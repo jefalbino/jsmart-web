@@ -91,15 +91,6 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	private boolean disabled;
 
-//	autocomplete, list e datalist
-//	É possível implementar uma funcionalidade de sugestão de valores com mais facilidade.
-//	<input type="text" list="cidades" autocomplete="on">
-//	<datalist id="cidades">
-//	<option value="Brasília">
-//	<option value="Rio de Janeiro">
-//	<option value="São Paulo">
-//	</datalist>
-
 	@Override
 	public void validateTag() throws JspException {
 		switch (type) {
