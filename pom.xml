@@ -165,13 +165,14 @@
 								<configuration>
 									<charset>utf-8</charset>
 									<webappSourceDir>${basedir}/src/main</webappSourceDir>
+									<webappTargetDir>${project.build.directory}</webappTargetDir>
 
 			                        <cssSourceDir>resources/css</cssSourceDir>
 									<cssSourceFiles>
 										<cssSourceFile>jquery.ui.general.css</cssSourceFile>
 										<cssSourceFile>jsmart5-0.0.2.css</cssSourceFile>
 									</cssSourceFiles>
-									<cssTargetDir>../classes/css</cssTargetDir>
+									<cssTargetDir>classes/css</cssTargetDir>
 									<cssFinalFile>jsmart5.css</cssFinalFile>
 
 									<jsSourceDir>resources/js</jsSourceDir>
@@ -185,7 +186,7 @@
 										<jsSourceFile>jquery.keypad.js</jsSourceFile>
 										<jsSourceFile>jsmart5-0.0.2.js</jsSourceFile>
 									</jsSourceFiles>
-									<jsTargetDir>../classes/js</jsTargetDir>
+									<jsTargetDir>classes/js</jsTargetDir>
 									<jsFinalFile>jsmart5.js</jsFinalFile>
 
 								</configuration>
