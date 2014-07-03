@@ -19,7 +19,6 @@
 package com.jsmart5.framework.manager;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,9 +68,7 @@ public final class SmartOutputFilter implements Filter {
 	    if (foundRegex) {
 		    responseWrapper.reset();
 		    responseWrapper.setContentLength(html.getBytes().length);
-	        PrintWriter out = responseWrapper.getWriter();
-	        out.write(html);
-	        // out.close();
+	        responseWrapper.getWriter().write(html);
 	    }
 	}
 

@@ -20,6 +20,7 @@ package com.jsmart5.framework.manager;
 
 import java.io.IOException;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -49,6 +50,12 @@ public final class SmartCacheFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+		// Dispatcher Forward not supposed to get in this Filter
+		if (httpRequest.getDispatcherType() == DispatcherType.FORWARD) {
+			filterChain.doFilter(httpRequest, httpResponse);
+        	return;
+		}
 
 		SmartCachePattern cachePattern = CONFIG.getContent().getCachePattern(httpRequest.getRequestURI());
 

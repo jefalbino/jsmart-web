@@ -32,7 +32,7 @@ package com.jsmart5.framework.manager;
 
 	public static final String USER_ACCESS = "jsmart_user_access";
 
-	public static final String JAR_FILE_PATH = WEB_INF + SEPARATOR + "lib" + SEPARATOR + "jsmart5-0.0.2.jar";
+	public static final String JAR_FILE_PATH = WEB_INF + SEPARATOR + "lib" + SEPARATOR + "jsmart5-0.0.3-SNAPSHOT.jar";
 
 	public static final String START_HEAD_TAG = "\t<head>";
 

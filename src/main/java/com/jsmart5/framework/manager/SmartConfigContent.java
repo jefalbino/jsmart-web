@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 	private String defaultLocale;
 
-	private String[] customFilters;
+	private SmartCustomFilter[] customFilters;
 
 	private SmartUploadConfig uploadConfig;
 
@@ -54,6 +54,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 	private SmartInitParam[] initParams;
 
 	private SmartCachePattern[] cachePatterns;
+
+	private SmartContentEncode contentEncode;
 
 	private boolean escapeRequest = true;
 
@@ -203,12 +205,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 	@XmlElement(name = "custom-filter")
 	@XmlElementWrapper(name = "custom-filters")
-	public String[] getCustomFilters() {
+	public SmartCustomFilter[] getCustomFilters() {
 		return customFilters;
 	}
 
-	public void setCustomFilters(String[] customFilters) {
-		this.customFilters = customFilters;
+	public void setCustomFilters(SmartCustomFilter[] customFilters) {
+		if (customFilters != null && customFilters.length > 0) {
+			this.customFilters = customFilters;
+		}
 	}
 
 	@XmlElement(name = "upload-config")
@@ -337,6 +341,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 		if (cachePatterns != null && cachePatterns.length > 0) {
 			this.cachePatterns = cachePatterns;
 		}
+	}
+
+	@XmlElement(name = "content-encode")
+	public SmartContentEncode getContentEncode() {
+		return contentEncode;
+	}
+
+	public void setContentEncode(SmartContentEncode contentEncode) {
+		this.contentEncode = contentEncode;
 	}
 
 }

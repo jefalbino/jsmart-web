@@ -18,26 +18,34 @@
 
 package com.jsmart5.framework.manager;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-/*package*/ final class SmartAttributeAdapter extends XmlAdapter<String, String[]> {
+/*package*/ final class SmartContentEncode {
 
-	@Override
-	public String marshal(String[] values) throws Exception {
-		String string = "";
-		for (String value : values) {
-			string += value + ",";
-		}
-		return string;
+	private String encode;
+
+	private String[] mimeTypes;
+
+	@XmlAttribute
+	public String getEncode() {
+		return encode;
 	}
 
-	@Override
-	public String[] unmarshal(String value) throws Exception {
-		String[] values = value.split(",");
-		for (int i = 0; i < values.length; i++) {
-			values[i] = values[i].trim();
+	public void setEncode(String encode) {
+		if (encode != null) {
+			this.encode = encode.toLowerCase();
 		}
-		return values;
+	}
+
+	@XmlAttribute
+	@XmlJavaTypeAdapter(value = SmartAttributeAdapter.class)
+	public String[] getMimeTypes() {
+		return mimeTypes;
+	}
+
+	public void setMimeTypes(String[] mimeTypes) {
+		this.mimeTypes = mimeTypes;
 	}
 
 }

@@ -55,6 +55,7 @@ import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 
 import static com.jsmart5.framework.manager.SmartHandler.*;
 import static com.jsmart5.framework.manager.SmartConstants.*;
+import static com.jsmart5.framework.manager.SmartConfig.*;
 
 public final class SmartWebFilter implements Filter {
 
@@ -112,7 +113,7 @@ public final class SmartWebFilter implements Filter {
 		httpRequest.getSession().removeAttribute(SCRIPT_BUILDER_ATTR);
 
 		// Anonymous subclass to wrap HTTP response to print output
-		SmartHttpServletResponseWrapper responseWrapper = new SmartHttpServletResponseWrapper(httpResponse);
+		SmartWebServletResponseWrapper responseWrapper = new SmartWebServletResponseWrapper(httpResponse);
 
         Throwable throwable = null;
 
@@ -128,6 +129,7 @@ public final class SmartWebFilter implements Filter {
 
         // Include head data to html
         String html = null;
+        responseWrapper.flushBuffer();
 
         try {
         	html = getCompleteHtml(httpRequest, responseWrapper);
@@ -137,6 +139,9 @@ public final class SmartWebFilter implements Filter {
 
         // Close bean context based on current thread instance
         SmartContext.closeCurrentInstance();
+
+        // Close current outputStream on responseWrapper
+        responseWrapper.close();
 
         // Case internal server error
 		if (throwable != null) {
@@ -151,12 +156,17 @@ public final class SmartWebFilter implements Filter {
 			throw new ServletException(throwable);
 		}
 
-		if (SmartConfig.CONFIG.getContent().isPrintHtml()) {
+		if (html == null || html.trim().isEmpty()) {
+			responseWrapper.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			return;
+		}
+
+		if (CONFIG.getContent().isPrintHtml()) {
         	LOGGER.log(Level.INFO, html);
         }
 
         // Compress html to better load performance
-		SmartHtmlCompress compressHtml = SmartConfig.CONFIG.getContent().getCompressHtml();
+		SmartHtmlCompress compressHtml = CONFIG.getContent().getCompressHtml();
 		if (compressHtml.isCompressHtml()) {
 			HtmlCompressor compressor = new HtmlCompressor();
 	    	compressor.setRemoveComments(!compressHtml.isSkipComments());
@@ -164,11 +174,9 @@ public final class SmartWebFilter implements Filter {
 		}
 
 		// Write our modified text to the real response
-		if (!responseWrapper.isCommitted()) {
-	        response.setContentLength(html.getBytes().length);
-	        PrintWriter out = response.getWriter();
-	        out.write(html);
-	        out.close();
+		if (!httpResponse.isCommitted()) {
+			httpResponse.setContentLength(html.getBytes().length);
+			httpResponse.getWriter().write(html);
 		}
 	}
 
@@ -242,7 +250,6 @@ public final class SmartWebFilter implements Filter {
 
 				if (closeBodyMatcher.find()) {
 					String closeBodyMatch = closeBodyMatcher.group();
-//					ClosureJavaScriptCompressor compressor = new ClosureJavaScriptCompressor();
 					String compressedScript = String.format(SCRIPT_READY_AJAX_TAG, scriptBuilders[0].append(scriptBuilders[1]));
 					html = html.replace(closeBodyMatch, compressedScript + closeBodyMatch);
 				}
@@ -290,10 +297,10 @@ public final class SmartWebFilter implements Filter {
 						JSONObject cssMarks = null;
 
 						if (JSMART5_CSS_PATH.equals(file.getRelativePath())) {
-							if (jsonStyles.has(SmartConfig.CONFIG.getContent().getTheme())) {
-								cssMarks = jsonStyles.getJSONObject(SmartConfig.CONFIG.getContent().getTheme());
+							if (jsonStyles.has(CONFIG.getContent().getTheme())) {
+								cssMarks = jsonStyles.getJSONObject(CONFIG.getContent().getTheme());
 							} else {
-								cssMarks = jsonStyles.getJSONObject(SmartConfig.CONFIG.getContent().getDefaultTheme());
+								cssMarks = jsonStyles.getJSONObject(CONFIG.getContent().getDefaultTheme());
 							}
 						}
 
@@ -355,88 +362,84 @@ public final class SmartWebFilter implements Filter {
 		}
 	}
 
-	private class SmartHttpServletResponseWrapper extends HttpServletResponseWrapper {
+	private class SmartWebServletResponseWrapper extends HttpServletResponseWrapper {
 
-		private StringWriter writer;
+		private SmartWebServletOutputStream outputStream = new SmartWebServletOutputStream();
 
-		private ServletOutputStreamWrapper outputWrapper;
-
-		public SmartHttpServletResponseWrapper(HttpServletResponse httpResponse) {
-			super(httpResponse);
+		public SmartWebServletResponseWrapper(HttpServletResponse servletResponse) {
+			super(servletResponse);
 		}
 
 		@Override
 		public ServletOutputStream getOutputStream() throws IOException {
-			if (writer != null) {
-				throw new IllegalStateException("getWriter() has already been called on this response.");
-			}
-			if (outputWrapper == null) {
-				outputWrapper = new ServletOutputStreamWrapper(getResponse().getOutputStream());
-			}
-			return outputWrapper;
+			return outputStream;
 		}
 
 		@Override
-        public PrintWriter getWriter() throws IOException {
-			if (outputWrapper != null) {
-	            throw new IllegalStateException("getOutputStream() has already been called on this response.");
-	        }
-	        if (writer == null) {
-	            writer = new StringWriter();
-	        }
-            return new PrintWriter(writer, true);
-        }
+		public PrintWriter getWriter() throws IOException {
+			return new PrintWriter(outputStream.getWriter(), true);
+		}
 
 		@Override
 		public void reset() {
-			if (writer != null) {
-                writer = new StringWriter();
-            } else if (outputWrapper != null) {
-            	try {
-            		outputWrapper = new ServletOutputStreamWrapper(getResponse().getOutputStream());
-            	} catch (IOException ex) {
-            		LOGGER.log(Level.SEVERE, "Error while reseting outputStream wrapper.", ex);
-            	}
-            }
+			outputStream.reset();
 		}
 
 		@Override
-        public String toString() {
-    		if (writer != null) {
-                return writer.toString();
-            } else if (outputWrapper != null) {
-            	return outputWrapper.toString();
-            }
-    		return null;
-        }
-	}
-
-	private class ServletOutputStreamWrapper extends ServletOutputStream {
-
-		private ServletOutputStream outputStream;
-
-		public ServletOutputStreamWrapper(ServletOutputStream outputStream) {
-			this.outputStream = outputStream;
+		public void flushBuffer() throws IOException {
+			outputStream.flush();
 		}
 
-		@Override
-		public void write(int b) throws IOException {
-			outputStream.write(b);
-		}
-
-		@Override
-		public void write(byte[] b) throws IOException {
-			outputStream.write(b);
-		}
-
-		@Override
-		public void write(byte[] b, int off, int len) throws IOException {
-			outputStream.write(b, off, len);
+		public void close() throws IOException {
+			outputStream.close();
 		}
 
 		@Override
 		public String toString() {
 			return outputStream.toString();
+		}
+	}
+
+	private class SmartWebServletOutputStream extends ServletOutputStream {
+
+		private StringWriter writer = new StringWriter();
+
+		public StringWriter getWriter() {
+			return writer;
+		}
+
+		public void reset() {
+			writer = new StringWriter();
+		}
+
+		@Override
+		public void write(int b) throws IOException {
+			writer.write(b);
+		}
+
+		@Override
+		public void write(byte[] b) throws IOException {
+			writer.write(new String(b));
+		}
+
+		@Override
+		public void write(byte[] b, int off, int len) throws IOException {
+			writer.write(new String(b), off, len);
+		}
+
+		@Override
+		public void flush() throws IOException {
+			writer.flush();
+		}
+
+		@Override
+		public void close() throws IOException {
+			writer.close();
+		}
+
+		@Override
+		public String toString() {
+			return writer.toString();
 		}
 	}
 

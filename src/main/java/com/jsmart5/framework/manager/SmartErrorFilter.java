@@ -36,9 +36,9 @@ import static com.jsmart5.framework.manager.SmartConfig.*;
 
 public final class SmartErrorFilter implements Filter {
 
-	private static final String HEADER_E_TAG = "ETag";
-
 	private static final Logger LOGGER = Logger.getLogger(SmartErrorFilter.class.getPackage().getName());
+
+	private static final String HEADER_E_TAG = "ETag";
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
@@ -57,8 +57,10 @@ public final class SmartErrorFilter implements Filter {
 
 		final String requestPath = httpRequest.getServletPath();
 
-		// Wrapper to change the default ETag-based validated caching to faster max-age-caching, we need to prevent the ETag-header from being added to the response object.
-		// Also it is necessary to avoid error 404 (not found) to be set by container, in order to allow 404 page customization by framework settings
+		// Wrapper to change the default ETag-based validated caching to faster max-age-caching,
+		// we need to prevent the ETag-header from being added to the response object.
+		// Also it is necessary to avoid error 404 (not found) to be set by container, 
+		// in order to allow 404 page customization by framework settings
 		HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(httpResponse) {
 
 			@Override 
