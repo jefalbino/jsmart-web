@@ -81,6 +81,8 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	private String placeHolder;
 
+	private String label;
+
 	private String pattern;
 
 	private Integer minValue;
@@ -149,7 +151,20 @@ public final class InputTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		StringBuilder builder = new StringBuilder(INPUT_TAG);
+		StringBuilder builder = new StringBuilder();
+
+		if (label != null) {
+			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
+			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL + ">");
+
+			String labelVal = (String) getTagValue(label);
+			if (labelVal != null) {
+				builder.append(labelVal);
+			}
+			builder.append(CLOSE_SPAN_TAG);
+		}
+
+		builder.append(INPUT_TAG);
 
 		if (id != null) {
 			builder.append("id=\"" + id + "\" ");
@@ -248,7 +263,13 @@ public final class InputTagHandler extends SmartTagHandler {
 
 		appendEventBuilder(builder);
 
-		printOutput(builder.append("/>"));
+		builder.append("/>");
+
+		if (label != null) {
+			builder.append(CLOSE_DIV_TAG);
+		}
+
+		printOutput(builder);
 	}
 
 	public void setType(String type) {
@@ -281,6 +302,10 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	public void setPlaceHolder(String placeHolder) {
 		this.placeHolder = placeHolder;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public void setPattern(String pattern) {

@@ -16,6 +16,28 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+.ui-widget-overlay {
+	opacity: .20;
+	filter: Alpha(Opacity=20);
+	background-color: #000000;
+	top: 0px;
+	left: 0px;
+	position: absolute;
+	z-index: 16777270;
+}
+
+.placeholder {
+	color: #bbbbbb;
+}
+
+::-webkit-input-placeholder {
+	color: #bbbbbb;
+}
+
+:-moz-placeholder {
+	color: #bbbbbb;
+}
+
 .jsmart5_table {
 	border: 1px solid @border@;
 	-webkit-border-radius: 5px;
@@ -25,10 +47,6 @@
 
 .jsmart5_table_head, .jsmart5_table_foot {
 	
-}
-
-.jsmart5_table_head_input {
-	width: 80px;
 }
 
 .jsmart5_table_head_sort_filter_up, .jsmart5_table_head_sort_up, .jsmart5_table_head_selected_sort_filter_up, .jsmart5_table_head_selected_sort_up, .jsmart5_table_head_sort_filter_down, .jsmart5_table_head_sort_down, .jsmart5_table_head_selected_sort_filter_down, .jsmart5_table_head_selected_sort_down {
@@ -69,8 +87,7 @@
 
 .jsmart5_table_head_row, .jsmart5_table_foot_row {
 	border-bottom: 1px solid @border@;
-	background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-	background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
+	background-color: @bckg@;
 }
 
 .jsmart5_table_head_row>th, .jsmart5_table_foot_row>td {
@@ -241,51 +258,80 @@
 	text-align: center;
 }
 
-.ui-widget-overlay {
-	opacity: .20;
-	filter: Alpha(Opacity=20);
-	background-color: #000000;
-	top: 0px;
-	left: 0px;
-	position: absolute;
-	z-index: 16777270;
-}
-
-.placeholder {
-	color: #bbbbbb;
-}
-
-::-webkit-input-placeholder {
-	color: #bbbbbb;
-}
-
-:-moz-placeholder {
-	color: #bbbbbb;
-}
-
-.jsmart5_input_text:not([type="range"]), .jsmart5_input_text_area, .jsmart5_table_head_input, .jsmart5_select, .jsmart5_select_multi, .jsmart5_date_title select {
+.jsmart5_input_text:not([type="range"]), .jsmart5_input_text_area, .jsmart5_table_head_input, .jsmart5_select, .jsmart5_select_multi, .jsmart5_date_title select, .jsmart5_auto_complete, .jsmart5_input_label, .jsmart5_input_label_select, .jsmart5_input_label_upload {
 	padding: 4px 8px;
+	height: 18px;
+	width: 180px;
 	border: solid 1px #a3a3a3;
-	background: #f4f4f4;
+	background: #f9f9f9;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
-	-webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
-	   -moz-box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
-	   		box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	   		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
 }
 
-.jsmart5_input_text:not([type="range"]):focus, .jsmart5_input_text_area:focus, .jsmart5_table_head_input:focus, .jsmart5_select:focus, .jsmart5_select_multi:focus, .jsmart5_date_title select:focus {
+.jsmart5_input_text:not([type="range"]):focus, .jsmart5_input_text_area:focus, .jsmart5_table_head_input:focus, .jsmart5_select:focus, .jsmart5_select_multi:focus, .jsmart5_auto_complete:focus {
 	background: #ffffff;
-	border-color: @border@;
 	outline: none;
+}
+
+.jsmart5_input_text_area {
+	height: inherit;
+}
+
+.jsmart5_table_head_input {
+	width: 80px;
+	border: 0px solid #a3a3a3;
+}
+
+.jsmart5_auto_complete_load, .jsmart5_auto_complete_load:focus {
+	background: url("img/load_dots.gif") no-repeat scroll right center transparent;
+}
+
+.jsmart5_auto_complete_list {
+	display: none;
+	position: absolute;
+	z-index: 100;
+	border: solid 1px #a3a3a3;
+	background: #ffffff;
+	-webkit-border-radius: 3px;
+  	   -moz-border-radius: 3px;
+	   		border-radius: 3px;
+}
+
+.jsmart5_auto_complete_list:focus {
+	border-color: @border@;
+	cursor: pointer;
+}
+
+.jsmart5_auto_complete_list>ul {
+	margin: 4px 0px;
+	outline: none;
+	list-style: none outside none;
+	overflow-x: hidden;
+    overflow-y: auto;
+    margin: 0px;
+    padding: 0px;
+}
+
+.jsmart5_auto_complete_list>ul li {
+	padding: 0px 5px;
+	width: 100%;
+	text-align: left;
+}
+
+.jsmart5_auto_complete_list>ul li:hover {
+	background-color: @bckghover@;
 }
 
 .jsmart5_select, .jsmart5_select_multi, .jsmart5_date_title select {
 	width: 220px;
-	height: 30px;
+	height: 28px;
+	padding: 2px 8px;
 	text-align: left;
-	background: #f4f4f4 url('@selectimage@') right center no-repeat;
+	background: #f9f9f9 url('@selectimage@') right center no-repeat;
 	font-family: serif;
 	font: inherit;
 	color: inherit;
@@ -298,7 +344,7 @@
 }
 
 .jsmart5_select[disabled="disabled"], .jsmart5_date_title select[disabled="disabled"] {
-	background: #f4f4f4 url('@selectdisableimage@') right center no-repeat;
+	background: #f9f9f9 url('@selectdisableimage@') right center no-repeat;
 }
 
 .jsmart5_select:focus, .jsmart5_date_title select:focus {
@@ -317,7 +363,6 @@
 .jsmart5_captcha_challenge {
 	margin-right: 15px;
 	display: inline-block;
-	color: @fontstrong@;
 }
 
 .jsmart5_captcha_text {
@@ -349,21 +394,54 @@
 	margin-top: 7px;
 }
 
+.jsmart5_input_group {
+	position: relative;
+	display: inline-block;
+}
+
+.jsmart5_input_label, .jsmart5_input_label_select, .jsmart5_input_label_upload {
+	width: inherit;
+	height: 100%;
+	float: left;
+	display: table;
+	outline: none;
+	padding: 1px 15px;
+	text-align: center;
+	background-color: #eeeeee;
+	-webkit-border-radius: 4px 0px 0px 4px;
+  	   -moz-border-radius: 4px 0px 0px 4px;
+	   		border-radius: 4px 0px 0px 4px;
+	-webkit-box-shadow: none;
+	   -moz-box-shadow: none;
+	   		box-shadow: none;
+}
+
+.jsmart5_input_label_select, .jsmart5_input_label_upload {
+	padding: 3px 15px;
+}
+
+.jsmart5_input_group>input, .jsmart5_input_group>select {
+    margin-left: -1px;
+	-webkit-border-radius: 0px 4px 4px 0px !important;
+  	   -moz-border-radius: 0px 4px 4px 0px !important;
+	   		border-radius: 0px 4px 4px 0px !important;
+}
+
 .jsmart5_menu_horizontal, .jsmart5_menu_vertical, .jsmart5_menu_horizontal ul, .jsmart5_menu_vertical ul {
 	margin: 0px;
 	padding: 0px;
 	display: inline-block;
 	list-style: none outside none;
+    background-color: @bckg@;
 	border: 1px solid @border@;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
     	    border-radius: 4px;
-    background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-    background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
-    -webkit-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-       -moz-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-       		box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
+}
+
+.jsmart5_menu_horizontal ul, .jsmart5_menu_vertical ul {
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_menu_horizontal>li {
@@ -400,20 +478,72 @@
 	margin: 4px;
 	width: 100%;
 	height: 100%;
-	color: @fontstrong@;
-}
-
-.jsmart5_menu_item {
-	width: 150px;
-	height: 31px;
-	line-height: 2.1em;
-	text-align: center;
+	color: inherit;
 }
 
 .jsmart5_menu_vertical {
 	display: block;
 	width: 150px;
 	float: left;
+}
+
+.jsmart5_menu_item, .jsmart5_menu_item_left, .jsmart5_menu_item_right {
+	width: 150px;
+	height: 31px;
+	line-height: 2.1em;
+	text-align: center;
+}
+
+.jsmart5_menu_item_left {
+	text-align: left;
+	padding-left: 10px;
+}
+
+.jsmart5_menu_item_right {
+	text-align: right;
+	padding-right: 10px;
+}
+
+.jsmart5_menu_arrow_up, .jsmart5_menu_arrow_down, .jsmart5_menu_arrow_left, .jsmart5_menu_arrow_right, .jsmart5_menu_item_arrow_left, .jsmart5_menu_item_arrow_right {
+	width: 0px; 
+	height: 0px; 
+	display: inline-block;
+	margin-left: 10px;
+	margin-bottom: 2px;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid @arrow@;
+	cursor: pointer;
+}
+
+.jsmart5_menu_arrow_down {
+	border-bottom: 0px;
+	border-top: 5px solid @arrow@;
+}
+
+.jsmart5_menu_arrow_left, .jsmart5_menu_arrow_right, .jsmart5_menu_item_arrow_left, .jsmart5_menu_item_arrow_right {
+	float: right;
+	margin-top: 10px; 
+	margin-right: 4px;
+	border-top: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+	border-left: 5px solid #a3a3a3;
+}
+
+.jsmart5_menu_arrow_right, .jsmart5_menu_item_arrow_right {
+	float: left;
+	margin-left: 4px;
+	margin-right: 0px;
+	border-left: 5px solid transparent;
+	border-right: 5px solid #a3a3a3;
+}
+
+.jsmart5_menu_arrow_right {
+	border-right: 5px solid @arrow@;
+}
+
+.jsmart5_menu_arrow_left {
+	border-left: 5px solid @arrow@;
 }
 
 .jsmart5_tabs {
@@ -445,8 +575,7 @@
 	text-align: center;
 	float: left;
 	color: @font@;
-	background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-    background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
+	background-color: @bckg@;
 }
 
 .jsmart5_tabs_li_left, .jsmart5_tabs_li_right {
@@ -575,16 +704,14 @@
 	height: 20px;
 	top: 0;
   	left: 0;
-
 	border: solid 1px #a3a3a3;
-	background: #f4f4f4;
+	background: #f9f9f9;
     -webkit-border-radius: 3px;
        -moz-border-radius: 3px;
             border-radius: 3px;
-
-    -webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
-       -moz-box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
-            box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+       -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
 }
 
 .jsmart5_checkbox>label:hover, .jsmart5_checkgroup_item>label:hover, .jsmart5_radiogroup_item>label:hover, .jsmart5_checkbox>label:focus, .jsmart5_checkgroup_item>label:focus, .jsmart5_radiogroup_item>label:focus {
@@ -604,7 +731,6 @@
 	border: 3px solid #333;
 	border-top: none;
 	border-right: none;
-
 	-webkit-transform: rotate(-45deg);
 	   -moz-transform: rotate(-45deg);
 	    -ms-transform: rotate(-45deg);
@@ -685,28 +811,27 @@
           	border-radius: 25px;
 }
 
-.jsmart5_button, .jsmart5_button_disabled {
+.jsmart5_button_group {
+	display: inline-block;
+}
+
+.jsmart5_button, .jsmart5_button_default, .jsmart5_button_dropdown {
 	min-width: 110px;
-	min-height: 30px;
-    padding: 5px 11px;
+	min-height: 34px;
+    padding: 7px 11px;
 	font-size: 15px;
 	cursor: pointer;
-    border: 1px solid @border@;
 	color: @font@;
-	background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-  	background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
+	background-color: @bckg@;
+    border: 1px solid @border@;
 	-webkit-border-radius: 5px;
 	   -moz-border-radius: 5px;
 	        border-radius: 5px;
-    -webkit-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-       -moz-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-       		box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
 }
 
-.jsmart5_button_disabled {
+.jsmart5_button[disabled="disabled"], .jsmart5_button_default[disabled="disabled"], .jsmart5_button_dropdown[disabled="disabled"] {
 	border: 1px solid @borderdisabled@;
-	background: linear-gradient(to bottom, @gradtopdisabled@ 0%, @gradbottomdisabled@ 100%) repeat scroll 0 0 @bckg@;
-  	background: -webkit-gradient(linear, left top, left bottom, from(@gradtopdisabled@), to(@gradbottomdisabled@)) repeat scroll 0 0 @bckgdisabled@;
+	background-color: @bckgdisabled@;
 }
 
 .jsmart5_button_image {
@@ -714,8 +839,126 @@
 	cursor: pointer;
 }
 
+.jsmart5_button_icon {
+	margin-right: 7px;	
+}
+
 .jsmart5_button:active {
 	
+}
+
+.jsmart5_button_default, .jsmart5_button_default[disabled="disabled"] {
+	border-right: none;
+	-webkit-border-radius: 5px 0px 0px 5px;
+	   -moz-border-radius: 5px 0px 0px 5px;
+	        border-radius: 5px 0px 0px 5px;
+}
+
+.jsmart5_button_dropdown, .jsmart5_button_dropdown[disabled="disabled"] {
+	width: 28px;
+	min-width: 0px;
+	margin: 0px;
+	margin-left: -2px;
+	padding: 7px 0px 7px 0px;
+	-webkit-border-radius: 0px 5px 5px 0px;
+	   -moz-border-radius: 0px 5px 5px 0px;
+	        border-radius: 0px 5px 5px 0px;
+}
+
+.jsmart5_button_dropdown_arrow {
+	width: 0px;
+	height: 0px; 
+	display: inline-block;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 5px solid @arrow@;
+	border-bottom: 0px;
+	cursor: pointer;
+}
+
+.jsmart5_button_dropdown_list {
+	margin: 0px;
+	padding: 0px;
+	display: none;
+	position: absolute;
+	background: @bckgsoft@;
+	list-style: none outside none;
+	border: 1px solid #a3a3a3;
+	-webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+       	-ms-border-radius: 4px;
+    	    border-radius: 4px;
+}
+
+.jsmart5_button_dropdown_list li {
+	width: 150px;
+	height: 31px;
+	line-height: 2.1em;
+	text-align: left;
+	padding-left: 10px;
+}
+
+.jsmart5_button_dropdown_list li:hover {
+	background-color: @bckghover@;
+}
+
+.jsmart5_button_dropdown_list li a {
+	cursor: pointer;
+	margin: 4px;
+	width: 100%;
+	height: 100%;
+	color: inherit;
+}
+
+.jsmart5_button_group_item {
+	margin: 0px -2px 0px -2px;
+	-webkit-border-radius: 0px;
+	   -moz-border-radius: 0px;
+	        border-radius: 0px;
+}
+
+.jsmart5_button_group_horizontal {
+	display: inline-flex;
+}
+
+.jsmart5_button_group_horizontal>button:first-child {
+	margin: 0px -3px 0px 0px;
+	-webkit-border-radius: 5px 0px 0px 5px;
+	   -moz-border-radius: 5px 0px 0px 5px;
+	        border-radius: 5px 0px 0px 5px;
+}
+
+.jsmart5_button_group_horizontal>button:last-child {
+	margin: 0px 0px 0px -3px;
+	-webkit-border-radius: 0px 5px 5px 0px;
+	   -moz-border-radius: 0px 5px 5px 0px;
+	        border-radius: 0px 5px 5px 0px;
+}
+
+.jsmart5_button_group_vertical {
+	margin: -2px 0px 0px -2px;
+	display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+
+.jsmart5_button_group_vertical>button {
+	width: 100%;
+	margin-top: -3px;
+	float: none;
+	display: block;
+}
+
+.jsmart5_button_group_vertical>button:first-child {
+	-webkit-border-radius: 5px 5px 0px 0px;
+	   -moz-border-radius: 5px 5px 0px 0px;
+	        border-radius: 5px 5px 0px 0px;
+}
+
+.jsmart5_button_group_vertical>button:last-child {
+	-webkit-border-radius: 0px 0px 5px 5px;
+	   -moz-border-radius: 0px 0px 5px 5px;
+	        border-radius: 0px 0px 5px 5px;
 }
 
 .jsmart5_image {
@@ -723,7 +966,8 @@
 }
 
 .jsmart5_upload_text {
-	
+	width: inherit !important;
+	height: 22px !important;
 }
 
 .jsmart5_link {
@@ -732,22 +976,99 @@
 
 .jsmart5_list {
 	display: inline-block;
+	position: relative;
 	text-align: left;
 	line-height: 1.8;
+	list-style-type: none;
+	counter-reset: li-counter;
 }
 
-.jsmart5_list dt {
-	font-weight: bold;
-	line-height: 1.2;
+ul.jsmart5_list, dl.jsmart5_list {
+	margin: 0px;
+	padding: 0px;
+	list-style: none outside none;
+	border: 1px solid #a3a3a3;
+	-webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+       	-ms-border-radius: 4px;
+    	    border-radius: 4px;
 }
 
-.jsmart5_list li[select=true]:hover {
-	color: @fontstrong@;
-	font-weight: bold;
+dl.jsmart5_list {
+	border: none;
 }
 
 .jsmart5_list_row {
-	
+	height: 32px;
+	display: table;
+	width: 250px;
+	position: relative;
+	padding: 5px 5px 3px 5px;
+}
+
+.jsmart5_list_row_badge {
+	background-color: #a3a3a3;
+    border-radius: 10px;
+    color: #ffffff;
+    display: inline-block;
+    float: right;
+    font-size: 12px;
+    line-height: 0.8;
+    margin-right: 5px;
+    margin-top: 8px;
+    min-width: 10px;
+    padding: 2px 7px;
+    text-align: center;
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+
+ul.jsmart5_list>li, dl.jsmart5_list>dd {
+	display: block;
+}
+
+ol.jsmart5_list>li:before {
+	position: absolute;
+	top: 0.7em;
+	left: -2.3em;
+	width: 1.3em;
+	height: 1.3em;
+	border-radius: 50%;
+	color: @font@;
+	background-color: @bckg@;
+	content: counter(li-counter);
+	counter-increment: li-counter;
+	text-align: center;
+	line-height: 1.2em;
+	font-size: 13px;
+}
+
+.jsmart5_list>dt {
+	color: @font@;
+	background-color: @bckg@;
+	padding: 2px 10px;
+	line-height: 1.2;
+	border: 1px solid @border@;
+	-webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+       	-ms-border-radius: 4px;
+    	    border-radius: 4px;
+}
+
+dl.jsmart5_list>dd {
+	margin: 0px;
+}
+
+ul.jsmart5_list>li, .jsmart5_list>dd {
+	border-bottom: 1px solid @bordersoft@;
+}
+
+.jsmart5_list>li[select=true]:hover, .jsmart5_list>dd[select=true]:hover {
+	background-color: @bckghover@;
+	-webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+       	-ms-border-radius: 4px;
+    	    border-radius: 4px;
 }
 
 .jsmart5_outputs {
@@ -769,13 +1090,13 @@
 
 .jsmart5_panel_header {
 	height: 35px;
-	padding: 0 10px 0 8px;
-	line-height: 2; 
+	padding: 4px 10px 0 8px;
+	line-height: 2.1;
+	font-size: 15px;
 	cursor: pointer;
 	color: @font@;
 	border-bottom: 1px solid @border@; 
-    background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-    background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
+    background-color: @bckg@;
 }
 
 .jsmart5_panel_header>div {
@@ -802,7 +1123,7 @@
 }
 
 .jsmart5_switch_container {
-	height: 28px;
+	height: 30px;
 	width: 80px;
 	padding: 0px;
 	display: inline-block;
@@ -830,9 +1151,9 @@
 	-webkit-border-radius: 5px;
 	   -moz-border-radius: 5px;
 			border-radius: 5px;
-	-webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
-	   -moz-box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
-			box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
 }
 
 .jsmart5_switch_span_off, .jsmart5_switch_span_off_disabled {
@@ -847,30 +1168,25 @@
 .jsmart5_switch_button, .jsmart5_switch_button_disabled {
 	position: relative;
 	width: 30px;
-	height: 24px;
+	height: 26px;
 	margin: 1px;
 	cursor: pointer;
+	background-color: @bckg@;
+    border: 1px solid @border@;
 	-webkit-border-radius: 5px;
        -moz-border-radius: 5px;
 	        border-radius: 5px;
-	background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-	background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
-    border: 1px solid @border@;
-    -webkit-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-       -moz-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-       		box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
 }
 
 .jsmart5_switch_button_disabled {
 	cursor: default;
 	border: solid 1px @borderdisabled@;
-	background: linear-gradient(to bottom, @gradtopdisabled@ 0%, @gradbottomdisabled@ 100%) repeat scroll 0 0 @bckgdisabled@;
-	background: -webkit-gradient(linear, left top, left bottom, from(@gradtopdisabled@), to(@gradbottomdisabled@)) repeat scroll 0 0 @bckgdisabled@;
+	background-color: @bckgdisabled@;
 }
 
 .jsmart5_balloon {
-	color: @fontstrong@;
 	padding: 10px;
+	color: @fontstrong@;
 	border: solid 2px @border@;
 	background-color: @bckgsoft@;
 	-webkit-border-radius: 5px;
@@ -1005,9 +1321,9 @@
 	width: 17em;
 	padding: .2em .2em 0; 
 	display: none; 
-	background-color: @bckgsoft@; 
 	z-index: 1003;
-	border: 1px solid @border@;
+	border: 1px solid #a3a3a3;
+	background-color: @bckgsoft@; 
 	-webkit-border-radius: 4px;
 	   -moz-border-radius: 4px;
         -ms-border-radius: 4px;
@@ -1089,8 +1405,7 @@
 	position: relative; 
 	padding: .2em 0;
 	border: 1px solid @border@;
-    background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-    background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
+    background-color: @bckg@;
 	-webkit-border-radius: 4px;
 	   -moz-border-radius: 4px;
         -ms-border-radius: 4px;
@@ -1117,7 +1432,19 @@
 
 .jsmart5_date_title select {
 	width: 40%;
-	font: inherit;
+	height: 22px;
+	padding: 0px 8px;
+	margin: 0px 4px;
+	line-height: 22px; 
+	border: none;
+	-webkit-box-shadow: none;
+	   -moz-box-shadow: none;
+	   		box-shadow: none;
+}
+
+.jsmart5_date_title select:focus {
+	background: #ffffff;
+	outline: none;
 }
 
 .jsmart5_date_month, .jsmart5_date_year {
@@ -1477,6 +1804,10 @@
 	font-style: italic;
 }
 
+.jsmart5_validate_target {
+	border: solid 1px #ff0000 !important;
+}
+
 .jsmart5_progress_container {
 	width: 370px;
 	height: 28px;
@@ -1515,19 +1846,14 @@
 .jsmart5_progress_bar, .jsmart5_progress_bar_disabled {
 	width: 0px;
 	height: 100%;
+	background-color: @bckg@;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
-	background: linear-gradient(to right, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-	background: -webkit-gradient(linear, left top, right top, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
-	-webkit-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-	   -moz-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-			box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
 }
 
 .jsmart5_progress_bar_disabled {
-	background: linear-gradient(to right, @gradtopdisabled@ 0%, @gradbottomdisabled@ 100%) repeat scroll 0 0 @bckg@;
-  	background: -webkit-gradient(linear, left top, right top, from(@gradtopdisabled@), to(@gradbottomdisabled@)) repeat scroll 0 0 @bckgdisabled@;
+	background-color: @bckg@;
 }
 
 .jsmart5_progress_percent {
@@ -1564,28 +1890,23 @@
 	-webkit-border-radius: 1px;
   	   -moz-border-radius: 1px;
 	   		border-radius: 1px;
-	-webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
-	   -moz-box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
-	   		box-shadow: inset 0 2px 3px rgba(0,0,0,.1);
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	   		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
 }
 
 .jsmart5_range_bar, .jsmart5_range_bar_disabled {
 	width: 10px;
 	height: 100%;
 	position: relative;
+	background-color: @bckg@;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
-	background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-    background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
-	-webkit-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-       -moz-box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
-       		box-shadow: 0 1px 3px 0 rgba(178, 187, 205, 0.8) inset;
 }
 
 .jsmart5_range_bar_disabled {
-	background: linear-gradient(to bottom, @gradtopdisabled@ 0%, @gradbottomdisabled@ 100%) repeat scroll 0 0 @bckg@;
-  	background: -webkit-gradient(linear, left top, left bottom, from(@gradtopdisabled@), to(@gradbottomdisabled@)) repeat scroll 0 0 @bckgdisabled@;
+	background-color: @bckgdisabled@;
 }
 
 .jsmart5_range_value {
@@ -1595,7 +1916,7 @@
 
 .jsmart5_dialog {
 	width: 300px;
-	border: 1px solid @border@;
+	border: 1px solid #a3a3a3;
 	position: absolute;
 	padding: .2em;
 	overflow: hidden;
@@ -1609,14 +1930,12 @@
 .jsmart5_dialog_titlebar {
 	position: relative;
 	height: 1.4em;
-    padding: .3em 1em;
+    padding: .5em 1em;
 	border: 1px solid @border@;
 	font-size: 15px;
 	color: @font@;
 	vertical-align: top;
 	background-color: @bckg@;
-	background: linear-gradient(to bottom, @gradtop@ 0%, @gradbottom@ 100%) repeat scroll 0 0 @bckg@;
-  	background: -webkit-gradient(linear, left top, left bottom, from(@gradtop@), to(@gradbottom@)) repeat scroll 0 0 @bckg@;
 	-webkit-border-radius: 4px;
 	   -moz-border-radius: 4px;
 	    -ms-border-radius: 4px;

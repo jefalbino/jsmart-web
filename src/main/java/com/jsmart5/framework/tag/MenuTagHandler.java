@@ -30,13 +30,13 @@ import static com.jsmart5.framework.tag.HtmlConstants.*;
 
 public final class MenuTagHandler extends SmartTagHandler {
 
-	private static final String MENU_TOP = "top";
+	/*package*/ static final String MENU_TOP = "top";
 
-	private static final String MENU_LEFT = "left";
+	/*package*/ static final String MENU_LEFT = "left";
 
-	private static final String MENU_RIGHT = "right";
+	/*package*/ static final String MENU_RIGHT = "right";
 
-	private static final String MENU_BOTTOM = "bottom";
+	/*package*/ static final String MENU_BOTTOM = "bottom";
 
 	private String type;
 
@@ -83,6 +83,10 @@ public final class MenuTagHandler extends SmartTagHandler {
 		appendScriptBuilder(new StringBuilder(JSConstants.JSMART_MENU.format(id)));
 
 		printOutput(builder);
+	}
+
+	/*package*/ String getType() {
+		return type;
 	}
 
 	public void setType(String type) {

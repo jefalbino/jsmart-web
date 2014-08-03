@@ -89,7 +89,6 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 			builder.append("placeholder=\"" + getResourceString(placeHolder) + "\" datatype=\"text\" ");
 		}
 
-
 		StringBuilder captchaScript = new StringBuilder(String.format(OPEN_CAPTCHA_SCRIPT, id) + CLOSE_CAPTCHA_SCRIPT);
 		
 		captchaScript.append(String.format(OPEN_CAPTCHA_SCRIPT, id) + "'option', {");

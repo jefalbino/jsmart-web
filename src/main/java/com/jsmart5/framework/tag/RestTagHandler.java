@@ -148,7 +148,7 @@ public final class RestTagHandler extends SmartTagHandler {
 			if (image != null) {
 				builder.append(CssConstants.CSS_BUTTON_IMAGE);
 			} else {
-				builder.append(disabled ? CssConstants.CSS_BUTTON_DISABLED : CssConstants.CSS_BUTTON);
+				builder.append(CssConstants.CSS_BUTTON);
 			}
 		}
 

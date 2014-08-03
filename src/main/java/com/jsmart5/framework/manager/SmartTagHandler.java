@@ -77,6 +77,8 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	protected static final String J_CAPTCHA_HASH = J_TAG_INIT + "014_";
 
+	protected static final String J_COMPLETE = J_TAG_INIT + "015_";
+
 	protected static final String EL_PARAM_READ_ONLY = SmartConstants.EL_PARAM_READ_ONLY;
 
 	protected static final String ON_SELECT = "onselect=\"";

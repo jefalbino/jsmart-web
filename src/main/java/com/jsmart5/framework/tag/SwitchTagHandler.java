@@ -21,6 +21,7 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
@@ -53,6 +54,12 @@ public final class SwitchTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
+
+		// Just to call nested tags
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}
 
 		// Container to hold switch
 		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_DIV_TAG);
@@ -94,6 +101,8 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		}
 
 		builder.append("type=\"hidden\" ");
+
+		builder.append("switch=\"switch\" ");
 
 		appendFormValidator(builder);
 		

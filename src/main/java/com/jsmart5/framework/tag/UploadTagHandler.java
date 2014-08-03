@@ -18,6 +18,11 @@
 
 package com.jsmart5.framework.tag;
 
+import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_DIV_TAG;
+import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_SPAN_TAG;
+import static com.jsmart5.framework.tag.HtmlConstants.OPEN_DIV_TAG;
+import static com.jsmart5.framework.tag.HtmlConstants.OPEN_SPAN_TAG;
+
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
@@ -33,6 +38,8 @@ public final class UploadTagHandler extends SmartTagHandler {
 	private String value;
 
 	private Long maxSize;
+
+	private String label;
 
 	private String maxSizeMessage;
 
@@ -60,6 +67,17 @@ public final class UploadTagHandler extends SmartTagHandler {
 		String name = getTagName(J_FILE, value);
 
 		builder.append("name=\"" + name + "\" type=\"hidden\" />");
+
+		if (label != null) {
+			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
+			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL_UPLOAD + ">");
+
+			String labelVal = (String) getTagValue(label);
+			if (labelVal != null) {
+				builder.append(labelVal);
+			}
+			builder.append(CLOSE_SPAN_TAG);
+		}
 
 		builder.append(HtmlConstants.INPUT_TAG);
 
@@ -95,7 +113,13 @@ public final class UploadTagHandler extends SmartTagHandler {
 
 		appendEventBuilder(builder);
 
-		printOutput(builder.append("/>"));
+		builder.append("/>");
+
+		if (label != null) {
+			builder.append(CLOSE_DIV_TAG);
+		}
+
+		printOutput(builder);
 	}
 
 	public void setValue(String value) {
@@ -104,6 +128,10 @@ public final class UploadTagHandler extends SmartTagHandler {
 
 	public void setMaxSize(Long maxSize) {
 		this.maxSize = maxSize;
+	}
+	
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public void setMaxSizeMessage(String maxSizeMessage) {

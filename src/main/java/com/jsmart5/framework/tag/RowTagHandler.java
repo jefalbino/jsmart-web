@@ -34,6 +34,8 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	private String type;
 
+	private String badge;
+
 	@Override
 	public void doTag() throws JspException, IOException {
 		JspTag parent = getParent();
@@ -79,6 +81,13 @@ public final class RowTagHandler extends SmartTagHandler {
 			builder.append(object);
 		}
 
+		if (badge != null) {
+			object = getTagValue(badge);
+			builder.append(HtmlConstants.OPEN_SPAN_TAG + CssConstants.CSS_LIST_ROW_BADGE + ">");
+			builder.append(object != null ? object : "");
+			builder.append(HtmlConstants.CLOSE_SPAN_TAG);
+		}
+
 		if (type != null && type.equals(ListTagHandler.DEFINITION)) {
 			builder.append(HtmlConstants.CLOSE_DEFINITION_DATA_TAG);
 		} else {
@@ -98,6 +107,10 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public void setBadge(String badge) {
+		this.badge = badge;
 	}
 
 }

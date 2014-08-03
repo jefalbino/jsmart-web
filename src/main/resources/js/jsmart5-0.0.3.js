@@ -51,7 +51,11 @@ var Jsmart5 = (function() {
 	var RANGE_INPUT = "_range_input";
 	var RANGE_VALUE = "_range_value";
 	var DATE_FORMAT = '_date_format';
-	
+	var AUTOCOMPLETE_VALUES = '_complete_values';
+	var AUTOCOMPLETE_TIMERS = [];
+	var AUTOCOMPLETE_CHARS = [];
+	var TABLE_FILTER_TIMERS = [];
+
 	$(function () {
 		initCheckbox();
 		initPlaceHolders();
@@ -73,6 +77,10 @@ var Jsmart5 = (function() {
 		// Button ajax={'method': '', 'action': '','update': '','before': '','exec': ''}
 		button: function (async, element) {
 			doButton(async, element);
+		},
+
+		buttonDropDown: function (element) {
+			doButtonDropDown(element);
 		},
 
 		// Rest ajax={'method': '','content': '','bodyRoot': '','crossdomain': '', 'jsonp': '', 'jsoncallback': '','endpoint': '','params':[{'name': '', 'value': ''}],'before': '','success': '','error': ''}
@@ -205,6 +213,10 @@ var Jsmart5 = (function() {
 		// Table ajax={'ajax': '', 'max': '', 'min': '', 'step': '', 'callback': ''}
 		range: function (id) {
 			doRange(id);
+		},
+		
+		autocomplete: function (async, id, event) {
+			doAutoComplete(async, id, event);
 		}
 	};
 	// end public interface
@@ -416,7 +428,7 @@ var Jsmart5 = (function() {
 	
 			validateElement.find('*[validatedrequired]').each(function(index) {
 				var name = $(this).attr("name");
-	
+
 				if (name.indexOf(TAG_INIT) >= 0) {
 					var message = $(this).attr('validatemessage');
 					var value = getElementParam($(this), true);
@@ -424,49 +436,68 @@ var Jsmart5 = (function() {
 					if ($(this).is('input') && $(this).attr('checkgroup')) {
 						if (!contains(checkgroups, name)) {
 							checkgroups[checkgroups.length] = name;
+
+							$(this).closest('table').find('div label').each(function(index) {
+								$(this).removeClass('jsmart5_validate_target');
+							});
 	
 							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
-								$(this).parents('div:eq(1)').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+								warnValidate($(this), message, 'checkgroup');
 								validated = false;
 							}
 						}
 					} else if ($(this).is('input') && $(this).attr('radiogroup')) {
 						if (!contains(checkgroups, name)) {
 							checkgroups[checkgroups.length] = name;
-	
+
+							$(this).closest('table').find('div label').each(function(index) {
+								$(this).removeClass('jsmart5_validate_target');
+							});
+
 							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
-								$(this).parents('div:eq(1)').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+								warnValidate($(this), message, 'radiogroup');
 								validated = false;
 							}
 						}
 	
 					} else if ($(this).is('input:checkbox')) {
+
+						$(this).closest('div').find('>label').removeClass('jsmart5_validate_target');
+
 						if (value.length == 0 || !value[0].value || value[0].value == 'false') {
-							$(this).closest('div').next('span').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+							warnValidate($(this), message, 'checkbox');
 							validated = false;
 						}
 					} else {
+						var type = $(this).is('input') && $(this).attr('switch') ? 'switch' : 'general';
+
+						if (type == 'switch') {
+							$(this).closest('div').removeClass('jsmart5_validate_target');
+						} else {
+							$(this).removeClass('jsmart5_validate_target');
+						}
+
 						if (value.length > 0 && value[0].value && value[0].value.length > 0) {
-	
+
 							if (isString(value[0].value) && $.trim(value[0].value).length == 0) {
-								$(this).after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+								warnValidate($(this), message, type);
 								validated = false;
 	
 							} else {
 								var validateMinLength = $(this).attr('validateminlength');
 								if (validateMinLength && value[0].value.length < validateMinLength) {
-									$(this).after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+									warnValidate($(this), message, type);
 									validated = false;
 								}
 	
 								var validateMaxLength = $(this).attr('validatemaxlength');
 								if (validateMaxLength && value[0].value.length > validateMaxLength) {
-									$(this).after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+									warnValidate($(this), message, type);
 									validated = false;
 								}
 							}
 						} else {
-							$(this).after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+							warnValidate($(this), message, type);
 							validated = false;
 						}
 					}
@@ -474,6 +505,27 @@ var Jsmart5 = (function() {
 			});
 		}
 		return validated;
+	}
+	
+	function warnValidate(element, message, type) {
+		if (type == 'radiogroup' || type == 'checkgroup') {
+			element.closest('table').find('div label').each(function(index) {
+				$(this).addClass('jsmart5_validate_target');
+			});
+			element.parents('div:eq(1)').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+
+		} else if (type == 'checkbox') {
+			element.closest('div').find('>label').addClass('jsmart5_validate_target');
+			element.closest('div').next('span').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+
+		} else if (type == 'switch') {
+			element.closest('div').addClass('jsmart5_validate_target');
+			element.closest('div').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+
+		} else {
+			element.addClass('jsmart5_validate_target');
+			element.after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+		}
 	}
 
 	function doExecute(a, exec) {
@@ -551,6 +603,15 @@ var Jsmart5 = (function() {
 		}
 	}
 
+	function clearTableFilterTimer(id) {
+		for (var i = 0; i < TABLE_FILTER_TIMERS.length; i++) {
+			if (TABLE_FILTER_TIMERS[i].id == id) {
+				clearTimeout(TABLE_FILTER_TIMERS[i].value);
+				break;
+			}
+		}
+	}
+
 	function doTable(async, id, element) {
 		if ($(element) && $(element).attr('ajax')) {
 	
@@ -560,9 +621,10 @@ var Jsmart5 = (function() {
 			var timeout = 0;
 			if (ajax.action == 'FILTER') {
 				timeout = 1000;
+				clearTableFilterTimer(id);
 			}
-	
-			setTimeout(function() {
+
+			var timerId = setTimeout(function() {
 				var json = getTableAction(ajax);
 	
 				var options = getAjaxOptions(async, ajax);
@@ -587,6 +649,8 @@ var Jsmart5 = (function() {
 				}
 	
 			}, timeout);
+
+			TABLE_FILTER_TIMERS.push({id: id, value: timerId});
 		}
 	}
 
@@ -1124,7 +1188,7 @@ var Jsmart5 = (function() {
 
 	function doCarousel(id) {
 		if (id && id.length > 0) {
-			clearCarousel(id);
+			clearCarouselTimer(id);
 	
 			var carousel = $(getId(id));
 			var slides = carousel.find('.jsmart5_carousel_slides');
@@ -1374,6 +1438,29 @@ var Jsmart5 = (function() {
 			}
 		}
 	}
+	
+	function doButtonDropDown(element) {
+		if (element) {
+			var dropDown = $(element).closest('div').find('>ul');
+			var button = $(element).closest('div').find('>button, >input');
+
+			$(dropDown).css({'position': 'absolute'});
+			$(dropDown).css({'left': $(button).position().left, 'top': $(button).position().top + $(button).outerHeight(true)});
+			$(dropDown).show();
+			
+			$(window).click(function(){
+				$(dropDown).hide();
+			});
+
+			$(element).click(function(event) {
+				event.stopPropagation();
+			});
+
+			$(dropDown).find('li').click(function() {
+				$(dropDown).hide();
+			});
+		}
+	}
 
 	function doMenu(id) {
 		if (id && id.length > 0) {
@@ -1386,12 +1473,9 @@ var Jsmart5 = (function() {
 			menu.find('li').mouseenter(function () {
 				var subMenu = $(this).find('>ul');
 				if (subMenu && subMenu.length > 0) {
-	
+
 					subMenu.css({'position':'absolute'});
-					subMenu.find('>li').each(function() {
-						$(this).css({'text-align': 'left', 'paddingLeft': '15px'});
-					});
-	
+
 					if (type == 'top') {
 						if (parseInt(subMenu.attr('level')) != 1) {
 							subMenu.css({'left': $(this).position().left + $(this).outerWidth(true), 'top': $(this).position().top});
@@ -2725,7 +2809,7 @@ var Jsmart5 = (function() {
 		}
 	}
 	
-	function clearCarousel(id) {
+	function clearCarouselTimer(id) {
 		for (var i = 0; i < CAROUSEL_TIMERS.length; i++) {
 			if (CAROUSEL_TIMERS[i].id == id) {
 				clearInterval(CAROUSEL_TIMERS[i].value);
@@ -2750,7 +2834,7 @@ var Jsmart5 = (function() {
 				}
 				
 				$(this).click(function() {
-					clearCarousel(id);
+					clearCarouselTimer(id);
 					doCarouselTransition(id, $(this).text(), transType, transTime);
 				});
 			});
@@ -2796,7 +2880,7 @@ var Jsmart5 = (function() {
 					} else {
 						currentIndex--;	
 					}
-					clearCarousel(id);
+					clearCarouselTimer(id);
 					doCarouselTransition(id, currentIndex.toString(), transType, transTime);
 				});
 			});
@@ -3228,7 +3312,180 @@ var Jsmart5 = (function() {
 			$.ajax(options);
 		}
 	}
-	
+
+	function clearAutoCompleteTimer(id) {
+		for (var i = 0; i < AUTOCOMPLETE_TIMERS.length; i++) {
+			if (AUTOCOMPLETE_TIMERS[i].id == id) {
+				clearTimeout(AUTOCOMPLETE_TIMERS[i].value);
+			}
+		}
+	}
+
+	function clearAutoCompleteChar(id, val) {
+		for (var i = 0; i < AUTOCOMPLETE_CHARS.length; i++) {
+			if (AUTOCOMPLETE_CHARS[i].id == id) {
+				AUTOCOMPLETE_CHARS[i].value = val;
+				break;
+			}
+		}
+	}
+
+	function pushAutoCompleteChar(id, val) {
+		var found = false;
+		for (var i = 0; i < AUTOCOMPLETE_CHARS.length; i++) {
+			if (AUTOCOMPLETE_CHARS[i].id == id) {
+				AUTOCOMPLETE_CHARS[i].value += val;
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			AUTOCOMPLETE_CHARS.push({id: id, value: val});
+		}
+	}
+
+	function getAutoCompleteChar(id) {
+		for (var i = 0; i < AUTOCOMPLETE_CHARS.length; i++) {
+			if (AUTOCOMPLETE_CHARS[i].id == id) {
+				return AUTOCOMPLETE_CHARS[i].value;
+			}
+		}
+		return '';
+	}
+
+	function doAutoComplete(async, id, event) {
+		var element = $(getId(id));
+		if (element && element.attr('ajax')) {
+
+			clearAutoCompleteTimer(id);
+			
+			var previous = $(getId(id + AUTOCOMPLETE_VALUES));
+			if (previous && previous.length > 0) {
+				previous.remove();
+			}
+
+			// If delete or backspace, just clear the cache
+			if (event.keyCode == 46 || event.keyCode == 8) {
+				clearAutoCompleteChar(id, element.val());
+				return;
+			}
+
+			// If space just return 
+			if (event.keyCode == 32) {
+				return;
+			}
+
+			var timerId = setTimeout(function() {
+				element.addClass('jsmart5_auto_complete_load');
+
+				var ajax = $.parseJSON($(element).attr('ajax'));
+				ajax.method = 'post';
+				var options = getAjaxOptions(async, ajax);
+
+				var search = element.val().replace(getAutoCompleteChar(id), '');
+				var postParam = [{name: ajax.name, value: search}, {name: element.attr('name'), value: element.val()}];
+
+				var closestForm = element.closest('form');
+				if (closestForm && closestForm.length > 0) {
+					if (!doValidate($(closestForm).attr('id'))) {
+						return;
+					}
+				} else {
+					postParam = $.param(postParam);
+				}
+
+				options.data = postParam;
+
+				options.success = function(data) {
+					var reset = $(data).find(RESET_PATH);
+					if (reset && reset.length > 0) {
+						$(location).attr('href', $(location).attr('href'));
+					} else {
+						var div = $(data).find(getId(id + AUTOCOMPLETE_VALUES));
+
+						if (div && div.length > 0) {
+							var itemsLength = $(div).find('>ul li').length;
+
+							if (itemsLength > 0) {
+								element.after($(div));
+
+								var itemHeight = element.outerHeight();
+								$(div).outerWidth(element.outerWidth(true));
+
+								var totalHeight = itemHeight * itemsLength;
+								if (itemsLength > 10) {
+									totalHeight = itemHeight * 10;
+								}
+
+								$(div).outerHeight(totalHeight);
+								$(div).find('>ul').height($(div).height());
+								$(div).find('>ul li').each(function (index) {
+									$(this).height(itemHeight);
+
+									$(this).click(function() {
+										if (ajax.multiple == 'true') {
+											pushAutoCompleteChar(id, $(this).text() + ' ');
+											element.val(getAutoCompleteChar(id));
+										} else {
+											element.val($(this).text());
+										}
+										$(div).remove();
+										
+										doAutoCompleteCallback(ajax, element, $(this).text());
+									});
+								});
+
+								$(window).click(function() {
+									$(div).remove();
+								});
+
+								$(div).css({'left': element.position().left, 'top': element.position().top + itemHeight});
+								$(div).show();
+							}
+						}
+
+						resetMessage(data);
+						var redirect = $(data).find(REDIRECT_PATH); 
+						if (redirect && redirect.length > 0) {
+							$(location).attr('href', redirect.val());
+						}
+					}
+				};
+				
+				options.complete = function (xhr, status) {
+					jQuery.event.trigger('ajaxStop');
+					element.removeClass('jsmart5_auto_complete_load');
+				};
+
+				if (closestForm && closestForm.length > 0) {
+					doFormPlaceHolders(closestForm);
+					$(closestForm).ajaxSubmit(options);
+				} else {
+					$.ajax(options);
+				}
+
+			}, 1000);
+			
+			AUTOCOMPLETE_TIMERS.push({id: id, value: timerId});
+		}
+	}
+
+	function doAutoCompleteCallback(ajax, input, value) {
+		// Call callback on client
+		if (ajax.callback && ajax.callback.length > 0) {
+			try {
+				var callbackFunc = window[ajax.callback];
+				if (typeof callbackFunc === 'function') {
+					callbackFunc(input, value);
+				} else {
+					showOnConsole(ajax.callback + ' was not found as a function!');
+				}
+			} catch(err) {
+				showOnConsole(err.message); 
+			}
+		}
+	}
+
 	function getId(id) {
 		if (id) {
 			id = '#' + id;

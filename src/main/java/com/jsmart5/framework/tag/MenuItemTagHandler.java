@@ -26,6 +26,7 @@ import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.json.JSONLink;
 import com.jsmart5.framework.manager.SmartTagHandler;
@@ -63,6 +64,8 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 
 	private boolean async = true;
 
+	private String type;
+
 	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
@@ -70,6 +73,13 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
+		
+		JspTag parent = getParent();
+		if (parent instanceof MenuTagHandler) {
+			type = ((MenuTagHandler) parent).getType();
+		} else if (parent instanceof MenuItemTagHandler) {
+			type = ((MenuItemTagHandler) parent).getType();
+		}
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -89,7 +99,15 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_MENU_ITEM);
+			if (parent instanceof MenuItemTagHandler) {
+				if (MenuTagHandler.MENU_RIGHT.equals(type)) {
+					builder.append(CssConstants.CSS_MENU_ITEM_RIGHT);
+				} else {
+					builder.append(CssConstants.CSS_MENU_ITEM_LEFT);
+				}
+			} else {
+				builder.append(CssConstants.CSS_MENU_ITEM);
+			}			
 		}
 
 		appendEventBuilder(builder);
@@ -158,6 +176,29 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 		builder.append(HtmlConstants.CLOSE_LINK_TAG);
 
 		if (!sw.toString().isEmpty()) {
+			builder.append(HtmlConstants.OPEN_DIV_TAG);
+			
+			if (parent instanceof MenuTagHandler) {
+				if (MenuTagHandler.MENU_BOTTOM.equals(type)) {
+					builder.append(CssConstants.CSS_MENUT_ARROW_UP + ">");
+
+				} else if (MenuTagHandler.MENU_LEFT.equals(type)) {
+					builder.append(CssConstants.CSS_MENUT_ARROW_LEFT + ">");
+
+				} else if (MenuTagHandler.MENU_RIGHT.equals(type)) {
+					builder.append(CssConstants.CSS_MENUT_ARROW_RIGHT + ">");
+				} else {
+					builder.append(CssConstants.CSS_MENUT_ARROW_DOWN + ">");
+				}
+			} else {
+				if (MenuTagHandler.MENU_RIGHT.equals(type)) {
+					builder.append(CssConstants.CSS_MENUT_ITEM_ARROW_RIGHT + ">");
+				} else {
+					builder.append(CssConstants.CSS_MENUT_ITEM_ARROW_LEFT + ">");
+				}
+			}
+			builder.append(HtmlConstants.CLOSE_DIV_TAG);
+
 			builder.append(HtmlConstants.OPEN_UNORDERED_LIST_TAG + ">");
 			builder.append(sw);
 			builder.append(HtmlConstants.CLOSE_UNORDERED_LIST_TAG);
@@ -202,6 +243,10 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 
 	public void setAsync(boolean async) {
 		this.async = async;
+	}
+
+	private String getType() {
+		return type;
 	}
 
 }

@@ -26,6 +26,22 @@ package com.jsmart5.framework.tag;
 
 	public static final String CSS_MENU_ITEM = "class=\"jsmart5_menu_item\" ";
 
+	public static final String CSS_MENU_ITEM_LEFT = "class=\"jsmart5_menu_item_left\" ";
+
+	public static final String CSS_MENU_ITEM_RIGHT = "class=\"jsmart5_menu_item_right\" ";
+	
+	public static final String CSS_MENUT_ARROW_DOWN = "class=\"jsmart5_menu_arrow_down\" ";
+
+	public static final String CSS_MENUT_ARROW_UP = "class=\"jsmart5_menu_arrow_up\" ";
+
+	public static final String CSS_MENUT_ARROW_LEFT = "class=\"jsmart5_menu_arrow_left\" ";
+
+	public static final String CSS_MENUT_ARROW_RIGHT = "class=\"jsmart5_menu_arrow_right\" ";
+
+	public static final String CSS_MENUT_ITEM_ARROW_LEFT = "class=\"jsmart5_menu_item_arrow_left\" ";
+
+	public static final String CSS_MENUT_ITEM_ARROW_RIGHT = "class=\"jsmart5_menu_item_arrow_right\" ";
+
 	public static final String CSS_TABLE = "class=\"jsmart5_table\" ";
 
 	public static final String CSS_TABLE_HEAD = "class=\"jsmart5_table_head\" ";
@@ -132,15 +148,47 @@ package com.jsmart5.framework.tag;
 
 	public static final String CSS_RADIOGROUP_ITEM = "class=\"jsmart5_radiogroup_item\" ";
 
+	public static final String CSS_BUTTON_GROUP = "class=\"jsmart5_button_group\" ";
+
+	public static final String CSS_BUTTON_GROUP_HORIZONTAL = "class=\"jsmart5_button_group_horizontal\" ";
+
+	public static final String CSS_BUTTON_GROUP_VERTICAL = "class=\"jsmart5_button_group_vertical\" ";
+
+	public static final String CSS_BUTTON_DEFAULT = "class=\"jsmart5_button_default\" ";
+
+	public static final String CSS_BUTTON_DEFAULT_GROUP_ITEM = "class=\"jsmart5_button_default jsmart5_button_group_item\" ";
+
+	public static final String CSS_BUTTON_DROPDOWN = "class=\"jsmart5_button_dropdown\" ";
+
+	public static final String CSS_BUTTON_DROPDOWN_GROUP_ITEM = "class=\"jsmart5_button_dropdown jsmart5_button_group_item\" ";
+	
+	public static final String CSS_BUTTON_DROPDOWN_ARROW = "class=\"jsmart5_button_dropdown_arrow\" ";
+
+	public static final String CSS_BUTTON_DROPDOWN_LIST = "class=\"jsmart5_button_dropdown_list\" ";
+
 	public static final String CSS_BUTTON = "class=\"jsmart5_button\" ";
 
-	public static final String CSS_BUTTON_DISABLED = "class=\"jsmart5_button_disabled\" ";
+	public static final String CSS_BUTTON_GROUP_ITEM = "class=\"jsmart5_button jsmart5_button_group_item\" ";
 
 	public static final String CSS_BUTTON_IMAGE = "class=\"jsmart5_button_image\" ";
+
+	public static final String CSS_BUTTON_ICON = "class=\"jsmart5_button_icon\" ";
 	
 	public static final String CSS_IMAGE = "class=\"jsmart5_image\" ";
+
+	public static final String CSS_INPUT_GROUP = "class=\"jsmart5_input_group\" ";
+
+	public static final String CSS_INPUT_LABEL = "class=\"jsmart5_input_label\" ";
+	
+	public static final String CSS_INPUT_LABEL_SELECT = "class=\"jsmart5_input_label_select\" ";
+
+	public static final String CSS_INPUT_LABEL_UPLOAD = "class=\"jsmart5_input_label_upload\" ";
 	
 	public static final String CSS_INPUT = "class=\"jsmart5_input_text\" ";
+
+	public static final String CSS_AUTO_COMPLETE = "class=\"jsmart5_auto_complete\" ";
+
+	public static final String CSS_AUTO_COMPLETE_LIST = "class=\"jsmart5_auto_complete_list\" ";
 
 	public static final String CSS_CAPTCHA = "class=\"jsmart5_input_text jsmart5_captcha_input\" ";
 
@@ -151,6 +199,8 @@ package com.jsmart5.framework.tag;
 	public static final String CSS_LIST = "class=\"jsmart5_list\" ";
 
 	public static final String CSS_LIST_ROW = "class=\"jsmart5_list_row\" ";
+
+	public static final String CSS_LIST_ROW_BADGE = "class=\"jsmart5_list_row_badge\" ";
 
 	public static final String CSS_SELECT = "class=\"jsmart5_select\" ";
 

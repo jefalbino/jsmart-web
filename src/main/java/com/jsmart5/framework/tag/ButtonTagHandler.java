@@ -21,8 +21,11 @@ package com.jsmart5.framework.tag;
 import static com.jsmart5.framework.tag.JSConstants.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.json.JSONAjax;
 import com.jsmart5.framework.manager.SmartTagHandler;
@@ -48,6 +51,8 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	private String image;
 
+	private String icon;
+
 	private String action;
 	
 	private boolean ajax;
@@ -66,6 +71,12 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	private boolean async = true;
 
+	private List<ButtonActionTagHandler> actionItems;
+
+	public ButtonTagHandler() {
+		actionItems = new ArrayList<ButtonActionTagHandler>();
+	}
+
 	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
@@ -73,7 +84,27 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		StringBuilder builder = new StringBuilder();
+
+		boolean parentGroup = getParent() instanceof ButtonGroupTagHandler;
+		if (parentGroup && image != null) {
+			throw new JspException("Attribute image and parent tag buttongroup cannot coexist for button tag");
+		}
+
+		// Just to call nested tags
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}	
+
+		if (!actionItems.isEmpty() && image != null) {
+			throw new JspException("Attribute image and internal tag buttonaction cannot coexist for button tag");
+		}
+
+		StringBuilder builder = new StringBuilder();	
+		
+		if (!actionItems.isEmpty()) {
+			builder.append(HtmlConstants.OPEN_DIV_TAG + CssConstants.CSS_BUTTON_GROUP + ">");
+		}
 
 		if (image != null) {
 			builder.append(HtmlConstants.INPUT_TAG);
@@ -93,7 +124,19 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			if (image != null) {
 				builder.append(CssConstants.CSS_BUTTON_IMAGE);
 			} else {
-				builder.append(disabled ? CssConstants.CSS_BUTTON_DISABLED : CssConstants.CSS_BUTTON);
+				if (parentGroup) {
+					if (!actionItems.isEmpty()) {
+						builder.append(CssConstants.CSS_BUTTON_DEFAULT_GROUP_ITEM);
+					} else {
+						builder.append(CssConstants.CSS_BUTTON_GROUP_ITEM);
+					}
+				} else {
+					if (!actionItems.isEmpty()) {
+						builder.append(CssConstants.CSS_BUTTON_DEFAULT);
+					} else {
+						builder.append(CssConstants.CSS_BUTTON);
+					}
+				}
 			}
 		}
 
@@ -167,10 +210,71 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		if (image != null) {
 			builder.append((val != null ? "value=\"" + val + "\"" : "") + " />");
 		} else {
-			builder.append(">" + (val != null ? val : "") + HtmlConstants.CLOSE_BUTTON_TAG);
+			builder.append(">");
+
+			if (icon != null) {
+				builder.append(HtmlConstants.IMG_TAG + CssConstants.CSS_BUTTON_ICON);
+				builder.append("src=\"" + icon + "\" alt=\"" + icon + "\" >");
+			}
+
+			builder.append(val != null ? val : "");
+			builder.append(HtmlConstants.CLOSE_BUTTON_TAG);
+		}
+
+		if (!actionItems.isEmpty()) {
+			
+			builder.append(HtmlConstants.OPEN_BUTTON_TAG);
+			
+			if (parentGroup) {
+				builder.append(CssConstants.CSS_BUTTON_DROPDOWN_GROUP_ITEM);
+			} else {
+				builder.append(CssConstants.CSS_BUTTON_DROPDOWN);
+			}
+
+			if (disabled) {
+				builder.append("disabled=\"disabled\" ");
+			}
+
+			builder.append(ON_CLICK + JSMART_BUTTON_DROPDOWN.format("$(this)") + "return false;\" ");
+
+			builder.append("type=\"button\" >&nbsp;");
+			builder.append(HtmlConstants.OPEN_DIV_TAG);
+			builder.append(CssConstants.CSS_BUTTON_DROPDOWN_ARROW + ">");
+			builder.append(HtmlConstants.CLOSE_DIV_TAG);
+			builder.append("&nbsp;" + HtmlConstants.CLOSE_BUTTON_TAG);
+
+			builder.append(HtmlConstants.OPEN_UNORDERED_LIST_TAG);
+			builder.append(CssConstants.CSS_BUTTON_DROPDOWN_LIST + ">");
+
+			for (ButtonActionTagHandler actionItem : actionItems) {
+				builder.append(HtmlConstants.OPEN_LIST_ITEM_TAG + ">");
+				builder.append(HtmlConstants.OPEN_LINK_TAG);
+
+				builder.append(ON_CLICK + JSMART_BUTTON.format(async, "$(this)") + "return false;\" ");
+
+				JSONAjax jsonAjax = new JSONAjax();
+				jsonAjax.setMethod("post");
+				jsonAjax.setAction(getTagName(J_SBMT, actionItem.getAction()));
+				jsonAjax.setUpdate(update);
+				jsonAjax.setBefore(beforeAjax);
+				jsonAjax.setExec(afterAjax);
+				builder.append("ajax=\"" + getJSONValue(jsonAjax) + "\" >");
+
+				builder.append(getTagValue(actionItem.getLabel()));
+
+				builder.append(HtmlConstants.CLOSE_LINK_TAG);
+				builder.append(HtmlConstants.CLOSE_LIST_ITEM_TAG);
+			}
+
+			builder.append(HtmlConstants.CLOSE_UNORDERED_LIST_TAG);
+			builder.append(HtmlConstants.CLOSE_DIV_TAG);
 		}
 
 		printOutput(builder);
+	}
+
+	/*package*/ void addActionItem(ButtonActionTagHandler actionItem) {
+		this.actionItems.add(actionItem);
 	}
 
 	public void setLabel(String label) {
@@ -187,6 +291,10 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public void setAction(String action) {

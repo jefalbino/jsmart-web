@@ -43,6 +43,8 @@ public final class DateTagHandler extends SmartTagHandler {
 
 	private String format;
 	
+	private String label;
+	
 	private boolean changeMonth;
 
 	private boolean changeYear;
@@ -75,6 +77,10 @@ public final class DateTagHandler extends SmartTagHandler {
 	@Override
 	public void executeTag() throws JspException, IOException {
 
+		if (label != null && opened) {
+			throw new JspException("Attribute label and opened cannot coexist for date tag");
+		}
+
 		// Just to call nested tags
 		JspFragment body = getJspBody();
 		if (body != null) {
@@ -88,9 +94,20 @@ public final class DateTagHandler extends SmartTagHandler {
 		String name = getTagName(J_FRMT, value) + (readOnly ? EL_PARAM_READ_ONLY : "");
 
 		String dateFormat = format != null ? format.replace("yy", "yyyy").replace("MM", "MMMM") : "dd/MM/yyyy";
-
+		
 		// Hidden input to carry format content
 		builder.append(INPUT_TAG + "id=\"" + id + "_date_format\" name=\"" + name + "\" value=\"" + dateFormat + "\" type=\"hidden\" />");
+
+		if (label != null) {
+			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
+			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL + ">");
+
+			String labelVal = (String) getTagValue(label);
+			if (labelVal != null) {
+				builder.append(labelVal);
+			}
+			builder.append(CLOSE_SPAN_TAG);
+		}
 
 		// Input to carry date content
 		builder.append(INPUT_TAG + "name=\"" + name.replace(J_FRMT, J_DATE) + "\" ");
@@ -175,8 +192,13 @@ public final class DateTagHandler extends SmartTagHandler {
 
 		if (opened) {
 			printOutput(builder.append(">" + CLOSE_DIV_TAG));
-		} else {
-			printOutput(builder.append("/>"));
+		} else {			
+			builder.append("/>");
+
+			if (label != null) {
+				builder.append(CLOSE_DIV_TAG);
+			}
+			printOutput(builder);
 		}
 	}
 
@@ -186,6 +208,10 @@ public final class DateTagHandler extends SmartTagHandler {
 
 	public void setFormat(String format) {
 		this.format = format;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public void setChangeMonth(boolean changeMonth) {

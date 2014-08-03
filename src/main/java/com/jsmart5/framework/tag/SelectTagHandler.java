@@ -27,6 +27,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+
+import static com.jsmart5.framework.tag.HtmlConstants.*;
 import static com.jsmart5.framework.tag.JSConstants.*;
 
 public final class SelectTagHandler extends SmartTagHandler {
@@ -40,6 +42,8 @@ public final class SelectTagHandler extends SmartTagHandler {
 	private boolean disabled;
 
 	private Integer tabIndex;
+	
+	private String label;
 
 	private boolean async = false;
 
@@ -57,13 +61,30 @@ public final class SelectTagHandler extends SmartTagHandler {
 	@Override
 	public void executeTag() throws JspException, IOException {
 
+		if (label != null && multiple) {
+			throw new JspException("Attribute label and multiple cannot coexist for select tag");
+		}
+
 		// Just to call nested tags
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(null);
 		}
 		
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_SELECT_TAG);
+		StringBuilder builder = new StringBuilder();
+		
+		if (label != null) {
+			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
+			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL_SELECT + ">");
+
+			String labelVal = (String) getTagValue(label);
+			if (labelVal != null) {
+				builder.append(labelVal);
+			}
+			builder.append(CLOSE_SPAN_TAG);
+		}
+
+		builder.append(OPEN_SELECT_TAG);
 
 		builder.append("id=\"" + id + "\" ");
 
@@ -139,7 +160,13 @@ public final class SelectTagHandler extends SmartTagHandler {
 			}
 		}
 
-		printOutput(builder.append(HtmlConstants.CLOSE_SELECT_TAG));
+		builder.append(CLOSE_SELECT_TAG);
+
+		if (label != null) {
+			builder.append(CLOSE_DIV_TAG);
+		}
+
+		printOutput(builder);
 	}
 
 	/*package*/ void addOption(OptionTagHandler option) {
@@ -164,6 +191,10 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 	public void setTabIndex(Integer tabIndex) {
 		this.tabIndex = tabIndex;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public void setAsync(boolean async) {

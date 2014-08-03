@@ -60,7 +60,10 @@ package com.jsmart5.framework.tag;
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
 	JSMART_UPLOAD("Jsmart5.upload", "('%s');"),
 	JSMART_MENU("Jsmart5.menu", "('%s');"),
-	JSMART_SELECT("Jsmart5.select", "(%s,'%s');");
+	JSMART_SELECT("Jsmart5.select", "(%s,'%s');"),
+	JSMART_BUTTON_DROPDOWN("Jsmart5.buttonDropDown", "(%s);"),
+
+	JSMART_AUTOCOMPLETE("Jsmart5.autocomplete", "(%s,'%s',event);");
 
 	private String name;
 
