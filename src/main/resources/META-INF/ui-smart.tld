@@ -63,8 +63,12 @@
             <name>style</name>
             <required>false</required>
         </attribute>
-         <attribute>
+        <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -189,6 +193,10 @@
         </attribute>
         <attribute>
             <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -996,6 +1004,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>theme</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>title</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
@@ -1084,6 +1096,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
 		<attribute>
@@ -1180,6 +1196,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -1864,6 +1884,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>theme</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>emptyMessage</name>
             <required>false</required>
         </attribute>
@@ -2164,6 +2188,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2509,6 +2537,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>theme</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>onClick</name>
             <required>false</required>
         </attribute>
@@ -2693,6 +2725,10 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
+            <name>theme</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>layout</name>
             <required>false</required>
         </attribute>
@@ -2725,6 +2761,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2919,6 +2959,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>theme</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>position</name>
             <required>false</required>
         </attribute>
@@ -2947,6 +2991,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3051,6 +3099,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3174,6 +3226,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>theme</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>rest</name>
             <required>false</required>
         </attribute>
@@ -3283,6 +3339,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>

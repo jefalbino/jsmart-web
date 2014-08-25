@@ -93,7 +93,7 @@ public final class TabTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_TABS);
+			appendClass(builder, CssConstants.CSS_TABS);
 		}
 
 		JSONTab jsonTab = new JSONTab();
@@ -126,13 +126,13 @@ public final class TabTagHandler extends SmartTagHandler {
 				builder.append("class=\"" + tabItem.getStyleClass() + "\" ");
 			} else {
 				if (TOP.equals(position)) { 
-					builder.append(CssConstants.CSS_TAB_CONTENT_TOP);
+					appendClass(builder, CssConstants.CSS_TAB_CONTENT_TOP);
 				} else if (LEFT.equals(position)) {
-					builder.append(CssConstants.CSS_TAB_CONTENT_LEFT);
+					appendClass(builder, CssConstants.CSS_TAB_CONTENT_LEFT);
 				} else if (BOTTOM.equals(position)) {
-					builder.append(CssConstants.CSS_TAB_CONTENT_BOTTOM);
+					appendClass(builder, CssConstants.CSS_TAB_CONTENT_BOTTOM);
 				} else if (RIGHT.equals(position)) {
-					builder.append(CssConstants.CSS_TAB_CONTENT_RIGHT);
+					appendClass(builder, CssConstants.CSS_TAB_CONTENT_RIGHT);
 				}
 			}
 
@@ -177,23 +177,23 @@ public final class TabTagHandler extends SmartTagHandler {
 			builder.append(" />");
 		}
 
-		appendScriptBuilder(new StringBuilder(JSMART_TAB.format(id)), true);
+		appendScript(new StringBuilder(JSMART_TAB.format(id)), true);
 		
 		printOutput(builder);
 	}
 
-	private String appendTabNavigator(StringBuilder builder) {
+	private String appendTabNavigator(StringBuilder builder) throws JspException, IOException {
 		String defaultValue = "";
 
 		builder.append(OPEN_UNORDERED_LIST_TAG);
 
 		if (TOP.equals(position) || BOTTOM.equals(position)) {
-			builder.append(CssConstants.CSS_TABS_UL_HORIZONTAL);
+			appendClass(builder, CssConstants.CSS_TABS_UL_HORIZONTAL);
 		} else {
-			builder.append(CssConstants.CSS_TABS_UL_VERTICAL);
+			appendClass(builder, CssConstants.CSS_TABS_UL_VERTICAL);
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append(">");
 
@@ -207,13 +207,13 @@ public final class TabTagHandler extends SmartTagHandler {
 				builder.append("class=\"" + tabItem.getTabClass() + "\" ");
 			} else {
 				if (TOP.equals(position)) {
-					builder.append(CssConstants.CSS_TABS_LI_TOP);
+					appendClass(builder, CssConstants.CSS_TABS_LI_TOP);
 				} else if (LEFT.equals(position)) {
-					builder.append(CssConstants.CSS_TABS_LI_LEFT);
+					appendClass(builder, CssConstants.CSS_TABS_LI_LEFT);
 				} else if (BOTTOM.equals(position)) {
-					builder.append(CssConstants.CSS_TABS_LI_BOTTOM);
+					appendClass(builder, CssConstants.CSS_TABS_LI_BOTTOM);
 				} else if (RIGHT.equals(position)) {
-					builder.append(CssConstants.CSS_TABS_LI_RIGHT);
+					appendClass(builder, CssConstants.CSS_TABS_LI_RIGHT);
 				}
 			}
 
@@ -223,7 +223,7 @@ public final class TabTagHandler extends SmartTagHandler {
 
 			StringBuilder eventBuilder = new StringBuilder();
 
-			tabItem.appendEventBuilder(eventBuilder);
+			tabItem.appendEvent(eventBuilder);
 
 			builder.append(eventBuilder);
 

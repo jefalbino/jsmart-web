@@ -146,9 +146,9 @@ public final class RestTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (image != null) {
-				builder.append(CssConstants.CSS_BUTTON_IMAGE);
+				appendClass(builder, CssConstants.CSS_BUTTON_IMAGE);
 			} else {
-				builder.append(CssConstants.CSS_BUTTON);
+				appendClass(builder, CssConstants.CSS_BUTTON);
 			}
 		}
 

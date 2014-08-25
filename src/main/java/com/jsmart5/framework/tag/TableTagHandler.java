@@ -234,7 +234,9 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
 			// Add header pagination
 			if (paginator != null && (paginator.equals(PAGINATOR_BOTH) || paginator.equals(PAGINATOR_TOP))) {
-				builder.append(OPEN_DIV_TAG + CSS_TABLE_PAGE_HEADER + ">");
+				builder.append(OPEN_DIV_TAG);
+				appendClass(builder, CSS_TABLE_PAGE_HEADER);
+				builder.append(">");
 				builder.append(pgtr);
 				builder.append(CLOSE_DIV_TAG);
 			}
@@ -249,7 +251,11 @@ public final class TableTagHandler extends SmartTableTagHandler {
 				builder.append("style=\"" + style + "\" ");
 			}
 
-			builder.append(styleClass != null ? "class=\"" + styleClass + "\" " : CSS_TABLE);
+			if (styleClass != null) {
+				builder.append("class=\"" + styleClass + "\" ");
+			} else {
+				appendClass(builder, CSS_TABLE);
+			}
 
 			if (cellPadding != null) {
 				builder.append("cellpadding=\""+ cellPadding + "\" ");
@@ -270,7 +276,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
  	 		// Check if table is scrollable to include script to perform ajax updates on scroll
  	 		if (scrollable) {
- 	 			appendScriptBuilder(new StringBuilder(JSMART_TABLE_SCROLL.format(id)));
+ 	 			appendScript(new StringBuilder(JSMART_TABLE_SCROLL.format(id)));
 
  	 			JSONScroll jsonScroll = new JSONScroll();
  	 			jsonScroll.setName(getTagName(J_TBL, "@{" + id + "}"));
@@ -289,24 +295,34 @@ public final class TableTagHandler extends SmartTableTagHandler {
 			boolean allColumnsSelectable = true;
 
 			if (TOP_POSITION.equals(position)) {
-				StringBuilder header = new StringBuilder(OPEN_TABLE_HEAD_TAG + CSS_TABLE_HEAD + ">");
-				header.append(OPEN_TABLE_ROW_TAG + CSS_TABLE_HEAD_ROW + ">");
+				StringBuilder header = new StringBuilder(OPEN_TABLE_HEAD_TAG);
+				appendClass(header, CSS_TABLE_HEAD);
+				header.append(">");
+				header.append(OPEN_TABLE_ROW_TAG);
+				appendClass(header, CSS_TABLE_HEAD_ROW);
+				header.append(">");
 
 				if (multiSelect) {
-					header.append(OPEN_TABLE_HEAD_COLUMN_TAG + CSS_TABLE_HEAD_MULTI_SELECT_COLUMN + ">");
+					header.append(OPEN_TABLE_HEAD_COLUMN_TAG);
+					appendClass(header, CSS_TABLE_HEAD_MULTI_SELECT_COLUMN);
+					header.append(">");
 					appendHeaderMultiSelect(header);
 					header.append(CLOSE_TABLE_HEAD_COLUMN_TAG);
 				}
 
 				for (ColumnTagHandler item : items) {
 					allColumnsSelectable &= item.isSelectable();
-		 			header.append(OPEN_TABLE_HEAD_COLUMN_TAG + CSS_TABLE_HEAD_ROW_COLUMN + ">");
+		 			header.append(OPEN_TABLE_HEAD_COLUMN_TAG);
+		 			appendClass(header, CSS_TABLE_HEAD_ROW_COLUMN);
+		 			header.append(">");
 		 			appendHeaderContent(header, item);
 		 			header.append(CLOSE_TABLE_HEAD_COLUMN_TAG);
 			 	}
 
 				if (edition != null) {
-					header.append(OPEN_TABLE_HEAD_COLUMN_TAG + CSS_TABLE_HEAD_EDIT_CELL_COLUMN + ">");
+					header.append(OPEN_TABLE_HEAD_COLUMN_TAG);
+					appendClass(header, CSS_TABLE_HEAD_EDIT_CELL_COLUMN);
+					header.append(">");
 					header.append(CLOSE_TABLE_HEAD_COLUMN_TAG);
 				}
 
@@ -316,24 +332,34 @@ public final class TableTagHandler extends SmartTableTagHandler {
 			 	builder.append(header);
 
 			} else if (BOTTOM_POSITION.equals(position)) {
-				StringBuilder footer = new StringBuilder(OPEN_TABLE_FOOT_TAG + CSS_TABLE_FOOT + ">");
-				footer.append(OPEN_TABLE_ROW_TAG + CSS_TABLE_FOOT_ROW + ">");
+				StringBuilder footer = new StringBuilder(OPEN_TABLE_FOOT_TAG);
+				appendClass(footer, CSS_TABLE_FOOT);
+				footer.append(">");
+				footer.append(OPEN_TABLE_ROW_TAG);
+				appendClass(footer, CSS_TABLE_FOOT_ROW);
+				footer.append(">");
 
 				if (multiSelect) {
-					footer.append(OPEN_TABLE_COLUMN_TAG + CSS_TABLE_FOOT_MULTI_SELECT_COLUMN + ">");
+					footer.append(OPEN_TABLE_COLUMN_TAG);
+					appendClass(footer, CSS_TABLE_FOOT_MULTI_SELECT_COLUMN);
+					footer.append(">");
 					appendHeaderMultiSelect(footer);
 					footer.append(CLOSE_TABLE_COLUMN_TAG);
 				}
 
 				for (ColumnTagHandler item : items) {
 					allColumnsSelectable &= item.isSelectable();
-					footer.append(OPEN_TABLE_COLUMN_TAG + CSS_TABLE_FOOT_ROW_COLUMN + ">");
+					footer.append(OPEN_TABLE_COLUMN_TAG);
+					appendClass(footer, CSS_TABLE_FOOT_ROW_COLUMN);
+					footer.append(">");
 					appendHeaderContent(footer, item);
 		 			footer.append(CLOSE_TABLE_COLUMN_TAG);
 			 	}
 
 				if (edition != null) {
-					footer.append(OPEN_TABLE_COLUMN_TAG + CSS_TABLE_FOOT_EDIT_CELL_COLUMN + ">");
+					footer.append(OPEN_TABLE_COLUMN_TAG);
+					appendClass(footer, CSS_TABLE_FOOT_EDIT_CELL_COLUMN);
+					footer.append(">");
 					footer.append(CLOSE_TABLE_COLUMN_TAG);
 				}
 
@@ -344,7 +370,9 @@ public final class TableTagHandler extends SmartTableTagHandler {
 			}
 
 			// Iteration on body content
- 	 		builder.append(OPEN_TABLE_BODY_TAG + CSS_TABLE_BODY + ">");
+ 	 		builder.append(OPEN_TABLE_BODY_TAG);
+ 	 		appendClass(builder, CSS_TABLE_BODY);
+ 	 		builder.append(">");
 
 	 	 	if (list != null && !list.isEmpty()) {
 
@@ -352,7 +380,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 	 	 		int size = pageSize > 0 && pageSize < list.size() ? pageSize : list.size();
 
  	 			if (itemExpand != null) {
- 	 				appendScriptBuilder(new StringBuilder(JSMART_TABLE_ROW_EXPAND.format(id)));
+ 	 				appendScript(new StringBuilder(JSMART_TABLE_ROW_EXPAND.format(id)));
  	 			}
 
  	 			String rowStyle = select != null || itemExpand != null ? CSS_TABLE_BODY_ROW_SELECTION : CSS_TABLE_BODY_ROW;
@@ -374,16 +402,27 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 					appendSelectCommand(builder, selectCommand, i, true);
  	 				}
 
- 	 				appendEventBuilder(builder);
+ 	 				appendEvent(builder);
 
  	 				if (paginator == null && scrollable && pageSize % 2 != 0 && getPageFirst() % 2 != 0) {
- 	 					builder.append((i % 2 == 0 ? rowStyleNth : rowStyle) + ">");
+ 	 					if (i % 2 == 0) {
+ 	 						appendClass(builder, rowStyleNth);
+ 	 					} else {
+ 	 						appendClass(builder, rowStyle);
+ 	 					}
  	 				} else {
- 	 					builder.append((i % 2 == 0 ? rowStyle : rowStyleNth) + ">");
+ 	 					if (i % 2 == 0) {
+ 	 						appendClass(builder, rowStyle);
+ 	 					} else {
+ 	 						appendClass(builder, rowStyleNth);
+ 	 					}
  	 				}
+ 	 				builder.append(">");
 
  	 				if (multiSelect) {
- 	 					builder.append(OPEN_TABLE_COLUMN_TAG + CSS_TABLE_BODY_MULTI_SELECT_COLUMN);
+ 	 					builder.append(OPEN_TABLE_COLUMN_TAG);
+ 	 					appendClass(builder, CSS_TABLE_BODY_MULTI_SELECT_COLUMN);
+
  	 					if (!allColumnsSelectable || edition != null) {
  	 						appendSelectCommand(builder, selectCommand, i, true);
  	 					}
@@ -400,7 +439,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 						if (item.styleClass != null) {
 							builder.append("class=\"" + item.styleClass + "\" ");
 						} else {
-							builder.append(CSS_TABLE_BODY_COLUMN);
+							appendClass(builder, CSS_TABLE_BODY_COLUMN);
 						}
 
  	 					if (!allColumnsSelectable || edition != null) {
@@ -417,7 +456,9 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 				}
 
  	 				if (edition != null) {
- 	 					builder.append(OPEN_TABLE_COLUMN_TAG + CSS_TABLE_BODY_CELL_EDIT_COLUMN + ">");
+ 	 					builder.append(OPEN_TABLE_COLUMN_TAG);
+ 	 					appendClass(builder, CSS_TABLE_BODY_CELL_EDIT_COLUMN);
+ 	 					builder.append(">");
  	 					appendCellEditContent(builder, i);
  	 					builder.append(CLOSE_TABLE_COLUMN_TAG);
  	 				}
@@ -427,8 +468,8 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 				if (itemExpand != null) {
  	 					builder.append(OPEN_TABLE_ROW_TAG + ">");
  	 					builder.append(OPEN_TABLE_COLUMN_TAG);
- 	 	 				builder.append(CSS_TABLE_BODY_ROW_COLUMN_EXPANDED + "colspan=\"" + 
- 	 	 									(items.size() + (multiSelect ? 1 : 0) + (edition != null ? 1 : 0)) + "\">");
+ 	 					appendClass(builder, CSS_TABLE_BODY_ROW_COLUMN_EXPANDED);
+ 	 	 				builder.append("colspan=\"" + (items.size() + (multiSelect ? 1 : 0) + (edition != null ? 1 : 0)) + "\">");
 
  	 	 				StringWriter sw = new StringWriter();
  	 	 				itemExpand.setOutputWriter(sw);
@@ -447,7 +488,13 @@ public final class TableTagHandler extends SmartTableTagHandler {
 	 	 		builder.append(OPEN_TABLE_COLUMN_TAG);
 
 	 	 		builder.append(emptyStyle != null ? "style=\"" + emptyStyle + "\" " : "");
-	 	 		builder.append(emptyClass != null ? "class=\"" + emptyClass + "\" " : CSS_TABLE_BODY_EMPTY);
+
+	 	 		if (emptyClass != null) {	 	 			
+	 	 			builder.append("class=\"" + emptyClass + "\" ");
+	 	 		} else {
+	 	 			appendClass(builder, CSS_TABLE_BODY_EMPTY);	 	 			
+	 	 		}
+	 	 		
 	 	 		builder.append("colspan=\"" + (items.size() + (multiSelect ? 1 : 0) + (edition != null ? 1 : 0)) + "\" valign=\"middle\" >");
 	 	 		builder.append(emptyMessage != null ? getTagValue(emptyMessage) : "");
 
@@ -460,7 +507,9 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
 	 	 	// Add footer pagination
 			if (paginator != null && (paginator.equals(PAGINATOR_BOTH) || paginator.equals(PAGINATOR_BOTTOM))) {
-				builder.append(OPEN_DIV_TAG + CSS_TABLE_PAGE_FOOTER + ">");
+				builder.append(OPEN_DIV_TAG);
+				appendClass(builder, CSS_TABLE_PAGE_FOOTER);
+				builder.append(">");
 				builder.append(pgtr);
 				builder.append(CLOSE_DIV_TAG);
 			}
@@ -472,12 +521,14 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		}
 	}
 
-	private void appendCellEditContent(StringBuilder builder, int index) throws JSONException {
-		builder.append(OPEN_DIV_TAG + "id=\"" + id + EDIT_CELL_START_ITEM_ID + (index + getIndex()) + "_" + getPageFirst() + "\" " + CSS_TABLE_EDIT_CELL_START);
+	private void appendCellEditContent(StringBuilder builder, int index) throws JSONException, JspException, IOException {
+		builder.append(OPEN_DIV_TAG + "id=\"" + id + EDIT_CELL_START_ITEM_ID + (index + getIndex()) + "_" + getPageFirst() + "\" ");
+		appendClass(builder, CSS_TABLE_EDIT_CELL_START);
 		builder.append(ON_CLICK + JSMART_TABLE_EDIT_START.format(id, "$(this)", (index + getIndex()), getPageFirst()) + "\">");
 		builder.append(CLOSE_DIV_TAG);
 
-		builder.append(OPEN_DIV_TAG + "id=\"" + id + EDIT_CELL_CONFIRM_ITEM_ID + (index + getIndex()) + "_" + getPageFirst() + "\" " + CSS_TABLE_EDIT_CELL_CONFIRM);
+		builder.append(OPEN_DIV_TAG + "id=\"" + id + EDIT_CELL_CONFIRM_ITEM_ID + (index + getIndex()) + "_" + getPageFirst() + "\" ");
+		appendClass(builder, CSS_TABLE_EDIT_CELL_CONFIRM);
 		builder.append(ON_CLICK + JSMART_TABLE_EDIT.format(async, id, "$(this)") + "\" ");
 
 		JSONEdit jsonEdit = new JSONEdit();
@@ -494,7 +545,8 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		builder.append("ajax=\"" + getJSONValue(jsonEdit) + "\" >");
 		builder.append(CLOSE_DIV_TAG);
 
-		builder.append(OPEN_DIV_TAG + "id=\"" + id + EDIT_CELL_CANCEL_ITEM_ID + (index + getIndex()) + "_" + getPageFirst() + "\" " + CSS_TABLE_EDIT_CELL_CANCEL);
+		builder.append(OPEN_DIV_TAG + "id=\"" + id + EDIT_CELL_CANCEL_ITEM_ID + (index + getIndex()) + "_" + getPageFirst() + "\" ");
+		appendClass(builder, CSS_TABLE_EDIT_CELL_CANCEL);
 		builder.append(ON_CLICK + JSMART_TABLE_EDIT_CANCEL.format(id, "$(this)", (index + getIndex()), getPageFirst()) + "\">");
 		builder.append(CLOSE_DIV_TAG);
 	}
@@ -504,10 +556,10 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		builder.append(getSelectCommand(MULTI_SELECT_ALL_INDEX, id + ID_WRAPPER) + "/>");
 	}
 
-	private void appendHeaderContent(StringBuilder builder, ColumnTagHandler item) throws JSONException {
+	private void appendHeaderContent(StringBuilder builder, ColumnTagHandler item) throws JSONException, JspException, IOException {
 		if (item.getFilterBy() != null) {
 			builder.append(INPUT_TAG + "id=\"" + id + "_" + item.getId() + INPUT_FILTER_ID + "\" ");
-			builder.append(CSS_TABLE_HEAD_INPUT);
+			appendClass(builder, CSS_TABLE_HEAD_INPUT);
 			builder.append(getActionCommand(ACTION.FILTER, item.getFilterBy() + "," + id + "_" + item.getId() + "_filter"));
 			builder.append("placeholder=\"" + getTagValue(item.getHeader()) + "\" datatype=\"text\" />");
 		} else {
@@ -522,18 +574,34 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
 			builder.append(OPEN_DIV_TAG);
 			if (item.getSortBy().equals(sortBy) && sortOrder == SmartTableAdapter.SortOrder.ASC) {
-				builder.append(item.getFilterBy() != null ? CSS_TABLE_HEAD_SELECTED_SORT_FILTER_UP : CSS_TABLE_HEAD_SELECTED_SORT_UP);
+				if (item.getFilterBy() != null) {
+					appendClass(builder, CSS_TABLE_HEAD_SELECTED_SORT_FILTER_UP);
+				} else {
+					appendClass(builder, CSS_TABLE_HEAD_SELECTED_SORT_UP);
+				}
 			} else {
-				builder.append(item.getFilterBy() != null ? CSS_TABLE_HEAD_SORT_FILTER_UP : CSS_TABLE_HEAD_SORT_UP);
+				if (item.getFilterBy() != null) {
+					appendClass(builder, CSS_TABLE_HEAD_SORT_FILTER_UP);
+				} else {
+					appendClass(builder, CSS_TABLE_HEAD_SORT_UP);
+				}
 			}
 			builder.append(getActionCommand(ACTION.SORT, item.getSortBy() + "," + SORT_ASCENDENT));
 			builder.append(">" + CLOSE_DIV_TAG);
 
 			builder.append(OPEN_DIV_TAG);
 			if (item.getSortBy().equals(sortBy) && sortOrder == SmartTableAdapter.SortOrder.DESC) {
-				builder.append(item.getFilterBy() != null ? CSS_TABLE_HEAD_SELECTED_SORT_FILTER_DOWN : CSS_TABLE_HEAD_SELECTED_SORT_DOWN);
+				if (item.getFilterBy() != null) {
+					appendClass(builder, CSS_TABLE_HEAD_SELECTED_SORT_FILTER_DOWN);
+				} else {
+					appendClass(builder, CSS_TABLE_HEAD_SELECTED_SORT_DOWN);
+				}
 			} else {
-				builder.append(item.getFilterBy() != null ? CSS_TABLE_HEAD_SORT_FILTER_DOWN : CSS_TABLE_HEAD_SORT_DOWN);
+				if (item.getFilterBy() != null) {
+					appendClass(builder, CSS_TABLE_HEAD_SORT_FILTER_DOWN);
+				} else {
+					appendClass(builder, CSS_TABLE_HEAD_SORT_DOWN);
+				}
 			}
 			builder.append(getActionCommand(ACTION.SORT, item.getSortBy() + "," + SORT_DESCENDENT));
 			builder.append(">" + CLOSE_DIV_TAG);
@@ -752,24 +820,34 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		return Collections.EMPTY_LIST;
 	}
 
-	private StringBuilder getPaginatorWrapper() throws JSONException {
+	private StringBuilder getPaginatorWrapper() throws JSONException, JspException, IOException {
 		if (paginator != null) {
 			StringBuilder wrapper = new StringBuilder(OPEN_SPAN_TAG + CSS_TABLE_PAGE_SPAN + ">");
 	
-			wrapper.append(OPEN_SPAN_TAG + CSS_TABLE_PAGE_FIRST + getActionCommand(ACTION.FIRST, getPageFirst()) + ">" + CLOSE_SPAN_TAG + "&nbsp;");
-			wrapper.append(OPEN_SPAN_TAG + CSS_TABLE_PAGE_PREVIOUS + getActionCommand(ACTION.PREV, getPageFirst()) + ">" + CLOSE_SPAN_TAG + "&nbsp;");
+			wrapper.append(OPEN_SPAN_TAG);
+			appendClass(wrapper, CSS_TABLE_PAGE_FIRST);
+			wrapper.append(getActionCommand(ACTION.FIRST, getPageFirst()) + ">" + CLOSE_SPAN_TAG + "&nbsp;");
+
+			wrapper.append(OPEN_SPAN_TAG);
+			appendClass(wrapper, CSS_TABLE_PAGE_PREVIOUS);
+			wrapper.append(getActionCommand(ACTION.PREV, getPageFirst()) + ">" + CLOSE_SPAN_TAG + "&nbsp;");
 	
 			wrapper.append(getPaginatiorPages() + "&nbsp;");
 	
-			wrapper.append(OPEN_SPAN_TAG + CSS_TABLE_PAGE_NEXT + getActionCommand(ACTION.NEXT, getPageFirst()) + ">" + CLOSE_SPAN_TAG + "&nbsp;");
-			wrapper.append(OPEN_SPAN_TAG + CSS_TABLE_PAGE_LAST + getActionCommand(ACTION.LAST, getPageFirst()) + ">" + CLOSE_SPAN_TAG);
+			wrapper.append(OPEN_SPAN_TAG);
+			appendClass(wrapper, CSS_TABLE_PAGE_NEXT);
+			wrapper.append(getActionCommand(ACTION.NEXT, getPageFirst()) + ">" + CLOSE_SPAN_TAG + "&nbsp;");
+
+			wrapper.append(OPEN_SPAN_TAG);
+			appendClass(wrapper, CSS_TABLE_PAGE_LAST);
+			wrapper.append(getActionCommand(ACTION.LAST, getPageFirst()) + ">" + CLOSE_SPAN_TAG);
 	
 			return wrapper.append(CLOSE_SPAN_TAG);
 		}
 		return null;
 	}
 
-	private StringBuilder getPaginatiorPages() throws JSONException {
+	private StringBuilder getPaginatiorPages() throws JSONException, JspException, IOException {
 
 		StringBuilder pages = new StringBuilder("&nbsp;");
 
@@ -799,8 +877,9 @@ public final class TableTagHandler extends SmartTableTagHandler {
 			}
 
 			for (int i = start; i < finish; i++) {
-				String style = (i + 1 == index ? CSS_TABLE_PAGE_INDEX_ACTIVE : CSS_TABLE_PAGE_INDEX);
-				pages.append(OPEN_SPAN_TAG + style + getActionCommand(ACTION.NUMBER, i + 1) + ">" + (i + 1) + CLOSE_SPAN_TAG + "&nbsp;");
+				pages.append(OPEN_SPAN_TAG);
+				appendClass(pages, (i + 1 == index ? CSS_TABLE_PAGE_INDEX_ACTIVE : CSS_TABLE_PAGE_INDEX));
+				pages.append(getActionCommand(ACTION.NUMBER, i + 1) + ">" + (i + 1) + CLOSE_SPAN_TAG + "&nbsp;");
 			}
 		}
 		

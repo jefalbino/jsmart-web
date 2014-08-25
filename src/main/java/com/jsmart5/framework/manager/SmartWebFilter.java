@@ -79,18 +79,14 @@ public final class SmartWebFilter implements Filter {
 
 	private static final Pattern FORM_PATTERN = Pattern.compile("<form.*?>");
 
-	private static final Pattern CSS_MARK_PATTERN = Pattern.compile("@.{1,20}?@");
-
 	private static JSONObject jsonResources;
 
 	private static JSONObject jsonHeaders;
 
-	private static JSONObject jsonStyles;
-
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		initJsonResources();
-		initBeanResources(config.getServletContext());
+		initFileResources(config.getServletContext());
 	}
 
 	@Override
@@ -263,11 +259,10 @@ public final class SmartWebFilter implements Filter {
 
 	private void initJsonResources() {
 		try {
-			jsonStyles = new JSONObject(convertResourceToString(FILTER_STYLES));
 			jsonResources = new JSONObject(convertResourceToString(FILTER_RESOURCES));
 			jsonHeaders = new JSONObject(convertResourceToString(FILTER_HEADERS));
 		} catch (Exception ex) {
-			LOGGER.log(Level.SEVERE, "Failure to load resources: " + ex.getMessage(), ex);
+			LOGGER.log(Level.SEVERE, "Failure to load JSON resources: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -278,7 +273,7 @@ public final class SmartWebFilter implements Filter {
 		return scanner.hasNext() ? scanner.next() : "";
 	}
 
-	private void initBeanResources(ServletContext context) {
+	private void initFileResources(ServletContext context) {
 		try {
 			File rootFile = new File(context.getRealPath(JAR_FILE_PATH));
 			Dir content = Vfs.fromURL(rootFile.toURI().toURL());
@@ -293,47 +288,17 @@ public final class SmartWebFilter implements Filter {
 					if (resources.getString(i).equals(file.getRelativePath())) {
 						initDirResources(context.getRealPath(SEPARATOR), file.getRelativePath());
 
-						// Replace style marks on CSS file according to the theme defined on config file
-						JSONObject cssMarks = null;
-
-						if (JSMART5_CSS_PATH.equals(file.getRelativePath())) {
-							if (jsonStyles.has(CONFIG.getContent().getTheme())) {
-								cssMarks = jsonStyles.getJSONObject(CONFIG.getContent().getTheme());
-							} else {
-								cssMarks = jsonStyles.getJSONObject(CONFIG.getContent().getDefaultTheme());
-							}
-						}
-
+						int count = 0;
 	                	BufferedInputStream bis = new BufferedInputStream(file.openInputStream());
-
-	                	int count = 0;
 	                	String realFilePath = new File(context.getRealPath(SEPARATOR)).getPath() + SEPARATOR + file.getRelativePath();
 
 	                    FileOutputStream fos = new FileOutputStream(realFilePath);
 	                    BufferedOutputStream bos = new BufferedOutputStream(fos, STREAM_BUFFER);
 
-                    	// Replace style marks on CSS file
-                    	if (cssMarks != null) {
-                    		byte data[] = new byte[STREAM_BUFFER];
-
-    	                    while ((count = bis.read(data, 0, STREAM_BUFFER)) != -1) {
-    	                    	String cssData = new String(data, 0, count);
-                        		Matcher cssMatcher = CSS_MARK_PATTERN.matcher(cssData);
-
-    							while (cssMatcher.find()) {
-    								String match = cssMatcher.group();
-    								if (cssMarks.has(match)) {
-    									cssData = cssData.replace(match, cssMarks.getString(match));
-    								}
-    							}
-    							bos.write(cssData.getBytes(), 0, cssData.length());
-    	                    }
-                    	} else {
-    	                    byte data[] = new byte[STREAM_BUFFER];
-    	                    while ((count = bis.read(data, 0, STREAM_BUFFER)) != -1) {
-    	                    	bos.write(data, 0, count);
-    	                    }
-                    	}
+	                    byte data[] = new byte[STREAM_BUFFER];
+	                    while ((count = bis.read(data, 0, STREAM_BUFFER)) != -1) {
+	                    	bos.write(data, 0, count);
+	                    }
 
 	                    bos.close();
 	                    bis.close();
@@ -341,7 +306,6 @@ public final class SmartWebFilter implements Filter {
 					}
 				}
 			}
-
         } catch (Exception ex) {
         	LOGGER.log(Level.SEVERE, ex.getMessage());
         }

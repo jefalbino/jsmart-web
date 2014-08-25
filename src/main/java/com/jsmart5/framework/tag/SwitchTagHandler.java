@@ -74,10 +74,10 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_SWITCH_CONTAINER);
+			appendClass(builder, CssConstants.CSS_SWITCH_CONTAINER);
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append(">");
 
@@ -106,7 +106,7 @@ public final class SwitchTagHandler extends SmartTagHandler {
 
 		appendFormValidator(builder);
 		
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		builder.append(" />");
 
@@ -116,9 +116,9 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		builder.append("id=\"" + id + SWITCH_SPAN_ON + "\" ");
 
 		if (disabled) {
-			builder.append(CssConstants.CSS_SWITCH_SPAN_ON_DISABLED);
+			appendClass(builder, CssConstants.CSS_SWITCH_SPAN_ON_DISABLED);
 		} else {
-			builder.append(CssConstants.CSS_SWITCH_SPAN_ON);
+			appendClass(builder, CssConstants.CSS_SWITCH_SPAN_ON);
 		}
 
 		builder.append(">");
@@ -133,9 +133,9 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		builder.append("id=\"" + id + SWITCH_SPAN_OFF + "\" ");
 
 		if (disabled) {
-			builder.append(CssConstants.CSS_SWITCH_SPAN_OFF_DISABLED);
+			appendClass(builder, CssConstants.CSS_SWITCH_SPAN_OFF_DISABLED);
 		} else {
-			builder.append(CssConstants.CSS_SWITCH_SPAN_OFF);
+			appendClass(builder, CssConstants.CSS_SWITCH_SPAN_OFF);
 		}
 
 		builder.append(">");
@@ -150,20 +150,18 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		builder.append("id=\"" + id + SWITCH_BUTTON + "\" ");
 
 		if (disabled) {
-			builder.append(CssConstants.CSS_SWITCH_BUTTON_DISABLED);
+			appendClass(builder, CssConstants.CSS_SWITCH_BUTTON_DISABLED);
 		} else {
-			builder.append(CssConstants.CSS_SWITCH_BUTTON);
-
+			appendClass(builder, CssConstants.CSS_SWITCH_BUTTON);
 			builder.append(ON_CLICK + JSConstants.JSMART_SWITCH.format(id, async, ajax) + "\" ");
-
-			appendEventBuilder(builder);
+			appendEvent(builder);
 		}
 
 		builder.append(">" + HtmlConstants.CLOSE_DIV_TAG);
 
 		printOutput(builder.append(HtmlConstants.CLOSE_DIV_TAG));
 
-		appendScriptBuilder(new StringBuilder(JSConstants.JSMART_SWITCH_RESET.format(id)));
+		appendScript(new StringBuilder(JSConstants.JSMART_SWITCH_RESET.format(id)));
 	}
 
 	public void setValue(String value) {

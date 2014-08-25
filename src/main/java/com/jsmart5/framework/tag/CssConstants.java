@@ -20,312 +20,393 @@ package com.jsmart5.framework.tag;
 
 /*package*/ interface CssConstants {
 
-	public static final String CSS_MENU_HORIZONTAL = "class=\"jsmart5_menu_horizontal\" ";
+	public static final String CSS_MENU_HORIZONTAL = "jsmart5_menu_%s_horizontal";
 
-	public static final String CSS_MENU_VERTICAL = "class=\"jsmart5_menu_vertical\" ";
+	public static final String CSS_MENU_VERTICAL = "jsmart5_menu_%s_vertical";
 
-	public static final String CSS_MENU_ITEM = "class=\"jsmart5_menu_item\" ";
+	public static final String CSS_MENU_ITEM = "jsmart5_menu_%s_item";
 
-	public static final String CSS_MENU_ITEM_LEFT = "class=\"jsmart5_menu_item_left\" ";
+	public static final String CSS_MENU_ITEM_LEFT = "jsmart5_menu_%s_item_left";
 
-	public static final String CSS_MENU_ITEM_RIGHT = "class=\"jsmart5_menu_item_right\" ";
+	public static final String CSS_MENU_ITEM_RIGHT = "jsmart5_menu_%s_item_right";
 	
-	public static final String CSS_MENUT_ARROW_DOWN = "class=\"jsmart5_menu_arrow_down\" ";
+	public static final String CSS_MENUT_ARROW_DOWN = "jsmart5_menu_%s_arrow_down";
 
-	public static final String CSS_MENUT_ARROW_UP = "class=\"jsmart5_menu_arrow_up\" ";
+	public static final String CSS_MENUT_ARROW_UP = "jsmart5_menu_%s_arrow_up";
 
-	public static final String CSS_MENUT_ARROW_LEFT = "class=\"jsmart5_menu_arrow_left\" ";
+	public static final String CSS_MENUT_ARROW_LEFT = "jsmart5_menu_%s_arrow_left";
 
-	public static final String CSS_MENUT_ARROW_RIGHT = "class=\"jsmart5_menu_arrow_right\" ";
+	public static final String CSS_MENUT_ARROW_RIGHT = "jsmart5_menu_%s_arrow_right";
 
-	public static final String CSS_MENUT_ITEM_ARROW_LEFT = "class=\"jsmart5_menu_item_arrow_left\" ";
+	public static final String CSS_MENUT_ITEM_ARROW_LEFT = "jsmart5_menu_%s_item_arrow_left";
 
-	public static final String CSS_MENUT_ITEM_ARROW_RIGHT = "class=\"jsmart5_menu_item_arrow_right\" ";
+	public static final String CSS_MENUT_ITEM_ARROW_RIGHT = "jsmart5_menu_%s_item_arrow_right";
 
-	public static final String CSS_TABLE = "class=\"jsmart5_table\" ";
 
-	public static final String CSS_TABLE_HEAD = "class=\"jsmart5_table_head\" ";
+	public static final String CSS_TABLE = "jsmart5_table_%s";
 
-	public static final String CSS_TABLE_HEAD_ROW = "class=\"jsmart5_table_head_row\" ";
+	public static final String CSS_TABLE_HEAD = "jsmart5_table_%s_head";
 
-	public static final String CSS_TABLE_HEAD_ROW_COLUMN = "class=\"jsmart5_table_head_row_column\" ";
+	public static final String CSS_TABLE_HEAD_ROW = "jsmart5_table_%s_head_row";
 
-	public static final String CSS_TABLE_HEAD_MULTI_SELECT_COLUMN = "class=\"jsmart5_table_head_multi_select_column\" ";
+	public static final String CSS_TABLE_HEAD_ROW_COLUMN = "jsmart5_table_%s_head_row_column";
 
-	public static final String CSS_TABLE_HEAD_EDIT_CELL_COLUMN = "class=\"jsmart5_table_head_edit_cell_column\" ";
+	public static final String CSS_TABLE_HEAD_MULTI_SELECT_COLUMN = "jsmart5_table_%s_head_multi_select_column";
 
-	public static final String CSS_TABLE_HEAD_INPUT = "class=\"jsmart5_table_head_input\" ";
+	public static final String CSS_TABLE_HEAD_EDIT_CELL_COLUMN = "jsmart5_table_%s_head_edit_cell_column";
 
-	public static final String CSS_TABLE_HEAD_SORT_UP = "class=\"jsmart5_table_head_sort_up\" ";
+	public static final String CSS_TABLE_HEAD_INPUT = "jsmart5_table_head_input";
 
-	public static final String CSS_TABLE_HEAD_SORT_DOWN = "class=\"jsmart5_table_head_sort_down\" ";
+	public static final String CSS_TABLE_HEAD_SORT_UP = "jsmart5_table_%s_head_sort_up";
 
-	public static final String CSS_TABLE_HEAD_SELECTED_SORT_UP = "class=\"jsmart5_table_head_selected_sort_up\" ";
+	public static final String CSS_TABLE_HEAD_SORT_DOWN = "jsmart5_table_%s_head_sort_down";
 
-	public static final String CSS_TABLE_HEAD_SELECTED_SORT_DOWN = "class=\"jsmart5_table_head_selected_sort_down\" ";
+	public static final String CSS_TABLE_HEAD_SELECTED_SORT_UP = "jsmart5_table_%s_head_selected_sort_up";
 
-	public static final String CSS_TABLE_HEAD_SORT_FILTER_UP = "class=\"jsmart5_table_head_sort_filter_up\" ";
+	public static final String CSS_TABLE_HEAD_SELECTED_SORT_DOWN = "jsmart5_table_%s_head_selected_sort_down";
 
-	public static final String CSS_TABLE_HEAD_SORT_FILTER_DOWN = "class=\"jsmart5_table_head_sort_filter_down\" ";
+	public static final String CSS_TABLE_HEAD_SORT_FILTER_UP = "jsmart5_table_%s_head_sort_filter_up";
 
-	public static final String CSS_TABLE_HEAD_SELECTED_SORT_FILTER_UP = "class=\"jsmart5_table_head_selected_sort_filter_up\" ";
+	public static final String CSS_TABLE_HEAD_SORT_FILTER_DOWN = "jsmart5_table_%s_head_sort_filter_down";
 
-	public static final String CSS_TABLE_HEAD_SELECTED_SORT_FILTER_DOWN = "class=\"jsmart5_table_head_selected_sort_filter_down\" ";
+	public static final String CSS_TABLE_HEAD_SELECTED_SORT_FILTER_UP = "jsmart5_table_%s_head_selected_sort_filter_up";
 
-	public static final String CSS_TABLE_EDIT_CELL_START = "class=\"jsmart5_table_edit_cell_start\" ";
+	public static final String CSS_TABLE_HEAD_SELECTED_SORT_FILTER_DOWN = "jsmart5_table_%s_head_selected_sort_filter_down";
 
-	public static final String CSS_TABLE_EDIT_CELL_CONFIRM = "class=\"jsmart5_table_edit_cell_confirm\" ";
+	public static final String CSS_TABLE_EDIT_CELL_START = "jsmart5_table_%s_edit_cell_start";
 
-	public static final String CSS_TABLE_EDIT_CELL_CANCEL = "class=\"jsmart5_table_edit_cell_cancel\" ";
+	public static final String CSS_TABLE_EDIT_CELL_CONFIRM = "jsmart5_table_%s_edit_cell_confirm";
 
-	public static final String CSS_TABLE_FOOT = "class=\"jsmart5_table_foot\" ";
+	public static final String CSS_TABLE_EDIT_CELL_CANCEL = "jsmart5_table_%s_edit_cell_cancel";
 
-	public static final String CSS_TABLE_FOOT_ROW = "class=\"jsmart5_table_foot_row\" ";
+	public static final String CSS_TABLE_FOOT = "jsmart5_table_%s_foot";
 
-	public static final String CSS_TABLE_FOOT_ROW_COLUMN = "class=\"jsmart5_table_foot_row_column\" ";
+	public static final String CSS_TABLE_FOOT_ROW = "jsmart5_table_%s_foot_row";
 
-	public static final String CSS_TABLE_FOOT_MULTI_SELECT_COLUMN = "class=\"jsmart5_table_foot_multi_select_column\" ";
+	public static final String CSS_TABLE_FOOT_ROW_COLUMN = "jsmart5_table_%s_foot_row_column";
 
-	public static final String CSS_TABLE_FOOT_EDIT_CELL_COLUMN = "class=\"jsmart5_table_foot_edit_cell_column\" ";
+	public static final String CSS_TABLE_FOOT_MULTI_SELECT_COLUMN = "jsmart5_table_%s_foot_multi_select_column";
 
-	public static final String CSS_TABLE_PAGE_HEADER = "class=\"jsmart5_table_page_header\" ";
+	public static final String CSS_TABLE_FOOT_EDIT_CELL_COLUMN = "jsmart5_table_%s_foot_edit_cell_column";
 
-	public static final String CSS_TABLE_PAGE_FOOTER = "class=\"jsmart5_table_page_footer\" ";
+	public static final String CSS_TABLE_PAGE_HEADER = "jsmart5_table_%s_page_header";
 
-	public static final String CSS_TABLE_BODY = "class=\"jsmart5_table_body\" ";
+	public static final String CSS_TABLE_PAGE_FOOTER = "jsmart5_table_%s_page_footer";
 
-	public static final String CSS_TABLE_BODY_EMPTY = "class=\"jsmart5_table_body_empty\" ";
+	public static final String CSS_TABLE_BODY = "jsmart5_table_%s_body";
 
-	public static final String CSS_TABLE_BODY_ROW = "class=\"jsmart5_table_row\" ";
+	public static final String CSS_TABLE_BODY_EMPTY = "jsmart5_table_%s_body_empty";
 
-	public static final String CSS_TABLE_BODY_ROW_NTH = "class=\"jsmart5_table_row_nth\" ";
+	public static final String CSS_TABLE_BODY_ROW = "jsmart5_table_%s_row";
 
-	public static final String CSS_TABLE_BODY_ROW_SELECTION = "class=\"jsmart5_table_row_selection\" ";
+	public static final String CSS_TABLE_BODY_ROW_NTH = "jsmart5_table_%s_row_nth";
 
-	public static final String CSS_TABLE_BODY_ROW_SELECTION_NTH = "class=\"jsmart5_table_row_selection_nth\" ";
+	public static final String CSS_TABLE_BODY_ROW_SELECTION = "jsmart5_table_%s_row_selection";
 
-	public static final String CSS_TABLE_BODY_COLUMN = "class=\"jsmart5_table_column\" ";
+	public static final String CSS_TABLE_BODY_ROW_SELECTION_NTH = "jsmart5_table_%s_row_selection_nth";
 
-	public static final String CSS_TABLE_BODY_MULTI_SELECT_COLUMN = "class=\"jsmart5_table_multi_select_column\" ";
+	public static final String CSS_TABLE_BODY_COLUMN = "jsmart5_table_%s_column";
 
-	public static final String CSS_TABLE_BODY_CELL_EDIT_COLUMN = "class=\"jsmart5_table_cell_edit_column\" ";
+	public static final String CSS_TABLE_BODY_MULTI_SELECT_COLUMN = "jsmart5_table_%s_multi_select_column";
 
-	public static final String CSS_TABLE_BODY_ROW_COLUMN_EXPANDED = "class=\"jsmart5_table_row_column_expanded\" ";
+	public static final String CSS_TABLE_BODY_CELL_EDIT_COLUMN = "jsmart5_table_%s_cell_edit_column";
 
-	public static final String CSS_TABLE_PAGE_SPAN = "class=\"jsmart5_table_page_span\" ";
+	public static final String CSS_TABLE_BODY_ROW_COLUMN_EXPANDED = "jsmart5_table_%s_row_column_expanded";
 
-	public static final String CSS_TABLE_PAGE_FIRST = "class=\"jsmart5_table_page_first\" ";
+	public static final String CSS_TABLE_PAGE_SPAN = "jsmart5_table_%s_page_span";
 
-	public static final String CSS_TABLE_PAGE_PREVIOUS = "class=\"jsmart5_table_page_prev\" ";
+	public static final String CSS_TABLE_PAGE_FIRST = "jsmart5_table_%s_page_first";
 
-	public static final String CSS_TABLE_PAGE_NEXT = "class=\"jsmart5_table_page_next\" ";
+	public static final String CSS_TABLE_PAGE_PREVIOUS = "jsmart5_table_%s_page_prev";
 
-	public static final String CSS_TABLE_PAGE_LAST = "class=\"jsmart5_table_page_last\" ";
+	public static final String CSS_TABLE_PAGE_NEXT = "jsmart5_table_%s_page_next";
 
-	public static final String CSS_TABLE_PAGE_INDEX = "class=\"jsmart5_table_page_index\" ";
+	public static final String CSS_TABLE_PAGE_LAST = "jsmart5_table_%s_page_last";
 
-	public static final String CSS_TABLE_PAGE_INDEX_ACTIVE = "class=\"jsmart5_table_page_index_active\" ";
+	public static final String CSS_TABLE_PAGE_INDEX = "jsmart5_table_%s_page_index";
 
-	public static final String CSS_CHECKBOX = "class=\"jsmart5_checkbox\" ";
+	public static final String CSS_TABLE_PAGE_INDEX_ACTIVE = "jsmart5_table_%s_page_index_active";
 
-	public static final String CSS_CHECKGROUP = "class=\"jsmart5_checkgroup\" ";
+
+	public static final String CSS_CHECKBOX = "jsmart5_checkbox";
+
+	public static final String CSS_CHECKGROUP = "jsmart5_checkgroup";
 	
-	public static final String CSS_CHECKGROUP_TABLE = "class=\"jsmart5_checkgroup_table\" ";
+	public static final String CSS_CHECKGROUP_TABLE = "jsmart5_checkgroup_table";
 
-	public static final String CSS_CHECKGROUP_TABLE_COLUMN = "class=\"jsmart5_checkgroup_table_column\" ";
+	public static final String CSS_CHECKGROUP_TABLE_COLUMN = "jsmart5_checkgroup_table_column";
 	
-	public static final String CSS_CHECKGROUP_TABLE_ROW = "class=\"jsmart5_checkgroup_table_row\" ";
+	public static final String CSS_CHECKGROUP_TABLE_ROW = "jsmart5_checkgroup_table_row";
 	
-	public static final String CSS_CHECKGROUP_ITEM = "class=\"jsmart5_checkgroup_item\" ";
+	public static final String CSS_CHECKGROUP_ITEM = "jsmart5_checkgroup_item";
+
 	
-	public static final String CSS_RADIOGROUP = "class=\"jsmart5_radiogroup\" ";
+	public static final String CSS_RADIOGROUP = "jsmart5_radiogroup";
 	
-	public static final String CSS_RADIOGROUP_TABLE = "class=\"jsmart5_radiogroup_table\" ";
+	public static final String CSS_RADIOGROUP_TABLE = "jsmart5_radiogroup_table";
 
-	public static final String CSS_RADIOGROUP_TABLE_COLUMN = "class=\"jsmart5_radiogroup_table_column\" ";
+	public static final String CSS_RADIOGROUP_TABLE_COLUMN = "jsmart5_radiogroup_table_column";
 	
-	public static final String CSS_RADIOGROUP_TABLE_ROW = "class=\"jsmart5_radiogroup_table_row\" ";
+	public static final String CSS_RADIOGROUP_TABLE_ROW = "jsmart5_radiogroup_table_row";
 
-	public static final String CSS_RADIOGROUP_ITEM = "class=\"jsmart5_radiogroup_item\" ";
+	public static final String CSS_RADIOGROUP_ITEM = "jsmart5_radiogroup_item";
 
-	public static final String CSS_BUTTON_GROUP = "class=\"jsmart5_button_group\" ";
 
-	public static final String CSS_BUTTON_GROUP_HORIZONTAL = "class=\"jsmart5_button_group_horizontal\" ";
+	public static final String CSS_BUTTON_GROUP = "jsmart5_button_%s_group";
 
-	public static final String CSS_BUTTON_GROUP_VERTICAL = "class=\"jsmart5_button_group_vertical\" ";
+	public static final String CSS_BUTTON_GROUP_HORIZONTAL = "jsmart5_button_%s_group_horizontal";
 
-	public static final String CSS_BUTTON_DEFAULT = "class=\"jsmart5_button_default\" ";
+	public static final String CSS_BUTTON_GROUP_VERTICAL = "jsmart5_button_%s_group_vertical";
 
-	public static final String CSS_BUTTON_DEFAULT_GROUP_ITEM = "class=\"jsmart5_button_default jsmart5_button_group_item\" ";
 
-	public static final String CSS_BUTTON_DROPDOWN = "class=\"jsmart5_button_dropdown\" ";
+	public static final String CSS_BUTTON_DEFAULT = "jsmart5_button_%s_default";
 
-	public static final String CSS_BUTTON_DROPDOWN_GROUP_ITEM = "class=\"jsmart5_button_dropdown jsmart5_button_group_item\" ";
+	public static final String CSS_BUTTON_DEFAULT_GROUP_ITEM = "jsmart5_button_%s_default jsmart5_button_%s_group_item";
+
 	
-	public static final String CSS_BUTTON_DROPDOWN_ARROW = "class=\"jsmart5_button_dropdown_arrow\" ";
+	public static final String CSS_BUTTON_DROPDOWN = "jsmart5_button_%s_dropdown";
 
-	public static final String CSS_BUTTON_DROPDOWN_LIST = "class=\"jsmart5_button_dropdown_list\" ";
+	public static final String CSS_BUTTON_DROPDOWN_GROUP_ITEM = "jsmart5_button_%s_dropdown jsmart5_button_%s_group_item";
 
-	public static final String CSS_BUTTON = "class=\"jsmart5_button\" ";
+	public static final String CSS_BUTTON_DROPDOWN_ARROW = "jsmart5_button_%s_dropdown_arrow";
 
-	public static final String CSS_BUTTON_GROUP_ITEM = "class=\"jsmart5_button jsmart5_button_group_item\" ";
+	public static final String CSS_BUTTON_DROPDOWN_LIST = "jsmart5_button_%s_dropdown_list";
 
-	public static final String CSS_BUTTON_IMAGE = "class=\"jsmart5_button_image\" ";
-
-	public static final String CSS_BUTTON_ICON = "class=\"jsmart5_button_icon\" ";
 	
-	public static final String CSS_IMAGE = "class=\"jsmart5_image\" ";
+	public static final String CSS_BUTTON = "jsmart5_button_%s";
 
-	public static final String CSS_INPUT_GROUP = "class=\"jsmart5_input_group\" ";
+	public static final String CSS_BUTTON_GROUP_ITEM = "jsmart5_button_%s jsmart5_button_%s_group_item";
 
-	public static final String CSS_INPUT_LABEL = "class=\"jsmart5_input_label\" ";
+	public static final String CSS_BUTTON_IMAGE = "jsmart5_button_%s_image";
+
+	public static final String CSS_BUTTON_ICON = "jsmart5_button_%s_icon";
+
 	
-	public static final String CSS_INPUT_LABEL_SELECT = "class=\"jsmart5_input_label_select\" ";
+	public static final String CSS_IMAGE = "jsmart5_image";
 
-	public static final String CSS_INPUT_LABEL_UPLOAD = "class=\"jsmart5_input_label_upload\" ";
+
+	public static final String CSS_INPUT_GROUP = "jsmart5_input_group";
+
+	public static final String CSS_INPUT_LABEL = "jsmart5_input_label";
 	
-	public static final String CSS_INPUT = "class=\"jsmart5_input_text\" ";
+	public static final String CSS_INPUT_LABEL_SELECT = "jsmart5_input_label_select";
 
-	public static final String CSS_AUTO_COMPLETE = "class=\"jsmart5_auto_complete\" ";
+	public static final String CSS_INPUT_LABEL_UPLOAD = "jsmart5_input_label_upload";
 
-	public static final String CSS_AUTO_COMPLETE_LIST = "class=\"jsmart5_auto_complete_list\" ";
-
-	public static final String CSS_CAPTCHA = "class=\"jsmart5_input_text jsmart5_captcha_input\" ";
-
-	public static final String CSS_UPLOAD = "class=\"jsmart5_input_text jsmart5_upload_text\" ";
-
-	public static final String CSS_LINK = "class=\"jsmart5_link\" ";
-
-	public static final String CSS_LIST = "class=\"jsmart5_list\" ";
-
-	public static final String CSS_LIST_ROW = "class=\"jsmart5_list_row\" ";
-
-	public static final String CSS_LIST_ROW_BADGE = "class=\"jsmart5_list_row_badge\" ";
-
-	public static final String CSS_SELECT = "class=\"jsmart5_select\" ";
-
-	public static final String CSS_SELECT_MULTI = "class=\"jsmart5_select_multi\" ";
-
-	public static final String CSS_SELECT_OPTION = "class=\"jsmart5_select_option\" ";
-
-	public static final String CSS_OUTPUTS = "class=\"jsmart5_outputs\" ";
 	
-	public static final String CSS_OUTPUT = "class=\"jsmart5_output\" ";
+	public static final String CSS_INPUT = "jsmart5_input_text";
 
-	public static final String CSS_PANEL = "class=\"jsmart5_panel\" ";
+	
+	public static final String CSS_AUTO_COMPLETE = "jsmart5_auto_complete";
 
-	public static final String CSS_PANEL_HEADER = "class=\"jsmart5_panel_header\" ";
+	public static final String CSS_AUTO_COMPLETE_LIST = "jsmart5_auto_complete_%s_list";
 
-	public static final String CSS_PANEL_CONTENT = "class=\"jsmart5_panel_content\" ";
 
-	public static final String CSS_TEXTAREA = "class=\"jsmart5_input_text_area\" ";
+	public static final String CSS_CAPTCHA = "jsmart5_input_text jsmart5_captcha_input";
 
-	public static final String CSS_CAROUSEL = "class=\"jsmart5_carousel\" ";
 
-	public static final String CSS_CAROUSEL_ITEM = "class=\"jsmart5_carousel_item\" ";
+	public static final String CSS_UPLOAD = "jsmart5_input_text jsmart5_upload_text";
 
-	public static final String CSS_CAROUSEL_SLIDES = "class=\"jsmart5_carousel_slides\" ";
 
-	public static final String CSS_CAROUSEL_CONTROL = "class=\"jsmart5_carousel_control\" ";
+	public static final String CSS_LINK = "jsmart5_link";
 
-	public static final String CSS_CAROUSEL_CONTROL_ARROW = "class=\"jsmart5_carousel_control_arrow\" ";
 
-	public static final String CSS_TABS = "class=\"jsmart5_tabs\" ";
+	public static final String CSS_LIST = "jsmart5_list_%s";
 
-	public static final String CSS_TABS_UL_HORIZONTAL = "class=\"jsmart5_tabs_ul_horizontal\" ";
+	public static final String CSS_LIST_ROW = "jsmart5_list_%s_row";
 
-	public static final String CSS_TABS_UL_VERTICAL = "class=\"jsmart5_tabs_ul_vertical\" ";
+	public static final String CSS_LIST_ROW_BADGE = "jsmart5_list_%s_row_badge";
 
-	public static final String CSS_TABS_LI_TOP = "class=\"jsmart5_tabs_li_top\" ";
 
-	public static final String CSS_TABS_LI_LEFT = "class=\"jsmart5_tabs_li_left\" ";
+	public static final String CSS_SELECT = "jsmart5_select";
 
-	public static final String CSS_TABS_LI_BOTTOM = "class=\"jsmart5_tabs_li_bottom\" ";
+	public static final String CSS_SELECT_MULTI = "jsmart5_select_multi";
 
-	public static final String CSS_TABS_LI_RIGHT = "class=\"jsmart5_tabs_li_right\" ";
+	public static final String CSS_SELECT_OPTION = "jsmart5_select_option";
 
-	public static final String CSS_TAB_CONTENT_TOP = "class=\"jsmart5_tab_content_top\" ";
+	
+	public static final String CSS_OUTPUTS = "jsmart5_outputs";
+	
+	public static final String CSS_OUTPUT = "jsmart5_output";
 
-	public static final String CSS_TAB_CONTENT_LEFT = "class=\"jsmart5_tab_content_left\" ";
 
-	public static final String CSS_TAB_CONTENT_BOTTOM = "class=\"jsmart5_tab_content_bottom\" ";
+	public static final String CSS_PANEL = "jsmart5_panel_%s";
 
-	public static final String CSS_TAB_CONTENT_RIGHT = "class=\"jsmart5_tab_content_right\" ";
+	public static final String CSS_PANEL_HEADER = "jsmart5_panel_%s_header";
 
-	public static final String CSS_BALLOON = "class=\"jsmart5_balloon\" ";
+	public static final String CSS_PANEL_CONTENT = "jsmart5_panel_%s_content";
 
-	public static final String CSS_SWITCH_CONTAINER = "class=\"jsmart5_switch_container\" ";
 
-	public static final String CSS_SWITCH_SPAN_ON = "class=\"jsmart5_switch_span_on\" ";
+	public static final String CSS_TEXTAREA = "jsmart5_input_text_area";
 
-	public static final String CSS_SWITCH_SPAN_ON_DISABLED = "class=\"jsmart5_switch_span_on_disabled\" ";
 
-	public static final String CSS_SWITCH_SPAN_OFF = "class=\"jsmart5_switch_span_off\" ";
+	public static final String CSS_CAROUSEL = "jsmart5_carousel";
 
-	public static final String CSS_SWITCH_SPAN_OFF_DISABLED = "class=\"jsmart5_switch_span_off_disabled\" ";
+	public static final String CSS_CAROUSEL_ITEM = "jsmart5_carousel_item";
 
-	public static final String CSS_SWITCH_BUTTON = "class=\"jsmart5_switch_button\" ";
+	public static final String CSS_CAROUSEL_SLIDES = "jsmart5_carousel_slides";
 
-	public static final String CSS_SWITCH_BUTTON_DISABLED = "class=\"jsmart5_switch_button_disabled\" ";
+	public static final String CSS_CAROUSEL_CONTROL = "jsmart5_carousel_control";
 
-	public static final String CSS_PROGRESS_CONTAINER = "class=\"jsmart5_progress_container\" ";
+	public static final String CSS_CAROUSEL_CONTROL_ARROW = "jsmart5_carousel_control_arrow";
 
-	public static final String CSS_PROGRESS_FRAME = "class=\"jsmart5_progress_frame\" ";
 
-	public static final String CSS_PROGRESS_BAR = "class=\"jsmart5_progress_bar\" ";
+	public static final String CSS_TABS = "jsmart5_tabs_%s";
 
-	public static final String CSS_PROGRESS_BAR_DISABLED = "class=\"jsmart5_progress_bar_disabled\" ";
+	public static final String CSS_TABS_UL_HORIZONTAL = "jsmart5_tabs_%s_ul_horizontal";
 
-	public static final String CSS_PROGRESS_LABEL = "class=\"jsmart5_progress_label\" ";
+	public static final String CSS_TABS_UL_VERTICAL = "jsmart5_tabs_%s_ul_vertical";
 
-	public static final String CSS_PROGRESS_PERCENT = "class=\"jsmart5_progress_percent\" ";
+	public static final String CSS_TABS_LI_TOP = "jsmart5_tabs_%s_li_top";
 
-	public static final String CSS_RANGE_CONTAINER = "class=\"jsmart5_range_container\" ";
+	public static final String CSS_TABS_LI_LEFT = "jsmart5_tabs_%s_li_left";
 
-	public static final String CSS_RANGE_FRAME = "class=\"jsmart5_range_frame\" ";
+	public static final String CSS_TABS_LI_BOTTOM = "jsmart5_tabs_%s_li_bottom";
 
-	public static final String CSS_RANGE_TRAIL = "class=\"jsmart5_range_trail\" ";
+	public static final String CSS_TABS_LI_RIGHT = "jsmart5_tabs_%s_li_right";
 
-	public static final String CSS_RANGE_BAR = "class=\"jsmart5_range_bar\" ";
+	public static final String CSS_TAB_CONTENT_TOP = "jsmart5_tab_%s_content_top";
 
-	public static final String CSS_RANGE_BAR_DISABLED = "class=\"jsmart5_range_bar_disabled\" ";
+	public static final String CSS_TAB_CONTENT_LEFT = "jsmart5_tab_%s_content_left";
 
-	public static final String CSS_RANGE_VALUE = "class=\"jsmart5_range_value\" ";
+	public static final String CSS_TAB_CONTENT_BOTTOM = "jsmart5_tab_%s_content_bottom";
 
-	public static final String CSS_DATE = "class=\"jsmart5_date\" ";
+	public static final String CSS_TAB_CONTENT_RIGHT = "jsmart5_tab_%s_content_right";
 
-	public static final String CSS_DATE_IMAGE = "class=\"jsmart5_date_image\" ";
 
-	public static final String CSS_DATE_CURRENT_DAY = "class=\"jsmart5_date_current_day\" ";
+	public static final String CSS_BALLOON = "jsmart5_balloon_%s";
 
-	public static final String CSS_DATE_DAY_HOVER = "class=\"jsmart5_date_cell_day_hover\" ";
+	
+	public static final String CSS_SWITCH_CONTAINER = "jsmart5_switch_%s_container";
 
-	public static final String CSS_DATE_HEADER = "class=\"jsmart5_date_header\" ";
+	public static final String CSS_SWITCH_SPAN_ON = "jsmart5_switch_%s_span_on";
 
-	public static final String CSS_DATE_TITLE = "class=\"jsmart5_date_title\" ";
+	public static final String CSS_SWITCH_SPAN_ON_DISABLED = "jsmart5_switch_%s_span_on_disabled";
 
-	public static final String CSS_DATE_YEAR = "class=\"jsmart5_date_year\" ";
+	public static final String CSS_SWITCH_SPAN_OFF = "jsmart5_switch_%s_span_off";
 
-	public static final String CSS_DATE_MONTH = "class=\"jsmart5_date_month\" ";
+	public static final String CSS_SWITCH_SPAN_OFF_DISABLED = "jsmart5_switch_%s_span_off_disabled";
 
-	public static final String CSS_DATE_TODAY = "class=\"jsmart5_date_today\" ";
+	public static final String CSS_SWITCH_BUTTON = "jsmart5_switch_%s_button";
 
-	public static final String CSS_DATE_PREV = "class=\"jsmart5_date_prev\" ";
+	public static final String CSS_SWITCH_BUTTON_DISABLED = "jsmart5_switch_%s_button_disabled";
 
-	public static final String CSS_DATE_NEXT = "class=\"jsmart5_date_next\" ";
 
-	public static final String CSS_DATE_WEEK_CEL = "class=\"jsmart5_date_week_col\" ";
+	public static final String CSS_PROGRESS_CONTAINER = "jsmart5_progress_%s_container";
 
-	public static final String CSS_DATE_WEEK_END = "class=\"jsmart5_date_week_end\" ";
+	public static final String CSS_PROGRESS_FRAME = "jsmart5_progress_%s_frame";
 
-	public static final String CSS_DATE_OTHER_MONTH = "class=\"jsmart5_date_other_month\" ";
+	public static final String CSS_PROGRESS_BAR = "jsmart5_progress_%s_bar";
 
-	public static final String CSS_DATE_ROW_BREAK = "class=\"jsmart5_date_row_break\" ";
+	public static final String CSS_PROGRESS_BAR_DISABLED = "jsmart5_progress_%s_bar_disabled";
 
-	public static final String CSS_LOAD_SMALL = "class=\"jsmart5_load_small\" ";
+	public static final String CSS_PROGRESS_LABEL = "jsmart5_progress_%s_label";
 
-	public static final String CSS_LOAD_MEDIUM = "class=\"jsmart5_load_medium\" ";
+	public static final String CSS_PROGRESS_PERCENT = "jsmart5_progress_%s_percent";
 
-	public static final String CSS_LOAD_LARGE = "class=\"jsmart5_load_large\" ";
+
+	public static final String CSS_RANGE_CONTAINER = "jsmart5_range_%s_container";
+
+	public static final String CSS_RANGE_FRAME = "jsmart5_range_%s_frame";
+
+	public static final String CSS_RANGE_TRAIL = "jsmart5_range_%s_trail";
+
+	public static final String CSS_RANGE_BAR = "jsmart5_range_%s_bar";
+
+	public static final String CSS_RANGE_BAR_DISABLED = "jsmart5_range_%s_bar_disabled";
+
+	public static final String CSS_RANGE_VALUE = "jsmart5_range_%s_value";
+
+
+	public static final String CSS_LOAD_SMALL = "jsmart5_load_small";
+
+	public static final String CSS_LOAD_MEDIUM = "jsmart5_load_medium";
+
+	public static final String CSS_LOAD_LARGE = "jsmart5_load_large";
+
+
+	public static final String CSS_DATE = "jsmart5_date_%s";
+
+	public static final String CSS_DATE_IMAGE = "jsmart5_date_%s_image";
+
+	public static final String CSS_DATE_CURRENT_DAY = "jsmart5_date_%s_current_day";
+
+	public static final String CSS_DATE_DAY_HOVER = "jsmart5_date_%s_cell_day_hover";
+
+	public static final String CSS_DATE_HEADER = "jsmart5_date_%s_header";
+
+	public static final String CSS_DATE_TITLE = "jsmart5_date_%s_title";
+
+	public static final String CSS_DATE_YEAR = "jsmart5_date_%s_year";
+
+	public static final String CSS_DATE_MONTH = "jsmart5_date_%s_month";
+
+	public static final String CSS_DATE_TODAY = "jsmart5_date_%s_today";
+
+	public static final String CSS_DATE_PREV = "jsmart5_date_%s_prev";
+
+	public static final String CSS_DATE_NEXT = "jsmart5_date_%s_next";
+
+	public static final String CSS_DATE_WEEK_CEL = "jsmart5_date_%s_week_col";
+
+	public static final String CSS_DATE_WEEK_END = "jsmart5_date_%s_week_end";
+
+	public static final String CSS_DATE_OTHER_MONTH = "jsmart5_date_%s_other_month";
+
+	public static final String CSS_DATE_ROW_BREAK = "jsmart5_date_%s_row_break";
+
+	
+	public static final String CSS_DIALOG = "jsmart5_dialog_%s";
+	
+	public static final String CSS_DIALOG_TITLE_BAR = "jsmart5_dialog_%s_titlebar";
+
+	public static final String CSS_DIALOG_TITLE = "jsmart5_dialog_%s_title";
+
+	public static final String CSS_DIALOG_CLOSE = "jsmart5_dialog_%s_titlebar_close";
+
+	public static final String CSS_DIALOG_CONTENT = "jsmart5_dialog_%s_content";
+
+	public static final String CSS_DIALOG_DRAGGING = "jsmart5_dialog_%s_dragging";
+
+	public static final String CSS_DIALOG_RESIZING = "jsmart5_dialog_%s_resizing";
+
+	public static final String CSS_DIALOG_DISABLED = "jsmart5_dialog_%s_disabled";
+
+
+	public static final String CSS_KEYPAD_TRIGGER = "jsmart5_keypad_%s_trigger";
+
+	public static final String CSS_KEYPAD_POPUP = "jsmart5_keypad_%s_popup";
+
+	public static final String CSS_KEYPAD_ENTRY = "jsmart5_keypad_%s_keyentry";
+
+	public static final String CSS_KEYPAD_INLINE = "jsmart5_keypad_%s_inline";
+
+	public static final String CSS_KEYPAD_DISABLED = "jsmart5_keypad_%s_disabled";
+
+	public static final String CSS_KEYPAD_RTL = "jsmart5_keypad_%s_rtl";
+
+	public static final String CSS_KEYPAD_ROW = "jsmart5_keypad_%s_row";
+
+	public static final String CSS_KEYPAD_SPACE = "jsmart5_keypad_%s_space";
+
+	public static final String CSS_KEYPAD_HALF_SPACE = "jsmart5_keypad_%s_half_space";
+
+	public static final String CSS_KEYPAD_TAB = "jsmart5_keypad_%s_tab";
+
+	public static final String CSS_KEYPAD_KEY = "jsmart5_keypad_%s_key";
+
+	public static final String CSS_KEYPAD_KEYDOWN = "jsmart5_keypad_%s_keydown";
+
+	public static final String CSS_KEYPAD_SPECIAL = "jsmart5_keypad_%s_special";
+
+	public static final String CSS_KEYPAD_SPACE_BAR = "jsmart5_keypad_%s_spacebar";
+
+	public static final String CSS_KEYPAD_CLEAR = "jsmart5_keypad_%s_clear";
+
+	public static final String CSS_KEYPAD_BACK = "jsmart5_keypad_%s_back";
+
+	public static final String CSS_KEYPAD_CLOSE = "jsmart5_keypad_%s_close";
+
+	public static final String CSS_KEYPAD_SHIFT = "jsmart5_keypad_%s_shift";
 
 }

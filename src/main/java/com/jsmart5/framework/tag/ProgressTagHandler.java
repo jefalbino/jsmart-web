@@ -93,18 +93,18 @@ public final class ProgressTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_PROGRESS_CONTAINER);
+			appendClass(builder, CssConstants.CSS_PROGRESS_CONTAINER);
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append(">");
 
 		builder.append(OPEN_DIV_TAG);
 
 		builder.append("id=\"" + id + PROGRESS_FRAME + "\" ");
-		
-		builder.append(CssConstants.CSS_PROGRESS_FRAME);
+
+		appendClass(builder, CssConstants.CSS_PROGRESS_FRAME);
 
 		JSONProgress jsonProgress = new JSONProgress();
 
@@ -152,7 +152,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 
 		builder.append("type=\"hidden\" ");
 		
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		builder.append(" />");
 
@@ -160,9 +160,9 @@ public final class ProgressTagHandler extends SmartTagHandler {
 		builder.append(OPEN_DIV_TAG);
 
 		if (disabled) {
-			builder.append(CssConstants.CSS_PROGRESS_BAR_DISABLED);
+			appendClass(builder, CssConstants.CSS_PROGRESS_BAR_DISABLED);
 		} else {
-			builder.append(CssConstants.CSS_PROGRESS_BAR);
+			appendClass(builder, CssConstants.CSS_PROGRESS_BAR);
 		}
 
 		builder.append(">" + CLOSE_DIV_TAG);
@@ -170,7 +170,8 @@ public final class ProgressTagHandler extends SmartTagHandler {
 		Object labelVal = getTagValue(label);
 		if (labelVal != null) {
 			builder.append(OPEN_SPAN_TAG);
-			builder.append(CssConstants.CSS_PROGRESS_LABEL + ">");
+			appendClass(builder, CssConstants.CSS_PROGRESS_LABEL);
+			builder.append(">");
 			builder.append(labelVal);
 			builder.append(CLOSE_SPAN_TAG);
 		}
@@ -180,7 +181,8 @@ public final class ProgressTagHandler extends SmartTagHandler {
 		if (showPercentage) {
 			builder.append(OPEN_SPAN_TAG);
 			builder.append("id=\"" + id + PROGRESS_PERCENT + "\" ");
-			builder.append(CssConstants.CSS_PROGRESS_PERCENT + ">");
+			appendClass(builder, CssConstants.CSS_PROGRESS_PERCENT);
+			builder.append(">");
 			builder.append(CLOSE_SPAN_TAG);
 		}
 
@@ -188,7 +190,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 
 		printOutput(builder);
 
-		appendScriptBuilder(new StringBuilder(JSConstants.JSMART_PROGRESS.format(id)));
+		appendScript(new StringBuilder(JSConstants.JSMART_PROGRESS.format(id)));
 	}
 
 	public void setAjax(boolean ajax) {

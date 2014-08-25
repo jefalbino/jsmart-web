@@ -66,7 +66,7 @@ public final class RestArrayTagHandler extends SmartTagHandler {
 			builder.append("align=\"left\" ");
 		}
 
-		appendRestBuilder(builder);
+		appendRest(builder);
 		builder.append(">");
 		builder.append(sw);
 		builder.append(CLOSE_DIV_TAG);

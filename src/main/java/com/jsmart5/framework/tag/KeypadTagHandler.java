@@ -65,34 +65,38 @@ public final class KeypadTagHandler extends SmartTagHandler {
 
 		if (opened) {
 			scriptBuilder.append(String.format(KEYPAD_SCRIPT_START, target + KEYPAD));
-			scriptBuilder.append("target: " + target + ",");
+			scriptBuilder.append("target:" + target + ",");
 		} else {
 			scriptBuilder.append(String.format(KEYPAD_SCRIPT_START, target));
 		}
 		
+		// Append theme options to keypad
+		appendThemeOption(scriptBuilder);
+		
 		if (onKeyPress != null && !onKeyPress.isEmpty()) {
-			scriptBuilder.append("onKeypress: " + onKeyPress + ",");
+			scriptBuilder.append("onKeypress:" + onKeyPress + ",");
 		}
 		if (showButton) {
-			scriptBuilder.append("showOn: 'button',");
+			scriptBuilder.append("showOn:'button',");
 		}
 		if (layout != null) {
 			if (layout.equals(QWERTY)) {
-				scriptBuilder.append("layout: $.keypad.qwertyLayout,");
+				scriptBuilder.append("layout:$.keypad.qwertyLayout,");
 
 			} else if (layout.equals(NUMERIC)) {
-				scriptBuilder.append("layout: $.keypad.numericLayout,");
+				scriptBuilder.append("layout:$.keypad.numericLayout,");
 
 			} else if (layout.equals(FULL)){
-				scriptBuilder.append("layout: $.keypad.fullLayout,");
+				scriptBuilder.append("layout:$.keypad.fullLayout,");
 			}
 		}
 
 		scriptBuilder.append(KEYPAD_SCRIPT_CLOSE);
 
-		appendScriptBuilder(scriptBuilder);
+		appendScript(scriptBuilder);
 
 		StringBuilder builder = new StringBuilder(HtmlConstants.INPUT_TAG);
+
 		builder.append("id=\"" + target + KEYPAD_HOLDER + "\" ");
 		builder.append("value=\"" + scriptBuilder + "\" ");
 		builder.append("type=\"hidden\" keypad=\"keypad\" />");

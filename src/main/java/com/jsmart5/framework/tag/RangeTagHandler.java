@@ -83,10 +83,10 @@ public final class RangeTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_RANGE_CONTAINER);
+			appendClass(builder, CssConstants.CSS_RANGE_CONTAINER);
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append(">");
 
@@ -94,7 +94,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 		builder.append("id=\"" + id + RANGE_FRAME + "\" ");
 
-		builder.append(CssConstants.CSS_RANGE_FRAME);
+		appendClass(builder, CssConstants.CSS_RANGE_FRAME);
 
 		JSONRange jsonRange = new JSONRange();
 
@@ -118,7 +118,8 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 		// Trail for the range
 		builder.append(OPEN_SPAN_TAG);
-		builder.append(CssConstants.CSS_RANGE_TRAIL + ">");
+		appendClass(builder, CssConstants.CSS_RANGE_TRAIL);
+		builder.append(">");
 		builder.append(CLOSE_SPAN_TAG);
 
 		// Hidden input to send value to server
@@ -142,7 +143,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 		builder.append("type=\"hidden\" ");
 		
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		builder.append(" />");
 
@@ -150,9 +151,9 @@ public final class RangeTagHandler extends SmartTagHandler {
 		builder.append(OPEN_DIV_TAG);
 
 		if (disabled) {
-			builder.append(CssConstants.CSS_RANGE_BAR_DISABLED);
+			appendClass(builder, CssConstants.CSS_RANGE_BAR_DISABLED);
 		} else {
-			builder.append(CssConstants.CSS_RANGE_BAR);
+			appendClass(builder, CssConstants.CSS_RANGE_BAR);
 		}
 
 		builder.append(">" + CLOSE_DIV_TAG);
@@ -162,7 +163,8 @@ public final class RangeTagHandler extends SmartTagHandler {
 		if (showValue) {
 			builder.append(OPEN_SPAN_TAG);
 			builder.append("id=\"" + id + RANGE_VALUE + "\" ");
-			builder.append(CssConstants.CSS_RANGE_VALUE + ">");
+			appendClass(builder, CssConstants.CSS_RANGE_VALUE);
+			builder.append(">");
 			builder.append(number != null ? number : 0);
 			builder.append(CLOSE_SPAN_TAG);
 		}
@@ -171,7 +173,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 		printOutput(builder);
 
-		appendScriptBuilder(new StringBuilder(JSConstants.JSMART_RANGE.format(id)));
+		appendScript(new StringBuilder(JSConstants.JSMART_RANGE.format(id)));
 	}
 
 	public void setAjax(boolean ajax) {

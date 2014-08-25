@@ -80,8 +80,6 @@ package com.jsmart5.framework.manager;
 
 	public static final String JSMART5_XML_PATH = WEB_INF + SEPARATOR + "jsmart5.xml";
 
-	public static final String JSMART5_CSS_PATH = "css/jsmart5.min.css";
-
 	public static final String FILTER_RESOURCES = "jsmart_resources.json";
 
 	public static final String FILTER_HEADERS = "jsmart_headers.json";

@@ -106,67 +106,70 @@ public final class DialogTagHandler extends SmartTagHandler {
 		builder.append(sw);
 		builder.append(CLOSE_DIV_TAG);
 
-	    StringBuilder script = new StringBuilder(String.format(DIALOG_SCRIPT_START, id) + "closeOnEscape: true,");
+	    StringBuilder scriptBuilder = new StringBuilder(String.format(DIALOG_SCRIPT_START, id) + "closeOnEscape: true,");
+	    
+		// Append theme options to dialog
+		appendThemeOption(scriptBuilder);
 
 		if (title != null) {
-			script.append("title:'" + getTagValue(title) + "',");
+			scriptBuilder.append("title:'" + getTagValue(title) + "',");
 		}
 
 		if (opened != null) {
-			script.append("autoOpen:" + opened + ",");
+			scriptBuilder.append("autoOpen:" + opened + ",");
 		}
 
 		if (modal != null) {
-			script.append("modal:" + modal + ",");
+			scriptBuilder.append("modal:" + modal + ",");
 		}
 
 		if (width != null) {
-			script.append("width:" + width + ",");
+			scriptBuilder.append("width:" + width + ",");
 		}
 
 		if (height != null) {
-			script.append("height:" + height + ",");
+			scriptBuilder.append("height:" + height + ",");
 		}
 
 		if (zIndex != null) {
-			script.append("zIndex:" + zIndex + ",");
+			scriptBuilder.append("zIndex:" + zIndex + ",");
 		}
 
 		if (showEffect != null) {
-			script.append("show:'" + showEffect + "',");
+			scriptBuilder.append("show:'" + showEffect + "',");
 		}
 
 		if (hideEffect != null) {
-			script.append("hide:'" + hideEffect + "',");
+			scriptBuilder.append("hide:'" + hideEffect + "',");
 		}
 
 		if (resizable != null) {
-			script.append("resizable:" + resizable + ",");
+			scriptBuilder.append("resizable:" + resizable + ",");
 		}
 
 		if (draggable != null) {
-			script.append("draggable:" + draggable + ",");
+			scriptBuilder.append("draggable:" + draggable + ",");
 		}
 
 		if (position != null) {
-			script.append("position:'" + position + "',");
+			scriptBuilder.append("position:'" + position + "',");
 		}
 
 		if (onOpen != null) {
-			script.append("open: function() {" + onOpen + ";},");
+			scriptBuilder.append("open: function() {" + onOpen + ";},");
 		}
 
 		if (onClose != null) {
-			script.append("close: function() {" + onClose + ";},");
+			scriptBuilder.append("close: function() {" + onClose + ";},");
 		}
 
 		if (listenEnter != null) {
-			script.append("listenEnter:'" + listenEnter + "',");
+			scriptBuilder.append("listenEnter:'" + listenEnter + "',");
 		}
 
-		script.append(DIALOG_SCRIPT_CLOSE);
+		scriptBuilder.append(DIALOG_SCRIPT_CLOSE);
 
-		appendScriptBuilder(script);
+		appendScript(scriptBuilder);
 
 		printOutput(builder);
 	}

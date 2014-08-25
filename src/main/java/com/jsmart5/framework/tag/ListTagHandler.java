@@ -100,7 +100,7 @@ public final class ListTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_LIST);
+			appendClass(builder, CssConstants.CSS_LIST);
 		}
 
 		builder.append(">");
@@ -166,7 +166,11 @@ public final class ListTagHandler extends SmartTagHandler {
 				if (type.equals(DEFINITION)) {
 					builder.append(HtmlConstants.OPEN_DEFINITION_TITLE_TAG + empty + HtmlConstants.CLOSE_DEFINITION_TITLE_TAG);
 				} else {
-					builder.append(HtmlConstants.OPEN_LIST_ITEM_TAG + CssConstants.CSS_LIST_ROW + ">" + empty + HtmlConstants.CLOSE_LIST_ITEM_TAG);
+					builder.append(HtmlConstants.OPEN_LIST_ITEM_TAG);
+					appendClass(builder, CssConstants.CSS_LIST_ROW);
+					builder.append(">");
+					builder.append(empty);
+					builder.append(HtmlConstants.CLOSE_LIST_ITEM_TAG);
 				}				
 			}
 		}

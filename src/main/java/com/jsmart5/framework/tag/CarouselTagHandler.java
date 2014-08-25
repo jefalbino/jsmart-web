@@ -92,7 +92,7 @@ public final class CarouselTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_CAROUSEL);
+			appendClass(builder, CssConstants.CSS_CAROUSEL);
 		}
 
 		builder.append("width=\"" + width + "\" ");
@@ -112,7 +112,9 @@ public final class CarouselTagHandler extends SmartTagHandler {
 			builder.append(OPEN_PARAGRAPH_TAG + getTagValue(title) + CLOSE_PARAGRAPH_TAG);
 		}
 
-		builder.append(OPEN_DIV_TAG + CssConstants.CSS_CAROUSEL_SLIDES + ">");
+		builder.append(OPEN_DIV_TAG);
+		appendClass(builder, CssConstants.CSS_CAROUSEL_SLIDES);
+		builder.append(">");
 
 		for (int i = 0; i < items.size(); i++) {
 			StringWriter sw = new StringWriter();
@@ -124,7 +126,9 @@ public final class CarouselTagHandler extends SmartTagHandler {
 
 		if (NUMBERED.equals(type)) {
 			// Numbers
-			builder.append(OPEN_DIV_TAG + CssConstants.CSS_CAROUSEL_CONTROL +" align=\"center\" >");
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CssConstants.CSS_CAROUSEL_CONTROL);
+			builder.append(" align=\"center\" >");
 			builder.append(OPEN_DIV_TAG + "align=\"right\" >");
 			for (int i = 0; i < items.size(); i++) {
 				builder.append(OPEN_SPAN_TAG + ">" + (i + 1) + CLOSE_SPAN_TAG);
@@ -132,7 +136,9 @@ public final class CarouselTagHandler extends SmartTagHandler {
 			builder.append(CLOSE_DIV_TAG + CLOSE_DIV_TAG);
 
 			// Arrows Previous and Next
-			builder.append(OPEN_DIV_TAG + CssConstants.CSS_CAROUSEL_CONTROL_ARROW +" >");
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CssConstants.CSS_CAROUSEL_CONTROL_ARROW);
+			builder.append(">");
 			builder.append(OPEN_SPAN_TAG + "direction=\"prev\" >");
 			builder.append(OPEN_DIV_TAG + ">" + CLOSE_DIV_TAG);
 			builder.append(CLOSE_SPAN_TAG);
@@ -146,7 +152,7 @@ public final class CarouselTagHandler extends SmartTagHandler {
 
 		StringBuilder scriptBuilder = new StringBuilder(JSConstants.JSMART_CAROUSEL.format(id));
 
-		appendScriptBuilder(scriptBuilder);
+		appendScript(scriptBuilder);
 
 		printOutput(builder);
 	}

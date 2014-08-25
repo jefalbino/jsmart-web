@@ -101,16 +101,16 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 		} else {
 			if (parent instanceof MenuItemTagHandler) {
 				if (MenuTagHandler.MENU_RIGHT.equals(type)) {
-					builder.append(CssConstants.CSS_MENU_ITEM_RIGHT);
+					appendClass(builder, CssConstants.CSS_MENU_ITEM_RIGHT);
 				} else {
-					builder.append(CssConstants.CSS_MENU_ITEM_LEFT);
+					appendClass(builder, CssConstants.CSS_MENU_ITEM_LEFT);
 				}
 			} else {
-				builder.append(CssConstants.CSS_MENU_ITEM);
+				appendClass(builder, CssConstants.CSS_MENU_ITEM);
 			}			
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append(">" + HtmlConstants.OPEN_LINK_TAG);
 
@@ -180,23 +180,24 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 			
 			if (parent instanceof MenuTagHandler) {
 				if (MenuTagHandler.MENU_BOTTOM.equals(type)) {
-					builder.append(CssConstants.CSS_MENUT_ARROW_UP + ">");
+					appendClass(builder, CssConstants.CSS_MENUT_ARROW_UP);
 
 				} else if (MenuTagHandler.MENU_LEFT.equals(type)) {
-					builder.append(CssConstants.CSS_MENUT_ARROW_LEFT + ">");
+					appendClass(builder, CssConstants.CSS_MENUT_ARROW_LEFT);
 
 				} else if (MenuTagHandler.MENU_RIGHT.equals(type)) {
-					builder.append(CssConstants.CSS_MENUT_ARROW_RIGHT + ">");
+					appendClass(builder, CssConstants.CSS_MENUT_ARROW_RIGHT);
 				} else {
-					builder.append(CssConstants.CSS_MENUT_ARROW_DOWN + ">");
+					appendClass(builder, CssConstants.CSS_MENUT_ARROW_DOWN);
 				}
 			} else {
 				if (MenuTagHandler.MENU_RIGHT.equals(type)) {
-					builder.append(CssConstants.CSS_MENUT_ITEM_ARROW_RIGHT + ">");
+					appendClass(builder, CssConstants.CSS_MENUT_ITEM_ARROW_RIGHT);
 				} else {
-					builder.append(CssConstants.CSS_MENUT_ITEM_ARROW_LEFT + ">");
+					appendClass(builder, CssConstants.CSS_MENUT_ITEM_ARROW_LEFT);
 				}
 			}
+			builder.append(">");
 			builder.append(HtmlConstants.CLOSE_DIV_TAG);
 
 			builder.append(HtmlConstants.OPEN_UNORDERED_LIST_TAG + ">");

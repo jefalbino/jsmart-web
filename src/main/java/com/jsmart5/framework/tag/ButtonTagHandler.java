@@ -103,7 +103,9 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		StringBuilder builder = new StringBuilder();	
 		
 		if (!actionItems.isEmpty()) {
-			builder.append(HtmlConstants.OPEN_DIV_TAG + CssConstants.CSS_BUTTON_GROUP + ">");
+			builder.append(HtmlConstants.OPEN_DIV_TAG);
+			appendClass(builder, CssConstants.CSS_BUTTON_GROUP);
+			builder.append(">");
 		}
 
 		if (image != null) {
@@ -122,19 +124,19 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (image != null) {
-				builder.append(CssConstants.CSS_BUTTON_IMAGE);
+				appendClass(builder, CssConstants.CSS_BUTTON_IMAGE);
 			} else {
 				if (parentGroup) {
 					if (!actionItems.isEmpty()) {
-						builder.append(CssConstants.CSS_BUTTON_DEFAULT_GROUP_ITEM);
+						appendClass(builder, CssConstants.CSS_BUTTON_DEFAULT_GROUP_ITEM);
 					} else {
-						builder.append(CssConstants.CSS_BUTTON_GROUP_ITEM);
+						appendClass(builder, CssConstants.CSS_BUTTON_GROUP_ITEM);
 					}
 				} else {
 					if (!actionItems.isEmpty()) {
-						builder.append(CssConstants.CSS_BUTTON_DEFAULT);
+						appendClass(builder, CssConstants.CSS_BUTTON_DEFAULT);
 					} else {
-						builder.append(CssConstants.CSS_BUTTON);
+						appendClass(builder, CssConstants.CSS_BUTTON);
 					}
 				}
 			}
@@ -195,7 +197,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			}
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		String val = (String) getTagValue(label);
 
@@ -213,7 +215,8 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			builder.append(">");
 
 			if (icon != null) {
-				builder.append(HtmlConstants.IMG_TAG + CssConstants.CSS_BUTTON_ICON);
+				builder.append(HtmlConstants.IMG_TAG);
+				appendClass(builder, CssConstants.CSS_BUTTON_ICON);
 				builder.append("src=\"" + icon + "\" alt=\"" + icon + "\" >");
 			}
 
@@ -226,9 +229,9 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			builder.append(HtmlConstants.OPEN_BUTTON_TAG);
 			
 			if (parentGroup) {
-				builder.append(CssConstants.CSS_BUTTON_DROPDOWN_GROUP_ITEM);
+				appendClass(builder, CssConstants.CSS_BUTTON_DROPDOWN_GROUP_ITEM);
 			} else {
-				builder.append(CssConstants.CSS_BUTTON_DROPDOWN);
+				appendClass(builder, CssConstants.CSS_BUTTON_DROPDOWN);
 			}
 
 			if (disabled) {
@@ -239,12 +242,14 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 			builder.append("type=\"button\" >&nbsp;");
 			builder.append(HtmlConstants.OPEN_DIV_TAG);
-			builder.append(CssConstants.CSS_BUTTON_DROPDOWN_ARROW + ">");
+			appendClass(builder, CssConstants.CSS_BUTTON_DROPDOWN_ARROW);
+			builder.append(">");
 			builder.append(HtmlConstants.CLOSE_DIV_TAG);
 			builder.append("&nbsp;" + HtmlConstants.CLOSE_BUTTON_TAG);
 
 			builder.append(HtmlConstants.OPEN_UNORDERED_LIST_TAG);
-			builder.append(CssConstants.CSS_BUTTON_DROPDOWN_LIST + ">");
+			appendClass(builder, CssConstants.CSS_BUTTON_DROPDOWN_LIST);
+			builder.append(">");
 
 			for (ButtonActionTagHandler actionItem : actionItems) {
 				builder.append(HtmlConstants.OPEN_LIST_ITEM_TAG + ">");

@@ -51,9 +51,9 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 		builder.append("id=\"" + id + "\" ");
 
 		if (inline) {
-			builder.append(CssConstants.CSS_BUTTON_GROUP_HORIZONTAL);
+			appendClass(builder, CssConstants.CSS_BUTTON_GROUP_HORIZONTAL);
 		} else {
-			builder.append(CssConstants.CSS_BUTTON_GROUP_VERTICAL);
+			appendClass(builder, CssConstants.CSS_BUTTON_GROUP_VERTICAL);
 		}
 
 		if (style != null) {

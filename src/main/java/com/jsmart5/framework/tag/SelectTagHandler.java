@@ -74,8 +74,12 @@ public final class SelectTagHandler extends SmartTagHandler {
 		StringBuilder builder = new StringBuilder();
 		
 		if (label != null) {
-			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
-			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL_SELECT + ">");
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_GROUP);
+			builder.append(">");
+			builder.append(OPEN_SPAN_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_LABEL_SELECT);
+			builder.append(">");
 
 			String labelVal = (String) getTagValue(label);
 			if (labelVal != null) {
@@ -99,13 +103,13 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 		} else {
 			if (multiple) {
-				builder.append(CssConstants.CSS_SELECT_MULTI);
+				appendClass(builder, CssConstants.CSS_SELECT_MULTI);
 			} else {
-				builder.append(CssConstants.CSS_SELECT);
+				appendClass(builder, CssConstants.CSS_SELECT);
 			}
 		}
 
-		appendScriptBuilder(scriptBuilder);
+		appendScript(scriptBuilder);
 
 		if (disabled || isEditRowTagEnabled()) {
 			builder.append("disabled=\"disabled\" ");
@@ -142,11 +146,11 @@ public final class SelectTagHandler extends SmartTagHandler {
 			builder.append(command);
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		appendFormValidator(builder);
 		
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		builder.append(">");
 

@@ -3436,13 +3436,13 @@ function Datepicker() {
 	this._datepickerShowing = false; // True if the popup picker is showing , false if not
 	this._inDialog = false; // True if showing within a "dialog", false if not
 	this._mainDivId = 'jsmart5_date_div'; // The ID of the main datepicker division
-	this._inlineClass = 'jsmart5_date_inline'; // The name of the inline marker class
-	this._appendClass = 'jsmart5_date_append'; // The name of the append marker class
-	this._triggerClass = 'jsmart5_date_image'; // The name of the trigger marker class
-	this._dialogClass = 'jsmart5_date_dialog'; // The name of the dialog marker class
-	this._unselectableClass = 'jsmart5_date_unselectable'; // The name of the unselectable cell marker class
-	this._currentClass = 'jsmart5_date_current_day'; // The name of the current day marker class
-	this._dayOverClass = 'jsmart5_date_cell_day_hover'; // The name of the day hover marker class
+	this._inlineClass = 'jsmart5_date_%s_inline'; // The name of the inline marker class
+	this._appendClass = 'jsmart5_date_%s_append'; // The name of the append marker class
+	this._triggerClass = 'jsmart5_date_%s_image'; // The name of the trigger marker class
+	this._dialogClass = 'jsmart5_date_%s_dialog'; // The name of the dialog marker class
+	this._unselectableClass = 'jsmart5_date_%s_unselectable'; // The name of the unselectable cell marker class
+	this._currentClass = 'jsmart5_date_%s_current_day'; // The name of the current day marker class
+	this._dayOverClass = 'jsmart5_date_%s_cell_day_hover'; // The name of the day hover marker class
 	this.regional = []; // Available regional settings, indexed by language code
 	this.regional[''] = { // Default regional settings
 		prevText: '', // Display text for previous month link
@@ -3509,10 +3509,11 @@ function Datepicker() {
 		constrainInput: true, // The input is constrained by the current date format
 		showButtonPanel: false, // True to show button panel, false to not show it
 		autoSize: false, // True to size the input for the date format, false to leave as is
-		disabled: false // The initial disabled state
+		disabled: false, // The initial disabled state
+		theme: '' // theme to include on date style
 	};
 	$.extend(this._defaults, this.regional['']);
-	this.dpDiv = bindHover($('<div id="' + this._mainDivId + '" class="jsmart5_date ui-widget ui-widget-content ui-corner-all"></div>'));
+	this.dpDiv = $('<div id="' + this._mainDivId + '" class="ui-widget ui-widget-content ui-corner-all"></div>');
 }
 
 $.extend(Datepicker.prototype, {
@@ -3566,6 +3567,12 @@ $.extend(Datepicker.prototype, {
 		}
 		var inst = this._newInst($(target), inline);
 		inst.settings = $.extend({}, settings || {}, inlineSettings || {});
+		
+		inst.dpDiv.addClass('jsmart5_date_%s'.replace('%s',  $.datepicker._get(inst, 'theme')));
+		if (inline) {
+			inst.dpDiv.addClass(this._inlineClass.replace('%s',  $.datepicker._get(inst, 'theme')));
+		}
+
 		if (nodeName == 'input') {
 			this._connectDatepicker(target, inst);
 		} else if (inline) {
@@ -3581,8 +3588,7 @@ $.extend(Datepicker.prototype, {
 			selectedDay: 0, selectedMonth: 0, selectedYear: 0, // current selection
 			drawMonth: 0, drawYear: 0, // month being drawn
 			inline: inline, // is datepicker inline or not
-			dpDiv: (!inline ? this.dpDiv : // presentation div
-			bindHover($('<div class="' + this._inlineClass + ' jsmart5_date ui-widget ui-widget-content ui-corner-all"></div>')))};
+			dpDiv: (!inline ? this.dpDiv : $('<div class="ui-widget ui-widget-content ui-corner-all"></div>'))};
 	},
 
 	/* Attach the date picker to an input field. */
@@ -3615,7 +3621,7 @@ $.extend(Datepicker.prototype, {
 		if (inst.append)
 			inst.append.remove();
 		if (appendText) {
-			inst.append = $('<span class="' + this._appendClass + '">' + appendText + '</span>');
+			inst.append = $('<span class="' + this._appendClass.replace('%s', $.datepicker._get(inst, 'theme')) + '">' + appendText + '</span>');
 			input[isRTL ? 'before' : 'after'](inst.append);
 		}
 		input.unbind('focus', this._showDatepicker);
@@ -3628,9 +3634,9 @@ $.extend(Datepicker.prototype, {
 			var buttonText = this._get(inst, 'buttonText');
 			var buttonImage = this._get(inst, 'buttonImage');
 			inst.trigger = $(this._get(inst, 'buttonImageOnly') ?
-				$('<img/>').addClass(this._triggerClass).
+				$('<img/>').addClass(this._triggerClass.replace('%s', $.datepicker._get(inst, 'theme'))).
 					attr({ src: buttonImage, alt: buttonText, title: buttonText }) :
-				$('<button type="button"></button>').addClass(this._triggerClass).
+				$('<button type="button"></button>').addClass(this._triggerClass.replace('%s', $.datepicker._get(inst, 'theme'))).
 					html(buttonImage == '' ? buttonText : $('<img/>').attr(
 					{ src:buttonImage, alt:buttonText, title:buttonText })));
 			input[isRTL ? 'before' : 'after'](inst.trigger);
@@ -3717,6 +3723,12 @@ $.extend(Datepicker.prototype, {
 			$('body').append(this._dialogInput);
 			inst = this._dialogInst = this._newInst(this._dialogInput, false);
 			inst.settings = {};
+
+			inst.dpDiv.addClass('jsmart5_date_%s'.replace('%s',  $.datepicker._get(inst, 'theme')));
+			if (inst.inline) {
+				inst.dpDiv.addClass(this._inlineClass.replace('%s',  $.datepicker._get(inst, 'theme')));
+			}
+
 			$.data(this._dialogInput[0], PROP_NAME, inst);
 		}
 		extendRemove(inst.settings, settings || {});
@@ -3737,7 +3749,7 @@ $.extend(Datepicker.prototype, {
 		this._dialogInput.css('left', (this._pos[0] + 20) + 'px').css('top', this._pos[1] + 'px');
 		inst.settings.onSelect = onSelect;
 		this._inDialog = true;
-		this.dpDiv.addClass(this._dialogClass);
+		this.dpDiv.addClass(this._dialogClass.replace('%s', $.datepicker._get(inst, 'theme')));
 		this._showDatepicker(this._dialogInput[0]);
 		if ($.blockUI)
 			$.blockUI(this.dpDiv);
@@ -3783,9 +3795,9 @@ $.extend(Datepicker.prototype, {
 				filter('img').css({opacity: '1.0', cursor: ''});
 		}
 		else if (nodeName == 'div' || nodeName == 'span') {
-			var inline = $target.children('.' + this._inlineClass);
+			var inline = $target.children('.' + this._inlineClass.replace('%s', $.datepicker._get(inst, 'theme')));
 			inline.children().removeClass('ui-state-disabled');
-			inline.find("select.jsmart5_date_month, select.jsmart5_date_year").
+			inline.find("select.jsmart5_date_%s_month".replace('%s', $.datepicker._get(inst, 'theme')) + ", select.jsmart5_date_%s_year".replace('%s', $.datepicker._get(inst, 'theme'))).
 				prop("disabled", false);
 		}
 		this._disabledInputs = $.map(this._disabledInputs,
@@ -3808,9 +3820,9 @@ $.extend(Datepicker.prototype, {
 				filter('img').css({opacity: '0.5', cursor: 'default'});
 		}
 		else if (nodeName == 'div' || nodeName == 'span') {
-			var inline = $target.children('.' + this._inlineClass);
+			var inline = $target.children('.' + this._inlineClass.replace('%s', $.datepicker._get(inst, 'theme')));
 			inline.children().addClass('ui-state-disabled');
-			inline.find("select.jsmart5_date_month, select.jsmart5_date_year").
+			inline.find("select.jsmart5_date_%s_month".replace('%s', $.datepicker._get(inst, 'theme')) + ", select.jsmart5_date_%s_year".replace('%s', $.datepicker._get(inst, 'theme'))).
 				prop("disabled", true);
 		}
 		this._disabledInputs = $.map(this._disabledInputs,
@@ -3927,15 +3939,15 @@ $.extend(Datepicker.prototype, {
 	_doKeyDown: function(event) {
 		var inst = $.datepicker._getInst(event.target);
 		var handled = true;
-		var isRTL = inst.dpDiv.is('.jsmart5_date_rtl');
+		var isRTL = inst.dpDiv.is('.jsmart5_date_%s_rtl'.replace('%s', $.datepicker._get(inst, 'theme')));
 		inst._keyEvent = true;
 		if ($.datepicker._datepickerShowing)
 			switch (event.keyCode) {
 				case 9: $.datepicker._hideDatepicker();
 						handled = false;
 						break; // hide on tab out
-				case 13: var sel = $('td.' + $.datepicker._dayOverClass + ':not(.' +
-									$.datepicker._currentClass + ')', inst.dpDiv);
+				case 13: var sel = $('td.' + $.datepicker._dayOverClass.replace('%s', $.datepicker._get(inst, 'theme')) + ':not(.' +
+									$.datepicker._currentClass.replace('%s', $.datepicker._get(inst, 'theme')) + ')', inst.dpDiv);
 						if (sel[0])
 							$.datepicker._selectDay(event.target, inst.selectedMonth, inst.selectedYear, sel[0]);
 							var onSelect = $.datepicker._get(inst, 'onSelect');
@@ -4086,7 +4098,7 @@ $.extend(Datepicker.prototype, {
 			var showAnim = $.datepicker._get(inst, 'showAnim');
 			var duration = $.datepicker._get(inst, 'duration');
 			var postProcess = function() {
-				var cover = inst.dpDiv.find('iframe.jsmart5_date_cover'); // IE6- only
+				var cover = inst.dpDiv.find('iframe.jsmart5_date_%s_cover'.replace('%s', $.datepicker._get(inst, 'theme'))); // IE6- only
 				if( !! cover.length ){
 					var borders = $.datepicker._getBorders(inst.dpDiv);
 					cover.css({left: -borders[0], top: -borders[1],
@@ -4116,21 +4128,21 @@ $.extend(Datepicker.prototype, {
 		instActive = inst; // for delegate hover events
 		inst.dpDiv.empty().append(this._generateHTML(inst));
 		this._attachHandlers(inst);
-		var cover = inst.dpDiv.find('iframe.jsmart5_date_cover'); // IE6- only
+		var cover = inst.dpDiv.find('iframe.jsmart5_date_%s_cover'.replace('%s', $.datepicker._get(inst, 'theme'))); // IE6- only
 		if( !!cover.length ){ //avoid call to outerXXXX() when not in IE6
 			cover.css({left: -borders[0], top: -borders[1], width: inst.dpDiv.outerWidth(), height: inst.dpDiv.outerHeight()})
 		}
-		inst.dpDiv.find('.' + this._dayOverClass + ' a').mouseover();
+		inst.dpDiv.find('.' + this._dayOverClass.replace('%s', $.datepicker._get(inst, 'theme')) + ' a').mouseover();
 		var numMonths = this._getNumberOfMonths(inst);
 		var cols = numMonths[1];
 		var width = 17;
-		inst.dpDiv.removeClass('jsmart5_date_multi_2 jsmart5_date_multi_3 jsmart5_date_multi_4').width('');
+		inst.dpDiv.removeClass('jsmart5_date_%s_multi_2'.replace('%s', $.datepicker._get(inst, 'theme')) + ' jsmart5_date_%s_multi_3'.replace('%s', $.datepicker._get(inst, 'theme')) + ' jsmart5_date_%s_multi_4'.replace('%s', $.datepicker._get(inst, 'theme'))).width('');
 		if (cols > 1)
-			inst.dpDiv.addClass('jsmart5_date_multi_' + cols).css('width', (width * cols) + 'em');
+			inst.dpDiv.addClass('jsmart5_date_%s_multi_'.replace('%s', $.datepicker._get(inst, 'theme')) + cols).css('width', (width * cols) + 'em');
 		inst.dpDiv[(numMonths[0] != 1 || numMonths[1] != 1 ? 'add' : 'remove') +
-			'Class']('jsmart5_date_multi');
+			'Class']('jsmart5_date_%s_multi'.replace('%s', $.datepicker._get(inst, 'theme')));
 		inst.dpDiv[(this._get(inst, 'isRTL') ? 'add' : 'remove') +
-			'Class']('jsmart5_date_rtl');
+			'Class']('jsmart5_date_%s_rtl'.replace('%s', $.datepicker._get(inst, 'theme')));
 		if (inst == $.datepicker._curInst && $.datepicker._datepickerShowing && inst.input &&
 				// #6694 - don't focus the input if it's already focused
 				// this breaks the change event in IE
@@ -4142,7 +4154,7 @@ $.extend(Datepicker.prototype, {
 			setTimeout(function(){
 				//assure that inst.yearshtml didn't change.
 				if( origyearshtml === inst.yearshtml && inst.yearshtml ){
-					inst.dpDiv.find('select.jsmart5_date_year:first').replaceWith(inst.yearshtml);
+					inst.dpDiv.find('select.jsmart5_date_%s_year:first'.replace('%s', $.datepicker._get(inst, 'theme'))).replaceWith(inst.yearshtml);
 				}
 				origyearshtml = inst.yearshtml = null;
 			}, 0);
@@ -4233,7 +4245,7 @@ $.extend(Datepicker.prototype, {
 
 	/* Tidy up after a dialog display. */
 	_tidyDialog: function(inst) {
-		inst.dpDiv.removeClass(this._dialogClass).unbind('.jsmart5_date_calendar');
+		inst.dpDiv.removeClass(this._dialogClass.replace('%s', $.datepicker._get(inst, 'theme'))).unbind('.jsmart5_date_%s_calendar'.replace('%s', $.datepicker._get(inst, 'theme')));
 	},
 
 	/* Close date picker if clicked elsewhere. */
@@ -4247,7 +4259,7 @@ $.extend(Datepicker.prototype, {
 		if ( ( ( $target[0].id != $.datepicker._mainDivId &&
 				$target.parents('#' + $.datepicker._mainDivId).length == 0 &&
 				!$target.hasClass($.datepicker.markerClassName) &&
-				!$target.closest("." + $.datepicker._triggerClass).length &&
+				!$target.closest("." + $.datepicker._triggerClass.replace('%s', $.datepicker._get(inst, 'theme'))).length &&
 				$.datepicker._datepickerShowing && !($.datepicker._inDialog && $.blockUI) ) ) ||
 			( $target.hasClass($.datepicker.markerClassName) && $.datepicker._curInst != inst ) )
 			$.datepicker._hideDatepicker();
@@ -4299,10 +4311,10 @@ $.extend(Datepicker.prototype, {
 	/* Action for selecting a day. */
 	_selectDay: function(id, month, year, td) {
 		var target = $(id);
-		if ($(td).hasClass(this._unselectableClass) || this._isDisabledDatepicker(target[0])) {
+		var inst = this._getInst(target[0]);
+		if ($(td).hasClass(this._unselectableClass.replace('%s', $.datepicker._get(inst, 'theme'))) || this._isDisabledDatepicker(target[0])) {
 			return;
 		}
-		var inst = this._getInst(target[0]);
 		inst.selectedDay = inst.currentDay = $('a', td).html();
 		inst.selectedMonth = inst.currentMonth = month;
 		inst.selectedYear = inst.currentYear = year;
@@ -4684,7 +4696,7 @@ $.extend(Datepicker.prototype, {
 
 	/* Get a setting value, defaulting if necessary. */
 	_get: function(inst, name) {
-		return inst.settings[name] !== undefined ?
+		return inst && inst.settings[name] !== undefined ?
 			inst.settings[name] : this._defaults[name];
 	},
 
@@ -4888,24 +4900,24 @@ $.extend(Datepicker.prototype, {
 			this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)),
 			this._getFormatConfig(inst)));
 		var prev = (this._canAdjustMonth(inst, -1, drawYear, drawMonth) ?
-			'<a class="jsmart5_date_prev" data-handler="prev" data-event="click"' +
+			'<a class="jsmart5_date_%s_prev"'.replace('%s', $.datepicker._get(inst, 'theme')) + ' data-handler="prev" data-event="click"' +
 			'><div class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'e' : 'w') + '">' + prevText + '</div></a>' :
-			(hideIfNoPrevNext ? '' : '<a class="jsmart5_date_prev ui-corner-all ui-state-disabled"><div class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'e' : 'w') + '">' + prevText + '</div></a>'));
+			(hideIfNoPrevNext ? '' : '<a class="jsmart5_date_%s_prev'.replace('%s', $.datepicker._get(inst, 'theme')) + ' ui-corner-all ui-state-disabled"><div class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'e' : 'w') + '">' + prevText + '</div></a>'));
 		var nextText = this._get(inst, 'nextText');
 		nextText = (!navigationAsDateFormat ? nextText : this.formatDate(nextText,
 			this._daylightSavingAdjust(new Date(drawYear, drawMonth + stepMonths, 1)),
 			this._getFormatConfig(inst)));
 		var next = (this._canAdjustMonth(inst, +1, drawYear, drawMonth) ?
-			'<a class="jsmart5_date_next ui-corner-all" data-handler="next" data-event="click"' +
+			'<a class="jsmart5_date_%s_next'.replace('%s', $.datepicker._get(inst, 'theme')) + ' ui-corner-all" data-handler="next" data-event="click"' +
 			'><div class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'w' : 'e') + '">' + nextText + '</div></a>' :
-			(hideIfNoPrevNext ? '' : '<a class="jsmart5_date_next ui-corner-all ui-state-disabled"><div class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'w' : 'e') + '">' + nextText + '</div></a>'));
+			(hideIfNoPrevNext ? '' : '<a class="jsmart5_date_%s_next'.replace('%s', $.datepicker._get(inst, 'theme')) + ' ui-corner-all ui-state-disabled"><div class="ui-icon ui-icon-circle-triangle-' + ( isRTL ? 'w' : 'e') + '">' + nextText + '</div></a>'));
 		var currentText = this._get(inst, 'currentText');
 		var gotoDate = (this._get(inst, 'gotoCurrent') && inst.currentDay ? currentDate : today);
 		currentText = (!navigationAsDateFormat ? currentText :
 			this.formatDate(currentText, gotoDate, this._getFormatConfig(inst)));
-		var controls = (!inst.inline ? '<button type="button" class="jsmart5_date_close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">' + '</button>' : '');
-		var buttonPanel = (showButtonPanel) ? '<div class="jsmart5_date_buttonpane ui-widget-content">' + (isRTL ? controls : '') +
-			(this._isInRange(inst, gotoDate) ? '<button type="button" class="jsmart5_date_current ui-state-default ui-priority-secondary ui-corner-all" data-handler="today" data-event="click"' +
+		var controls = (!inst.inline ? '<button type="button" class="jsmart5_date_%s_close'.replace('%s', $.datepicker._get(inst, 'theme')) + ' ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">' + '</button>' : '');
+		var buttonPanel = (showButtonPanel) ? '<div class="jsmart5_date_%s_buttonpane'.replace('%s', $.datepicker._get(inst, 'theme')) + ' ui-widget-content">' + (isRTL ? controls : '') +
+			(this._isInRange(inst, gotoDate) ? '<button type="button" class="jsmart5_date_%s_current'.replace('%s', $.datepicker._get(inst, 'theme')) + ' ui-state-default ui-priority-secondary ui-corner-all" data-handler="today" data-event="click"' +
 			'>' + currentText + '</button>' : '') + (isRTL ? '' : controls) + '</div>' : '';
 		var firstDay = parseInt(this._get(inst, 'firstDay'),10);
 		firstDay = (isNaN(firstDay) ? 0 : firstDay);
@@ -4929,28 +4941,28 @@ $.extend(Datepicker.prototype, {
 				var cornerClass = ' ui-corner-all';
 				var calender = '';
 				if (isMultiMonth) {
-					calender += '<div class="jsmart5_date_group';
+					calender += '<div class="jsmart5_date_%s_group'.replace('%s', $.datepicker._get(inst, 'theme'));
 					if (numMonths[1] > 1)
 						switch (col) {
-							case 0: calender += ' jsmart5_date_group_first';
+							case 0: calender += ' jsmart5_date_%s_group_first'.replace('%s', $.datepicker._get(inst, 'theme'));
 								cornerClass = ' ui-corner-' + (isRTL ? 'right' : 'left'); break;
-							case numMonths[1]-1: calender += ' jsmart5_date_group_last';
+							case numMonths[1]-1: calender += ' jsmart5_date_%s_group_last'.replace('%s', $.datepicker._get(inst, 'theme'));
 								cornerClass = ' ui-corner-' + (isRTL ? 'left' : 'right'); break;
-							default: calender += ' jsmart5_date_group_middle'; cornerClass = ''; break;
+							default: calender += ' jsmart5_date_%s_group_middle'.replace('%s', $.datepicker._get(inst, 'theme')); cornerClass = ''; break;
 						}
 					calender += '">';
 				}
-				calender += '<div class="jsmart5_date_header ui-widget-header ' + cornerClass + '">' +
+				calender += '<div class="jsmart5_date_%s_header ui-widget-header '.replace('%s', $.datepicker._get(inst, 'theme')) + cornerClass + '">' +
 					(/all|left/.test(cornerClass) && row == 0 ? (isRTL ? next : prev) : '') +
 					(/all|right/.test(cornerClass) && row == 0 ? (isRTL ? prev : next) : '') +
 					this._generateMonthYearHeader(inst, drawMonth, drawYear, minDate, maxDate,
 					row > 0 || col > 0, monthNames, monthNamesShort) + // draw month headers
-					'</div><table class="jsmart5_date_calendar"><thead>' +
+					'</div><table class="jsmart5_date_%s_calendar"><thead>'.replace('%s', $.datepicker._get(inst, 'theme')) +
 					'<tr>';
-				var thead = (showWeek ? '<th class="jsmart5_date_week_col">' + this._get(inst, 'weekHeader') + '</th>' : '');
+				var thead = (showWeek ? '<th class="jsmart5_date_%s_week_col">'.replace('%s', $.datepicker._get(inst, 'theme')) + this._get(inst, 'weekHeader') + '</th>' : '');
 				for (var dow = 0; dow < 7; dow++) { // days of the week
 					var day = (dow + firstDay) % 7;
-					thead += '<th' + ((dow + firstDay + 6) % 7 >= 5 ? ' class="jsmart5_date_week_end"' : '') + '>' +
+					thead += '<th' + ((dow + firstDay + 6) % 7 >= 5 ? ' class="jsmart5_date_%s_week_end"'.replace('%s', $.datepicker._get(inst, 'theme')) : '') + '>' +
 						'<span>' + dayNamesMin[day] + '</span></th>';
 				}
 				calender += thead + '</tr></thead><tbody>';
@@ -4964,7 +4976,7 @@ $.extend(Datepicker.prototype, {
 				var printDate = this._daylightSavingAdjust(new Date(drawYear, drawMonth, 1 - leadDays));
 				for (var dRow = 0; dRow < numRows; dRow++) { // create date picker rows
 					calender += '<tr>';
-					var tbody = (!showWeek ? '' : '<td class="jsmart5_date_week_col">' +
+					var tbody = (!showWeek ? '' : '<td class="jsmart5_date_%s_week_col">'.replace('%s', $.datepicker._get(inst, 'theme')) +
 						this._get(inst, 'calculateWeek')(printDate) + '</td>');
 					for (var dow = 0; dow < 7; dow++) { // create date picker days
 						var daySettings = (beforeShowDay ?
@@ -4973,16 +4985,16 @@ $.extend(Datepicker.prototype, {
 						var unselectable = (otherMonth && !selectOtherMonths) || !daySettings[0] ||
 							(minDate && printDate < minDate) || (maxDate && printDate > maxDate);
 						tbody += '<td class="' +
-							((dow + firstDay + 6) % 7 >= 5 ? ' jsmart5_date_week_end' : '') + // highlight weekends
-							(otherMonth ? ' jsmart5_date_other_month' : '') + // highlight days from other months
+							((dow + firstDay + 6) % 7 >= 5 ? ' jsmart5_date_%s_week_end'.replace('%s', $.datepicker._get(inst, 'theme')) : '') + // highlight weekends
+							(otherMonth ? ' jsmart5_date_%s_other_month'.replace('%s', $.datepicker._get(inst, 'theme')) : '') + // highlight days from other months
 							((printDate.getTime() == selectedDate.getTime() && drawMonth == inst.selectedMonth && inst._keyEvent) || // user pressed key
 							(defaultDate.getTime() == printDate.getTime() && defaultDate.getTime() == selectedDate.getTime()) ?
 							// or defaultDate is current printedDate and defaultDate is selectedDate
-							' ' + this._dayOverClass : '') + // highlight selected day
-							(unselectable ? ' ' + this._unselectableClass + ' ui-state-disabled': '') +  // highlight unselectable days
+							' ' + this._dayOverClass.replace('%s', $.datepicker._get(inst, 'theme')) : '') + // highlight selected day
+							(unselectable ? ' ' + this._unselectableClass.replace('%s', $.datepicker._get(inst, 'theme')) + ' ui-state-disabled': '') +  // highlight unselectable days
 							(otherMonth && !showOtherMonths ? '' : ' ' + daySettings[1] + // highlight custom dates
-							(printDate.getTime() == currentDate.getTime() ? ' ' + this._currentClass : '') + // highlight selected day
-							(printDate.getTime() == today.getTime() ? ' jsmart5_date_today' : '')) + '"' + // highlight today (if different)
+							(printDate.getTime() == currentDate.getTime() ? ' ' + this._currentClass.replace('%s', $.datepicker._get(inst, 'theme')) : '') + // highlight selected day
+							(printDate.getTime() == today.getTime() ? ' jsmart5_date_%s_today'.replace('%s', $.datepicker._get(inst, 'theme')) : '')) + '"' + // highlight today (if different)
 							((!otherMonth || showOtherMonths) && daySettings[2] ? '' : '') + // cell title
 							(unselectable ? '' : ' data-handler="selectDay" data-event="click" data-month="' + printDate.getMonth() + '" data-year="' + printDate.getFullYear() + '"') + '>' + // actions
 							(otherMonth && !showOtherMonths ? '&#xa0;' : // display for other months
@@ -5002,13 +5014,13 @@ $.extend(Datepicker.prototype, {
 					drawYear++;
 				}
 				calender += '</tbody></table>' + (isMultiMonth ? '</div>' +
-							((numMonths[0] > 0 && col == numMonths[1]-1) ? '<div class="jsmart5_date_row_break"></div>' : '') : '');
+							((numMonths[0] > 0 && col == numMonths[1]-1) ? '<div class="jsmart5_date_%s_row_break"></div>'.replace('%s', $.datepicker._get(inst, 'theme')) : '') : '');
 				group += calender;
 			}
 			html += group;
 		}
 		html += buttonPanel + ($.ui.ie6 && !inst.inline ?
-			'<iframe src="javascript:false;" class="jsmart5_date_cover" frameborder="0"></iframe>' : '');
+			'<iframe src="javascript:false;" class="jsmart5_date_%s_cover" frameborder="0"></iframe>'.replace('%s', $.datepicker._get(inst, 'theme')) : '');
 		inst._keyEvent = false;
 		return html;
 	},
@@ -5019,15 +5031,15 @@ $.extend(Datepicker.prototype, {
 		var changeMonth = this._get(inst, 'changeMonth');
 		var changeYear = this._get(inst, 'changeYear');
 		var showMonthAfterYear = this._get(inst, 'showMonthAfterYear');
-		var html = '<div class="jsmart5_date_title">';
+		var html = '<div class="jsmart5_date_%s_title">'.replace('%s', $.datepicker._get(inst, 'theme'));
 		var monthHtml = '';
 		// month selection
 		if (secondary || !changeMonth)
-			monthHtml += '<span class="jsmart5_date_month">' + monthNames[drawMonth] + '</span>';
+			monthHtml += '<span class="jsmart5_date_%s_month">'.replace('%s', $.datepicker._get(inst, 'theme')) + monthNames[drawMonth] + '</span>';
 		else {
 			var inMinYear = (minDate && minDate.getFullYear() == drawYear);
 			var inMaxYear = (maxDate && maxDate.getFullYear() == drawYear);
-			monthHtml += '<select class="jsmart5_date_month" data-handler="selectMonth" data-event="change">';
+			monthHtml += '<select class="jsmart5_date_%s_month" data-handler="selectMonth" data-event="change">'.replace('%s', $.datepicker._get(inst, 'theme'));
 			for (var month = 0; month < 12; month++) {
 				if ((!inMinYear || month >= minDate.getMonth()) &&
 						(!inMaxYear || month <= maxDate.getMonth()))
@@ -5043,7 +5055,7 @@ $.extend(Datepicker.prototype, {
 		if ( !inst.yearshtml ) {
 			inst.yearshtml = '';
 			if (secondary || !changeYear)
-				html += '<span class="jsmart5_date_year">' + drawYear + '</span>';
+				html += '<span class="jsmart5_date_%s_year">'.replace('%s', $.datepicker._get(inst, 'theme')) + drawYear + '</span>';
 			else {
 				// determine range of years to display
 				var years = this._get(inst, 'yearRange').split(':');
@@ -5058,7 +5070,7 @@ $.extend(Datepicker.prototype, {
 				var endYear = Math.max(year, determineYear(years[1] || ''));
 				year = (minDate ? Math.max(year, minDate.getFullYear()) : year);
 				endYear = (maxDate ? Math.min(endYear, maxDate.getFullYear()) : endYear);
-				inst.yearshtml += '<select class="jsmart5_date_year" data-handler="selectYear" data-event="change">';
+				inst.yearshtml += '<select class="jsmart5_date_%s_year" data-handler="selectYear" data-event="change">'.replace('%s', $.datepicker._get(inst, 'theme'));
 				for (; year <= endYear; year++) {
 					inst.yearshtml += '<option value="' + year + '"' +
 						(year == drawYear ? ' selected="selected"' : '') +
@@ -5172,28 +5184,6 @@ $.extend(Datepicker.prototype, {
 	}
 });
 
-/*
- * Bind hover events for datepicker elements.
- * Done via delegate so the binding only occurs once in the lifetime of the parent div.
- * Global instActive, set by _updateDatepicker allows the handlers to find their way back to the active picker.
- */
-function bindHover(dpDiv) {
-	var selector = 'button, .jsmart5_date_prev, .jsmart5_date_next, .jsmart5_date_calendar td a';
-	return dpDiv.delegate(selector, 'mouseout', function() {
-			$(this).removeClass('ui-state-hover');
-			if (this.className.indexOf('jsmart5_date_prev') != -1) $(this).removeClass('jsmart5_date_prev_hover');
-			if (this.className.indexOf('jsmart5_date_next') != -1) $(this).removeClass('jsmart5_date_next_hover');
-		})
-		.delegate(selector, 'mouseover', function(){
-			if (!$.datepicker._isDisabledDatepicker( instActive.inline ? dpDiv.parent()[0] : instActive.input[0])) {
-				$(this).parents('.jsmart5_date_calendar').find('a').removeClass('ui-state-hover');
-				$(this).addClass('ui-state-hover');
-				if (this.className.indexOf('jsmart5_date_prev') != -1) $(this).addClass('jsmart5_date_prev_hover');
-				if (this.className.indexOf('jsmart5_date_next') != -1) $(this).addClass('jsmart5_date_next_hover');
-			}
-		});
-}
-
 /* jQuery extend now ignores nulls! */
 function extendRemove(target, props) {
 	$.extend(target, props);
@@ -5248,7 +5238,7 @@ window['DP_jQuery_' + dpuuid] = $;
 })(jQuery);
 (function( $, undefined ) {
 
-var uiDialogClasses = "jsmart5_dialog ui-widget ui-widget-content ui-corner-all ",
+var uiDialogClasses = "jsmart5_dialog_%s ui-widget ui-widget-content ui-corner-all ",
 	sizeRelatedOptions = {
 		buttons: true,
 		height: true,
@@ -5298,7 +5288,8 @@ $.widget("ui.dialog", {
 		stack: true,
 		title: "",
 		width: 300,
-		zIndex: 1000
+		zIndex: 1000,
+		theme: '' // theme to include on date style
 	},
 
 	_create: function() {
@@ -5312,6 +5303,7 @@ $.widget("ui.dialog", {
 			index: this.element.parent().children().index( this.element )
 		};
 		this.options.title = this.options.title || this.originalTitle;
+
 		var that = this,
 			options = this.options,
 
@@ -5323,7 +5315,7 @@ $.widget("ui.dialog", {
 			uiDialogButtonPane;
 
 			uiDialog = ( this.uiDialog = $( "<div>" ) )
-				.addClass( uiDialogClasses + options.dialogClass )
+				.addClass( uiDialogClasses.replace('%s', that.options.theme) + options.dialogClass )
 				.css({
 					display: "none",
 					outline: 0, // TODO: move to stylesheet
@@ -5346,11 +5338,11 @@ $.widget("ui.dialog", {
 			this.element
 				.show()
 				.removeAttr( "title" )
-				.addClass( "jsmart5_dialog_content ui-widget-content" )
+				.addClass( "jsmart5_dialog_%s_content".replace('%s', that.options.theme) + " ui-widget-content" )
 				.appendTo( uiDialog );
 
 			uiDialogTitlebar = ( this.uiDialogTitlebar = $( "<div>" ) )
-				.addClass( "jsmart5_dialog_titlebar  ui-widget-header  " +
+				.addClass( "jsmart5_dialog_%s_titlebar".replace('%s', that.options.theme) + "  ui-widget-header  " +
 					"ui-corner-all  ui-helper-clearfix" )
 				.bind( "mousedown", function() {
 					// Dialog isn't getting focus when dragging (#8063)
@@ -5359,7 +5351,7 @@ $.widget("ui.dialog", {
 				.prependTo( uiDialog );
 
 			uiDialogTitlebarClose = $( "<span></span>" )
-				.addClass( "jsmart5_dialog_titlebar_close ui-corner-all" )
+				.addClass( "jsmart5_dialog_%s_titlebar_close".replace('%s', that.options.theme) + " ui-corner-all" )
 				.attr( "role", "button" )
 				.click(function( event ) {
 					event.preventDefault();
@@ -5369,15 +5361,15 @@ $.widget("ui.dialog", {
 
 			uiDialogTitle = $( "<span>" )
 				.uniqueId()
-				.addClass( "jsmart5_dialog_title" )
+				.addClass( "jsmart5_dialog_%s_title".replace('%s', that.options.theme) )
 				.html( title )
 				.prependTo( uiDialogTitlebar );
 
 			uiDialogButtonPane = ( this.uiDialogButtonPane = $( "<div>" ) )
-				.addClass( "jsmart5_dialog_buttonpane ui-widget-content ui-helper-clearfix" );
+				.addClass( "jsmart5_dialog_%s_buttonpane".replace('%s', that.options.theme) + " ui-widget-content ui-helper-clearfix" );
 
 			( this.uiButtonSet = $( "<div>" ) )
-				.addClass( "jsmart5_dialog_buttonset" )
+				.addClass( "jsmart5_dialog_%s_buttonset".replace('%s', that.options.theme) )
 				.appendTo( uiDialogButtonPane );
 
 		uiDialog.attr({
@@ -5438,7 +5430,7 @@ $.widget("ui.dialog", {
 		}
 		this.uiDialog.hide();
 		this.element
-			.removeClass( "jsmart5_dialog_content ui-widget-content" )
+			.removeClass( "jsmart5_dialog_%s_content".replace('%s', this.options.theme) + " ui-widget-content" )
 			.hide()
 			.appendTo( "body" );
 		this.uiDialog.remove();
@@ -5492,7 +5484,7 @@ $.widget("ui.dialog", {
 		// adjust the maxZ to allow other modal dialogs to continue to work (see #4309)
 		if ( this.options.modal ) {
 			maxZ = 0;
-			$( ".jsmart5_dialog" ).each(function() {
+			$( ".jsmart5_dialog_%s".replace('%s', this.options.theme) ).each(function() {
 				if ( this !== that.uiDialog[0] ) {
 					thisZ = $( this ).css( "z-index" );
 					if ( !isNaN( thisZ ) ) {
@@ -5609,10 +5601,10 @@ $.widget("ui.dialog", {
 					button.button();
 				}
 			});
-			this.uiDialog.addClass( "jsmart5_dialog_buttons" );
+			this.uiDialog.addClass( "jsmart5_dialog_%s_buttons".replace('%s', this.options.theme) );
 			this.uiDialogButtonPane.appendTo( this.uiDialog );
 		} else {
-			this.uiDialog.removeClass( "jsmart5_dialog_buttons" );
+			this.uiDialog.removeClass( "jsmart5_dialog_%s_buttons".replace('%s', this.options.theme) );
 		}
 	},
 
@@ -5628,12 +5620,12 @@ $.widget("ui.dialog", {
 		}
 
 		this.uiDialog.draggable({
-			cancel: ".jsmart5_dialog_content, .jsmart5_dialog_titlebar_close",
-			handle: ".jsmart5_dialog_titlebar",
+			cancel: ".jsmart5_dialog_%s_content".replace('%s', this.options.theme) + ", .jsmart5_dialog_%s_titlebar_close".replace('%s', this.options.theme),
+			handle: ".jsmart5_dialog_%s_titlebar".replace('%s', this.options.theme),
 			containment: "document",
 			start: function( event, ui ) {
 				$( this )
-					.addClass( "jsmart5_dialog_dragging" );
+					.addClass( "jsmart5_dialog_%s_dragging".replace('%s', that.options.theme) );
 				that._trigger( "dragStart", event, filteredUi( ui ) );
 			},
 			drag: function( event, ui ) {
@@ -5645,7 +5637,7 @@ $.widget("ui.dialog", {
 					ui.position.top - that.document.scrollTop()
 				];
 				$( this )
-					.removeClass( "jsmart5_dialog_dragging" );
+					.removeClass( "jsmart5_dialog_%s_dragging".replace('%s', that.options.theme) );
 				that._trigger( "dragStop", event, filteredUi( ui ) );
 				$.ui.dialog.overlay.resize();
 			}
@@ -5673,7 +5665,7 @@ $.widget("ui.dialog", {
 		}
 
 		this.uiDialog.resizable({
-			cancel: ".jsmart5_dialog_content",
+			cancel: ".jsmart5_dialog_%s_content".replace('%s', this.options.theme),
 			containment: "document",
 			alsoResize: this.element,
 			maxWidth: options.maxWidth,
@@ -5682,14 +5674,14 @@ $.widget("ui.dialog", {
 			minHeight: this._minHeight(),
 			handles: resizeHandles,
 			start: function( event, ui ) {
-				$( this ).addClass( "jsmart5_dialog_resizing" );
+				$( this ).addClass( "jsmart5_dialog_%s_resizing".replace('%s', that.options.theme) );
 				that._trigger( "resizeStart", event, filteredUi( ui ) );
 			},
 			resize: function( event, ui ) {
 				that._trigger( "resize", event, filteredUi( ui ) );
 			},
 			stop: function( event, ui ) {
-				$( this ).removeClass( "jsmart5_dialog_resizing" );
+				$( this ).removeClass( "jsmart5_dialog_%s_resizing".replace('%s', that.options.theme) );
 				options.height = $( this ).height();
 				options.width = $( this ).width();
 				that._trigger( "resizeStop", event, filteredUi( ui ) );
@@ -5792,13 +5784,13 @@ $.widget("ui.dialog", {
 			case "dialogClass":
 				uiDialog
 					.removeClass( this.options.dialogClass )
-					.addClass( uiDialogClasses + value );
+					.addClass( uiDialogClasses.replace('%s', this.options.theme) + value );
 				break;
 			case "disabled":
 				if ( value ) {
-					uiDialog.addClass( "jsmart5_dialog_disabled" );
+					uiDialog.addClass( "jsmart5_dialog_%s_disabled".replace('%s', this.options.theme) );
 				} else {
-					uiDialog.removeClass( "jsmart5_dialog_disabled" );
+					uiDialog.removeClass( "jsmart5_dialog_%s_disabled".replace('%s', this.options.theme) );
 				}
 				break;
 			case "draggable":
@@ -5833,7 +5825,7 @@ $.widget("ui.dialog", {
 				break;
 			case "title":
 				// convert whatever was passed in o a string, for html() to not throw up
-				$( ".jsmart5_dialog_title", this.uiDialogTitlebar )
+				$( ".jsmart5_dialog_%s_title".replace('%s', this.options.theme), this.uiDialogTitlebar )
 					.html( "" + ( value || "&#160;" ) );
 				break;
 		}
@@ -5897,16 +5889,6 @@ $.widget("ui.dialog", {
 $.extend($.ui.dialog, {
 	uuid: 0,
 	maxZ: 0,
-
-	getTitleId: function($el) {
-		var id = $el.attr( "id" );
-		if ( !id ) {
-			this.uuid += 1;
-			id = this.uuid;
-		}
-		return "jsmart5_dialog_title_" + id;
-	},
-
 	overlay: function( dialog ) {
 		this.$el = $.ui.dialog.overlay.create( dialog );
 	}

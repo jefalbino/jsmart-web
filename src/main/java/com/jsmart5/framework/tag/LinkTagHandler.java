@@ -98,7 +98,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_LINK);
+			appendClass(builder, CssConstants.CSS_LINK);
 		}
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");
@@ -139,7 +139,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 			builder.append("ajax=\"" + getJSONValue(jsonAjax) + "\" ");
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append(">");
 

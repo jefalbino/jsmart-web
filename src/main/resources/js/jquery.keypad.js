@@ -83,10 +83,11 @@ function Keypad() {
 		randomiseAll: false, // True to randomise all key positions, false to keep in order
 		beforeShow: null, // Callback before showing the keypad
 		onKeypress: null, // Callback when a key is selected
-		onClose: null // Callback when the panel is closed
+		onClose: null, // Callback when the panel is closed
+		theme: '' // theme to include on date style
 	};
 	$.extend(this._defaults, this.regional['']);
-	this.mainDiv = $('<div class="' + this._mainDivClass + '" style="display: none;"></div>');
+	this.mainDiv = $('<div style="display: none;"></div>');
 }
 
 $.extend(Keypad.prototype, {
@@ -95,17 +96,17 @@ $.extend(Keypad.prototype, {
 	/* Name of the data property for instance settings. */
 	propertyName: 'keypad',
 
-	_mainDivClass: 'jsmart5_keypad_popup', // The main keypad division class
-	_inlineClass: 'jsmart5_keypad_inline', // The inline marker class
-	_triggerClass: 'jsmart5_keypad_trigger', // The trigger marker class
-	_disableClass: 'jsmart5_keypad_disabled', // The disabled covering marker class
-	_inlineEntryClass: 'jsmart5_keypad_keyentry', // The inline entry marker class
-	_rtlClass: 'jsmart5_keypad_rtl', // The right-to-left marker class
-	_rowClass: 'jsmart5_keypad_row', // The keypad row marker class
-	_specialClass: 'jsmart5_keypad_special', // The special key marker class
-	_namePrefixClass: 'jsmart5_keypad_', // The key name marker class prefix
-	_keyClass: 'jsmart5_keypad_key', // The key marker class
-	_keyDownClass: 'jsmart5_keypad_keydown', // The key down marker class
+	_mainDivClass: 'jsmart5_keypad_%s_popup', // The main keypad division class
+	_inlineClass: 'jsmart5_keypad_%s_inline', // The inline marker class
+	_triggerClass: 'jsmart5_keypad_%s_trigger', // The trigger marker class
+	_disableClass: 'jsmart5_keypad_%s_disabled', // The disabled covering marker class
+	_inlineEntryClass: 'jsmart5_keypad_%s_keyentry', // The inline entry marker class
+	_rtlClass: 'jsmart5_keypad_%s_rtl', // The right-to-left marker class
+	_rowClass: 'jsmart5_keypad_%s_row', // The keypad row marker class
+	_specialClass: 'jsmart5_keypad_%s_special', // The special key marker class
+	_namePrefixClass: 'jsmart5_keypad_%s_', // The key name marker class prefix
+	_keyClass: 'jsmart5_keypad_%s_key', // The key marker class
+	_keyDownClass: 'jsmart5_keypad_%s_keydown', // The key down marker class
 
 	/* Override the default settings for all keypad instances.
 	   @param  settings  (object) the new settings to use as defaults
@@ -143,8 +144,12 @@ $.extend(Keypad.prototype, {
 		}
 		var inline = !target[0].nodeName.toLowerCase().match(/input|textarea/);
 		var inst = {options: $.extend({}, this._defaults, options), _inline: inline,
-			_mainDiv: (inline ? $('<div class="' + this._inlineClass + '"></div>') : plugin.mainDiv),
+			_mainDiv: (inline ? $('<div></div>') : plugin.mainDiv),
 			ucase: false};
+		inst._mainDiv.addClass(this._mainDivClass.replace('%s', inst.options.theme));
+		if (inline) {
+			inst._mainDiv.addClass(this._inlineClass.replace('%s', inst.options.theme));
+		}
 		this._setInput(target, inst);
 		this._connectKeypad(target, inst);
 		if (inline) {
@@ -163,7 +168,7 @@ $.extend(Keypad.prototype, {
 	   @param  inst    (object) the instance settings */
 	_setInput: function(target, inst) {
 		inst._input = $(!inst._inline ? target : inst.options.target ||
-			'<input type="text" class="' + this._inlineEntryClass + '" disabled="disabled"/>');
+			'<input type="text" class="' + this._inlineEntryClass.replace('%s', this._curInst.options.theme) + '" disabled="disabled"/>');
 		if (inst._inline) {
 			target.find('input').remove();
 			if (!inst.options.target) {
@@ -190,7 +195,7 @@ $.extend(Keypad.prototype, {
 				});
 				var trigger = $($('<button target="' + target.attr('id') + '" type="button"></button>'));
 				target[inst.options.isRTL ? 'before' : 'after'](trigger);
-				trigger.addClass(this._triggerClass).click(function() {
+				trigger.addClass(this._triggerClass.replace('%s', inst.options.theme)).click(function() {
 					if (plugin._keypadShowing && plugin._lastField == target[0]) {
 						plugin._hidePlugin();
 					}
@@ -256,8 +261,8 @@ $.extend(Keypad.prototype, {
 		if (this._curInst == inst) {
 			this._hidePlugin();
 		}
-		target.siblings('.' + this._triggerClass).remove().end().
-			prev('.' + this._inlineEntryClass).remove();
+		target.siblings('.' + this._triggerClass.replace('%s', inst.options.theme)).remove().end().
+			prev('.' + this._inlineEntryClass.replace('%s', inst.options.theme)).remove();
 		target.removeClass(this.markerClassName).empty().
 			unbind('.' + this.propertyName).
 			removeData(this.propertyName)
@@ -275,13 +280,13 @@ $.extend(Keypad.prototype, {
 		var nodeName = target[0].nodeName.toLowerCase();
 		if (nodeName.match(/input|textarea/)) {
 			target[0].disabled = false;
-			target.siblings('button.' + this._triggerClass).
+			target.siblings('button.' + this._triggerClass.replace('%s', this._curInst.options.theme)).
 				each(function() { this.disabled = false; }).end().
-				siblings('img.' + this._triggerClass).
+				siblings('img.' + this._triggerClass.replace('%s', this._curInst.options.theme)).
 				css({opacity: '1.0', cursor: ''});
 		}
 		else if (nodeName.match(/div|span/)) {
-			target.children('.' + this._disableClass).remove();
+			target.children('.' + this._disableClass.replace('%s', this._curInst.options.theme)).remove();
 			var inst = target.data(this.propertyName);
 			inst._mainDiv.find('button').removeAttr('disabled');
 		}
@@ -299,13 +304,13 @@ $.extend(Keypad.prototype, {
 		var nodeName = target[0].nodeName.toLowerCase();
 		if (nodeName.match(/input|textarea/)) {
 			target[0].disabled = true;
-			target.siblings('button.' + this._triggerClass).
+			target.siblings('button.' + this._triggerClass.replace('%s', this._curInst.options.theme)).
 				each(function() { this.disabled = true; }).end().
-				siblings('img.' + this._triggerClass).
+				siblings('img.' + this._triggerClass.replace('%s', this._curInst.options.theme)).
 				css({opacity: '0.5', cursor: 'default'});
 		}
 		else if (nodeName.match(/div|span/)) {
-			var inline = target.children('.' + this._inlineClass);
+			var inline = target.children('.' + this._inlineClass.replace('%s', this._curInst.options.theme));
 			var offset = inline.offset();
 			var relOffset = {left: 0, top: 0};
 			inline.parents().each(function() {
@@ -314,7 +319,7 @@ $.extend(Keypad.prototype, {
 					return false;
 				}
 			});
-			target.prepend('<div class="' + this._disableClass + '" style="width: ' +
+			target.prepend('<div class="' + this._disableClass.replace('%s', this._curInst.options.theme) + '" style="width: ' +
 				inline.outerWidth() + 'px; height: ' + inline.outerHeight() +
 				'px; left: ' + (offset.left - relOffset.left) +
 				'px; top: ' + (offset.top - relOffset.top) + 'px;"></div>');
@@ -392,8 +397,8 @@ $.extend(Keypad.prototype, {
 		inst._mainDiv.empty().append(this._generateHTML(inst)).
 			removeClass().addClass(inst.options.keypadClass +
 				(inst.options.useThemeRoller ? ' ui-widget ui-widget-content' : '') +
-				(inst.options.isRTL ? ' ' + this._rtlClass : '') + ' ' +
-				(inst._inline ? this._inlineClass : this._mainDivClass));
+				(inst.options.isRTL ? ' ' + this._rtlClass.replace('%s', inst.options.theme) : '') + ' ' +
+				(inst._inline ? this._inlineClass.replace('%s', inst.options.theme) : this._mainDivClass.replace('%s', inst.options.theme)));
 		if ($.isFunction(inst.options.beforeShow)) {
 			inst.options.beforeShow.apply((inst._input ? inst._input[0] : null),
 				[inst._mainDiv, inst]);
@@ -510,9 +515,9 @@ $.extend(Keypad.prototype, {
 			return;
 		}
 		var target = $(event.target);
-		if (!target.parents().andSelf().hasClass(plugin._mainDivClass) &&
+		if (!target.parents().andSelf().hasClass(plugin._mainDivClass.replace('%s', plugin._curInst.options.theme)) &&
 				!target.hasClass(plugin.markerClassName) &&
-				!target.parents().andSelf().hasClass(plugin._triggerClass) &&
+				!target.parents().andSelf().hasClass(plugin._triggerClass.replace('%s', plugin._curInst.options.theme)) &&
 				plugin._keypadShowing) {
 			plugin._hidePlugin();
 		}
@@ -673,7 +678,7 @@ $.extend(Keypad.prototype, {
 		var html = '';
 		var layout = this._randomiseLayout(inst);
 		for (var i = 0; i < layout.length; i++) {
-			html += '<div class="' + this._rowClass + '">';
+			html += '<div class="' + this._rowClass.replace('%s', inst.options.theme) + '">';
 			var keys = layout[i].split(inst.options.separator);
 			for (var j = 0; j < keys.length; j++) {
 				if (inst.ucase) {
@@ -681,15 +686,15 @@ $.extend(Keypad.prototype, {
 				}
 				var keyDef = this._specialKeys[keys[j].charCodeAt(0)];
 				if (keyDef) {
-					html += (keyDef.action ? '<button type="button" class="' + this._specialClass +
-						' ' + this._namePrefixClass + keyDef.name +
+					html += (keyDef.action ? '<button type="button" class="' + this._specialClass.replace('%s', inst.options.theme) +
+						' ' + this._namePrefixClass.replace('%s', inst.options.theme) + keyDef.name +
 						(inst.options.useThemeRoller ? ' ui-corner-all ui-state-default' +
 						(keyDef.noHighlight ? '' : ' ui-state-highlight') : '') + '">' +
 						(inst.options[keyDef.name + 'Text'] || '&nbsp;') + '</button>' :
-						'<div class="' + this._namePrefixClass + keyDef.name + '"></div>');
+						'<div class="' + this._namePrefixClass.replace('%s', inst.options.theme) + keyDef.name + '"></div>');
 				}
 				else {
-					html += '<button type="button" class="' + this._keyClass +
+					html += '<button type="button" class="' + this._keyClass.replace('%s', inst.options.theme) +
 						(inst.options.useThemeRoller ? ' ui-corner-all ui-state-default' : '') + '">' +
 						(keys[j] == ' ' ? '&nbsp;' : keys[j]) + '</button>';
 				}
@@ -698,13 +703,13 @@ $.extend(Keypad.prototype, {
 		}
 		html = $(html);
 		var thisInst = inst;
-		var activeClasses = this._keyDownClass + (inst.options.useThemeRoller ? ' ui-state-active' : '');
+		var activeClasses = this._keyDownClass.replace('%s', inst.options.theme) + (inst.options.useThemeRoller ? ' ui-state-active' : '');
 		html.find('button').mousedown(function() { $(this).addClass(activeClasses); }).
 			mouseup(function() { $(this).removeClass(activeClasses); }).
 			mouseout(function() { $(this).removeClass(activeClasses); }).
-			filter('.' + this._keyClass).click(function() { plugin._selectValue(thisInst, $(this).text()); });
+			filter('.' + this._keyClass.replace('%s', inst.options.theme)).click(function() { plugin._selectValue(thisInst, $(this).text()); });
 		$.each(this._specialKeys, function(i, keyDef) {
-			html.find('.' + plugin._namePrefixClass + keyDef.name).click(function() {
+			html.find('.' + plugin._namePrefixClass.replace('%s', inst.options.theme) + keyDef.name).click(function() {
 				keyDef.action.apply(thisInst._input, [thisInst]);
 			});
 		});

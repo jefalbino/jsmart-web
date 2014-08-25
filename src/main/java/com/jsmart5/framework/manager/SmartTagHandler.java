@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import static com.jsmart5.framework.manager.SmartExpression.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
 import static com.jsmart5.framework.manager.SmartText.*;
+import static com.jsmart5.framework.manager.SmartConfig.*;
 
 public abstract class SmartTagHandler extends SimpleTagSupport {
 
@@ -127,6 +128,8 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	public String rest;
 
+	public String theme;
+
 	public String style;
 
 	public String styleClass;
@@ -210,6 +213,10 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		this.rest = rest;
 	}
 
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+
 	public void setStyle(String style) {
 		this.style = style;
 	}
@@ -274,11 +281,11 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		this.onSelect = onSelect;
 	}
 
-	protected void appendScriptBuilder(StringBuilder script) {
-		appendScriptBuilder(script, false);
+	protected void appendScript(StringBuilder script) {
+		appendScript(script, false);
 	}
 
-	protected void appendScriptBuilder(StringBuilder script, boolean appendToEnd) {
+	protected void appendScript(StringBuilder script, boolean appendToEnd) {
 		StringBuilder[] scriptBuilders = (StringBuilder[]) SmartContext.getSession().getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
 		if (scriptBuilders == null) {
 			scriptBuilders = new StringBuilder[] {new StringBuilder(), new StringBuilder()};
@@ -291,7 +298,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		}
 	}
 
-	protected void prependScriptBuilder(StringBuilder script) {
+	protected void prependScript(StringBuilder script) {
 		StringBuilder[] scriptBuilders = (StringBuilder[]) SmartContext.getSession().getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
 		if (scriptBuilders == null) {
 			scriptBuilders = new StringBuilder[] {new StringBuilder(), new StringBuilder()};
@@ -392,58 +399,76 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		}
 	}
 
-	protected void appendRestBuilder(StringBuilder builder) throws JspException, IOException {
+	protected void appendRest(StringBuilder builder) throws JspException, IOException {
 		if (rest != null) {
 			builder.append("rest=\"" + rest + "\" ");
 		}
 	}
 
-	protected void appendEventBuilder(StringBuilder builder) {
-		if (onClick != null) {
-			appendEventBuilder(builder, ON_CLICK, onClick);
+	protected void appendThemeOption(StringBuilder builder) throws JspException, IOException {
+		if (theme == null) {
+			theme = CONFIG.getContent().getTheme();
 		}
-		if (onDblClick != null) {
-			appendEventBuilder(builder, ON_DBL_CLICK, onDblClick);
+		builder.append("theme:'" + theme + "',");
+	}
+
+	protected void appendClass(StringBuilder builder, String styleClass) throws JspException, IOException {
+		if (theme == null) {
+			theme = CONFIG.getContent().getTheme();
 		}
-		if (onMouseDown != null) {
-			appendEventBuilder(builder, ON_MOUSE_DOWN, onMouseDown);
-		}
-		if (onMouseMove != null) {
-			appendEventBuilder(builder, ON_MOUSE_MOVE, onMouseMove);
-		}
-		if (onMouseOver != null) {
-			appendEventBuilder(builder, ON_MOUSE_OVER, onMouseOver);
-		}
-		if (onMouseOut != null) {
-			appendEventBuilder(builder, ON_MOUSE_OUT, onMouseOut);
-		}
-		if (onMouseUp != null) {
-			appendEventBuilder(builder, ON_MOUSE_UP, onMouseUp);
-		}
-		if (onKeyDown != null) {
-			appendEventBuilder(builder, ON_KEY_DOWN, onKeyDown);
-		}
-		if (onKeyPress != null) {
-			appendEventBuilder(builder, ON_KEY_PRESS, onKeyPress);
-		}
-		if (onKeyUp != null) {
-			appendEventBuilder(builder, ON_KEY_UP, onKeyUp);
-		}
-		if (onBlur != null) {
-			appendEventBuilder(builder, ON_BLUR, onBlur);
-		}
-		if (onChange != null) {
-			appendEventBuilder(builder, ON_CHANGE, onChange);
-		}
-		if (onFocus != null) {
-			appendEventBuilder(builder, ON_FOCUS, onFocus);
-		}
-		if (onSelect != null) {
-			appendEventBuilder(builder, ON_SELECT, onSelect);
+		if (styleClass.contains("%s")) {
+			builder.append("class=\"" + styleClass.replace("%s", theme) + "\" ");			
+		} else {
+			builder.append("class=\"" + styleClass + "\" ");
 		}
 	}
 
-	private void appendEventBuilder(StringBuilder builder, String attr, String exec) {
+	protected void appendEvent(StringBuilder builder) {
+		if (onClick != null) {
+			appendEvent(builder, ON_CLICK, onClick);
+		}
+		if (onDblClick != null) {
+			appendEvent(builder, ON_DBL_CLICK, onDblClick);
+		}
+		if (onMouseDown != null) {
+			appendEvent(builder, ON_MOUSE_DOWN, onMouseDown);
+		}
+		if (onMouseMove != null) {
+			appendEvent(builder, ON_MOUSE_MOVE, onMouseMove);
+		}
+		if (onMouseOver != null) {
+			appendEvent(builder, ON_MOUSE_OVER, onMouseOver);
+		}
+		if (onMouseOut != null) {
+			appendEvent(builder, ON_MOUSE_OUT, onMouseOut);
+		}
+		if (onMouseUp != null) {
+			appendEvent(builder, ON_MOUSE_UP, onMouseUp);
+		}
+		if (onKeyDown != null) {
+			appendEvent(builder, ON_KEY_DOWN, onKeyDown);
+		}
+		if (onKeyPress != null) {
+			appendEvent(builder, ON_KEY_PRESS, onKeyPress);
+		}
+		if (onKeyUp != null) {
+			appendEvent(builder, ON_KEY_UP, onKeyUp);
+		}
+		if (onBlur != null) {
+			appendEvent(builder, ON_BLUR, onBlur);
+		}
+		if (onChange != null) {
+			appendEvent(builder, ON_CHANGE, onChange);
+		}
+		if (onFocus != null) {
+			appendEvent(builder, ON_FOCUS, onFocus);
+		}
+		if (onSelect != null) {
+			appendEvent(builder, ON_SELECT, onSelect);
+		}
+	}
+
+	private void appendEvent(StringBuilder builder, String attr, String exec) {
 		int index = builder.lastIndexOf(attr);
 		if (index >= 0) {
 			builder.replace(index, index + attr.length(), attr + exec + ";");

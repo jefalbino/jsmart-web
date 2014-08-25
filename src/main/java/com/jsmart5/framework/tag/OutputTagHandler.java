@@ -130,7 +130,7 @@ public final class OutputTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_OUTPUT);
+			appendClass(builder, CssConstants.CSS_OUTPUT);
 		}
 
 		if (target != null && (LABEL_TYPE.equals(type) || OUTPUT_TYPE.equals(type))) {

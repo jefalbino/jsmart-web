@@ -70,7 +70,7 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 
 		appendFormValidator(builder);
 		
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		if (rows != null) {
 			builder.append("rows=\"" + rows + "\" ");
@@ -87,7 +87,7 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_TEXTAREA);
+			appendClass(builder, CssConstants.CSS_TEXTAREA);
 		}
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");
@@ -102,7 +102,7 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 			builder.append("placeholder=\"" + getResourceString(placeHolder) + "\" "); 
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append(">");
 

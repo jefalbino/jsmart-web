@@ -58,7 +58,7 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_CHECKBOX);
+			appendClass(builder, CssConstants.CSS_CHECKBOX);
 		}
 
 		builder.append(">" + HtmlConstants.CHECKBOX_TAG);
@@ -72,7 +72,7 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 
 		appendFormValidator(builder);
 
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");
@@ -98,7 +98,7 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 			builder.append(ON_CLICK + JSConstants.JSMART_CHECKBOX.format("$(this)") + "\" ");
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append("/>" + HtmlConstants.OPEN_LABEL_TAG);
 

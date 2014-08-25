@@ -87,7 +87,7 @@ public final class ImageTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_IMAGE);
+			appendClass(builder, CssConstants.CSS_IMAGE);
 		}
 
 		if (width != null) {
@@ -102,7 +102,7 @@ public final class ImageTagHandler extends SmartTagHandler {
 			builder.append(ajaxCommand);
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append("/>");
 

@@ -37,9 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 	private int sessionTimeout;
 
-	private String defaultTheme = "BLUE";
-
-	private String theme = defaultTheme;
+	private String theme = SmartTheme.BLUE.toString();
 
 	private String[] messageFiles;
 
@@ -167,10 +165,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 		}
 	}
 
-	public String getDefaultTheme() {
-		return defaultTheme;
-	}
-
 	@XmlElement(name = "theme")
 	public String getTheme() {
 		return theme;
@@ -178,7 +172,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 	public void setTheme(String theme) {
 		if (theme != null && !theme.trim().isEmpty()) {
-			this.theme = theme;
+			if (SmartTheme.contains(theme)) {
+				this.theme = theme.toLowerCase();
+			}
 		}
 	}
 

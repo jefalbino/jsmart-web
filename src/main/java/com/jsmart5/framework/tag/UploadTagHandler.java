@@ -69,8 +69,12 @@ public final class UploadTagHandler extends SmartTagHandler {
 		builder.append("name=\"" + name + "\" type=\"hidden\" />");
 
 		if (label != null) {
-			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
-			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL_UPLOAD + ">");
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_GROUP);
+			builder.append(">");
+			builder.append(OPEN_SPAN_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_LABEL_UPLOAD);
+			builder.append(">");
 
 			String labelVal = (String) getTagValue(label);
 			if (labelVal != null) {
@@ -105,13 +109,13 @@ public final class UploadTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_UPLOAD);
+			appendClass(builder, CssConstants.CSS_UPLOAD);
 		}
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append("/>");
 

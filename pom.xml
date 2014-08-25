@@ -143,6 +143,27 @@
 						</configuration>
 					</plugin>
 
+					<!-- Process theme styles before packaging -->
+					<plugin>
+      					<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.3.2</version>
+      					<executions>
+        					<execution>
+          						<id>theme-style-process</id>
+          						<goals>
+            						<goal>exec</goal>
+          						</goals>
+        					</execution>
+      					</executions>
+      					<configuration>
+      						<mainClass>com.jsmart5.framework.manager.SmartThemeProcess</mainClass>
+      						<arguments>
+      							<argument>${project.version}</argument>
+      						</arguments>
+      					</configuration>
+    				</plugin>
+
 					<!-- Test plugin -->
 					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
@@ -169,6 +190,7 @@
 			                        <cssSourceDir>resources/css</cssSourceDir>
 									<cssSourceFiles>
 										<cssSourceFile>jquery.ui.general.css</cssSourceFile>
+										<cssSourceFile>jsmart5.general.css</cssSourceFile>
 										<cssSourceFile>jsmart5-0.0.3.css</cssSourceFile>
 									</cssSourceFiles>
 									<cssTargetDir>classes/css</cssTargetDir>
@@ -203,6 +225,8 @@
 						<configuration>
 							<excludes>
 								<exclude>**/jquery.ui.general.css</exclude>
+								<exclude>**/jsmart5.general.css</exclude>
+								<exclude>**/jsmart5.base.css</exclude>
 								<exclude>**/jsmart5-0.0.3.css</exclude>
 								<exclude>**/jsmart5.css</exclude>
 

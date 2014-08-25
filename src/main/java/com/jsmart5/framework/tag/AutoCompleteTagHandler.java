@@ -88,8 +88,12 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 		StringBuilder builder = new StringBuilder();
 		
 		if (label != null) {
-			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
-			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL + ">");
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_GROUP);
+			builder.append(">");
+			builder.append(OPEN_SPAN_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_LABEL);
+			builder.append(">");
 
 			String labelVal = (String) getTagValue(label);
 			if (labelVal != null) {
@@ -112,12 +116,12 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_AUTO_COMPLETE);
+			appendClass(builder, CssConstants.CSS_AUTO_COMPLETE);
 		}
 
 		appendFormValidator(builder);
 
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");
@@ -156,7 +160,7 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 
 		builder.append(ON_KEY_UP + JSConstants.JSMART_AUTOCOMPLETE.format(async, id) + "\" ");
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append("/>");
 		
@@ -167,7 +171,8 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 		List<String> completeValues = getCompleteValues();
 		if (completeValues != null) {
 			builder.append(OPEN_DIV_TAG + "id=\"" + id + COMPLETE_VALUES + "\" ");
-			builder.append(CssConstants.CSS_AUTO_COMPLETE_LIST + ">");
+			appendClass(builder, CssConstants.CSS_AUTO_COMPLETE_LIST);
+			builder.append(">");
 			builder.append(OPEN_UNORDERED_LIST_TAG + ">");
 
 			for (int i = 0; i < completeValues.size(); i++) {

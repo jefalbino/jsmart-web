@@ -154,8 +154,13 @@ public final class InputTagHandler extends SmartTagHandler {
 		StringBuilder builder = new StringBuilder();
 
 		if (label != null) {
-			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
-			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL + ">");
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_GROUP);
+			builder.append(">");
+
+			builder.append(OPEN_SPAN_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_LABEL);
+			builder.append(">");
 
 			String labelVal = (String) getTagValue(label);
 			if (labelVal != null) {
@@ -177,7 +182,7 @@ public final class InputTagHandler extends SmartTagHandler {
 
 		appendFormValidator(builder);
 
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		builder.append("type=\"" + type + "\" ");
 		
@@ -199,7 +204,7 @@ public final class InputTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_INPUT);
+			appendClass(builder, CssConstants.CSS_INPUT);
 		}
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");
@@ -240,7 +245,7 @@ public final class InputTagHandler extends SmartTagHandler {
 
 		if (mask != null) {
 			builder.append("mask=\"" + mask + "\" ");
-			appendScriptBuilder(new StringBuilder(String.format(MASK_SCRIPT, id, mask)));
+			appendScript(new StringBuilder(String.format(MASK_SCRIPT, id, mask)));
 		}
 
 		if (ajaxCommand != null) {
@@ -261,7 +266,7 @@ public final class InputTagHandler extends SmartTagHandler {
 			}
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append("/>");
 

@@ -1,0 +1,579 @@
+/*
+ * JSmart5 - Java Web Development Framework
+ * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+.placeholder {
+	color: #bbbbbb;
+}
+
+::-webkit-input-placeholder {
+	color: #bbbbbb;
+}
+
+:-moz-placeholder {
+	color: #bbbbbb;
+}
+
+.jsmart5_input_text:not([type="range"]), .jsmart5_input_text_area, .jsmart5_table_head_input, .jsmart5_select, .jsmart5_select_multi, .jsmart5_auto_complete, .jsmart5_input_label, .jsmart5_input_label_select, .jsmart5_input_label_upload {
+	padding: 4px 8px;
+	height: 18px;
+	width: 180px;
+	border: solid 1px #a3a3a3;
+	background: #f9f9f9;
+	-webkit-border-radius: 4px;
+  	   -moz-border-radius: 4px;
+	   		border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	   		box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+
+.jsmart5_input_text:not([type="range"]):focus, .jsmart5_input_text_area:focus, .jsmart5_table_head_input:focus, .jsmart5_select:focus, .jsmart5_select_multi:focus, .jsmart5_auto_complete:focus {
+	background: #ffffff;
+	outline: none;
+}
+
+.jsmart5_input_text_area {
+	height: inherit;
+}
+
+.jsmart5_table_head_input {
+	width: 80px;
+	border: 0px solid #a3a3a3;
+}
+
+.jsmart5_auto_complete_load, .jsmart5_auto_complete_load:focus {
+	background: url("img/load_dots.gif") no-repeat scroll right center transparent;
+}
+
+.jsmart5_select, .jsmart5_select_multi {
+	width: 220px;
+	height: 28px;
+	padding: 2px 8px;
+	text-align: left;
+	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
+	font-family: serif;
+	font: inherit;
+	color: inherit;
+	text-indent: 0.01px; /* Removes default arrow from firefox */
+    text-overflow: "";  /* Removes default arrow from firefox */
+	-webkit-appearance: none;
+	   -moz-appearance: none;
+	   	-ms-appearance: none;
+	   		appearance: none;
+}
+
+.jsmart5_select[disabled="disabled"] {
+	background: #f9f9f9 url('img/disable_select.png') right center no-repeat;
+}
+
+.jsmart5_select:focus {
+	background: #ffffff url('img/enable_select.png') right center no-repeat;
+}
+
+.jsmart5_select::-ms-expand, .jsmart5_select_multi::-ms-expand {
+	display: none; /* Removes default arrow from ie */
+}
+
+.jsmart5_select_multi {
+	height: 100px;
+	background-image: none;
+}
+
+.jsmart5_captcha_challenge {
+	margin-right: 15px;
+	display: inline-block;
+}
+
+.jsmart5_captcha_text {
+	font-family: "Courier New",monospace;
+	font-size: 6px;
+	font-weight: bold;
+	letter-spacing: -1px;
+	line-height: 3px;
+}
+
+.jsmart5_captcha_regen {
+	padding-top: 4px;
+	font-size: 12px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.jsmart5_captcha_disabled {
+	opacity: 0.5;
+	filter: Alpha(Opacity=50);
+}
+
+.jsmart5_captcha_disabled .jsmart5_captcha_regen {
+	cursor: default;
+}
+
+.jsmart5_captcha_input {
+	vertical-align: top;
+	margin-top: 7px;
+}
+
+.jsmart5_input_group {
+	position: relative;
+	display: inline-block;
+}
+
+.jsmart5_input_label, .jsmart5_input_label_select, .jsmart5_input_label_upload {
+	width: inherit;
+	height: 100%;
+	float: left;
+	display: table;
+	outline: none;
+	padding: 1px 15px;
+	text-align: center;
+	background-color: #eeeeee;
+	-webkit-border-radius: 4px 0px 0px 4px;
+  	   -moz-border-radius: 4px 0px 0px 4px;
+	   		border-radius: 4px 0px 0px 4px;
+	-webkit-box-shadow: none;
+	   -moz-box-shadow: none;
+	   		box-shadow: none;
+}
+
+.jsmart5_input_label_select, .jsmart5_input_label_upload {
+	padding: 3px 15px;
+}
+
+.jsmart5_input_group>input, .jsmart5_input_group>select {
+    margin-left: -1px;
+	-webkit-border-radius: 0px 4px 4px 0px !important;
+  	   -moz-border-radius: 0px 4px 4px 0px !important;
+	   		border-radius: 0px 4px 4px 0px !important;
+}
+
+.jsmart5_checkbox, .jsmart5_checkgroup_item, .jsmart5_radiogroup_item {
+	display: inline-block;
+	position: relative;
+	width: 20px;
+	height: 20px;
+	vertical-align: top;
+}
+
+.jsmart5_checkbox>input[type=checkbox], .jsmart5_checkgroup_item>input[type=checkbox], .jsmart5_radiogroup_item>input[type=radio] {
+	visibility: hidden;
+	width: 20px;
+	height: 20px;
+}
+
+.jsmart5_checkbox>label, .jsmart5_checkgroup_item>label, .jsmart5_radiogroup_item>label {
+	cursor: pointer;
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	top: 0;
+  	left: 0;
+	border: solid 1px #a3a3a3;
+	background: #f9f9f9;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+       -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+
+.jsmart5_checkbox>label:hover, .jsmart5_checkgroup_item>label:hover, .jsmart5_radiogroup_item>label:hover, .jsmart5_checkbox>label:focus, .jsmart5_checkgroup_item>label:focus, .jsmart5_radiogroup_item>label:focus {
+	background: #ffffff;
+}
+
+.jsmart5_checkbox>label:after, .jsmart5_checkgroup_item>label:after {
+	opacity: 0.05;
+	content: '';
+	position: absolute;
+	background: transparent;
+	width: 8px;
+	height: 4px;
+	top: 5px;
+	left: 5px;
+	border: 3px solid #333;
+	border-top: none;
+	border-right: none;
+	-webkit-transform: rotate(-45deg);
+	   -moz-transform: rotate(-45deg);
+	    -ms-transform: rotate(-45deg);
+	     -o-transform: rotate(-45deg);
+         	transform: rotate(-45deg);
+}
+
+.jsmart5_checkbox>label:hover::after, .jsmart5_checkgroup_item>label:hover::after, .jsmart5_radiogroup_item>label:hover::after {
+	opacity: 0.2;
+}
+
+.jsmart5_checkbox>input[type=checkbox]:checked + label:after, .jsmart5_checkgroup_item>input[type=checkbox]:checked + label:after, .jsmart5_radiogroup_item>input[type=radio]:checked + label:after {
+	opacity: 1;
+}
+
+.jsmart5_checkgroup {
+	position: relative;
+	display: inline-block;
+}
+
+.jsmart5_checkgroup_table {
+	
+}
+
+.jsmart5_checkgroup_table_column {
+	padding-right: 15px;
+}
+
+.jsmart5_checkgroup_table_row {
+	text-align: left;
+	line-height: 1.6;
+}
+
+.jsmart5_checkgroup_item {
+
+}
+
+.jsmart5_radiogroup {
+	position: relative;
+	display: inline-block;
+}
+
+.jsmart5_radiogroup_table {
+	
+}
+
+.jsmart5_radiogroup_table_column {
+	padding-right: 15px;
+	line-height: 1.6;
+}
+
+.jsmart5_radiogroup_table_row {
+	text-align: left;
+}
+
+.jsmart5_radiogroup_item {
+	
+}
+
+.jsmart5_radiogroup_item>label {
+	-webkit-border-radius: 10px;
+       -moz-border-radius: 10px;
+            border-radius: 10px;
+}
+
+.jsmart5_radiogroup_item>label:after {
+	opacity: 0.05;
+	content: '';
+	position: absolute;
+	background: #333;
+	width: 4px;
+	height: 4px;
+	top: 6px;
+	left: 6px;
+	border: 2px solid #333;
+	-webkit-border-radius: 25px;
+	   -moz-border-radius: 25px;
+          	border-radius: 25px;
+}
+
+.jsmart5_image {
+	
+}
+
+.jsmart5_upload_text {
+	width: inherit !important;
+	height: 22px !important;
+}
+
+.jsmart5_link {
+	
+}
+
+.jsmart5_outputs {
+	
+}
+
+.jsmart5_output {
+	
+}
+
+.jsmart5_load_small {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	background-image: url('img/load_small.gif');
+}
+
+.jsmart5_load_medium {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	background: url('img/load_medium.gif');
+}
+
+.jsmart5_load_large {
+	width: 66px;
+	height: 66px;
+	display: inline-block;
+	background-image: url('img/load_large.gif');
+}
+
+.jsmart5_validate {
+	color: #ff0000;
+	font: inherit;
+	display: block;
+	margin-top: 10px;
+	font-style: italic;
+}
+
+.jsmart5_validate_target {
+	border: solid 1px #ff0000 !important;
+}
+
+.jsmart5_carousel {
+	position: relative;
+	display: inline-block;
+}
+
+.jsmart5_carousel>p {
+	width: 100%;
+	text-align: center;
+	margin-top: 0px;
+	margin-bottom: 10px;
+}
+
+.jsmart5_carousel_slides {
+	overflow: hidden;
+	position: relative;
+}
+
+.jsmart5_carousel_item {
+	border: medium none;
+	margin: 0px;
+	padding: 0px; 
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+.jsmart5_carousel_item>label {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 20px;
+	line-height: 1.2;
+	background-color: #ffffff;
+	opacity: 0.7;
+	padding-left: 20px;
+	padding-right: 20px;
+	margin-bottom: 5px;
+	-webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+	        border-radius: 3px;
+}
+
+.jsmart5_carousel_item>div span {
+	position: absolute; 
+}
+
+.jsmart5_carousel_item>div span a {
+	color: #ffffff;
+}
+
+.jsmart5_carousel_control {
+	z-index: 3;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	display: inline; 
+	width: 100%; 
+	height: 20px;
+	margin-top: 5px;
+	font-size: 14px;
+}
+
+.jsmart5_carousel_control>div {
+	height: 20px;
+}
+
+.jsmart5_carousel_control>div span {
+	width: 18px; 
+	height: 20px; 
+	float: left; 
+	text-align: center;
+	margin-right: 5px;
+	background-color: #ffffff;
+	opacity: 0.7;
+	cursor: pointer;
+}
+
+.jsmart5_carousel_control_arrow {
+	position: absolute; 
+	top: 0; 
+	left: 0;
+	z-index: 3;
+}
+
+.jsmart5_carousel_control_arrow span {
+	position: absolute; 
+	top: 0; 
+	left: 0;
+	width: 45px;
+	height: 30px;
+	background-color: #ffffff;
+	text-align: left;
+	opacity: 0;
+	cursor: pointer;
+	-webkit-border-radius: 7px 0px 0px 7px;
+       -moz-border-radius: 7px 0px 0px 7px;
+	        border-radius: 7px 0px 0px 7px;
+}
+
+.jsmart5_carousel_control_arrow span[direction=prev] {
+	-webkit-border-radius: 0px 7px 7px 0px;
+       -moz-border-radius: 0px 7px 7px 0px;
+	        border-radius: 0px 7px 7px 0px;
+}
+
+.jsmart5_carousel_control_arrow span[direction=prev]>div {
+	width: 0px; 
+	height: 0px; 
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent; 
+	border-right: 10px solid #000000;
+	margin-top: 5px;
+}
+
+.jsmart5_carousel_control_arrow span[direction=next]>div {
+	width: 0px; 
+	height: 0px; 
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent;
+	border-left: 10px solid #000000;
+	margin-top: 5px;
+}
+
+.jsmart5_message_info, .jsmart5_message_warning, .jsmart5_message_error, .jsmart5_message_success {
+	position: fixed;
+	margin: 15px;
+	padding: 10px;
+	z-index: 9999;
+	-webkit-border-radius: 5px;
+	   -moz-border-radius: 5px;
+		    border-radius: 5px;
+}
+
+.jsmart5_message_info {
+	background-color: #d8e6fc;
+	color: #35517c;
+	border: 1px solid #a7c3f0;
+	padding-left: 50px;
+}
+
+.jsmart5_message_info span {
+   	width: 25px;
+	height: 30px;
+	margin: 6px 0 0 6px;
+    position: absolute;
+    left: 0;
+    top: 0;
+	background: url('img/message_image.png') no-repeat;
+	background-position: 3px -26px;
+}
+
+.jsmart5_message_info a {
+	color: #35517c !important;
+	text-decoration: none;
+}
+
+.jsmart5_message_success {
+	background-color: #e6efc2;
+	color: #264409;
+	border: 1px solid #c6d880;
+	padding-left: 50px;
+}
+
+.jsmart5_message_success span {	
+    width: 30px;
+	height: 25px;
+	margin: 10px 0 0 10px;
+    position: absolute;
+    left: 0;
+    top: 0;
+	background: url('img/message_image.png') no-repeat;
+	background-position: -25px -3px;
+}
+
+.jsmart5_message_success a {
+	color: #264409 !important;
+	text-decoration: none;
+}
+
+.jsmart5_message_error {
+	background-color: #fbe3e4;
+	color: #8a1f11;
+	border: 1px solid #fbc2c4;
+	padding-left: 50px;
+}
+
+.jsmart5_message_error span {
+	width: 30px;
+	height: 30px;
+	margin: 6px 0 0 6px;
+    position: absolute;
+    left: 0;
+    top: 0;
+	background: url('img/message_image.png') no-repeat;
+	background-position: 2px 3px;
+}
+
+.jsmart5_message_error a {
+	color: #8a1f11 !important;
+	text-decoration: none;
+}
+
+.jsmart5_message_warning {
+    background-color: #ffeaa8;
+    color: #826200;
+    border: 1px solid #ffc237;
+    padding-left: 50px;
+}
+
+.jsmart5_message_warning span {
+	width: 30px;
+	height: 27px;
+	margin: 6px 0 0 6px;
+    position: absolute;
+    left: 0;
+    top: 0;
+	background: url('img/message_image.png') no-repeat;
+    background-position: -22px -26px;
+}
+
+.jsmart5_message_warning a {
+	color: #826200 !important;
+	text-decoration: none;
+}
+
+.jsmart5_overlay_message {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 9998;
+	opacity: 0.3;
+	background-color: #000000;
+}

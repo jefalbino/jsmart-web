@@ -88,7 +88,7 @@ public final class DateTagHandler extends SmartTagHandler {
 		}
 
 		StringBuilder builder = new StringBuilder();
-		StringBuilder options = new StringBuilder();
+		StringBuilder optionsBuilder = new StringBuilder();
 		Locale locale = getRequest().getLocale();
 
 		String name = getTagName(J_FRMT, value) + (readOnly ? EL_PARAM_READ_ONLY : "");
@@ -99,8 +99,12 @@ public final class DateTagHandler extends SmartTagHandler {
 		builder.append(INPUT_TAG + "id=\"" + id + "_date_format\" name=\"" + name + "\" value=\"" + dateFormat + "\" type=\"hidden\" />");
 
 		if (label != null) {
-			builder.append(OPEN_DIV_TAG + CssConstants.CSS_INPUT_GROUP + ">");
-			builder.append(OPEN_SPAN_TAG + CssConstants.CSS_INPUT_LABEL + ">");
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_GROUP);
+			builder.append(">");
+			builder.append(OPEN_SPAN_TAG);
+			appendClass(builder, CssConstants.CSS_INPUT_LABEL);
+			builder.append(">");
 
 			String labelVal = (String) getTagValue(label);
 			if (labelVal != null) {
@@ -127,7 +131,7 @@ public final class DateTagHandler extends SmartTagHandler {
 
 		appendFormValidator(builder);
 
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		if (opened) {
 			builder.append("id=\"" + id + "_date_hidden\" type=\"hidden\" />");
@@ -143,7 +147,7 @@ public final class DateTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (!opened) {
-				builder.append(CssConstants.CSS_INPUT);
+				appendClass(builder, CssConstants.CSS_INPUT);
 			}
 		}
 		if (tabIndex != null) {
@@ -157,38 +161,42 @@ public final class DateTagHandler extends SmartTagHandler {
 		}
 		if (disabled || isEditRowTagEnabled()) {
 			builder.append("disabled=\"disabled\" ");
-			options.append("disabled: " + disabled + ",");
+			optionsBuilder.append("disabled:" + disabled + ",");
 		}
+
+		// Append theme options to date picker
+		appendThemeOption(optionsBuilder);
 
 		if (showButton) {
-			options.append("showOn: 'button',");
+			optionsBuilder.append("showOn:'button',");
 		}
 		if (format != null) {
-			options.append("dateFormat: '" + format + "',");
+			optionsBuilder.append("dateFormat:'" + format + "',");
 		}
 		if (changeMonth) {
-			options.append("changeMonth: " + changeMonth + ",");
+			optionsBuilder.append("changeMonth:" + changeMonth + ",");
 		}
 		if (changeYear) {
-			options.append("changeYear: " + changeYear + ",");
+			optionsBuilder.append("changeYear:" + changeYear + ",");
 		}
 		if (months != null) {
-			options.append("numberOfMonths: " + months + ",");
+			optionsBuilder.append("numberOfMonths:" + months + ",");
 		}
 		if (fullMonth) {
-			options.append("showOtherMonths: true, selectOtherMonths: true,");
+			optionsBuilder.append("showOtherMonths:true,selectOtherMonths:true,");
 		}
 		if (showWeek) {
-			options.append("showWeek: " + showWeek + ",");
+			optionsBuilder.append("showWeek:" + showWeek + ",");
 		}
 
-		StringBuilder dateScript = new StringBuilder(String.format(REGIONAL_SCRIPT, locale.getLanguage()) + String.format(DATE_SCRIPT, id, options));
+		StringBuilder scriptBuilder = new StringBuilder(String.format(REGIONAL_SCRIPT, locale.getLanguage()));
+		scriptBuilder.append(String.format(DATE_SCRIPT, id, optionsBuilder));
 
-		appendScriptBuilder(dateScript);
+		appendScript(scriptBuilder);
 
-		builder.append("date=\"" + dateScript + "\" ");
+		builder.append("date=\"" + scriptBuilder + "\" ");
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		if (opened) {
 			printOutput(builder.append(">" + CLOSE_DIV_TAG));

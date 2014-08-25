@@ -66,13 +66,13 @@ public final class RowTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_LIST_ROW);
+			appendClass(builder, CssConstants.CSS_LIST_ROW);
 		}
 		if (ajaxCommand != null) {
 			builder.append((style == null ? "style=\"cursor: pointer;\" " : "") + ajaxCommand + "select=\"true\" ");
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append(">");
 
@@ -83,7 +83,9 @@ public final class RowTagHandler extends SmartTagHandler {
 
 		if (badge != null) {
 			object = getTagValue(badge);
-			builder.append(HtmlConstants.OPEN_SPAN_TAG + CssConstants.CSS_LIST_ROW_BADGE + ">");
+			builder.append(HtmlConstants.OPEN_SPAN_TAG);
+			appendClass(builder, CssConstants.CSS_LIST_ROW_BADGE);
+			builder.append(">");
 			builder.append(object != null ? object : "");
 			builder.append(HtmlConstants.CLOSE_SPAN_TAG);
 		}

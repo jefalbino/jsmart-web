@@ -79,10 +79,10 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (CHECKBOX.equals(type)) {
-				builder.append(CssConstants.CSS_CHECKGROUP_ITEM);
+				appendClass(builder, CssConstants.CSS_CHECKGROUP_ITEM);
 
 			} else if (RADIO.equals(type)) {
-				builder.append(CssConstants.CSS_RADIOGROUP_ITEM);
+				appendClass(builder, CssConstants.CSS_RADIOGROUP_ITEM);
 			}
 		}
 
@@ -104,7 +104,7 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 
 		appendFormValidator(builder);
 
-		appendRestBuilder(builder);
+		appendRest(builder);
 
 		if (type != null) {
 			builder.append("type=\"" + type +"\" ");
@@ -139,7 +139,7 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 			builder.append(command);
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append("/>" + HtmlConstants.OPEN_LABEL_TAG);
 

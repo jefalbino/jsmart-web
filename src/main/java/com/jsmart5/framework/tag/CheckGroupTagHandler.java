@@ -69,20 +69,27 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 	 		builder.append("align=\"" + align + "\" ");
 		}
 
-		builder.append(CssConstants.CSS_CHECKGROUP + ">");
+	 	appendClass(builder, CssConstants.CSS_CHECKGROUP);
+		builder.append(">");
 
-		builder.append(HtmlConstants.OPEN_TABLE_TAG + CssConstants.CSS_CHECKGROUP_TABLE + ">");
+		builder.append(HtmlConstants.OPEN_TABLE_TAG);
+		appendClass(builder, CssConstants.CSS_CHECKGROUP_TABLE);
+		builder.append(">");
 
 		if (!items.isEmpty()) {
 
  	 		String columnStyle = CssConstants.CSS_CHECKGROUP_TABLE_COLUMN;
- 	 		builder.append(HtmlConstants.OPEN_TABLE_ROW_TAG + CssConstants.CSS_CHECKGROUP_TABLE_ROW + ">");
+ 	 		builder.append(HtmlConstants.OPEN_TABLE_ROW_TAG);
+ 	 		appendClass(builder, CssConstants.CSS_CHECKGROUP_TABLE_ROW);
+ 	 		builder.append(">");
 
  	 		int index = 0;
  			for (GroupItemTagHandler item : items) {
  				
  				if (!inline && items.indexOf(item) != 0) {
- 		 	 		builder.append(HtmlConstants.OPEN_TABLE_ROW_TAG + CssConstants.CSS_CHECKGROUP_TABLE_ROW + ">");
+ 		 	 		builder.append(HtmlConstants.OPEN_TABLE_ROW_TAG);
+ 		 	 		appendClass(builder, CssConstants.CSS_CHECKGROUP_TABLE_ROW);
+ 		 	 		builder.append(">");
  				}
 
 				StringWriter sw = new StringWriter();
@@ -100,7 +107,11 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 				item.setOutputWriter(sw);
 				item.executeTag();
 
-				builder.append(HtmlConstants.OPEN_TABLE_COLUMN_TAG + columnStyle + ">" + sw.toString() + HtmlConstants.CLOSE_TABLE_COLUMN_TAG);
+				builder.append(HtmlConstants.OPEN_TABLE_COLUMN_TAG);
+				appendClass(builder, columnStyle);
+				builder.append(">");
+				builder.append(sw.toString());
+				builder.append(HtmlConstants.CLOSE_TABLE_COLUMN_TAG);
 
 				if (!inline) {
 					builder.append(HtmlConstants.CLOSE_TABLE_ROW_TAG);

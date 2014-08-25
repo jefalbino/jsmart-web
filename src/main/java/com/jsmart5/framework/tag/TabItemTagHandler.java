@@ -59,8 +59,8 @@ public final class TabItemTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	protected void appendEventBuilder(StringBuilder builder) {
-		super.appendEventBuilder(builder);
+	protected void appendEvent(StringBuilder builder) {
+		super.appendEvent(builder);
 	}
 
 	/*package*/ String getId() {

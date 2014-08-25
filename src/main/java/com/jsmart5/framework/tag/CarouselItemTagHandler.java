@@ -57,7 +57,9 @@ public final class CarouselItemTagHandler extends SmartTagHandler {
 		String nameValue = (String) getTagValue(name);
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(HtmlConstants.OPEN_DIV_TAG + "id=\"" + id + "\" " + CssConstants.CSS_CAROUSEL_ITEM + ">");
+		builder.append(HtmlConstants.OPEN_DIV_TAG + "id=\"" + id + "\" ");
+		appendClass(builder, CssConstants.CSS_CAROUSEL_ITEM);
+		builder.append(">");
 
 		if (link != null) {
 			builder.append(HtmlConstants.OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");

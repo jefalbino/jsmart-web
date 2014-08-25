@@ -68,19 +68,19 @@ public final class MenuTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (MENU_TOP.equals(type) || MENU_BOTTOM.equals(type)) {
-				builder.append(CssConstants.CSS_MENU_HORIZONTAL);
+				appendClass(builder, CssConstants.CSS_MENU_HORIZONTAL);
 			} else {
-				builder.append(CssConstants.CSS_MENU_VERTICAL);
+				appendClass(builder, CssConstants.CSS_MENU_VERTICAL);
 			}
 		}
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append("type=\"" + type + "\" >");
 		builder.append(sw);
 		builder.append(CLOSE_UNORDERED_LIST_TAG + CLOSE_NAV_TAG);
 
-		appendScriptBuilder(new StringBuilder(JSConstants.JSMART_MENU.format(id)));
+		appendScript(new StringBuilder(JSConstants.JSMART_MENU.format(id)));
 
 		printOutput(builder);
 	}

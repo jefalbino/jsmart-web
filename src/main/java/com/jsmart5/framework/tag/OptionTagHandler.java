@@ -64,7 +64,7 @@ public final class OptionTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_SELECT_OPTION);
+			appendClass(builder, CssConstants.CSS_SELECT_OPTION);
 		}
 		if (disabled || isEditRowTagEnabled()) {
 			builder.append("disabled=\"disabled\" ");

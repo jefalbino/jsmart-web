@@ -80,7 +80,7 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append(CssConstants.CSS_CAPTCHA);
+			appendClass(builder, CssConstants.CSS_CAPTCHA);
 		}
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");
@@ -118,9 +118,9 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 
 		captchaScript.append("$('#" + id + "').keyup(function(){this.value=this.value.toUpperCase();});");
 
-		appendScriptBuilder(captchaScript);
+		appendScript(captchaScript);
 
-		appendEventBuilder(builder);
+		appendEvent(builder);
 
 		builder.append("captcha=\"" + captchaScript + "\" ");
 

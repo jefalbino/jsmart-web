@@ -70,13 +70,13 @@ public final class LoadTagHandler extends SmartTagHandler {
 			builder.append(OPEN_SPAN_TAG);
 
 			if (size.equals(LARGE)) {
-				builder.append(CssConstants.CSS_LOAD_LARGE);
+				appendClass(builder, CssConstants.CSS_LOAD_LARGE);
 
 			} else if (size.equals(MEDIUM)) {
-				builder.append(CssConstants.CSS_LOAD_MEDIUM);
+				appendClass(builder, CssConstants.CSS_LOAD_MEDIUM);
 
 			} else {
-				builder.append(CssConstants.CSS_LOAD_SMALL);
+				appendClass(builder, CssConstants.CSS_LOAD_SMALL);
 			}
 			builder.append(">" + CLOSE_SPAN_TAG);
 		}
@@ -107,7 +107,7 @@ public final class LoadTagHandler extends SmartTagHandler {
 
 		builder.append(CLOSE_DIV_TAG);		
 
-		appendScriptBuilder(new StringBuilder(JSConstants.JSMART_LOAD.format(id)));
+		appendScript(new StringBuilder(JSConstants.JSMART_LOAD.format(id)));
 
 		printOutput(builder);
 	}
