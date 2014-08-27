@@ -77,8 +77,10 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 		JspTag parent = getParent();
 		if (parent instanceof MenuTagHandler) {
 			type = ((MenuTagHandler) parent).getType();
+			theme = ((MenuTagHandler) parent).getTheme();
 		} else if (parent instanceof MenuItemTagHandler) {
 			type = ((MenuItemTagHandler) parent).getType();
+			theme = ((MenuItemTagHandler) parent).getTheme();
 		}
 
 		StringWriter sw = new StringWriter();

@@ -713,6 +713,10 @@ ul.jsmart5_list_%s>li, dl.jsmart5_list_%s>dd {
 	display: block;
 }
 
+ul.jsmart5_list_%s>li:last-child, dl.jsmart5_list_%s>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_%s>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -767,9 +771,9 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 }
 
 .jsmart5_panel_%s_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: @font@;
@@ -988,7 +992,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 .jsmart5_date_%s_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 49%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
@@ -1208,8 +1212,10 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 }
 
 .jsmart5_keypad_%s_key:hover, .jsmart5_keypad_%s_special:hover, .jsmart5_keypad_%s_tab:hover {
-	border: 1px solid @border@;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: @font@;
+	background-color: @bckg@;
+    border: 1px solid @border@;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_%s_key:active, .jsmart5_keypad_%s_special:active, .jsmart5_keypad_%s_tab:active {
@@ -1247,7 +1253,8 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 .jsmart5_progress_%s_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -1273,6 +1280,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	width: 0px;
 	height: 100%;
 	background-color: @bckg@;
+	border: 1px solid @border@;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -1280,6 +1288,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 
 .jsmart5_progress_%s_bar_disabled {
 	background-color: @bckg@;
+	border: 1px solid @borderdisabled@;
 }
 
 .jsmart5_progress_%s_percent {
@@ -1326,12 +1335,14 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	height: 100%;
 	position: relative;
 	background-color: @bckg@;
+	border: 1px solid @border@;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_%s_bar_disabled {
+	border: 1px solid @borderdisabled@;
 	background-color: @bckgdisabled@;
 }
 

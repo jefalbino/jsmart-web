@@ -1447,18 +1447,18 @@ var Jsmart5 = (function() {
 			$(dropDown).css({'position': 'absolute'});
 			$(dropDown).css({'left': $(button).position().left, 'top': $(button).position().top + $(button).outerHeight(true)});
 			$(dropDown).show();
-			
-			$(window).click(function(){
-				$(dropDown).hide();
-			});
 
-			$(element).click(function(event) {
-				event.stopPropagation();
-			});
-
-			$(dropDown).find('li').click(function() {
+			if ($(element).attr('dropdown')) {
 				$(dropDown).hide();
-			});
+				$(element).removeAttr('dropdown');
+			} else {
+				$(element).attr('dropdown', 'opened');
+
+				$(dropDown).find('li').click(function() {
+					$(dropDown).hide();
+					$(element).removeAttr('dropdown');
+				});
+			}
 		}
 	}
 

@@ -136,8 +136,9 @@
 .jsmart5_input_label, .jsmart5_input_label_select, .jsmart5_input_label_upload {
 	width: inherit;
 	height: 100%;
+	line-height: 24px;
 	float: left;
-	display: table;
+	display: inline-block;
 	outline: none;
 	padding: 1px 15px;
 	text-align: center;
@@ -150,7 +151,7 @@
 	   		box-shadow: none;
 }
 
-.jsmart5_input_label_select, .jsmart5_input_label_upload {
+.jsmart5_input_label_upload {
 	padding: 3px 15px;
 }
 

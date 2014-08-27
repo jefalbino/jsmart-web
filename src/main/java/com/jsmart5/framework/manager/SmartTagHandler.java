@@ -217,6 +217,10 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		this.theme = theme;
 	}
 
+	public String getTheme() {
+		return theme;
+	}
+
 	public void setStyle(String style) {
 		this.style = style;
 	}
@@ -409,7 +413,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		if (theme == null) {
 			theme = CONFIG.getContent().getTheme();
 		}
-		builder.append("theme:'" + theme + "',");
+		builder.append("theme:'" + getTagValue(theme) + "',");
 	}
 
 	protected void appendClass(StringBuilder builder, String styleClass) throws JspException, IOException {
@@ -417,7 +421,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 			theme = CONFIG.getContent().getTheme();
 		}
 		if (styleClass.contains("%s")) {
-			builder.append("class=\"" + styleClass.replace("%s", theme) + "\" ");			
+			builder.append("class=\"" + styleClass.replace("%s", (String) getTagValue(theme)) + "\" ");			
 		} else {
 			builder.append("class=\"" + styleClass + "\" ");
 		}

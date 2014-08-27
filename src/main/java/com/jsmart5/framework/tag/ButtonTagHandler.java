@@ -90,6 +90,10 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			throw new JspException("Attribute image and parent tag buttongroup cannot coexist for button tag");
 		}
 
+		if (parentGroup) {
+			this.theme = ((ButtonGroupTagHandler) getParent()).getTheme();
+		}
+
 		// Just to call nested tags
 		JspFragment body = getJspBody();
 		if (body != null) {

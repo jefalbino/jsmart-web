@@ -713,6 +713,10 @@ ul.jsmart5_list_water>li, dl.jsmart5_list_water>dd {
 	display: block;
 }
 
+ul.jsmart5_list_water>li:last-child, dl.jsmart5_list_water>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_water>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -767,13 +771,13 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 }
 
 .jsmart5_panel_water_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #016b75; 
     background-color: #008b91;
 }
 
@@ -988,16 +992,15 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_date_water_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -1209,8 +1212,10 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 }
 
 .jsmart5_keypad_water_key:hover, .jsmart5_keypad_water_special:hover, .jsmart5_keypad_water_tab:hover {
-	border: 1px solid #016b75;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #008b91;
+    border: 1px solid #016b75;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_water_key:active, .jsmart5_keypad_water_special:active, .jsmart5_keypad_water_tab:active {
@@ -1248,7 +1253,8 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_progress_water_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -1274,6 +1280,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #008b91;
+	border: 1px solid #016b75;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -1281,6 +1288,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 
 .jsmart5_progress_water_bar_disabled {
 	background-color: #008b91;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_water_percent {
@@ -1327,12 +1335,14 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 	height: 100%;
 	position: relative;
 	background-color: #008b91;
+	border: 1px solid #016b75;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_water_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -2130,6 +2140,10 @@ ul.jsmart5_list_blue>li, dl.jsmart5_list_blue>dd {
 	display: block;
 }
 
+ul.jsmart5_list_blue>li:last-child, dl.jsmart5_list_blue>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_blue>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -2184,13 +2198,13 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 }
 
 .jsmart5_panel_blue_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #494587; 
     background-color: #4d4d99;
 }
 
@@ -2405,16 +2419,15 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_date_blue_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -2626,8 +2639,10 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 }
 
 .jsmart5_keypad_blue_key:hover, .jsmart5_keypad_blue_special:hover, .jsmart5_keypad_blue_tab:hover {
-	border: 1px solid #494587;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #4d4d99;
+    border: 1px solid #494587;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_blue_key:active, .jsmart5_keypad_blue_special:active, .jsmart5_keypad_blue_tab:active {
@@ -2665,7 +2680,8 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_progress_blue_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -2691,6 +2707,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #4d4d99;
+	border: 1px solid #494587;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -2698,6 +2715,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 
 .jsmart5_progress_blue_bar_disabled {
 	background-color: #4d4d99;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_blue_percent {
@@ -2744,12 +2762,14 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 	height: 100%;
 	position: relative;
 	background-color: #4d4d99;
+	border: 1px solid #494587;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_blue_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -3547,6 +3567,10 @@ ul.jsmart5_list_dark_blue>li, dl.jsmart5_list_dark_blue>dd {
 	display: block;
 }
 
+ul.jsmart5_list_dark_blue>li:last-child, dl.jsmart5_list_dark_blue>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_dark_blue>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -3601,13 +3625,13 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 }
 
 .jsmart5_panel_dark_blue_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #194071; 
     background-color: #1c5288;
 }
 
@@ -3822,16 +3846,15 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_date_dark_blue_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -4043,8 +4066,10 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 }
 
 .jsmart5_keypad_dark_blue_key:hover, .jsmart5_keypad_dark_blue_special:hover, .jsmart5_keypad_dark_blue_tab:hover {
-	border: 1px solid #194071;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #1c5288;
+    border: 1px solid #194071;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_dark_blue_key:active, .jsmart5_keypad_dark_blue_special:active, .jsmart5_keypad_dark_blue_tab:active {
@@ -4082,7 +4107,8 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_progress_dark_blue_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -4108,6 +4134,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #1c5288;
+	border: 1px solid #194071;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -4115,6 +4142,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 
 .jsmart5_progress_dark_blue_bar_disabled {
 	background-color: #1c5288;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_dark_blue_percent {
@@ -4161,12 +4189,14 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 	height: 100%;
 	position: relative;
 	background-color: #1c5288;
+	border: 1px solid #194071;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_dark_blue_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -4964,6 +4994,10 @@ ul.jsmart5_list_green>li, dl.jsmart5_list_green>dd {
 	display: block;
 }
 
+ul.jsmart5_list_green>li:last-child, dl.jsmart5_list_green>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_green>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -5018,13 +5052,13 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 }
 
 .jsmart5_panel_green_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #288401; 
     background-color: #37A100;
 }
 
@@ -5239,16 +5273,15 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_date_green_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -5460,8 +5493,10 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 }
 
 .jsmart5_keypad_green_key:hover, .jsmart5_keypad_green_special:hover, .jsmart5_keypad_green_tab:hover {
-	border: 1px solid #288401;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #37A100;
+    border: 1px solid #288401;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_green_key:active, .jsmart5_keypad_green_special:active, .jsmart5_keypad_green_tab:active {
@@ -5499,7 +5534,8 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_progress_green_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -5525,6 +5561,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #37A100;
+	border: 1px solid #288401;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -5532,6 +5569,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 
 .jsmart5_progress_green_bar_disabled {
 	background-color: #37A100;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_green_percent {
@@ -5578,12 +5616,14 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 	height: 100%;
 	position: relative;
 	background-color: #37A100;
+	border: 1px solid #288401;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_green_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -6381,6 +6421,10 @@ ul.jsmart5_list_dark_green>li, dl.jsmart5_list_dark_green>dd {
 	display: block;
 }
 
+ul.jsmart5_list_dark_green>li:last-child, dl.jsmart5_list_dark_green>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_dark_green>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -6435,13 +6479,13 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 }
 
 .jsmart5_panel_dark_green_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #115a2d; 
     background-color: #147134;
 }
 
@@ -6656,16 +6700,15 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_date_dark_green_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -6877,8 +6920,10 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 }
 
 .jsmart5_keypad_dark_green_key:hover, .jsmart5_keypad_dark_green_special:hover, .jsmart5_keypad_dark_green_tab:hover {
-	border: 1px solid #115a2d;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #147134;
+    border: 1px solid #115a2d;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_dark_green_key:active, .jsmart5_keypad_dark_green_special:active, .jsmart5_keypad_dark_green_tab:active {
@@ -6916,7 +6961,8 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_progress_dark_green_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -6942,6 +6988,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #147134;
+	border: 1px solid #115a2d;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -6949,6 +6996,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 
 .jsmart5_progress_dark_green_bar_disabled {
 	background-color: #147134;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_dark_green_percent {
@@ -6995,12 +7043,14 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 	height: 100%;
 	position: relative;
 	background-color: #147134;
+	border: 1px solid #115a2d;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_dark_green_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -7798,6 +7848,10 @@ ul.jsmart5_list_purple>li, dl.jsmart5_list_purple>dd {
 	display: block;
 }
 
+ul.jsmart5_list_purple>li:last-child, dl.jsmart5_list_purple>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_purple>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -7852,13 +7906,13 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 }
 
 .jsmart5_panel_purple_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #83329a; 
     background-color: #8f37af;
 }
 
@@ -8073,16 +8127,15 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_date_purple_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -8294,8 +8347,10 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 }
 
 .jsmart5_keypad_purple_key:hover, .jsmart5_keypad_purple_special:hover, .jsmart5_keypad_purple_tab:hover {
-	border: 1px solid #83329a;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #8f37af;
+    border: 1px solid #83329a;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_purple_key:active, .jsmart5_keypad_purple_special:active, .jsmart5_keypad_purple_tab:active {
@@ -8333,7 +8388,8 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_progress_purple_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -8359,6 +8415,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #8f37af;
+	border: 1px solid #83329a;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -8366,6 +8423,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 
 .jsmart5_progress_purple_bar_disabled {
 	background-color: #8f37af;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_purple_percent {
@@ -8412,12 +8470,14 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 	height: 100%;
 	position: relative;
 	background-color: #8f37af;
+	border: 1px solid #83329a;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_purple_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -9215,6 +9275,10 @@ ul.jsmart5_list_dark_purple>li, dl.jsmart5_list_dark_purple>dd {
 	display: block;
 }
 
+ul.jsmart5_list_dark_purple>li:last-child, dl.jsmart5_list_dark_purple>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_dark_purple>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -9269,13 +9333,13 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 }
 
 .jsmart5_panel_dark_purple_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #340c64; 
     background-color: #3c0e80;
 }
 
@@ -9490,16 +9554,15 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_date_dark_purple_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -9551,7 +9614,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
             border-radius: 4px;
 }
 
-.jsmart5_date_purple_prev, .jsmart5_date_dark_purple_next {
+.jsmart5_date_dark_purple_prev, .jsmart5_date_dark_purple_next {
 	position: absolute;
 	top: 2px; 
 	width: 1.8em;
@@ -9711,8 +9774,10 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 }
 
 .jsmart5_keypad_dark_purple_key:hover, .jsmart5_keypad_dark_purple_special:hover, .jsmart5_keypad_dark_purple_tab:hover {
-	border: 1px solid #340c64;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #3c0e80;
+    border: 1px solid #340c64;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_dark_purple_key:active, .jsmart5_keypad_dark_purple_special:active, .jsmart5_keypad_dark_purple_tab:active {
@@ -9750,7 +9815,8 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_progress_dark_purple_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -9776,6 +9842,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #3c0e80;
+	border: 1px solid #340c64;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -9783,6 +9850,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 
 .jsmart5_progress_dark_purple_bar_disabled {
 	background-color: #3c0e80;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_dark_purple_percent {
@@ -9829,12 +9897,14 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 	height: 100%;
 	position: relative;
 	background-color: #3c0e80;
+	border: 1px solid #340c64;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_dark_purple_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -10632,6 +10702,10 @@ ul.jsmart5_list_pink>li, dl.jsmart5_list_pink>dd {
 	display: block;
 }
 
+ul.jsmart5_list_pink>li:last-child, dl.jsmart5_list_pink>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_pink>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -10686,13 +10760,13 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 }
 
 .jsmart5_panel_pink_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #b92d69; 
     background-color: #d0347d;
 }
 
@@ -10907,16 +10981,15 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_date_pink_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -11128,8 +11201,10 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 }
 
 .jsmart5_keypad_pink_key:hover, .jsmart5_keypad_pink_special:hover, .jsmart5_keypad_pink_tab:hover {
-	border: 1px solid #b92d69;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #d0347d;
+    border: 1px solid #b92d69;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_pink_key:active, .jsmart5_keypad_pink_special:active, .jsmart5_keypad_pink_tab:active {
@@ -11167,7 +11242,8 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_progress_pink_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -11193,6 +11269,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #d0347d;
+	border: 1px solid #b92d69;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -11200,6 +11277,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 
 .jsmart5_progress_pink_bar_disabled {
 	background-color: #d0347d;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_pink_percent {
@@ -11246,12 +11324,14 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 	height: 100%;
 	position: relative;
 	background-color: #d0347d;
+	border: 1px solid #b92d69;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_pink_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -12049,6 +12129,10 @@ ul.jsmart5_list_orange>li, dl.jsmart5_list_orange>dd {
 	display: block;
 }
 
+ul.jsmart5_list_orange>li:last-child, dl.jsmart5_list_orange>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_orange>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -12103,13 +12187,13 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 }
 
 .jsmart5_panel_orange_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #a77501; 
     background-color: #c68200;
 }
 
@@ -12324,16 +12408,15 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_date_orange_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -12545,8 +12628,10 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 }
 
 .jsmart5_keypad_orange_key:hover, .jsmart5_keypad_orange_special:hover, .jsmart5_keypad_orange_tab:hover {
-	border: 1px solid #a77501;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #c68200;
+    border: 1px solid #a77501;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_orange_key:active, .jsmart5_keypad_orange_special:active, .jsmart5_keypad_orange_tab:active {
@@ -12584,7 +12669,8 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_progress_orange_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -12610,6 +12696,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #c68200;
+	border: 1px solid #a77501;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -12617,6 +12704,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 
 .jsmart5_progress_orange_bar_disabled {
 	background-color: #c68200;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_orange_percent {
@@ -12663,12 +12751,14 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 	height: 100%;
 	position: relative;
 	background-color: #c68200;
+	border: 1px solid #a77501;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_orange_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -13466,6 +13556,10 @@ ul.jsmart5_list_red>li, dl.jsmart5_list_red>dd {
 	display: block;
 }
 
+ul.jsmart5_list_red>li:last-child, dl.jsmart5_list_red>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_red>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -13520,13 +13614,13 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 }
 
 .jsmart5_panel_red_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #8f2e28; 
     background-color: #a82d2d;
 }
 
@@ -13741,16 +13835,15 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_date_red_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -13962,8 +14055,10 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 }
 
 .jsmart5_keypad_red_key:hover, .jsmart5_keypad_red_special:hover, .jsmart5_keypad_red_tab:hover {
-	border: 1px solid #8f2e28;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #a82d2d;
+    border: 1px solid #8f2e28;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_red_key:active, .jsmart5_keypad_red_special:active, .jsmart5_keypad_red_tab:active {
@@ -14001,7 +14096,8 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_progress_red_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -14027,6 +14123,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #a82d2d;
+	border: 1px solid #8f2e28;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -14034,6 +14131,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 
 .jsmart5_progress_red_bar_disabled {
 	background-color: #a82d2d;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_red_percent {
@@ -14080,12 +14178,14 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 	height: 100%;
 	position: relative;
 	background-color: #a82d2d;
+	border: 1px solid #8f2e28;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_red_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -14883,6 +14983,10 @@ ul.jsmart5_list_brown>li, dl.jsmart5_list_brown>dd {
 	display: block;
 }
 
+ul.jsmart5_list_brown>li:last-child, dl.jsmart5_list_brown>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_brown>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -14937,13 +15041,13 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 }
 
 .jsmart5_panel_brown_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #583b28; 
     background-color: #6c452f;
 }
 
@@ -15158,16 +15262,15 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_date_brown_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -15379,8 +15482,10 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 }
 
 .jsmart5_keypad_brown_key:hover, .jsmart5_keypad_brown_special:hover, .jsmart5_keypad_brown_tab:hover {
-	border: 1px solid #583b28;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #6c452f;
+    border: 1px solid #583b28;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_brown_key:active, .jsmart5_keypad_brown_special:active, .jsmart5_keypad_brown_tab:active {
@@ -15418,7 +15523,8 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_progress_brown_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -15444,6 +15550,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #6c452f;
+	border: 1px solid #583b28;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -15451,6 +15558,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 
 .jsmart5_progress_brown_bar_disabled {
 	background-color: #6c452f;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_brown_percent {
@@ -15497,12 +15605,14 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 	height: 100%;
 	position: relative;
 	background-color: #6c452f;
+	border: 1px solid #583b28;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_brown_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -16300,6 +16410,10 @@ ul.jsmart5_list_black>li, dl.jsmart5_list_black>dd {
 	display: block;
 }
 
+ul.jsmart5_list_black>li:last-child, dl.jsmart5_list_black>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_black>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -16354,13 +16468,13 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 }
 
 .jsmart5_panel_black_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #000000; 
     background-color: #000000;
 }
 
@@ -16575,16 +16689,15 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_date_black_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -16796,8 +16909,10 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 }
 
 .jsmart5_keypad_black_key:hover, .jsmart5_keypad_black_special:hover, .jsmart5_keypad_black_tab:hover {
-	border: 1px solid #000000;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #000000;
+    border: 1px solid #000000;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_black_key:active, .jsmart5_keypad_black_special:active, .jsmart5_keypad_black_tab:active {
@@ -16835,7 +16950,8 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_progress_black_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -16861,6 +16977,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #000000;
+	border: 1px solid #000000;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -16868,6 +16985,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 
 .jsmart5_progress_black_bar_disabled {
 	background-color: #000000;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_black_percent {
@@ -16914,12 +17032,14 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 	height: 100%;
 	position: relative;
 	background-color: #000000;
+	border: 1px solid #000000;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_black_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -17717,6 +17837,10 @@ ul.jsmart5_list_yellow>li, dl.jsmart5_list_yellow>dd {
 	display: block;
 }
 
+ul.jsmart5_list_yellow>li:last-child, dl.jsmart5_list_yellow>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_yellow>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -17771,13 +17895,13 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 }
 
 .jsmart5_panel_yellow_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #0e0e0e;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #feaa04; 
     background-color: #febf04;
 }
 
@@ -17992,16 +18116,15 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_date_yellow_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -18213,8 +18336,10 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 }
 
 .jsmart5_keypad_yellow_key:hover, .jsmart5_keypad_yellow_special:hover, .jsmart5_keypad_yellow_tab:hover {
-	border: 1px solid #feaa04;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #0e0e0e;
+	background-color: #febf04;
+    border: 1px solid #feaa04;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_yellow_key:active, .jsmart5_keypad_yellow_special:active, .jsmart5_keypad_yellow_tab:active {
@@ -18252,7 +18377,8 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_progress_yellow_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -18278,6 +18404,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #febf04;
+	border: 1px solid #feaa04;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -18285,6 +18412,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 
 .jsmart5_progress_yellow_bar_disabled {
 	background-color: #febf04;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_yellow_percent {
@@ -18331,12 +18459,14 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 	height: 100%;
 	position: relative;
 	background-color: #febf04;
+	border: 1px solid #feaa04;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_yellow_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -19134,6 +19264,10 @@ ul.jsmart5_list_gray>li, dl.jsmart5_list_gray>dd {
 	display: block;
 }
 
+ul.jsmart5_list_gray>li:last-child, dl.jsmart5_list_gray>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_gray>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -19188,13 +19322,13 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 }
 
 .jsmart5_panel_gray_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #ffffff;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #646668; 
     background-color: #707377;
 }
 
@@ -19409,16 +19543,15 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_date_gray_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -19630,8 +19763,10 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 }
 
 .jsmart5_keypad_gray_key:hover, .jsmart5_keypad_gray_special:hover, .jsmart5_keypad_gray_tab:hover {
-	border: 1px solid #646668;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #ffffff;
+	background-color: #707377;
+    border: 1px solid #646668;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_gray_key:active, .jsmart5_keypad_gray_special:active, .jsmart5_keypad_gray_tab:active {
@@ -19669,7 +19804,8 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_progress_gray_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -19695,6 +19831,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #707377;
+	border: 1px solid #646668;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -19702,6 +19839,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 
 .jsmart5_progress_gray_bar_disabled {
 	background-color: #707377;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_gray_percent {
@@ -19748,12 +19886,14 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	height: 100%;
 	position: relative;
 	background-color: #707377;
+	border: 1px solid #646668;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_gray_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -20025,7 +20165,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_table_white_page_index_active {
 	cursor: pointer;
 	font-weight: bold;
-	color: #eaeaea;
+	color: #313c4e;
 }
 
 .jsmart5_table_white_page_first, .jsmart5_table_white_page_prev, .jsmart5_table_white_page_next, .jsmart5_table_white_page_last {
@@ -20280,7 +20420,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	border-bottom-color: transparent;
 	background: none;
 	background-color: #ffffff;
-	color: #eaeaea;
+	color: #313c4e;
 }
 
 .jsmart5_tabs_white_li_bottom[active=true] {
@@ -20288,7 +20428,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	border-top-color: transparent;
 	background: none;
 	background-color: #ffffff;
-	color: #eaeaea;
+	color: #313c4e;
 }
 
 .jsmart5_tabs_white_li_left[active=true] {
@@ -20296,7 +20436,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	border-right-color: transparent;
 	background: none;
 	background-color: #ffffff;
-	color: #eaeaea;
+	color: #313c4e;
 }
 
 .jsmart5_tabs_white_li_right[active=true] {
@@ -20304,7 +20444,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	border-left-color: transparent;
 	background: none;
 	background-color: #ffffff;
-	color: #eaeaea;
+	color: #313c4e;
 }
 
 .jsmart5_tab_white_content_top, .jsmart5_tab_white_content_left, .jsmart5_tab_white_content_bottom, .jsmart5_tab_white_content_right {
@@ -20551,6 +20691,10 @@ ul.jsmart5_list_white>li, dl.jsmart5_list_white>dd {
 	display: block;
 }
 
+ul.jsmart5_list_white>li:last-child, dl.jsmart5_list_white>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_white>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -20605,13 +20749,13 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 }
 
 .jsmart5_panel_white_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #313c4e;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #eaeaea; 
     background-color: #ffffff;
 }
 
@@ -20702,7 +20846,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 
 .jsmart5_balloon_white {
 	padding: 10px;
-	color: #eaeaea;
+	color: #313c4e;
 	border: solid 2px #eaeaea;
 	background-color: #ffffff;
 	-webkit-border-radius: 5px;
@@ -20826,16 +20970,15 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 .jsmart5_date_white_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -21047,8 +21190,10 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 }
 
 .jsmart5_keypad_white_key:hover, .jsmart5_keypad_white_special:hover, .jsmart5_keypad_white_tab:hover {
-	border: 1px solid #eaeaea;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #313c4e;
+	background-color: #ffffff;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_white_key:active, .jsmart5_keypad_white_special:active, .jsmart5_keypad_white_tab:active {
@@ -21086,7 +21231,8 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 .jsmart5_progress_white_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -21112,6 +21258,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 	width: 0px;
 	height: 100%;
 	background-color: #ffffff;
+	border: 1px solid #eaeaea;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -21119,6 +21266,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 
 .jsmart5_progress_white_bar_disabled {
 	background-color: #ffffff;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_white_percent {
@@ -21165,12 +21313,14 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 	height: 100%;
 	position: relative;
 	background-color: #ffffff;
+	border: 1px solid #eaeaea;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_white_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: #d5d5d5;
 }
 
@@ -21968,6 +22118,10 @@ ul.jsmart5_list_none>li, dl.jsmart5_list_none>dd {
 	display: block;
 }
 
+ul.jsmart5_list_none>li:last-child, dl.jsmart5_list_none>dd {
+	border-bottom: none;
+}
+
 ol.jsmart5_list_none>li:before {
 	position: absolute;
 	top: 0.7em;
@@ -22022,13 +22176,13 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 }
 
 .jsmart5_panel_none_header {
-	height: 35px;
+	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 2.1;
+	line-height: 1.5;
 	font-size: 15px;
 	cursor: pointer;
 	color: #000000;
-	border-bottom: 1px solid @border@; 
+	border-bottom: 1px solid #000000; 
     background-color: none;
 }
 
@@ -22243,16 +22397,15 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 .jsmart5_date_none_title select {
 	padding: 0px 8px;
 	margin: 0px 4px;
-	width: 40%;
+	width: 39%;
 	height: 25px;
 	line-height: 22px; 
 	color: inherit;
 	background: #f9f9f9 url('img/enable_select.png') right center no-repeat;
-	font-family: serif;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
-    text-overflow: "";  /* Removes default arrow from firefox */
+    text-overflow: '';  /* Removes default arrow from firefox */
 	border: none;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
@@ -22464,8 +22617,10 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 }
 
 .jsmart5_keypad_none_key:hover, .jsmart5_keypad_none_special:hover, .jsmart5_keypad_none_tab:hover {
-	border: 1px solid #000000;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+	color: #000000;
+	background-color: none;
+    border: 1px solid #000000;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .jsmart5_keypad_none_key:active, .jsmart5_keypad_none_special:active, .jsmart5_keypad_none_tab:active {
@@ -22503,7 +22658,8 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 .jsmart5_progress_none_frame {
 	width: 300px;
 	height: 22px;
-	padding: 2px;
+	padding: 1px;
+	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
 	float: left;
@@ -22529,6 +22685,7 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 	width: 0px;
 	height: 100%;
 	background-color: none;
+	border: 1px solid #000000;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -22536,6 +22693,7 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 
 .jsmart5_progress_none_bar_disabled {
 	background-color: none;
+	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_none_percent {
@@ -22582,12 +22740,14 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 	height: 100%;
 	position: relative;
 	background-color: none;
+	border: 1px solid #000000;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
 }
 
 .jsmart5_range_none_bar_disabled {
+	border: 1px solid #a3a3a3;
 	background-color: none;
 }
 
