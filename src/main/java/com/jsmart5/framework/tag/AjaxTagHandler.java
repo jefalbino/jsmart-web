@@ -177,10 +177,9 @@ public final class AjaxTagHandler extends SmartTagHandler {
 			if (action != null) {
 				jsonAjax.setMethod("post");
 				jsonAjax.setAction(getTagName(J_SBMT, action));
-				if (!params.isEmpty()) {
-					for (String name : params.keySet()) {						
-						jsonAjax.getParams().add(new JSONParam(name, params.get(name)));
-					}
+
+				for (String name : params.keySet()) {						
+					jsonAjax.getParams().add(new JSONParam(name, params.get(name)));
 				}
 			} else if (update != null) {
 				jsonAjax.setMethod("get");

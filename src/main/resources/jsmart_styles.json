@@ -211,15 +211,15 @@
 	},
 	"white": {
 		"@image@": "img/white_image.png",
-		"@border@": "#eaeaea",
-		"@bordersoft@": "#f2f2f2",
+		"@border@": "#cacaca",
+		"@bordersoft@": "#eaeaea",
 		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#313c4e",
 		"@fontstrong@": "#313c4e",
 		"@bckg@": "#ffffff",
 		"@bckgsoft@": "#ffffff",
-		"@bckgstrong@": "#f2f2f2",
-		"@bckghover@": "#f2f2f2",
+		"@bckgstrong@": "#eaeaea",
+		"@bckghover@": "#eaeaea",
 		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#313c4e",
 		"@arrowselect@": "#ffffff"

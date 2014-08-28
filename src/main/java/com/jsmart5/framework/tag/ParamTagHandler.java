@@ -41,8 +41,8 @@ public final class ParamTagHandler extends SmartTagHandler {
 	public void executeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof SmartTagHandler) {
-			String key = getTagName(J_TAG, name); // For update parameters
-			Object obj = getTagValue(value); // For common parameters
+			String key = getTagName(J_TAG, name);
+			Object obj = getTagValue(value);
 			putParam((SmartTagHandler) parent, key, obj);
 		}
 	}

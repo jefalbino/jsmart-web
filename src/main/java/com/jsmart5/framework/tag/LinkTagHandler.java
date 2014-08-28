@@ -26,6 +26,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.json.JSONLink;
+import com.jsmart5.framework.json.JSONParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartUtils;
 
@@ -126,6 +127,10 @@ public final class LinkTagHandler extends SmartTagHandler {
 			if (action != null) {
 				jsonAjax.setMethod("post");
 				jsonAjax.setAction(getTagName(J_SBMT, action));
+
+				for (String name : params.keySet()) {						
+					jsonAjax.getParams().add(new JSONParam(name, params.get(name)));
+				}
 				if (update == null && afterAjax == null) {
 					jsonAjax.setUrl(url);
 				}

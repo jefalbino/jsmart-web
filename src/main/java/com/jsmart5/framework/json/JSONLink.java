@@ -18,6 +18,9 @@
 
 package com.jsmart5.framework.json;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class JSONLink {
 
 	private String url;
@@ -25,6 +28,8 @@ public final class JSONLink {
 	private String method;
 
 	private String action;
+
+	private List<JSONParam> params = new ArrayList<JSONParam>();
 
 	private String update;
 
@@ -54,6 +59,14 @@ public final class JSONLink {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	public List<JSONParam> getParams() {
+		return params;
+	}
+
+	public void setParams(List<JSONParam> params) {
+		this.params = params;
 	}
 
 	public String getUpdate() {

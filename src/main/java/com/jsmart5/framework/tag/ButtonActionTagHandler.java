@@ -20,8 +20,10 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
@@ -39,6 +41,13 @@ public class ButtonActionTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
+		
+		// Just to call nested tags
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}
+
 		JspTag parent = getParent();
 		if (parent instanceof ButtonTagHandler) {
 			((ButtonTagHandler) parent).addActionItem(this);
@@ -59,6 +68,10 @@ public class ButtonActionTagHandler extends SmartTagHandler {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	/*package*/ Map<String, Object> getParams() {
+		return params;
 	}
 
 }
