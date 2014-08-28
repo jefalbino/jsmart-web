@@ -3374,15 +3374,21 @@ var Jsmart5 = (function() {
 			if (event.keyCode == 32) {
 				return;
 			}
+			
+			var ajax = $.parseJSON($(element).attr('ajax'));
+			var search = element.val().replace(getAutoCompleteChar(id), '');
+
+			if (search.length < ajax.minLength) {
+				return;
+			}
 
 			var timerId = setTimeout(function() {
 				element.addClass('jsmart5_auto_complete_load');
 
-				var ajax = $.parseJSON($(element).attr('ajax'));
 				ajax.method = 'post';
 				var options = getAjaxOptions(async, ajax);
 
-				var search = element.val().replace(getAutoCompleteChar(id), '');
+				search = element.val().replace(getAutoCompleteChar(id), '');
 				var postParam = [{name: ajax.name, value: search}, {name: element.attr('name'), value: element.val()}];
 
 				var closestForm = element.closest('form');

@@ -36,6 +36,8 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 
 	private static final int DEFAULT_MAX_RESULTS = 10;
 
+	private static final int DEFAULT_MIN_LENGTH = 1;
+
 	private static final String COMPLETE_VALUES = "_complete_values";
 
 	private String value;
@@ -48,7 +50,7 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 
 	private boolean multiple;
 
-	private Integer minLength;
+	private Integer minLength = DEFAULT_MIN_LENGTH;
 
 	private Integer maxResults = DEFAULT_MAX_RESULTS;
 
@@ -158,7 +160,16 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 
 		builder.append("ajax=\"" + getJSONValue(jsonAutoComplete) + "\" ");
 
-		builder.append(ON_KEY_UP + JSConstants.JSMART_AUTOCOMPLETE.format(async, id) + "\" ");
+		if (ajaxCommand != null) {
+			if (ajaxCommand.startsWith(ON_KEY_UP)) {
+				builder.append(ajaxCommand.replace(ON_KEY_UP, ON_KEY_UP + JSConstants.JSMART_AUTOCOMPLETE.format(async, id)));
+			} else {
+				builder.append(ON_KEY_UP + JSConstants.JSMART_AUTOCOMPLETE.format(async, id) + "\" ");
+				builder.append(ajaxCommand);
+			}
+		} else {
+			builder.append(ON_KEY_UP + JSConstants.JSMART_AUTOCOMPLETE.format(async, id) + "\" ");
+		}
 
 		appendEvent(builder);
 

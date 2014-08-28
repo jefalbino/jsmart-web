@@ -451,7 +451,11 @@
             <name>styleClass</name>
             <required>false</required>
         </attribute>
-         <attribute>
+        <attribute>
+            <name>theme</name>
+            <required>false</required>
+        </attribute>
+		<attribute>
             <name>timeout</name>
             <required>false</required>
         </attribute>
