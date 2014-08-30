@@ -904,8 +904,9 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 }
 
 .jsmart5_date_%s td {
-	border: 0;
+	border: 0px;
 	padding: 1px;
+	background: none;
 }
 
 .jsmart5_date_%s td span, .jsmart5_date_%s td a {
@@ -951,9 +952,13 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	vertical-align: middle;
 }
 
-.jsmart5_date_%s_current_day, .jsmart5_date_%s_current_day>a {
-	color: @font@;
-	background-color: @bckg@;
+.jsmart5_date_%s_current_day {
+	color: @font@ !important;
+}
+
+.jsmart5_date_%s_current_day>a {
+	background-color: @bckg@ !important;
+	border: 1px solid @border@;
 	-webkit-border-radius: 4px;
 	   -moz-border-radius: 4px;
         -ms-border-radius: 4px;
@@ -1032,7 +1037,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 }
 
 .jsmart5_date_%s_today, .jsmart5_date_%s_today>a {
-	border: 1px solid @border@;
+	background-color: @bckghover@;
 	-webkit-border-radius: 4px;
 	   -moz-border-radius: 4px;
         -ms-border-radius: 4px;
@@ -1046,6 +1051,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 .jsmart5_date_%s td>a:hover {
 	color: @font@;
 	background-color: @bckg@;
+	border: 1px solid @border@;
 	-webkit-border-radius: 4px;
 	   -moz-border-radius: 4px;
         -ms-border-radius: 4px;
@@ -1254,6 +1260,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	width: 300px;
 	height: 22px;
 	padding: 1px;
+	padding-right: 3px;
 	padding-bottom: 3px;
 	overflow: hidden;
 	text-align: left;
@@ -1306,7 +1313,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	width: 300px;
 	height: 22px;
 	padding: 2px;
-	padding-right: 10px;
+	padding-right: 12px;
 	overflow: hidden;
 	text-align: left;
 	float: left;

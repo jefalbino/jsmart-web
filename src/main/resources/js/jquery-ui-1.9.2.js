@@ -5289,7 +5289,8 @@ $.widget("ui.dialog", {
 		title: "",
 		width: 300,
 		zIndex: 1000,
-		theme: '' // theme to include on date style
+		theme: '', // theme to include on date style
+		hideHeader: false
 	},
 
 	_create: function() {
@@ -5380,6 +5381,10 @@ $.widget("ui.dialog", {
 		uiDialogTitlebar.find( "*" ).add( uiDialogTitlebar ).disableSelection();
 		this._hoverable( uiDialogTitlebarClose );
 		this._focusable( uiDialogTitlebarClose );
+
+		if (options.hideHeader == true) {
+			uiDialogTitlebar.hide();
+		}
 
 		if ( options.draggable && $.fn.draggable ) {
 			this._makeDraggable();

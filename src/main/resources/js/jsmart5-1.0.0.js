@@ -3221,7 +3221,7 @@ var Jsmart5 = (function() {
 					rangeValue.outerHeight(totalHeight);
 				}
 
-				rangeTrail.css({marginTop: ((rangeFrame.height() - rangeTrail.height()) / 2) - 1});
+				rangeTrail.css({marginTop: ((rangeFrame.height() - rangeTrail.height()) / 2)});
 			}
 
 			var input = $(rangeFrame).find('>input:hidden');

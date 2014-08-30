@@ -62,6 +62,8 @@ public final class DialogTagHandler extends SmartTagHandler {
 
 	private String listenEnter;
 
+	private Boolean hideHeader;
+
 	@Override
 	public void validateTag() throws JspException {
 		if (showEffect != null && !showEffect.equals("blind") && !showEffect.equals("bounce") && !showEffect.equals("clip") 
@@ -81,6 +83,9 @@ public final class DialogTagHandler extends SmartTagHandler {
 				&& !position.equals("right top") && !position.equals("right bottom")) {
 			throw new JspException("Invalid position value for dialog tag. Valid values are center, left, right, top, bottom, left top, left bottom, " +
 					"right top, right bottom");
+		}
+		if (hideHeader != null && hideHeader == true && draggable != null && draggable == true) {
+			throw new JspException("Invalid attributes for dialog tag. The attribute draggable can only be used if hideHeader attribute is false");
 		}
 	}
 
@@ -113,6 +118,10 @@ public final class DialogTagHandler extends SmartTagHandler {
 
 		if (title != null) {
 			scriptBuilder.append("title:'" + getTagValue(title) + "',");
+		}
+		
+		if (hideHeader != null) {
+			scriptBuilder.append("hideHeader:" + hideHeader + ",");
 		}
 
 		if (opened != null) {
@@ -228,6 +237,14 @@ public final class DialogTagHandler extends SmartTagHandler {
 
 	public void setListenEnter(String listenEnter) {
 		this.listenEnter = listenEnter;
+	}
+
+	public Boolean getHideHeader() {
+		return hideHeader;
+	}
+
+	public void setHideHeader(Boolean hideHeader) {
+		this.hideHeader = hideHeader;
 	}
 
 }
