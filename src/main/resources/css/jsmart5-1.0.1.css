@@ -840,11 +840,11 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 
 .jsmart5_switch_water_span_off, .jsmart5_switch_water_span_off_disabled {
 	text-indent: 2em;
-	background-color: #e5f3f4;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_water_span_on_disabled, .jsmart5_switch_water_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_water_button, .jsmart5_switch_water_button_disabled {
@@ -1294,8 +1294,8 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 }
 
 .jsmart5_progress_water_bar_disabled {
-	background-color: #008b91;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_water_percent {
@@ -2274,11 +2274,11 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 
 .jsmart5_switch_blue_span_off, .jsmart5_switch_blue_span_off_disabled {
 	text-indent: 2em;
-	background-color: #ececf3;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_blue_span_on_disabled, .jsmart5_switch_blue_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_blue_button, .jsmart5_switch_blue_button_disabled {
@@ -2728,8 +2728,8 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 }
 
 .jsmart5_progress_blue_bar_disabled {
-	background-color: #4d4d99;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_blue_percent {
@@ -3708,11 +3708,11 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 
 .jsmart5_switch_dark_blue_span_off, .jsmart5_switch_dark_blue_span_off_disabled {
 	text-indent: 2em;
-	background-color: #e8edf3;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_dark_blue_span_on_disabled, .jsmart5_switch_dark_blue_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_dark_blue_button, .jsmart5_switch_dark_blue_button_disabled {
@@ -4162,8 +4162,8 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 }
 
 .jsmart5_progress_dark_blue_bar_disabled {
-	background-color: #1c5288;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_dark_blue_percent {
@@ -5142,11 +5142,11 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 
 .jsmart5_switch_green_span_off, .jsmart5_switch_green_span_off_disabled {
 	text-indent: 2em;
-	background-color: #e9f2e5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_green_span_on_disabled, .jsmart5_switch_green_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_green_button, .jsmart5_switch_green_button_disabled {
@@ -5596,8 +5596,8 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 }
 
 .jsmart5_progress_green_bar_disabled {
-	background-color: #37A100;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_green_percent {
@@ -6576,11 +6576,11 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 
 .jsmart5_switch_dark_green_span_off, .jsmart5_switch_dark_green_span_off_disabled {
 	text-indent: 2em;
-	background-color: #e7f0ea;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_dark_green_span_on_disabled, .jsmart5_switch_dark_green_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_dark_green_button, .jsmart5_switch_dark_green_button_disabled {
@@ -7030,8 +7030,8 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 }
 
 .jsmart5_progress_dark_green_bar_disabled {
-	background-color: #147134;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_dark_green_percent {
@@ -8010,11 +8010,11 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 
 .jsmart5_switch_purple_span_off, .jsmart5_switch_purple_span_off_disabled {
 	text-indent: 2em;
-	background-color: #f3ebf7;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_purple_span_on_disabled, .jsmart5_switch_purple_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_purple_button, .jsmart5_switch_purple_button_disabled {
@@ -8464,8 +8464,8 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 }
 
 .jsmart5_progress_purple_bar_disabled {
-	background-color: #8f37af;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_purple_percent {
@@ -9444,11 +9444,11 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 
 .jsmart5_switch_dark_purple_span_off, .jsmart5_switch_dark_purple_span_off_disabled {
 	text-indent: 2em;
-	background-color: #ebe6f2;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_dark_purple_span_on_disabled, .jsmart5_switch_dark_purple_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_dark_purple_button, .jsmart5_switch_dark_purple_button_disabled {
@@ -9898,8 +9898,8 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 }
 
 .jsmart5_progress_dark_purple_bar_disabled {
-	background-color: #3c0e80;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_dark_purple_percent {
@@ -10878,11 +10878,11 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 
 .jsmart5_switch_pink_span_off, .jsmart5_switch_pink_span_off_disabled {
 	text-indent: 2em;
-	background-color: #faeaf2;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_pink_span_on_disabled, .jsmart5_switch_pink_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_pink_button, .jsmart5_switch_pink_button_disabled {
@@ -11332,8 +11332,8 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 }
 
 .jsmart5_progress_pink_bar_disabled {
-	background-color: #d0347d;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_pink_percent {
@@ -12312,11 +12312,11 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 
 .jsmart5_switch_orange_span_off, .jsmart5_switch_orange_span_off_disabled {
 	text-indent: 2em;
-	background-color: #f9f2e5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_orange_span_on_disabled, .jsmart5_switch_orange_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_orange_button, .jsmart5_switch_orange_button_disabled {
@@ -12766,8 +12766,8 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 }
 
 .jsmart5_progress_orange_bar_disabled {
-	background-color: #c68200;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_orange_percent {
@@ -13746,11 +13746,11 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 
 .jsmart5_switch_red_span_off, .jsmart5_switch_red_span_off_disabled {
 	text-indent: 2em;
-	background-color: #f6eaea;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_red_span_on_disabled, .jsmart5_switch_red_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_red_button, .jsmart5_switch_red_button_disabled {
@@ -14200,8 +14200,8 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 }
 
 .jsmart5_progress_red_bar_disabled {
-	background-color: #a82d2d;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_red_percent {
@@ -15180,11 +15180,11 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 
 .jsmart5_switch_brown_span_off, .jsmart5_switch_brown_span_off_disabled {
 	text-indent: 2em;
-	background-color: #e9e7e6;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_brown_span_on_disabled, .jsmart5_switch_brown_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_brown_button, .jsmart5_switch_brown_button_disabled {
@@ -15634,8 +15634,8 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 }
 
 .jsmart5_progress_brown_bar_disabled {
-	background-color: #6c452f;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_brown_percent {
@@ -16614,11 +16614,11 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 
 .jsmart5_switch_black_span_off, .jsmart5_switch_black_span_off_disabled {
 	text-indent: 2em;
-	background-color: #cccccc;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_black_span_on_disabled, .jsmart5_switch_black_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_black_button, .jsmart5_switch_black_button_disabled {
@@ -17068,8 +17068,8 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 }
 
 .jsmart5_progress_black_bar_disabled {
-	background-color: #000000;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_black_percent {
@@ -18048,11 +18048,11 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 
 .jsmart5_switch_yellow_span_off, .jsmart5_switch_yellow_span_off_disabled {
 	text-indent: 2em;
-	background-color: #fff6de;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_yellow_span_on_disabled, .jsmart5_switch_yellow_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_yellow_button, .jsmart5_switch_yellow_button_disabled {
@@ -18502,8 +18502,8 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 }
 
 .jsmart5_progress_yellow_bar_disabled {
-	background-color: #febf04;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_yellow_percent {
@@ -19482,11 +19482,11 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 
 .jsmart5_switch_gray_span_off, .jsmart5_switch_gray_span_off_disabled {
 	text-indent: 2em;
-	background-color: #f0f1f1;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_gray_span_on_disabled, .jsmart5_switch_gray_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_gray_button, .jsmart5_switch_gray_button_disabled {
@@ -19936,8 +19936,8 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 }
 
 .jsmart5_progress_gray_bar_disabled {
-	background-color: #707377;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_gray_percent {
@@ -20916,11 +20916,11 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 
 .jsmart5_switch_white_span_off, .jsmart5_switch_white_span_off_disabled {
 	text-indent: 2em;
-	background-color: #eaeaea;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_white_span_on_disabled, .jsmart5_switch_white_span_off_disabled {
-	background-color: #d5d5d5;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_white_button, .jsmart5_switch_white_button_disabled {
@@ -21370,8 +21370,8 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 }
 
 .jsmart5_progress_white_bar_disabled {
-	background-color: #ffffff;
-	border: 1px solid #a3a3a3;
+	border: 1px solid #d5d5d5;
+	background-color: #d5d5d5;
 }
 
 .jsmart5_progress_white_percent {
@@ -22339,7 +22339,7 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 	line-height: 2.0;
 	text-indent: -2em;
 	white-space: nowrap;
-	background-color: none;
+	background-color: #ffffff;
 	-webkit-border-radius: 5px;
 	   -moz-border-radius: 5px;
 			border-radius: 5px;
@@ -22350,11 +22350,11 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 
 .jsmart5_switch_none_span_off, .jsmart5_switch_none_span_off_disabled {
 	text-indent: 2em;
-	background-color: none;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_none_span_on_disabled, .jsmart5_switch_none_span_off_disabled {
-	background-color: none;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_none_button, .jsmart5_switch_none_button_disabled {
@@ -22804,8 +22804,8 @@ ul.jsmart5_list_none>li, .jsmart5_list_none>dd {
 }
 
 .jsmart5_progress_none_bar_disabled {
+	border: 1px solid none;
 	background-color: none;
-	border: 1px solid #a3a3a3;
 }
 
 .jsmart5_progress_none_percent {

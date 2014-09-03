@@ -829,7 +829,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	line-height: 2.0;
 	text-indent: -2em;
 	white-space: nowrap;
-	background-color: @bckgsoft@;
+	background-color: #ffffff;
 	-webkit-border-radius: 5px;
 	   -moz-border-radius: 5px;
 			border-radius: 5px;
@@ -840,11 +840,11 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 
 .jsmart5_switch_%s_span_off, .jsmart5_switch_%s_span_off_disabled {
 	text-indent: 2em;
-	background-color: @bckgstrong@;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_%s_span_on_disabled, .jsmart5_switch_%s_span_off_disabled {
-	background-color: @bckgdisabled@;
+	background-color: #f9f9f9;
 }
 
 .jsmart5_switch_%s_button, .jsmart5_switch_%s_button_disabled {
@@ -1294,8 +1294,8 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 }
 
 .jsmart5_progress_%s_bar_disabled {
-	background-color: @bckg@;
-	border: 1px solid @borderdisabled@;
+	border: 1px solid @bckgdisabled@;
+	background-color: @bckgdisabled@;
 }
 
 .jsmart5_progress_%s_percent {
