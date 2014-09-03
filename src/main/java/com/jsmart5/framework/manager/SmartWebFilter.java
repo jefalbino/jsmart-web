@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -79,6 +80,8 @@ public final class SmartWebFilter implements Filter {
 
 	private static final Pattern FORM_PATTERN = Pattern.compile("<form.*?>");
 
+	private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
+
 	private static JSONObject jsonResources;
 
 	private static JSONObject jsonHeaders;
@@ -86,7 +89,7 @@ public final class SmartWebFilter implements Filter {
 	@Override
 	public void init(FilterConfig config) throws ServletException {
 		initJsonResources();
-		initFileResources(config.getServletContext());
+		initFileResources(config);
 	}
 
 	@Override
@@ -273,10 +276,32 @@ public final class SmartWebFilter implements Filter {
 		return scanner.hasNext() ? scanner.next() : "";
 	}
 
-	private void initFileResources(ServletContext context) {
+	private void initFileResources(FilterConfig config) {
 		try {
-			File rootFile = new File(context.getRealPath(JAR_FILE_PATH));
-			Dir content = Vfs.fromURL(rootFile.toURI().toURL());
+			ServletContext context = config.getServletContext();
+			Set<String> libs = context.getResourcePaths(LIB_FILE_PATH);
+
+			if (libs == null || libs.isEmpty()) {
+				LOGGER.log(Level.SEVERE, "Could not find the JSmart5 library JAR file. Empty " + LIB_FILE_PATH + " resource folder.");
+				return;
+			}
+
+			String libFilePath = null;
+			for (String lib : libs) {
+				Matcher matcher = JAR_FILE_PATTERN.matcher(lib);
+				if (matcher.find()) {
+					libFilePath = matcher.group();
+					break;
+				}
+			}
+
+			if (libFilePath == null) {
+				LOGGER.log(Level.SEVERE, "Could not find the JSmart5 library JAR file inside " + LIB_FILE_PATH);
+				return;
+			}
+
+			File libFile = new File(context.getRealPath(libFilePath));
+			Dir content = Vfs.fromURL(libFile.toURI().toURL());
 
 			Iterator<Vfs.File> files = content.getFiles().iterator();
 			while (files.hasNext()) {
