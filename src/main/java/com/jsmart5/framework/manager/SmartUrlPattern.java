@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 	private String url;
 
+	private String jsp;
+
 	private String[] access; // *, roles allowed with comma separated
 
 	private boolean loggedAccess = true;
@@ -37,6 +39,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 	public void setUrl(String url) {
 		this.url = SmartUtils.decodePath(url);
+	}
+
+	@XmlAttribute
+	public String getJsp() {
+		return jsp;
+	}
+
+	public void setJsp(String jsp) {
+		this.jsp = jsp;
 	}
 
 	@XmlAttribute

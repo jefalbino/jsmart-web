@@ -29,6 +29,7 @@ import com.jsmart5.framework.manager.SmartMessage;
 
 import static com.jsmart5.framework.manager.SmartMessage.*;
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class MessageTagHandler extends SmartTagHandler {
 
@@ -102,13 +103,13 @@ public final class MessageTagHandler extends SmartTagHandler {
 
 			for (String key : messages.keySet()) {
 				if (messages.get(key) == INFO) {
-					infoBuilder.append("'" + key.replace("\"", "'").replace("'", "\\'") + "',");				
+					infoBuilder.append("'" + clearMessage(key) + "',");				
 				} else if (messages.get(key) == WARNING) {
-					warningBuilder.append("'" + key.replace("\"", "'").replace("'", "\\'") + "',");
+					warningBuilder.append("'" + clearMessage(key) + "',");
 				} else if (messages.get(key) == ERROR) {
-					errorBuilder.append("'" + key.replace("\"", "'").replace("'", "\\'") + "',");
+					errorBuilder.append("'" + clearMessage(key) + "',");
 				} else if (messages.get(key) == SUCCESS) {
-					successBuilder.append("'" + key.replace("\"", "'").replace("'", "\\'") + "',");
+					successBuilder.append("'" + clearMessage(key) + "',");
 				}
 			}
 
@@ -152,7 +153,7 @@ public final class MessageTagHandler extends SmartTagHandler {
 
 			optionsBuilder.append("}");
 
-			StringBuilder scriptBuilder = new StringBuilder(JSConstants.JSMART_MESSAGE.format(messagesBuilder, optionsBuilder));
+			StringBuilder scriptBuilder = new StringBuilder(JSMART_MESSAGE.format(messagesBuilder, optionsBuilder));
 
 			if (SmartContext.isAjaxRequest()) {
 				StringBuilder inputBuilder = new StringBuilder(INPUT_TAG);
@@ -163,6 +164,10 @@ public final class MessageTagHandler extends SmartTagHandler {
 				appendScript(scriptBuilder);
 			}
 		}
+	}
+
+	private String clearMessage(String message) {
+		return message.replaceAll("(\\n)+", "\\\\n").replaceAll("(\\r)+", "\\\\r").replace("\"", "'").replace("'", "\\'");
 	}
 
 	public void setAutoHide(Boolean autoHide) {

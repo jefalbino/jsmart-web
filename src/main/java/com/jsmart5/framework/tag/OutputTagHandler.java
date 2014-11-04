@@ -27,12 +27,15 @@ import java.util.Locale;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 public final class OutputTagHandler extends SmartTagHandler {
 
@@ -67,6 +70,17 @@ public final class OutputTagHandler extends SmartTagHandler {
 	private String target;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		if (type != null && !LEGEND_TYPE.equals(type) && !STRONG_TYPE.equals(type) && !MARK_TYPE.equals(type) 
 				&& !EM_TYPE.equals(type) && !SMALL_TYPE.equals(type) && !LABEL_TYPE.equals(type) && !OUTPUT_TYPE.equals(type)) {
@@ -90,21 +104,28 @@ public final class OutputTagHandler extends SmartTagHandler {
 		StringBuilder builder = new StringBuilder();
 
 		if (LEGEND_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_LEGEND_TAG);
+			builder.append(OPEN_LEGEND_TAG);
+
 		} else if (STRONG_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_STRONG_TAG);
+			builder.append(OPEN_STRONG_TAG);
+
 		} else if (MARK_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_MARK_TAG);
+			builder.append(OPEN_MARK_TAG);
+
 		} else if (EM_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_EM_TAG);
+			builder.append(OPEN_EM_TAG);
+
 		} else if (SMALL_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_SMALL_TAG);
+			builder.append(OPEN_SMALL_TAG);
+
 		} else if (LABEL_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_LABEL_TAG);
+			builder.append(OPEN_LABEL_TAG);
+
 		} else if (OUTPUT_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_OUTPUT_TAG);
+			builder.append(OPEN_OUTPUT_TAG);
+
 		} else {
-			builder.append(HtmlConstants.OPEN_SPAN_TAG);
+			builder.append(OPEN_SPAN_TAG);
 		}
 
 		if (id != null) {
@@ -130,7 +151,7 @@ public final class OutputTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_OUTPUT);
+			appendClass(builder, CSS_OUTPUT);
 		}
 
 		if (target != null && (LABEL_TYPE.equals(type) || OUTPUT_TYPE.equals(type))) {
@@ -175,21 +196,21 @@ public final class OutputTagHandler extends SmartTagHandler {
 		builder.append(val);
 
 		if (LEGEND_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_LEGEND_TAG);
+			builder.append(CLOSE_LEGEND_TAG);
 		} else if (STRONG_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_STRONG_TAG);
+			builder.append(CLOSE_STRONG_TAG);
 		} else if (MARK_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_MARK_TAG);
+			builder.append(CLOSE_MARK_TAG);
 		} else if (EM_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_EM_TAG);
+			builder.append(CLOSE_EM_TAG);
 		} else if (SMALL_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_SMALL_TAG);
+			builder.append(CLOSE_SMALL_TAG);
 		} else if (LABEL_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_LABEL_TAG);
+			builder.append(CLOSE_LABEL_TAG);
 		} else if (OUTPUT_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_OUTPUT_TAG);
+			builder.append(CLOSE_OUTPUT_TAG);
 		} else {
-			builder.append(HtmlConstants.CLOSE_SPAN_TAG);
+			builder.append(CLOSE_SPAN_TAG);
 		}
 
 		printOutput(builder);

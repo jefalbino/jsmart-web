@@ -21,7 +21,7 @@ package com.jsmart5.framework.json;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class JSONRest {
+public final class JsonRest {
 
 	private Object method;
 
@@ -37,7 +37,7 @@ public final class JSONRest {
 
 	private String jsonpcallback;
 
-	private List<JSONParam> params = new ArrayList<JSONParam>();
+	private List<JsonParam> params = new ArrayList<JsonParam>();
 
 	private String before;
 
@@ -101,11 +101,11 @@ public final class JSONRest {
 		this.jsonpcallback = jsonpcallback;
 	}
 
-	public List<JSONParam> getParams() {
+	public List<JsonParam> getParams() {
 		return params;
 	}
 
-	public void setParams(List<JSONParam> params) {
+	public void setParams(List<JsonParam> params) {
 		this.params = params;
 	}
 

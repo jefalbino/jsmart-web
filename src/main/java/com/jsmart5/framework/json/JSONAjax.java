@@ -21,13 +21,13 @@ package com.jsmart5.framework.json;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class JSONAjax {
+public final class JsonAjax {
 
 	private String method;
 
 	private String action;
 
-	private List<JSONParam> params = new ArrayList<JSONParam>();
+	private List<JsonParam> params = new ArrayList<JsonParam>();
 
 	private String update;
 
@@ -51,11 +51,11 @@ public final class JSONAjax {
 		this.action = action;
 	}
 
-	public List<JSONParam> getParams() {
+	public List<JsonParam> getParams() {
 		return params;
 	}
 
-	public void setParams(List<JSONParam> params) {
+	public void setParams(List<JsonParam> params) {
 		this.params = params;
 	}
 

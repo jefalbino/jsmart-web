@@ -21,10 +21,14 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JSONProgress;
+import com.jsmart5.framework.json.JsonProgress;
 import com.jsmart5.framework.manager.SmartTagHandler;
+
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class ProgressTagHandler extends SmartTagHandler {
 
@@ -56,7 +60,18 @@ public final class ProgressTagHandler extends SmartTagHandler {
 
     private boolean showPercentage = true;
 
-    private String onComplete;    
+    private String onComplete;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -93,7 +108,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_PROGRESS_CONTAINER);
+			appendClass(builder, CSS_PROGRESS_CONTAINER);
 		}
 
 		appendEvent(builder);
@@ -104,9 +119,9 @@ public final class ProgressTagHandler extends SmartTagHandler {
 
 		builder.append("id=\"" + id + PROGRESS_FRAME + "\" ");
 
-		appendClass(builder, CssConstants.CSS_PROGRESS_FRAME);
+		appendClass(builder, CSS_PROGRESS_FRAME);
 
-		JSONProgress jsonProgress = new JSONProgress();
+		JsonProgress jsonProgress = new JsonProgress();
 
 		jsonProgress.setAjax(String.valueOf(ajax));
 		jsonProgress.setMax(String.valueOf(maxValue));
@@ -122,7 +137,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 			jsonProgress.setComplete(onComplete);
 		}
 
-		builder.append("ajax=\"" + getJSONValue(jsonProgress) + "\" ");
+		builder.append("ajax=\"" + getJsonValue(jsonProgress) + "\" ");
 
 		if (disabled || isEditRowTagEnabled()) {
 			builder.append("disabled=\"disabled\" ");
@@ -132,7 +147,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 
 
 		// Hidden input to send value to server
-		builder.append(HtmlConstants.INPUT_TAG);
+		builder.append(INPUT_TAG);
 
 		builder.append("id=\"" + id + PROGRESS_INPUT + "\" ");
 
@@ -160,9 +175,9 @@ public final class ProgressTagHandler extends SmartTagHandler {
 		builder.append(OPEN_DIV_TAG);
 
 		if (disabled) {
-			appendClass(builder, CssConstants.CSS_PROGRESS_BAR_DISABLED);
+			appendClass(builder, CSS_PROGRESS_BAR_DISABLED);
 		} else {
-			appendClass(builder, CssConstants.CSS_PROGRESS_BAR);
+			appendClass(builder, CSS_PROGRESS_BAR);
 		}
 
 		builder.append(">" + CLOSE_DIV_TAG);
@@ -170,7 +185,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 		Object labelVal = getTagValue(label);
 		if (labelVal != null) {
 			builder.append(OPEN_SPAN_TAG);
-			appendClass(builder, CssConstants.CSS_PROGRESS_LABEL);
+			appendClass(builder, CSS_PROGRESS_LABEL);
 			builder.append(">");
 			builder.append(labelVal);
 			builder.append(CLOSE_SPAN_TAG);
@@ -181,7 +196,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 		if (showPercentage) {
 			builder.append(OPEN_SPAN_TAG);
 			builder.append("id=\"" + id + PROGRESS_PERCENT + "\" ");
-			appendClass(builder, CssConstants.CSS_PROGRESS_PERCENT);
+			appendClass(builder, CSS_PROGRESS_PERCENT);
 			builder.append(">");
 			builder.append(CLOSE_SPAN_TAG);
 		}
@@ -190,7 +205,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 
 		printOutput(builder);
 
-		appendScript(new StringBuilder(JSConstants.JSMART_PROGRESS.format(id)));
+		appendScript(new StringBuilder(JSMART_PROGRESS.format(id)));
 	}
 
 	public void setAjax(boolean ajax) {

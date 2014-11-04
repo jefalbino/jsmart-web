@@ -19,55 +19,31 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
-
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
-
-public final class FormTagHandler extends SmartTagHandler {
-
-	private String method;
+public class SeparatorTagHandler extends ButtonActionTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (method != null && !method.equalsIgnoreCase("GET") && !method.equalsIgnoreCase("POST")) {
-			throw new JspException("Invalid method for form tag. Valid value are get or post");
-		}
+		// DO NOTHING
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
 
-		StringWriter sw = new StringWriter();
+		// Just to call nested tags
 		JspFragment body = getJspBody();
 		if (body != null) {
-			body.invoke(sw);
+			body.invoke(null);
 		}
 
-		StringBuilder builder = new StringBuilder(OPEN_FORM_TAG);
-
-		builder.append("id=\"" + id + "\" ");
-
-		if (method != null) {
-			builder.append("method=\"" + method + "\" ");
-		} else {
-			builder.append("method=\"GET\" ");
+		JspTag parent = getParent();
+		if (parent instanceof ButtonTagHandler) {
+			((ButtonTagHandler) parent).addActionItem(this);
 		}
-
-		builder.append(ON_SUBMIT + "return " + JSMART_VALIDATE.format(id) + "\" >");
-		builder.append(sw.toString());
-		builder.append(CLOSE_FORM_TAG);
-
-		printOutput(builder);
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
 	}
 
 }

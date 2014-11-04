@@ -21,10 +21,14 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JSONRange;
+import com.jsmart5.framework.json.JsonRange;
 import com.jsmart5.framework.manager.SmartTagHandler;
+
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class RangeTagHandler extends SmartTagHandler {
 
@@ -55,6 +59,17 @@ public final class RangeTagHandler extends SmartTagHandler {
     private boolean showValue = true;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		if (maxValue != null && minValue != null && minValue >= maxValue) {
 			throw new JspException("Attribute minValue must be less than maxValue attribute for range tag");
@@ -83,7 +98,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_RANGE_CONTAINER);
+			appendClass(builder, CSS_RANGE_CONTAINER);
 		}
 
 		appendEvent(builder);
@@ -94,9 +109,9 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 		builder.append("id=\"" + id + RANGE_FRAME + "\" ");
 
-		appendClass(builder, CssConstants.CSS_RANGE_FRAME);
+		appendClass(builder, CSS_RANGE_FRAME);
 
-		JSONRange jsonRange = new JSONRange();
+		JsonRange jsonRange = new JsonRange();
 
 		jsonRange.setAjax(String.valueOf(ajax));
 		jsonRange.setMax(String.valueOf(maxValue));
@@ -108,7 +123,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 			jsonRange.setCallback(onValueChange.trim());
 		}
 
-		builder.append("ajax=\"" + getJSONValue(jsonRange) + "\" ");
+		builder.append("ajax=\"" + getJsonValue(jsonRange) + "\" ");
 
 		if (disabled || isEditRowTagEnabled()) {
 			builder.append("disabled=\"disabled\" ");
@@ -118,12 +133,12 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 		// Trail for the range
 		builder.append(OPEN_SPAN_TAG);
-		appendClass(builder, CssConstants.CSS_RANGE_TRAIL);
+		appendClass(builder, CSS_RANGE_TRAIL);
 		builder.append(">");
 		builder.append(CLOSE_SPAN_TAG);
 
 		// Hidden input to send value to server
-		builder.append(HtmlConstants.INPUT_TAG);
+		builder.append(INPUT_TAG);
 
 		builder.append("id=\"" + id + RANGE_INPUT + "\" ");
 
@@ -151,9 +166,9 @@ public final class RangeTagHandler extends SmartTagHandler {
 		builder.append(OPEN_DIV_TAG);
 
 		if (disabled) {
-			appendClass(builder, CssConstants.CSS_RANGE_BAR_DISABLED);
+			appendClass(builder, CSS_RANGE_BAR_DISABLED);
 		} else {
-			appendClass(builder, CssConstants.CSS_RANGE_BAR);
+			appendClass(builder, CSS_RANGE_BAR);
 		}
 
 		builder.append(">" + CLOSE_DIV_TAG);
@@ -163,7 +178,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 		if (showValue) {
 			builder.append(OPEN_SPAN_TAG);
 			builder.append("id=\"" + id + RANGE_VALUE + "\" ");
-			appendClass(builder, CssConstants.CSS_RANGE_VALUE);
+			appendClass(builder, CSS_RANGE_VALUE);
 			builder.append(">");
 			builder.append(number != null ? number : 0);
 			builder.append(CLOSE_SPAN_TAG);
@@ -173,7 +188,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 		printOutput(builder);
 
-		appendScript(new StringBuilder(JSConstants.JSMART_RANGE.format(id)));
+		appendScript(new StringBuilder(JSMART_RANGE.format(id)));
 	}
 
 	public void setAjax(boolean ajax) {

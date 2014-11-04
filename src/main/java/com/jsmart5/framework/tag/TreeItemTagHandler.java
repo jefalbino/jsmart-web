@@ -18,6 +18,10 @@
 
 package com.jsmart5.framework.tag;
 
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.JSMART_LINK;
+
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -27,16 +31,11 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.json.JsonLink;
-import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartUtils;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
-
 /*
- * Link uses a json structure
+ * TreeItem uses a json structure
  * 
  * {
  * 	  'method': '',
@@ -47,15 +46,7 @@ import static com.jsmart5.framework.tag.JsConstants.*;
  *    'exec': ''
  *  }
  */
-public final class LinkTagHandler extends SmartTagHandler {
-
-	private String label;
-
-	private Integer length;
-
-	private boolean ellipsize;
-
-	private String outcome;
+public class TreeItemTagHandler extends SmartTagHandler {
 
 	private String action;
 
@@ -65,44 +56,40 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 	private String afterAjax;
 
-	private Integer tabIndex;
+	private String outcome;
+
+	private String label;
+
+	private Integer length;
+
+	private boolean ellipsize;
 
 	private boolean async = true;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
+	
+		JspTag parent = getParent();
+		if (parent instanceof TreeTagHandler) {
+			theme = ((TreeTagHandler) parent).getTheme();
+
+		} else if (parent instanceof TreeItemTagHandler) {
+			theme = ((TreeItemTagHandler) parent).getTheme();
+		}
 
 		StringWriter sw = new StringWriter();
-
-		// Just to call nested tags
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(sw);
 		}
 
 		HttpServletRequest request = getRequest();
-		StringBuilder builder = new StringBuilder(OPEN_LINK_TAG);
-
-		StringBuilder urlParams = new StringBuilder("?");
-		for (String key : params.keySet()) {
-			urlParams.append(key + "=" + params.get(key) + "&");
-		}
+		StringBuilder builder = new StringBuilder(OPEN_LIST_ITEM_TAG);
 
 		if (id != null) {
 			builder.append("id=\"" + id + "\" ");
@@ -113,11 +100,25 @@ public final class LinkTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CSS_LINK);
+			appendClass(builder, CSS_TREE_ITEM);			
 		}
-		if (tabIndex != null) {
-			builder.append("tabindex=\"" + tabIndex + "\" ");
+
+		appendEvent(builder);
+
+		builder.append(CLOSE_TAG);
+
+		builder.append(OPEN_DIV_TAG);
+		
+		if (!sw.toString().isEmpty()) {
+			appendClass(builder, CSS_TREE_ITEM_MARK_CLOSED);
+		} else {
+			appendClass(builder, CSS_TREE_ITEM_MARK_EMPTY);
 		}
+
+		builder.append(CLOSE_TAG);
+		builder.append(CLOSE_DIV_TAG);
+
+		builder.append(OPEN_LINK_TAG);
 
 		String outcomeVal = null; 
 		if (outcome != null) {
@@ -127,7 +128,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 		String url = "";
 		String href = "#";
 		if (outcomeVal != null) {
-			url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal) + urlParams.substring(0, urlParams.length() -1);
+			url = outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal;
 			href = (!url.startsWith("http") && !url.startsWith("mailto") ? request.getContextPath() + "/" : "") + url;
 		}
 
@@ -141,16 +142,13 @@ public final class LinkTagHandler extends SmartTagHandler {
 			if (action != null) {
 				jsonAjax.setMethod("post");
 				jsonAjax.setAction(getTagName(J_SBMT, action));
-
-				for (String name : params.keySet()) {						
-					jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
-				}
 				if (update == null && afterAjax == null) {
 					jsonAjax.setUrl(url);
 				}
 			} else if (update != null) {
 				jsonAjax.setMethod("get");
 			}
+
 			jsonAjax.setUpdate(update);
 			jsonAjax.setBefore(beforeAjax);
 			jsonAjax.setExec(afterAjax);
@@ -158,48 +156,40 @@ public final class LinkTagHandler extends SmartTagHandler {
 			builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" ");
 		}
 
-		appendEvent(builder);
+		builder.append(CLOSE_TAG);
+		
+		String labelVal = null;
+		Object objectVal = getTagValue(label);
 
-		builder.append(">");
-
-		Object labelVal = getTagValue(label);
-
-		if (labelVal != null && labelVal instanceof String) {
-			if (length != null && length > 0 && labelVal.toString().length() >= length) {
-				if (ellipsize && length > 4) {
-					labelVal = labelVal.toString().substring(0, length - 4) + " ...";
-				} else {
-					labelVal = labelVal.toString().substring(0, length);
-				}
-			}
-			builder.append(labelVal);
-
+		if (label != null && objectVal != null) {
+			labelVal = objectVal.toString();
 		} else if (!sw.toString().isEmpty()) {
-			builder.append(sw.toString());
-
+			labelVal = sw.toString();
 		} else {
-			builder.append(href);
+			labelVal = href;
 		}
+
+		if (length != null && length > 0 && labelVal.length() >= length) {
+			if (ellipsize && length > 4) {
+				labelVal = labelVal.substring(0, length - 4) + " ...";
+			} else {
+				labelVal = labelVal.substring(0, length);
+			}
+		}
+
+		builder.append(labelVal);
 
 		builder.append(CLOSE_LINK_TAG);
 
+		if (!sw.toString().isEmpty()) {
+			builder.append(OPEN_UNORDERED_LIST_TAG + CLOSE_TAG);
+			builder.append(sw);
+			builder.append(CLOSE_UNORDERED_LIST_TAG);
+		}
+
+		builder.append(CLOSE_LIST_ITEM_TAG);
+
 		printOutput(builder);
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public void setLength(Integer length) {
-		this.length = length;
-	}
-
-	public void setEllipsize(boolean ellipsize) {
-		this.ellipsize = ellipsize;
-	}
-
-	public void setOutcome(String outcome) {
-		this.outcome = outcome;
 	}
 
 	public void setAction(String action) {
@@ -218,8 +208,20 @@ public final class LinkTagHandler extends SmartTagHandler {
 		this.afterAjax = afterAjax;
 	}
 
-	public void setTabIndex(Integer tabIndex) {
-		this.tabIndex = tabIndex;
+	public void setOutcome(String outcome) {
+		this.outcome = outcome;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setLength(Integer length) {
+		this.length = length;
+	}
+
+	public void setEllipsize(boolean ellipsize) {
+		this.ellipsize = ellipsize;
 	}
 
 	public void setAsync(boolean async) {

@@ -18,18 +18,17 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_DIV_TAG;
-import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_SPAN_TAG;
-import static com.jsmart5.framework.tag.HtmlConstants.OPEN_DIV_TAG;
-import static com.jsmart5.framework.tag.HtmlConstants.OPEN_SPAN_TAG;
-
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class UploadTagHandler extends SmartTagHandler {
 
@@ -44,6 +43,17 @@ public final class UploadTagHandler extends SmartTagHandler {
 	private String maxSizeMessage;
 
 	private Integer tabIndex;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -62,7 +72,7 @@ public final class UploadTagHandler extends SmartTagHandler {
 		}
 
 		// Hidden input must be included to be captured on request parameters		
-		StringBuilder builder = new StringBuilder(HtmlConstants.INPUT_TAG);
+		StringBuilder builder = new StringBuilder(INPUT_TAG);
 
 		String name = getTagName(J_FILE, value);
 
@@ -70,10 +80,10 @@ public final class UploadTagHandler extends SmartTagHandler {
 
 		if (label != null) {
 			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CssConstants.CSS_INPUT_GROUP);
+			appendClass(builder, CSS_INPUT_GROUP);
 			builder.append(">");
 			builder.append(OPEN_SPAN_TAG);
-			appendClass(builder, CssConstants.CSS_INPUT_LABEL_UPLOAD);
+			appendClass(builder, CSS_INPUT_LABEL_UPLOAD);
 			builder.append(">");
 
 			String labelVal = (String) getTagValue(label);
@@ -83,7 +93,7 @@ public final class UploadTagHandler extends SmartTagHandler {
 			builder.append(CLOSE_SPAN_TAG);
 		}
 
-		builder.append(HtmlConstants.INPUT_TAG);
+		builder.append(INPUT_TAG);
 
 		builder.append("id=\"" + id + "\" ");
 
@@ -94,7 +104,7 @@ public final class UploadTagHandler extends SmartTagHandler {
 		appendFormValidator(builder);
 
 		if (maxSize != null) {
-			builder.append(ON_CHANGE + JSConstants.JSMART_UPLOAD.format(id) + "\" maxFileSize=\"" + maxSize + "\" ");
+			builder.append(ON_CHANGE + JSMART_UPLOAD.format(id) + "\" maxFileSize=\"" + maxSize + "\" ");
 		}
 
 		if (maxSizeMessage != null) {
@@ -109,7 +119,7 @@ public final class UploadTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_UPLOAD);
+			appendClass(builder, CSS_UPLOAD);
 		}
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");

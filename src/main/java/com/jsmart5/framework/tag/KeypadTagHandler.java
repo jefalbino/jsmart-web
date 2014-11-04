@@ -21,9 +21,11 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
 
 public final class KeypadTagHandler extends SmartTagHandler {
 
@@ -50,6 +52,17 @@ public final class KeypadTagHandler extends SmartTagHandler {
 	private String onKeyPress;
 
 	private boolean showButton;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -95,7 +108,7 @@ public final class KeypadTagHandler extends SmartTagHandler {
 
 		appendScript(scriptBuilder);
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.INPUT_TAG);
+		StringBuilder builder = new StringBuilder(INPUT_TAG);
 
 		builder.append("id=\"" + target + KEYPAD_HOLDER + "\" ");
 		builder.append("value=\"" + scriptBuilder + "\" ");
@@ -103,9 +116,9 @@ public final class KeypadTagHandler extends SmartTagHandler {
 		printOutput(builder);
 
 		if (opened) {
-			StringBuilder divBuilder = new StringBuilder(HtmlConstants.OPEN_DIV_TAG);
+			StringBuilder divBuilder = new StringBuilder(OPEN_DIV_TAG);
 			divBuilder.append("id=\"" + target + KEYPAD + "\" >");
-			divBuilder.append(HtmlConstants.CLOSE_DIV_TAG);
+			divBuilder.append(CLOSE_DIV_TAG);
 			printOutput(divBuilder);
 		}
 	}

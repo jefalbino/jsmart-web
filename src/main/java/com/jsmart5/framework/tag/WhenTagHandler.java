@@ -34,16 +34,19 @@ public final class WhenTagHandler extends SmartTagHandler {
 	private String access;
 
 	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof AuthorizeTagHandler) {
+
+			((AuthorizeTagHandler) parent).addWhen(this);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
-	public void doTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof AuthorizeTagHandler) {
-			((AuthorizeTagHandler) parent).addWhen(this);
-		}
+	public void validateTag() throws JspException {
+		// DO NOTHING
 	}
 
 	@Override

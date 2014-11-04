@@ -22,9 +22,12 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 public final class OutputsTagHandler extends SmartTagHandler {
 
@@ -33,6 +36,17 @@ public final class OutputsTagHandler extends SmartTagHandler {
 	private boolean breakline = true;
 
 	private String marker;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -45,7 +59,7 @@ public final class OutputsTagHandler extends SmartTagHandler {
 
 		StringBuilder builder = new StringBuilder();
 	
-		builder.append(HtmlConstants.OPEN_SPAN_TAG);
+		builder.append(OPEN_SPAN_TAG);
 
 		if (id != null) {
 			builder.append("id=\"" + id + "\" ");
@@ -56,7 +70,7 @@ public final class OutputsTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_OUTPUTS);
+			appendClass(builder, CSS_OUTPUTS);
 		}
 
 		builder.append(">");
@@ -66,20 +80,20 @@ public final class OutputsTagHandler extends SmartTagHandler {
 		if (obj != null) {
 			if (obj instanceof Collection) {
 				for (Object o : (Collection<Object>) obj) {
-					builder.append(breakline ? HtmlConstants.OPEN_PARAGRAPH_TAG : "");
+					builder.append(breakline ? OPEN_PARAGRAPH_TAG : "");
 					builder.append((marker != null ? marker + "&nbsp" : "") + (o != null ? o.toString() : o) + "&nbsp");
-					builder.append(breakline ? HtmlConstants.CLOSE_PARAGRAPH_TAG : "");
+					builder.append(breakline ? CLOSE_PARAGRAPH_TAG : "");
 				}
 			} else if (obj.getClass().isArray()) {
 				for (Object o : (Object[]) obj) {
-					builder.append(breakline ? HtmlConstants.OPEN_PARAGRAPH_TAG : "");
+					builder.append(breakline ? OPEN_PARAGRAPH_TAG : "");
 					builder.append((marker != null ? marker + "&nbsp" : "") + (o != null ? o.toString() : o) + "&nbsp");
-					builder.append(breakline ? HtmlConstants.CLOSE_PARAGRAPH_TAG : "");
+					builder.append(breakline ? CLOSE_PARAGRAPH_TAG : "");
 				}
 			}
 		}
 
-		builder.append(HtmlConstants.CLOSE_SPAN_TAG);
+		builder.append(CLOSE_SPAN_TAG);
 
 		printOutput(builder);
 	}

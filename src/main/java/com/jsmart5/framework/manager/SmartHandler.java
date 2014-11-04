@@ -89,7 +89,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 	
 	/*package*/ Set<SmartSessionListener> sessionListeners;
 
-	/*package*/ Map<String, String> forwardPaths;
+	private Map<String, String> forwardPaths;
 
 	private InitialContext initialContext;
 
@@ -854,6 +854,23 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
     private void initForwardPaths(ServletContext servletContext) {
     	forwardPaths = new HashMap<String, String>();
     	lookupInResourcePath(servletContext, SEPARATOR);
+    	overrideForwardPaths();
+    }
+
+    private void overrideForwardPaths() {
+    	for (SmartUrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+
+    		if (urlPattern.getJsp() != null && !urlPattern.getJsp().trim().isEmpty()) {
+    			String prevJsp = forwardPaths.put(urlPattern.getUrl(), urlPattern.getJsp());
+
+    			if (prevJsp != null) {
+    				LOGGER.log(Level.INFO, "Overriding path mapping " + urlPattern.getUrl() + " from " + prevJsp +
+    						" to " + urlPattern.getJsp());
+    			} else {
+    				LOGGER.log(Level.INFO, "Mapping path  " + urlPattern.getUrl() + " to " + urlPattern.getJsp());
+    			}
+    		}
+    	}
     }
 
     private void lookupInResourcePath(ServletContext servletContext, String path) {
@@ -918,7 +935,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 				}
 			}
 		} catch (Throwable ex) {
-			// DO NOTHING
+			LOGGER.log(Level.WARNING, "Bindings could not be found for EJB context: " + ex.getMessage());
 		}
 	}
 

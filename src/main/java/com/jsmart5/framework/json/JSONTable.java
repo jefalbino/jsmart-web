@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONTable {
+public final class JsonTable {
 
 	private String name;
 

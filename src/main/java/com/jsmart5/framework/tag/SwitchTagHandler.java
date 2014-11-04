@@ -22,8 +22,13 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class SwitchTagHandler extends SmartTagHandler {
 
@@ -37,6 +42,8 @@ public final class SwitchTagHandler extends SmartTagHandler {
 
 	private String value;
 
+	private String label;
+
 	private String labelOn;
 
 	private String labelOff;
@@ -46,6 +53,17 @@ public final class SwitchTagHandler extends SmartTagHandler {
 	private boolean disabled;
 
 	private boolean async = true;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -62,10 +80,26 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		}
 
 		// Container to hold switch
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_DIV_TAG);
+		StringBuilder builder = new StringBuilder();
+		
+		if (label != null) {
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CSS_INPUT_GROUP);
+			builder.append(CLOSE_TAG);
 
+			builder.append(OPEN_SPAN_TAG);
+			appendClass(builder, CSS_INPUT_LABEL);
+			builder.append(CLOSE_TAG);
+
+			String labelVal = (String) getTagValue(label);
+			if (labelVal != null) {
+				builder.append(labelVal);
+			}
+			builder.append(CLOSE_SPAN_TAG);
+		}
+
+		builder.append(OPEN_DIV_TAG);
 		builder.append("id=\"" + id + "\" ");
-
 		builder.append("switch=\"switch\" ");
 
 		if (style != null) {
@@ -74,7 +108,7 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_SWITCH_CONTAINER);
+			appendClass(builder, CSS_SWITCH_CONTAINER);
 		}
 
 		appendEvent(builder);
@@ -82,7 +116,7 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		builder.append(">");
 
 		// Hidden input to send value to server
-		builder.append(HtmlConstants.INPUT_TAG);
+		builder.append(INPUT_TAG);
 
 		builder.append("id=\"" + id + SWITCH_INPUT + "\" ");
 
@@ -111,61 +145,70 @@ public final class SwitchTagHandler extends SmartTagHandler {
 		builder.append(" />");
 
 		// Span tag to represent On state
-		builder.append(HtmlConstants.OPEN_SPAN_TAG);
+		builder.append(OPEN_SPAN_TAG);
 
 		builder.append("id=\"" + id + SWITCH_SPAN_ON + "\" ");
 
 		if (disabled) {
-			appendClass(builder, CssConstants.CSS_SWITCH_SPAN_ON_DISABLED);
+			appendClass(builder, CSS_SWITCH_SPAN_ON_DISABLED);
 		} else {
-			appendClass(builder, CssConstants.CSS_SWITCH_SPAN_ON);
+			appendClass(builder, CSS_SWITCH_SPAN_ON);
 		}
 
 		builder.append(">");
 
 		builder.append(getTagValue(labelOn));
 
-		builder.append(HtmlConstants.CLOSE_SPAN_TAG);
+		builder.append(CLOSE_SPAN_TAG);
 
 		// Span tag to represent Off state
-		builder.append(HtmlConstants.OPEN_SPAN_TAG);
+		builder.append(OPEN_SPAN_TAG);
 
 		builder.append("id=\"" + id + SWITCH_SPAN_OFF + "\" ");
 
 		if (disabled) {
-			appendClass(builder, CssConstants.CSS_SWITCH_SPAN_OFF_DISABLED);
+			appendClass(builder, CSS_SWITCH_SPAN_OFF_DISABLED);
 		} else {
-			appendClass(builder, CssConstants.CSS_SWITCH_SPAN_OFF);
+			appendClass(builder, CSS_SWITCH_SPAN_OFF);
 		}
 
 		builder.append(">");
 
 		builder.append(getTagValue(labelOff));
 
-		builder.append(HtmlConstants.CLOSE_SPAN_TAG);
+		builder.append(CLOSE_SPAN_TAG);
 
 		// Switch button
-		builder.append(HtmlConstants.OPEN_DIV_TAG);
+		builder.append(OPEN_DIV_TAG);
 
 		builder.append("id=\"" + id + SWITCH_BUTTON + "\" ");
 
 		if (disabled) {
-			appendClass(builder, CssConstants.CSS_SWITCH_BUTTON_DISABLED);
+			appendClass(builder, CSS_SWITCH_BUTTON_DISABLED);
 		} else {
-			appendClass(builder, CssConstants.CSS_SWITCH_BUTTON);
-			builder.append(ON_CLICK + JSConstants.JSMART_SWITCH.format(id, async, ajax) + "\" ");
+			appendClass(builder, CSS_SWITCH_BUTTON);
+			builder.append(ON_CLICK + JSMART_SWITCH.format(id, async, ajax) + "\" ");
 			appendEvent(builder);
 		}
 
-		builder.append(">" + HtmlConstants.CLOSE_DIV_TAG);
+		builder.append(CLOSE_TAG + CLOSE_DIV_TAG);
+		builder.append(CLOSE_DIV_TAG);
 
-		printOutput(builder.append(HtmlConstants.CLOSE_DIV_TAG));
+		if (label != null) {
+			builder.append(CLOSE_DIV_TAG);
+		}
 
-		appendScript(new StringBuilder(JSConstants.JSMART_SWITCH_RESET.format(id)));
+		printOutput(builder);
+
+		appendScript(new StringBuilder(JSMART_SWITCH_RESET.format(id)));
 	}
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public void setLabelOn(String labelOn) {

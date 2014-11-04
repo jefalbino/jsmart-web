@@ -25,11 +25,13 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.JSConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class SelectTagHandler extends SmartTagHandler {
 
@@ -54,6 +56,17 @@ public final class SelectTagHandler extends SmartTagHandler {
 	}
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
@@ -75,10 +88,10 @@ public final class SelectTagHandler extends SmartTagHandler {
 		
 		if (label != null) {
 			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CssConstants.CSS_INPUT_GROUP);
+			appendClass(builder, CSS_INPUT_GROUP);
 			builder.append(">");
 			builder.append(OPEN_SPAN_TAG);
-			appendClass(builder, CssConstants.CSS_INPUT_LABEL_SELECT);
+			appendClass(builder, CSS_INPUT_LABEL_SELECT);
 			builder.append(">");
 
 			String labelVal = (String) getTagValue(label);
@@ -103,9 +116,9 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 		} else {
 			if (multiple) {
-				appendClass(builder, CssConstants.CSS_SELECT_MULTI);
+				appendClass(builder, CSS_SELECT_MULTI);
 			} else {
-				appendClass(builder, CssConstants.CSS_SELECT);
+				appendClass(builder, CSS_SELECT);
 			}
 		}
 

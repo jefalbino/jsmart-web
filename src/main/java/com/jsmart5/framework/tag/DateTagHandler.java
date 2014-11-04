@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -32,6 +33,8 @@ import org.joda.time.format.DateTimeFormat;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class DateTagHandler extends SmartTagHandler {
 
@@ -68,6 +71,17 @@ public final class DateTagHandler extends SmartTagHandler {
 	private boolean disabled;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		if (months != null && (months <= 0 || months > 4)) {
 			throw new JspException("Invalid months value for date tag. Value must be greater than 0 and less or equal to 4");
@@ -100,10 +114,10 @@ public final class DateTagHandler extends SmartTagHandler {
 
 		if (label != null) {
 			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CssConstants.CSS_INPUT_GROUP);
+			appendClass(builder, CSS_INPUT_GROUP);
 			builder.append(">");
 			builder.append(OPEN_SPAN_TAG);
-			appendClass(builder, CssConstants.CSS_INPUT_LABEL);
+			appendClass(builder, CSS_INPUT_LABEL);
 			builder.append(">");
 
 			String labelVal = (String) getTagValue(label);
@@ -126,8 +140,8 @@ public final class DateTagHandler extends SmartTagHandler {
 			}
 		}
 
-		builder.append(ON_BLUR + JSConstants.JSMART_DATE.format("$(this)") + "\" ");
-		builder.append(ON_FOCUS + JSConstants.JSMART_BACKUP_DATE.format("$(this)") + " return false;\" ");
+		builder.append(ON_BLUR + JSMART_DATE.format("$(this)") + "\" ");
+		builder.append(ON_FOCUS + JSMART_BACKUP_DATE.format("$(this)") + " return false;\" ");
 
 		appendFormValidator(builder);
 
@@ -147,7 +161,7 @@ public final class DateTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (!opened) {
-				appendClass(builder, CssConstants.CSS_INPUT);
+				appendClass(builder, CSS_INPUT);
 			}
 		}
 		if (tabIndex != null) {

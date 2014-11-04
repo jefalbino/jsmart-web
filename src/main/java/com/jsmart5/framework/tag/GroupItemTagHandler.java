@@ -28,7 +28,9 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartValidateTagHandler;
 
-import static com.jsmart5.framework.tag.JSConstants.*;
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 
 public final class GroupItemTagHandler extends SmartTagHandler {
@@ -52,25 +54,29 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 	private boolean async;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+
+		if (parent instanceof RadioGroupTagHandler) {
+			((RadioGroupTagHandler) parent).addItem(this);
+			return false;
+
+		} else if (parent instanceof CheckGroupTagHandler) {
+			((CheckGroupTagHandler) parent).addItem(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING - type is internal
 	}
 
 	@Override
-	public void doTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof RadioGroupTagHandler) {
-			((RadioGroupTagHandler) parent).addItem(this);
-
-		} else if (parent instanceof CheckGroupTagHandler) {
-			((CheckGroupTagHandler) parent).addItem(this);
-		}
-	}
-
-	@Override
 	public void executeTag() throws JspException, IOException {
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_DIV_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
 
 		if (style != null) {
 			builder.append("style=\"" + style + "\" ");
@@ -79,14 +85,14 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (CHECKBOX.equals(type)) {
-				appendClass(builder, CssConstants.CSS_CHECKGROUP_ITEM);
+				appendClass(builder, CSS_CHECKGROUP_ITEM);
 
 			} else if (RADIO.equals(type)) {
-				appendClass(builder, CssConstants.CSS_RADIOGROUP_ITEM);
+				appendClass(builder, CSS_RADIOGROUP_ITEM);
 			}
 		}
 
-		builder.append(">" + HtmlConstants.INPUT_TAG);
+		builder.append(">" + INPUT_TAG);
 
 		builder.append("id=\"" + itemId + "\" ");
 
@@ -141,13 +147,13 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 
 		appendEvent(builder);
 
-		builder.append("/>" + HtmlConstants.OPEN_LABEL_TAG);
+		builder.append("/>" + OPEN_LABEL_TAG);
 
 		builder.append("for=\"" + itemId + "\" ");
 
-		builder.append(">" + HtmlConstants.CLOSE_LABEL_TAG);
+		builder.append(">" + CLOSE_LABEL_TAG);
 
-		builder.append(HtmlConstants.CLOSE_DIV_TAG);
+		builder.append(CLOSE_DIV_TAG);
 
 		printOutput(builder.append("&nbsp; " + getTagValue(label)));
 	}

@@ -18,6 +18,10 @@
 
 package com.jsmart5.framework.tag;
 
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
+
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -26,18 +30,11 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
-
-public final class FormTagHandler extends SmartTagHandler {
-
-	private String method;
+public class TreeTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (method != null && !method.equalsIgnoreCase("GET") && !method.equalsIgnoreCase("POST")) {
-			throw new JspException("Invalid method for form tag. Valid value are get or post");
-		}
+		// DO NOTHING
 	}
 
 	@Override
@@ -49,25 +46,28 @@ public final class FormTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 
-		StringBuilder builder = new StringBuilder(OPEN_FORM_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_UNORDERED_LIST_TAG + "id=\"" + id + "\" ");
 
-		builder.append("id=\"" + id + "\" ");
+		builder.append("tree=\"tree\" ");
 
-		if (method != null) {
-			builder.append("method=\"" + method + "\" ");
+		if (style != null) {
+			builder.append("style=\"" + style + "\" ");
+		}
+		if (styleClass != null) {
+			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			builder.append("method=\"GET\" ");
+			appendClass(builder, CSS_TREE);
 		}
 
-		builder.append(ON_SUBMIT + "return " + JSMART_VALIDATE.format(id) + "\" >");
-		builder.append(sw.toString());
-		builder.append(CLOSE_FORM_TAG);
+		appendEvent(builder);
+
+		builder.append(CLOSE_TAG);
+		builder.append(sw);
+		builder.append(CLOSE_UNORDERED_LIST_TAG);
+
+		appendScript(new StringBuilder(JSMART_TREE.format(id)));
 
 		printOutput(builder);
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
 	}
 
 }

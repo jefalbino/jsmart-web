@@ -18,8 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.JSConstants.*;
-
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -28,9 +26,13 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JSONLink;
+import com.jsmart5.framework.json.JsonLink;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartUtils;
+
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 /*
  * MenuItem uses a json structure
@@ -78,6 +80,7 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 		if (parent instanceof MenuTagHandler) {
 			type = ((MenuTagHandler) parent).getType();
 			theme = ((MenuTagHandler) parent).getTheme();
+
 		} else if (parent instanceof MenuItemTagHandler) {
 			type = ((MenuItemTagHandler) parent).getType();
 			theme = ((MenuItemTagHandler) parent).getTheme();
@@ -90,7 +93,7 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 		}
 
 		HttpServletRequest request = getRequest();
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_LIST_ITEM_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_LIST_ITEM_TAG);
 
 		if (id != null) {
 			builder.append("id=\"" + id + "\" ");
@@ -103,18 +106,18 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 		} else {
 			if (parent instanceof MenuItemTagHandler) {
 				if (MenuTagHandler.MENU_RIGHT.equals(type)) {
-					appendClass(builder, CssConstants.CSS_MENU_ITEM_RIGHT);
+					appendClass(builder, CSS_MENU_ITEM_RIGHT);
 				} else {
-					appendClass(builder, CssConstants.CSS_MENU_ITEM_LEFT);
+					appendClass(builder, CSS_MENU_ITEM_LEFT);
 				}
 			} else {
-				appendClass(builder, CssConstants.CSS_MENU_ITEM);
+				appendClass(builder, CSS_MENU_ITEM);
 			}			
 		}
 
 		appendEvent(builder);
 
-		builder.append(">" + HtmlConstants.OPEN_LINK_TAG);
+		builder.append(">" + OPEN_LINK_TAG);
 
 		String outcomeVal = null; 
 		if (outcome != null) {
@@ -134,7 +137,7 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 
 			builder.append(ON_CLICK + JSMART_LINK.format(async, "$(this)") + "return false;\" ");
 
-			JSONLink jsonAjax = new JSONLink();
+			JsonLink jsonAjax = new JsonLink();
 			if (action != null) {
 				jsonAjax.setMethod("post");
 				jsonAjax.setAction(getTagName(J_SBMT, action));
@@ -149,7 +152,7 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 			jsonAjax.setBefore(beforeAjax);
 			jsonAjax.setExec(afterAjax);
 
-			builder.append("ajax=\"" + getJSONValue(jsonAjax) + "\" ");
+			builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" ");
 		}
 
 		builder.append(">");
@@ -175,39 +178,39 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 
 		builder.append(labelVal);
 
-		builder.append(HtmlConstants.CLOSE_LINK_TAG);
+		builder.append(CLOSE_LINK_TAG);
 
 		if (!sw.toString().isEmpty()) {
-			builder.append(HtmlConstants.OPEN_DIV_TAG);
+			builder.append(OPEN_DIV_TAG);
 			
 			if (parent instanceof MenuTagHandler) {
 				if (MenuTagHandler.MENU_BOTTOM.equals(type)) {
-					appendClass(builder, CssConstants.CSS_MENUT_ARROW_UP);
+					appendClass(builder, CSS_MENUT_ARROW_UP);
 
 				} else if (MenuTagHandler.MENU_LEFT.equals(type)) {
-					appendClass(builder, CssConstants.CSS_MENUT_ARROW_LEFT);
+					appendClass(builder, CSS_MENUT_ARROW_LEFT);
 
 				} else if (MenuTagHandler.MENU_RIGHT.equals(type)) {
-					appendClass(builder, CssConstants.CSS_MENUT_ARROW_RIGHT);
+					appendClass(builder, CSS_MENUT_ARROW_RIGHT);
 				} else {
-					appendClass(builder, CssConstants.CSS_MENUT_ARROW_DOWN);
+					appendClass(builder, CSS_MENUT_ARROW_DOWN);
 				}
 			} else {
 				if (MenuTagHandler.MENU_RIGHT.equals(type)) {
-					appendClass(builder, CssConstants.CSS_MENUT_ITEM_ARROW_RIGHT);
+					appendClass(builder, CSS_MENUT_ITEM_ARROW_RIGHT);
 				} else {
-					appendClass(builder, CssConstants.CSS_MENUT_ITEM_ARROW_LEFT);
+					appendClass(builder, CSS_MENUT_ITEM_ARROW_LEFT);
 				}
 			}
 			builder.append(">");
-			builder.append(HtmlConstants.CLOSE_DIV_TAG);
+			builder.append(CLOSE_DIV_TAG);
 
-			builder.append(HtmlConstants.OPEN_UNORDERED_LIST_TAG + ">");
+			builder.append(OPEN_UNORDERED_LIST_TAG + ">");
 			builder.append(sw);
-			builder.append(HtmlConstants.CLOSE_UNORDERED_LIST_TAG);
+			builder.append(CLOSE_UNORDERED_LIST_TAG);
 		}
 
-		builder.append(HtmlConstants.CLOSE_LIST_ITEM_TAG);
+		builder.append(CLOSE_LIST_ITEM_TAG);
 
 		printOutput(builder);
 	}

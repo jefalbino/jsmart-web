@@ -27,7 +27,6 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-
 public final class OptionsTagHandler extends SmartTagHandler {
 
 	private String value;

@@ -33,15 +33,15 @@ import javax.servlet.jsp.tagext.JspFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jsmart5.framework.json.JSONEdit;
-import com.jsmart5.framework.json.JSONScroll;
-import com.jsmart5.framework.json.JSONSelect;
-import com.jsmart5.framework.json.JSONTable;
+import com.jsmart5.framework.json.JsonEdit;
+import com.jsmart5.framework.json.JsonScroll;
+import com.jsmart5.framework.json.JsonSelect;
+import com.jsmart5.framework.json.JsonTable;
 import com.jsmart5.framework.manager.SmartTableTagHandler;
 
 import static com.jsmart5.framework.tag.CssConstants.*;
 import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.JSConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 /*
  * Table uses a json structure to pass data over post request
@@ -154,7 +154,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
 	private ExpandTagHandler itemExpand;
 
-	private final List<ColumnTagHandler> items;
+	private final List<ColumnTagHandler> columns;
 
 	private Collection<Object> collectionItems;
 
@@ -165,7 +165,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 	private JSONObject jsonAction;
 
 	public TableTagHandler() {
-		items = new ArrayList<ColumnTagHandler>();
+		columns = new ArrayList<ColumnTagHandler>();
 	}
 
 	@Override
@@ -278,7 +278,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 		if (scrollable) {
  	 			appendScript(new StringBuilder(JSMART_TABLE_SCROLL.format(id)));
 
- 	 			JSONScroll jsonScroll = new JSONScroll();
+ 	 			JsonScroll jsonScroll = new JsonScroll();
  	 			jsonScroll.setName(getTagName(J_TBL, "@{" + id + "}"));
  	 			jsonScroll.setAction(ACTION.NEXT.toString());
  	 			jsonScroll.setFirst(String.valueOf(getPageFirst()));
@@ -286,7 +286,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 			jsonScroll.setFilter(getActionFilter(jsonAction));
  	 			jsonScroll.setSort(getActionSort(jsonAction));
 
- 	 			builder.append("ajaxscroll=\"" + getJSONValue(jsonScroll) + "\" ");
+ 	 			builder.append("ajaxscroll=\"" + getJsonValue(jsonScroll) + "\" ");
 			}
 
 			builder.append(">");
@@ -310,12 +310,12 @@ public final class TableTagHandler extends SmartTableTagHandler {
 					header.append(CLOSE_TABLE_HEAD_COLUMN_TAG);
 				}
 
-				for (ColumnTagHandler item : items) {
-					allColumnsSelectable &= item.isSelectable();
+				for (ColumnTagHandler column : columns) {
+					allColumnsSelectable &= column.isSelectable();
 		 			header.append(OPEN_TABLE_HEAD_COLUMN_TAG);
 		 			appendClass(header, CSS_TABLE_HEAD_ROW_COLUMN);
 		 			header.append(">");
-		 			appendHeaderContent(header, item);
+		 			appendHeaderContent(header, column);
 		 			header.append(CLOSE_TABLE_HEAD_COLUMN_TAG);
 			 	}
 
@@ -347,12 +347,12 @@ public final class TableTagHandler extends SmartTableTagHandler {
 					footer.append(CLOSE_TABLE_COLUMN_TAG);
 				}
 
-				for (ColumnTagHandler item : items) {
-					allColumnsSelectable &= item.isSelectable();
+				for (ColumnTagHandler column : columns) {
+					allColumnsSelectable &= column.isSelectable();
 					footer.append(OPEN_TABLE_COLUMN_TAG);
 					appendClass(footer, CSS_TABLE_FOOT_ROW_COLUMN);
 					footer.append(">");
-					appendHeaderContent(footer, item);
+					appendHeaderContent(footer, column);
 		 			footer.append(CLOSE_TABLE_COLUMN_TAG);
 			 	}
 
@@ -426,30 +426,30 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 					if (!allColumnsSelectable || edition != null) {
  	 						appendSelectCommand(builder, selectCommand, i, true);
  	 					}
- 	 					builder.append(">" + HtmlConstants.CHECKBOX_TAG + "id=\"" + id + MULTI_SELECT_ITEM_ID + (i + getIndex()) + "\" />");
+ 	 					builder.append(">" + CHECKBOX_TAG + "id=\"" + id + MULTI_SELECT_ITEM_ID + (i + getIndex()) + "\" />");
  	 					builder.append(CLOSE_TABLE_COLUMN_TAG);
 					}
 
- 	 				for (ColumnTagHandler item : items) {
+ 	 				for (ColumnTagHandler column : columns) {
  	 					builder.append(OPEN_TABLE_COLUMN_TAG);
 
- 	 					if (item.style != null) {
-							builder.append("style=\"" + item.style + "\" ");
+ 	 					if (column.style != null) {
+							builder.append("style=\"" + column.style + "\" ");
 						}
-						if (item.styleClass != null) {
-							builder.append("class=\"" + item.styleClass + "\" ");
+						if (column.styleClass != null) {
+							builder.append("class=\"" + column.styleClass + "\" ");
 						} else {
 							appendClass(builder, CSS_TABLE_BODY_COLUMN);
 						}
 
  	 					if (!allColumnsSelectable || edition != null) {
- 	 						appendSelectCommand(builder, selectCommand, i, item.isSelectable());
+ 	 						appendSelectCommand(builder, selectCommand, i, column.isSelectable());
  	 					}
  	 					builder.append(">");
 
  	 					StringWriter sw = new StringWriter();
- 	 					item.setOutputWriter(sw);
- 	 					item.executeTag();
+ 	 					column.setOutputWriter(sw);
+ 	 					column.executeTag();
  	 					builder.append(sw.toString());
 
  	 					builder.append(CLOSE_TABLE_COLUMN_TAG);
@@ -469,7 +469,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 					builder.append(OPEN_TABLE_ROW_TAG + ">");
  	 					builder.append(OPEN_TABLE_COLUMN_TAG);
  	 					appendClass(builder, CSS_TABLE_BODY_ROW_COLUMN_EXPANDED);
- 	 	 				builder.append("colspan=\"" + (items.size() + (multiSelect ? 1 : 0) + (edition != null ? 1 : 0)) + "\">");
+ 	 	 				builder.append("colspan=\"" + (columns.size() + (multiSelect ? 1 : 0) + (edition != null ? 1 : 0)) + "\">");
 
  	 	 				StringWriter sw = new StringWriter();
  	 	 				itemExpand.setOutputWriter(sw);
@@ -495,7 +495,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 	 	 			appendClass(builder, CSS_TABLE_BODY_EMPTY);	 	 			
 	 	 		}
 	 	 		
-	 	 		builder.append("colspan=\"" + (items.size() + (multiSelect ? 1 : 0) + (edition != null ? 1 : 0)) + "\" valign=\"middle\" >");
+	 	 		builder.append("colspan=\"" + (columns.size() + (multiSelect ? 1 : 0) + (edition != null ? 1 : 0)) + "\" valign=\"middle\" >");
 	 	 		builder.append(emptyMessage != null ? getTagValue(emptyMessage) : "");
 
 	 	 		builder.append(CLOSE_TABLE_COLUMN_TAG);
@@ -531,7 +531,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		appendClass(builder, CSS_TABLE_EDIT_CELL_CONFIRM);
 		builder.append(ON_CLICK + JSMART_TABLE_EDIT.format(async, id, "$(this)") + "\" ");
 
-		JSONEdit jsonEdit = new JSONEdit();
+		JsonEdit jsonEdit = new JsonEdit();
 		jsonEdit.setVarname(var);
 		jsonEdit.setName(getTagName(J_TBL_EDT, edition));
 		jsonEdit.setAction(getTagName(J_TBL_EDT, value));
@@ -542,7 +542,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		jsonEdit.setFilter(getActionFilter(jsonAction));
 		jsonEdit.setUpdate(id + EDIT_CELL_ROW_ITEM_ID + index + "_" + getPageFirst());
 		
-		builder.append("ajax=\"" + getJSONValue(jsonEdit) + "\" >");
+		builder.append("ajax=\"" + getJsonValue(jsonEdit) + "\" >");
 		builder.append(CLOSE_DIV_TAG);
 
 		builder.append(OPEN_DIV_TAG + "id=\"" + id + EDIT_CELL_CANCEL_ITEM_ID + (index + getIndex()) + "_" + getPageFirst() + "\" ");
@@ -552,7 +552,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 	}
 
 	private void appendHeaderMultiSelect(StringBuilder builder) throws JSONException {
-		builder.append(HtmlConstants.CHECKBOX_TAG + "id=\"" + id + MULTI_SELECT_ALL_ID + "\" ");
+		builder.append(CHECKBOX_TAG + "id=\"" + id + MULTI_SELECT_ALL_ID + "\" ");
 		builder.append(getSelectCommand(MULTI_SELECT_ALL_INDEX, id + ID_WRAPPER) + "/>");
 	}
 
@@ -631,7 +631,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		String command = ajaxCommand; 
 		if (select != null) {
 			
-			JSONSelect jsonSelect = new JSONSelect();
+			JsonSelect jsonSelect = new JsonSelect();
 			jsonSelect.setId(id);
 			jsonSelect.setName(getTagName(J_TBL_SEL, select));
 			jsonSelect.setAction(getTagName(J_TBL_SEL, value));
@@ -643,7 +643,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 			jsonSelect.setFilter(getActionFilter(jsonAction));
 			jsonSelect.setUpdate(update);
 
-			String parameters = "ajaxeval=\"" + getJSONValue(jsonSelect) + "\" ";
+			String parameters = "ajaxeval=\"" + getJsonValue(jsonSelect) + "\" ";
 
 			if (command != null) {
 				if (command.startsWith(ON_CLICK)) {
@@ -707,7 +707,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		builder.append(action == ACTION.FILTER ? ON_KEY_UP : ON_CLICK);
 		builder.append(JSMART_TABLE.format(async, id, "$(this)") + "return false;\" ");
 
-		JSONTable jsonTable = new JSONTable();
+		JsonTable jsonTable = new JsonTable();
 		jsonTable.setName(getTagName(J_TBL, "@{" + id + "}"));
 		jsonTable.setAction(action.toString());
 		jsonTable.setFirst(String.valueOf(first));
@@ -715,7 +715,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		jsonTable.setFilter(String.valueOf(filter));
 		jsonTable.setUpdate(id + ID_WRAPPER);
 
-		builder.append("ajax=\"" + getJSONValue(jsonTable) + "\" ");
+		builder.append("ajax=\"" + getJsonValue(jsonTable) + "\" ");
 
 		return builder;
 	}
@@ -966,9 +966,9 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		this.itemExpand = itemExpand;
 	}
 
-	/*package*/ void addItem(ColumnTagHandler item) {
-		item.setId(String.valueOf(items.size() + 1));
-		this.items.add(item);
+	/*package*/ void addColumn(ColumnTagHandler column) {
+		column.setId(String.valueOf(columns.size() + 1));
+		this.columns.add(column);
 	}
 
 	public void setAsync(boolean async) {

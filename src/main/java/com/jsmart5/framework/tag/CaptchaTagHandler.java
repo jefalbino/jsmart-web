@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
@@ -48,6 +49,17 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 	private Integer tabIndex;
 
 	private String placeHolder;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -124,7 +136,7 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 
 		builder.append("captcha=\"" + captchaScript + "\" ");
 
-		printOutput(builder.append("/>"));
+		printOutput(builder.append(CLOSE_INLINE_TAG));
 	}
 
 	public void setLength(String length) {

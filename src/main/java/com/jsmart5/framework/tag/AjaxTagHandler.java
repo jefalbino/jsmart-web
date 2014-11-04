@@ -24,10 +24,10 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JSONAjax;
-import com.jsmart5.framework.json.JSONParam;
+import com.jsmart5.framework.json.JsonAjax;
+import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
-import static com.jsmart5.framework.tag.JSConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 /*
  * Ajax uses a json structure
@@ -173,22 +173,28 @@ public final class AjaxTagHandler extends SmartTagHandler {
 		if (builder.length() > 0) {
 			builder.append(JSMART_AJAX.format(async, "$(this)", timeout != null ? timeout : 0) + "\" ");
 
-			JSONAjax jsonAjax = new JSONAjax();
+			JsonAjax jsonAjax = new JsonAjax();
 			if (action != null) {
 				jsonAjax.setMethod("post");
 				jsonAjax.setAction(getTagName(J_SBMT, action));
 
 				for (String name : params.keySet()) {						
-					jsonAjax.getParams().add(new JSONParam(name, params.get(name)));
+					jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
 				}
 			} else if (update != null) {
 				jsonAjax.setMethod("get");
 			}
-			jsonAjax.setUpdate(update);
-			jsonAjax.setBefore(beforeAjax);
-			jsonAjax.setExec(afterAjax);
+			if (update != null) {
+				jsonAjax.setUpdate(update.trim());
+			}
+			if (beforeAjax != null) {
+				jsonAjax.setBefore(beforeAjax.trim());
+			}
+			if (afterAjax != null) {
+				jsonAjax.setExec(afterAjax.trim());
+			}
 
-			builder.append("ajax=\"" + getJSONValue(jsonAjax) + "\" ");
+			builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" ");
 
 			JspTag parent = getParent();
 			if (parent instanceof SmartTagHandler) {

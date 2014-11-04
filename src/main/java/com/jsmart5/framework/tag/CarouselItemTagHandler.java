@@ -27,6 +27,9 @@ import com.jsmart5.framework.manager.SmartImage;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartUtils;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+
 
 public final class CarouselItemTagHandler extends SmartTagHandler {
 
@@ -39,16 +42,19 @@ public final class CarouselItemTagHandler extends SmartTagHandler {
 	private String link;
 
 	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof CarouselTagHandler) {
+
+			((CarouselTagHandler) parent).addItem(this);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
-	public void doTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof CarouselTagHandler) {
-			((CarouselTagHandler) parent).addItem(this);
-		}
+	public void validateTag() throws JspException {
+		// DO NOTHING
 	}
 
 	@Override
@@ -57,31 +63,32 @@ public final class CarouselItemTagHandler extends SmartTagHandler {
 		String nameValue = (String) getTagValue(name);
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(HtmlConstants.OPEN_DIV_TAG + "id=\"" + id + "\" ");
-		appendClass(builder, CssConstants.CSS_CAROUSEL_ITEM);
-		builder.append(">");
+		builder.append(OPEN_DIV_TAG + "id=\"" + id + "\" ");
+		appendClass(builder, CSS_CAROUSEL_ITEM);
+		builder.append(CLOSE_TAG);
 
 		if (link != null) {
-			builder.append(HtmlConstants.OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");
-			builder.append(HtmlConstants.IMG_TAG + "src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" alt=\"" + name + "\" />");
-			builder.append(HtmlConstants.CLOSE_LINK_TAG);
+			builder.append(OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");
+			builder.append(IMG_TAG + "src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" alt=\"" + name + "\" />");
+			builder.append(CLOSE_LINK_TAG);
 		} else {
-			builder.append(HtmlConstants.IMG_TAG + "src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" alt=\"" + name + "\" />");
+			builder.append(IMG_TAG + "src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" alt=\"" + name + "\" />");
 		}
 
 		if (caption != null) {
-			builder.append(HtmlConstants.OPEN_LABEL_TAG + ">");
+			builder.append(OPEN_LABEL_TAG);
+			builder.append(CLOSE_TAG);
 			if (link != null) {
-				builder.append(HtmlConstants.OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");
+				builder.append(OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");
 				builder.append(getTagValue(caption));
-				builder.append(HtmlConstants.CLOSE_LINK_TAG);
+				builder.append(CLOSE_LINK_TAG);
 			} else {
 				builder.append(getTagValue(caption));
 			}
-			builder.append(HtmlConstants.CLOSE_LABEL_TAG);
+			builder.append(CLOSE_LABEL_TAG);
 		}
 
-		builder.append(HtmlConstants.CLOSE_DIV_TAG);
+		builder.append(CLOSE_DIV_TAG);
 
 		printOutput(builder);
 	}

@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.tag;
 
-/*package*/ enum JSConstants {
+/*package*/ enum JsConstants {
 
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
 
@@ -60,16 +60,23 @@ package com.jsmart5.framework.tag;
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
 	JSMART_UPLOAD("Jsmart5.upload", "('%s');"),
 	JSMART_MENU("Jsmart5.menu", "('%s');"),
+	JSMART_TREE("Jsmart5.tree", "('%s');"),
 	JSMART_SELECT("Jsmart5.select", "(%s,'%s');"),
 	JSMART_BUTTON_DROPDOWN("Jsmart5.buttonDropDown", "(%s);"),
 
-	JSMART_AUTOCOMPLETE("Jsmart5.autocomplete", "(%s,'%s',event);");
+	JSMART_BUTTON_RESTARRAY("Jsmart5.buttonRestArray", "('%s','%s');"),
+
+	JSMART_AUTOCOMPLETE_RESET("Jsmart5.resetAutocomplete", "('%s');"),
+	JSMART_AUTOCOMPLETE("Jsmart5.autocomplete", "(%s,'%s',event);"),
+
+	JSMART_SEARCH_RESET("Jsmart5.resetSearch", "('%s');"),
+	JSMART_SEARCH("Jsmart5.search", "(%s,'%s',event);");
 
 	private String name;
 
 	private String parameters;
 
-	private JSConstants(String name, String parameters) {
+	private JsConstants(String name, String parameters) {
 		this.name = name;
 		this.parameters = parameters;
 	}

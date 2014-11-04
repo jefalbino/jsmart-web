@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONRange {
+public final class JsonRange {
 
 	private String ajax;
 

@@ -22,11 +22,13 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartImage;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 public final class ImageTagHandler extends SmartTagHandler {
 
@@ -43,6 +45,17 @@ public final class ImageTagHandler extends SmartTagHandler {
 	private String caption;
 
 	private boolean figure;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -87,7 +100,7 @@ public final class ImageTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_IMAGE);
+			appendClass(builder, CSS_IMAGE);
 		}
 
 		if (width != null) {

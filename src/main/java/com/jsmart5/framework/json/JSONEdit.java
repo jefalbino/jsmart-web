@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONEdit {
+public final class JsonEdit {
 
 	private String varname;
 

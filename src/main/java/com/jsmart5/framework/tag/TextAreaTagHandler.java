@@ -22,9 +22,12 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 public final class TextAreaTagHandler extends SmartTagHandler {
 
@@ -45,6 +48,17 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 	private Integer tabIndex;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
@@ -58,7 +72,7 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_TEXT_AREA_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_TEXT_AREA_TAG);
 
 		if (id != null) {
 			builder.append("id=\"" + id + "\" ");
@@ -87,7 +101,7 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_TEXTAREA);
+			appendClass(builder, CSS_TEXTAREA);
 		}
 		if (tabIndex != null) {
 			builder.append("tabindex=\"" + tabIndex + "\" ");
@@ -112,7 +126,7 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 			builder.append(object.toString());
 		}
 
-		printOutput(builder.append(HtmlConstants.CLOSE_TEXT_AREA_TAG));
+		printOutput(builder.append(CLOSE_TEXT_AREA_TAG));
 	}
 
 	public void setRows(Integer rows) {

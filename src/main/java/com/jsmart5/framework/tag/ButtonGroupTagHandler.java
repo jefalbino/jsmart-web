@@ -19,18 +19,31 @@
 package com.jsmart5.framework.tag;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 public class ButtonGroupTagHandler extends SmartTagHandler {
 
 	private boolean inline = true;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -51,16 +64,16 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 		builder.append("id=\"" + id + "\" ");
 
 		if (inline) {
-			appendClass(builder, CssConstants.CSS_BUTTON_GROUP_HORIZONTAL);
+			appendClass(builder, CSS_BUTTON_GROUP_HORIZONTAL);
 		} else {
-			appendClass(builder, CssConstants.CSS_BUTTON_GROUP_VERTICAL);
+			appendClass(builder, CSS_BUTTON_GROUP_VERTICAL);
 		}
 
 		if (style != null) {
 			builder.append("style=\"" + style + "\" ");
 		}
 
-		builder.append(">");
+		builder.append(CLOSE_TAG);
 		builder.append(sw);
 		builder.append(CLOSE_DIV_TAG);
 

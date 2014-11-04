@@ -18,17 +18,27 @@
 
 package com.jsmart5.framework.tag;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+
 import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-
 public final class RowTagHandler extends SmartTagHandler {
 
+	// Used as boolean for rows inside grid tag
 	private String header;
+
+	// Used as boolean for rows inside grid tag
+	private String footer;
 
 	private String value;
 
@@ -36,28 +46,72 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	private String badge;
 
+	// Internally used, setup via GridTagHandler
+	private boolean border;
+
+	// Used for rows inside grid tag
+	private List<ColumnTagHandler> columns;
+
+	public RowTagHandler() {
+		columns = new ArrayList<ColumnTagHandler>();
+	}
+
 	@Override
-	public void doTag() throws JspException, IOException {
+	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof ListTagHandler) {
-			((ListTagHandler) parent).addItem(this);
+
+			theme = ((ListTagHandler) parent).getTheme();
+			((ListTagHandler) parent).addRow(this);
+			return false;
+
+		} else if (parent instanceof GridTagHandler) {
+			theme = ((GridTagHandler) parent).getTheme();
+			((GridTagHandler) parent).addRow(this);
+			return false;
 		}
+		return true;
 	}
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING - type is internal
+		JspTag parent = getParent();
+		if (parent instanceof ListTagHandler) {
+			if (value == null) {
+				throw new JspException("Attribute value is required for row tag inside list tag");
+			}
+		} else if (parent instanceof GridTagHandler) {
+			if (value != null) {
+				throw new JspException("Attribute value cannot be used on row tag inside grid tag");
+			}
+			if (badge != null) {
+				throw new JspException("Attribute badge cannot be used on row tag inside grid tag");
+			}
+			if (type != null) {
+				throw new JspException("Attribute type cannot be used on row tag inside grid tag");
+			}
+		}
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
 
+		JspTag parent = getParent();
+		if (parent instanceof ListTagHandler) {
+			executeListTag();
+
+		} else if (parent instanceof GridTagHandler) {
+			executeGridTag();
+		}
+	}
+
+	private void executeListTag() throws JspException, IOException {
 		StringBuilder builder = new StringBuilder();
 
 		if (type != null && type.equals(ListTagHandler.DEFINITION)) {
-			builder.append(HtmlConstants.OPEN_DEFINITION_TITLE_TAG + (header != null ? getTagValue(header) : "") + HtmlConstants.CLOSE_DEFINITION_TITLE_TAG + HtmlConstants.OPEN_DEFINITION_DATA_TAG);
+			builder.append(OPEN_DEFINITION_TITLE_TAG + (header != null ? getTagValue(header) : "") + CLOSE_DEFINITION_TITLE_TAG + OPEN_DEFINITION_DATA_TAG);
 		} else {
-			builder.append(HtmlConstants.OPEN_LIST_ITEM_TAG);
+			builder.append(OPEN_LIST_ITEM_TAG);
 		}
 
 		if (style != null) {
@@ -66,7 +120,7 @@ public final class RowTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_LIST_ROW);
+			appendClass(builder, CSS_LIST_ROW);
 		}
 		if (ajaxCommand != null) {
 			builder.append((style == null ? "style=\"cursor: pointer;\" " : "") + ajaxCommand + "select=\"true\" ");
@@ -83,17 +137,106 @@ public final class RowTagHandler extends SmartTagHandler {
 
 		if (badge != null) {
 			object = getTagValue(badge);
-			builder.append(HtmlConstants.OPEN_SPAN_TAG);
-			appendClass(builder, CssConstants.CSS_LIST_ROW_BADGE);
+			builder.append(OPEN_SPAN_TAG);
+			appendClass(builder, CSS_LIST_ROW_BADGE);
 			builder.append(">");
 			builder.append(object != null ? object : "");
-			builder.append(HtmlConstants.CLOSE_SPAN_TAG);
+			builder.append(CLOSE_SPAN_TAG);
 		}
 
 		if (type != null && type.equals(ListTagHandler.DEFINITION)) {
-			builder.append(HtmlConstants.CLOSE_DEFINITION_DATA_TAG);
+			builder.append(CLOSE_DEFINITION_DATA_TAG);
 		} else {
-			builder.append(HtmlConstants.CLOSE_LIST_ITEM_TAG);
+			builder.append(CLOSE_LIST_ITEM_TAG);
+		}
+
+		printOutput(builder);
+	}
+
+	private void executeGridTag() throws JspException, IOException {
+
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}
+
+		boolean rowHeader = Boolean.parseBoolean(header);
+		boolean rowFooter = Boolean.parseBoolean(footer);
+
+		StringBuilder builder = new StringBuilder();
+
+		if (rowHeader) {
+			builder.append(OPEN_TABLE_HEAD_TAG + ">");
+		} else if (rowFooter) {
+			builder.append(OPEN_TABLE_FOOT_TAG + ">");
+		}
+
+		builder.append(OPEN_TABLE_ROW_TAG);
+		appendClass(builder, rowHeader ? CSS_GRID_ROW_HEADER : rowFooter ? CSS_GRID_ROW_FOOTER : CSS_GRID_ROW);
+
+		if (id != null) {
+			builder.append("id=\"" + id + "\" ");
+		}
+		if (style != null) {
+			builder.append("style=\"" + (ajaxCommand != null ? "cursor: pointer; " : "") + style + "\" ");
+		}
+		if (styleClass != null) {
+			builder.append("class=\"" + styleClass + "\" ");
+		}
+		if (ajaxCommand != null) {
+			builder.append((style == null ? "style=\"cursor: pointer;\" " : "") + ajaxCommand);
+		}
+
+		appendEvent(builder);
+		builder.append(">");
+
+		for (ColumnTagHandler column : columns) {
+			if (rowHeader) {
+				builder.append(OPEN_TABLE_HEAD_COLUMN_TAG);
+			} else {
+				builder.append(OPEN_TABLE_COLUMN_TAG);
+			}
+
+			if (column.id != null) {
+				builder.append("id=\"" + column.id + "\" ");
+			}
+			if (column.style != null) {
+				builder.append("style=\"" + column.style + "\" ");
+			}
+			if (column.styleClass != null) {
+				builder.append("class=\"" + column.styleClass + "\" ");
+			} else {
+				appendClass(builder,  rowHeader ? CSS_GRID_HEADER_COLUMN : rowFooter ? 
+						CSS_GRID_FOOTER_COLUMN : border ? CSS_GRID_BORDER_COLUMN : CSS_GRID_COLUMN);
+			}
+
+			if (column.getColspan() != null) {
+				builder.append("colspan=\"" + column.getColspan() + "\" ");
+			}
+			if (column.getRowspan() != null) {
+				builder.append("rowspan=\"" + column.getRowspan() + "\" ");
+			}
+			builder.append(">");
+
+			StringWriter sw = new StringWriter();
+			column.setOutputWriter(sw);
+			column.executeTag();
+
+			builder.append(sw.toString());
+			
+			if (rowHeader) {
+				builder.append(CLOSE_TABLE_HEAD_COLUMN_TAG);
+			} else {
+				builder.append(CLOSE_TABLE_COLUMN_TAG);
+			}
+		}
+		
+		builder.append(CLOSE_TABLE_ROW_TAG);
+		
+		if (rowHeader) {
+			builder.append(CLOSE_TABLE_HEAD_TAG);
+		} else if (rowFooter) {
+			builder.append(CLOSE_TABLE_FOOT_TAG);
 		}
 
 		printOutput(builder);
@@ -107,12 +250,24 @@ public final class RowTagHandler extends SmartTagHandler {
 		this.header = header;
 	}
 
+	public void setFooter(String footer) {
+		this.footer = footer;
+	}
+
 	public void setValue(String value) {
 		this.value = value;
 	}
 
 	public void setBadge(String badge) {
 		this.badge = badge;
+	}
+
+	/*package*/ void addColumn(ColumnTagHandler column) {
+		this.columns.add(column);
+	}
+
+	/*package*/ void setBorder(boolean border) {
+		this.border = border;
 	}
 
 }

@@ -26,6 +26,8 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 public final class OptionTagHandler extends SmartTagHandler {
 
@@ -38,22 +40,25 @@ public final class OptionTagHandler extends SmartTagHandler {
 	private boolean disabled;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof SelectTagHandler) {
+			
+			((SelectTagHandler) parent).addOption(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
 
 	@Override
-	public void doTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof SelectTagHandler) {
-			((SelectTagHandler) parent).addOption(this);
-		}
-	}
-
-	@Override
 	public void executeTag() throws JspException, IOException {
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_OPTION_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_OPTION_TAG);
 
 		if (id != null) {
 			builder.append("id=\"" + id + "\" ");
@@ -64,7 +69,7 @@ public final class OptionTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_SELECT_OPTION);
+			appendClass(builder, CSS_SELECT_OPTION);
 		}
 		if (disabled || isEditRowTagEnabled()) {
 			builder.append("disabled=\"disabled\" ");
@@ -79,7 +84,7 @@ public final class OptionTagHandler extends SmartTagHandler {
 			builder.append("selected=\"selected\" ");
 		}
 
-		printOutput(builder.append(">" + getTagValue(label) + HtmlConstants.CLOSE_OPTION_TAG));
+		printOutput(builder.append(">" + getTagValue(label) + CLOSE_OPTION_TAG));
 	}
 
 	@SuppressWarnings("rawtypes")

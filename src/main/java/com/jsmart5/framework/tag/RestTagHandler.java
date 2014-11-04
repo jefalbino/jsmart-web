@@ -18,18 +18,20 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.JSConstants.*;
-
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JSONParam;
-import com.jsmart5.framework.json.JSONRest;
+import com.jsmart5.framework.json.JsonParam;
+import com.jsmart5.framework.json.JsonRest;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartUtils;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 /*
  * Rest uses a json structure
@@ -103,6 +105,17 @@ public final class RestTagHandler extends SmartTagHandler {
 	private boolean async = true;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		if (!method.equalsIgnoreCase(POST) && !method.equalsIgnoreCase(GET) && !method.equalsIgnoreCase(DELETE) && !method.equalsIgnoreCase(PUT)
 				&& !method.equalsIgnoreCase(HEAD) && !method.equalsIgnoreCase(OPTIONS)) {
@@ -131,9 +144,9 @@ public final class RestTagHandler extends SmartTagHandler {
 		}
 
 		if (image != null) {
-			builder.append(HtmlConstants.INPUT_TAG);
+			builder.append(INPUT_TAG);
 		} else {
-			builder.append(HtmlConstants.OPEN_BUTTON_TAG);
+			builder.append(OPEN_BUTTON_TAG);
 		}
 
 		if (id != null) {
@@ -146,9 +159,9 @@ public final class RestTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (image != null) {
-				appendClass(builder, CssConstants.CSS_BUTTON_IMAGE);
+				appendClass(builder, CSS_BUTTON_IMAGE);
 			} else {
-				appendClass(builder, CssConstants.CSS_BUTTON);
+				appendClass(builder, CSS_BUTTON);
 			}
 		}
 
@@ -168,14 +181,14 @@ public final class RestTagHandler extends SmartTagHandler {
 
 		builder.append(ON_CLICK + JSMART_REST.format(async, "$(this)", timeout != null ? timeout : 0) + "return false;\" ");
 
-		JSONRest jsonRest = new JSONRest();
+		JsonRest jsonRest = new JsonRest();
 		jsonRest.setMethod(getTagValue(method));
 		jsonRest.setEndpoint(SmartUtils.decodePath((String) getTagValue(endpoint)));
 		jsonRest.setContent(contentType != null ? contentType.toLowerCase() : CONTENT_TYPE_JSON);
 
 		if (!params.isEmpty()) {
 			for (String name : params.keySet()) {						
-				jsonRest.getParams().add(new JSONParam(name, params.get(name)));
+				jsonRest.getParams().add(new JsonParam(name, params.get(name)));
 			}
 		}
 		jsonRest.setBodyRoot(rootContent != null ? rootContent.trim() : null);
@@ -186,7 +199,7 @@ public final class RestTagHandler extends SmartTagHandler {
 		jsonRest.setSuccess(onSuccess);
 		jsonRest.setError(onError);
 
-		builder.append("ajax=\"" + getJSONValue(jsonRest) + "\" ");
+		builder.append("ajax=\"" + getJsonValue(jsonRest) + "\" ");
 
 		String val = (String) getTagValue(label);
 
@@ -201,7 +214,7 @@ public final class RestTagHandler extends SmartTagHandler {
 		if (image != null) {
 			builder.append((val != null ? "value=\"" + val + "\"" : "") + " />");
 		} else {
-			builder.append(">" + (val != null ? val : "") + HtmlConstants.CLOSE_BUTTON_TAG);
+			builder.append(">" + (val != null ? val : "") + CLOSE_BUTTON_TAG);
 		}
 
 		printOutput(builder);

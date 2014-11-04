@@ -163,14 +163,23 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	public String onSelect;
 
 	@Override
-	public void doTag() throws JspException, IOException {
+	public final void doTag() throws JspException, IOException {
+		// long start = System.currentTimeMillis();
 		try {
 			validateTag();
-			executeTag();
+			if (beforeTag()) {
+				executeTag();
+			}
 		} catch (Exception ex) {
 			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
 			throw ex;
 		}
+		// LOGGER.log(Level.INFO, this.getClass().getName() + ": " + (System.currentTimeMillis() - start) + "ms");
+	}
+
+	// Available for overriding to stop tag being processed
+	public boolean beforeTag() throws JspException, IOException {
+		return true;
 	}
 
 	public abstract void validateTag() throws JspException;
@@ -202,7 +211,9 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	}
 
 	public void setAjaxCommand(String ajaxCommand) {
-		this.ajaxCommand = ajaxCommand;
+		if (this.ajaxCommand == null) {
+			this.ajaxCommand = ajaxCommand;
+		}
 	}
 
 	public void setId(String id) {
@@ -227,6 +238,51 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
+	}
+
+	protected void setEvents(SmartTagHandler tag) {
+		if (tag.onClick == null) {
+			tag.setOnClick(onClick);
+		}
+		if (tag.onDblClick == null) {
+			tag.setOnDblClick(onDblClick);
+		}
+		if (tag.onMouseDown == null) {
+			tag.setOnMouseDown(onMouseDown);
+		}
+		if (tag.onMouseMove == null) {
+			tag.setOnMouseMove(onMouseMove);
+		}
+		if (tag.onMouseOver == null) {
+			tag.setOnMouseOver(onMouseOver);
+		}
+		if (tag.onMouseOut == null) {
+			tag.setOnMouseOut(onMouseOut);
+		}
+		if (tag.onMouseUp == null) {
+			tag.setOnMouseUp(onMouseUp);
+		}
+		if (tag.onKeyDown == null) {
+			tag.setOnKeyDown(onKeyDown);
+		}
+		if (tag.onKeyPress == null) {
+			tag.setOnKeyPress(onKeyPress);
+		}
+		if (tag.onKeyUp == null) {
+			tag.setOnKeyUp(onKeyUp);
+		}
+		if (tag.onBlur == null) {
+			tag.setOnBlur(onBlur);
+		}
+		if (tag.onChange == null) {
+			tag.setOnChange(onChange);
+		}
+		if (tag.onFocus == null) {
+			tag.setOnFocus(onFocus);
+		}
+		if (tag.onSelect == null) {
+			tag.setOnSelect(onSelect);
+		}
 	}
 
 	public void setOnClick(String onClick) {
@@ -384,7 +440,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		return SmartContext.getMessages(id);
 	}
 
-	protected String getJSONValue(Object object) {
+	protected String getJsonValue(Object object) {
 		return new JSONObject(object).toString().replace("\"", "&quot;");
 	}
 

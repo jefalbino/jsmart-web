@@ -1,242 +1,174 @@
 {
+	"default": {
+		"@bckgdefault@": "#ffffff",
+		"@bckgdisabled@": "#d5d5d5",
+		"@borderdefault@": "#cccccc",
+		"@borderdivisor@": "#eaeaea",
+		"@borderdisabled@": "#a3a3a3"
+	},
 	"water": {
 		"@image@": "img/water_image.png",
-		"@border@": "#016b75",
-		"@bordersoft@": "#e5f3f4",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#016b75",
+		"@border@": "#016b75",
 		"@bckg@": "#008b91",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#e5f3f4",
 		"@bckghover@": "#cce7e9",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"blue": {
 		"@image@": "img/blue_image.png",
-		"@border@": "#494587",
-		"@bordersoft@": "#ececf3",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#494587",
+		"@border@": "#494587",
 		"@bckg@": "#4d4d99",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#ececf3",
 		"@bckghover@": "#dadae8",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"dark_blue": {
 		"@image@": "img/dark_blue_image.png",
-		"@border@": "#194071",
-		"@bordersoft@": "#e8edf3",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#194071",
+		"@border@": "#194071",
 		"@bckg@": "#1c5288",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#e8edf3",
 		"@bckghover@": "#d1dce7",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"green": {
 		"@image@": "img/green_image.png",
-		"@border@": "#288401",
-		"@bordersoft@": "#e9f2e5",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#288401",
+		"@border@": "#288401",
 		"@bckg@": "#37A100",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#e9f2e5",
 		"@bckghover@": "#d4e6cc",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"dark_green": {
 		"@image@": "img/dark_green_image.png",
-		"@border@": "#115a2d",
-		"@bordersoft@": "#e7f0ea",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#115a2d",
+		"@border@": "#115a2d",
 		"@bckg@": "#147134",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#e7f0ea",
 		"@bckghover@": "#d0e2d6",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"purple": {
 		"@image@": "img/purple_image.png",
-		"@border@": "#83329a",
-		"@bordersoft@": "#f3ebf7",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#83329a",
+		"@border@": "#83329a",
 		"@bckg@": "#8f37af",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#f3ebf7",
 		"@bckghover@": "#e8d7ef",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"dark_purple": {
 		"@image@": "img/dark_purple_image.png",
-		"@border@": "#340c64",
-		"@bordersoft@": "#ebe6f2",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#340c64",
+		"@border@": "#340c64",
 		"@bckg@": "#3c0e80",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#ebe6f2",
 		"@bckghover@": "#d8cee5",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"pink": {
 		"@image@": "img/pink_image.png",
-		"@border@": "#b92d69",
-		"@bordersoft@": "#faeaf2",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#b92d69",
+		"@border@": "#b92d69",
 		"@bckg@": "#d0347d",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#faeaf2",
 		"@bckghover@": "#f5d6e5",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"orange": {
 		"@image@": "img/orange_image.png",
-		"@border@": "#a77501",
-		"@bordersoft@": "#f9f2e5",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#a77501",
+		"@border@": "#a77501",
 		"@bckg@": "#c68200",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#f9f2e5",
 		"@bckghover@": "#f3e6cc",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"red": {
 		"@image@": "img/red_image.png",
-		"@border@": "#8f2e28",
-		"@bordersoft@": "#f6eaea",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#8f2e28",
+		"@border@": "#8f2e28",
 		"@bckg@": "#a82d2d",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#f6eaea",
 		"@bckghover@": "#edd5d5",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"brown": {
 		"@image@": "img/brown_image.png",
-		"@border@": "#583b28",
-		"@bordersoft@": "#e9e7e6",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#583b28",
+		"@border@": "#583b28",
 		"@bckg@": "#6c452f",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#e9e7e6",
 		"@bckghover@": "#d4d0ce",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"black": {
 		"@image@": "img/black_image.png",
-		"@border@": "#000000",
-		"@bordersoft@": "#cccccc",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#000000",
+		"@border@": "#000000",
 		"@bckg@": "#000000",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#cccccc",
 		"@bckghover@": "#999999",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#cccccc",
 		"@arrowselect@": "#ffffff"
 	},	
 	"yellow": {
 		"@image@": "img/yellow_image.png",
-		"@border@": "#feaa04",
-		"@bordersoft@": "#f2f2f2",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#0e0e0e",
 		"@fontstrong@": "#feaa04",
+		"@border@": "#feaa04",
 		"@bckg@": "#febf04",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#fff6de",
 		"@bckghover@": "#fff2ce",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#0e0e0e",
 		"@arrowselect@": "#ffffff"
 	},
 	"gray": {
 		"@image@": "img/gray_image.png",
-		"@border@": "#646668",
-		"@bordersoft@": "#f0f1f1",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#ffffff",
 		"@fontstrong@": "#646668",
+		"@border@": "#646668",
 		"@bckg@": "#707377",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#f0f1f1",
 		"@bckghover@": "#e2e3e3",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#ffffff",
 		"@arrowselect@": "#000000"
 	},
 	"white": {
 		"@image@": "img/white_image.png",
-		"@border@": "#cacaca",
-		"@bordersoft@": "#eaeaea",
-		"@borderdisabled@": "#a3a3a3";
 		"@font@": "#313c4e",
 		"@fontstrong@": "#313c4e",
+		"@border@": "#cacaca",
 		"@bckg@": "#ffffff",
-		"@bckgsoft@": "#ffffff",
 		"@bckgstrong@": "#eaeaea",
 		"@bckghover@": "#eaeaea",
-		"@bckgdisabled@": "#d5d5d5",
 		"@arrow@": "#313c4e",
-		"@arrowselect@": "#ffffff"
-	},
-	"none": {
-		"@image@": "img/none_image.png",
-		"@border@": "#000000",
-		"@bordersoft@": "#000000",
-		"@borderdisabled@": "#a3a3a3";
-		"@font@": "#000000",
-		"@fontstrong@": "#000000",
-		"@bckg@": "none",
-		"@bckgsoft@": "none",
-		"@bckgstrong@": "none",
-		"@bckghover@": "none",
-		"@bckgdisabled@": "none",
-		"@arrow@": "#000000",
 		"@arrowselect@": "#ffffff"
 	}
 }

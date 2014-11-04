@@ -35,23 +35,30 @@ public class ButtonActionTagHandler extends SmartTagHandler {
 	private String action;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof ButtonTagHandler) {
+			
+			// Just to call nested tags
+			JspFragment body = getJspBody();
+			if (body != null) {
+				body.invoke(null);
+			}
+
+			((ButtonTagHandler) parent).addActionItem(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-
-		JspTag parent = getParent();
-		if (parent instanceof ButtonTagHandler) {
-			((ButtonTagHandler) parent).addActionItem(this);
-		}
+		// DO NOTHING
 	}
 
 	/*package*/ String getLabel() {

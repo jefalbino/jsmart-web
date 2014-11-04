@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @param <T> the type of the element being loaded inside the {@link List} of elements.
  */
-public abstract class SmartAutoCompleteAdapter<T> {
+public abstract class SmartSearchAdapter<T> {
 
 	/**
 	 * Method must be implemented to search values for autocomplete component.

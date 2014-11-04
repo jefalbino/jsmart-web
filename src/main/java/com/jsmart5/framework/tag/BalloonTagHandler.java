@@ -21,9 +21,12 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 public final class BalloonTagHandler extends SmartTagHandler {
 
@@ -50,6 +53,17 @@ public final class BalloonTagHandler extends SmartTagHandler {
 	private Integer length;
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		if (position != null && !position.equals(POSITION_TOP) && !position.equals(POSITION_LEFT) 
 				&& !position.equals(POSITION_RIGHT) && !position.equals(POSITION_BOTTOM)) {
@@ -64,12 +78,12 @@ public final class BalloonTagHandler extends SmartTagHandler {
 			length = DEFAULT_LENGTH;
 		}
 
-		String balloonScript = JSConstants.JSMART_BALLOON.format(target, position != null ? position : "top",
+		String balloonScript = JsConstants.JSMART_BALLOON.format(target, position != null ? position : "top",
 				opened, length, messageVal != null ? messageVal.toString().replace("'", "\\'") : "");
 
 		appendScript(new StringBuilder(balloonScript), true);
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_SPAN_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_SPAN_TAG);
 		builder.append("id=\"" + target + BALLOON_HOLDER + "\" ");
 		builder.append("style=\"display: none;\" ");
 		builder.append("type=\"balloon\" ");
@@ -77,15 +91,16 @@ public final class BalloonTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_BALLOON);
+			appendClass(builder, CSS_BALLOON);
 		}
 
 		builder.append("target=\"" + target + "\" ");
 		builder.append("position=\"" + (position != null ? position : "top") + "\" ");
 		builder.append("opened=\"" + opened + "\" ");
 		builder.append("length=\"" + length + "\" ");
-		builder.append("message=\"" + (messageVal != null ? messageVal.toString() : "") + "\">");
-		builder.append(HtmlConstants.CLOSE_SPAN_TAG);
+		builder.append("message=\"" + (messageVal != null ? messageVal.toString() : "") + "\" ");
+		builder.append(CLOSE_TAG);
+		builder.append(CLOSE_SPAN_TAG);
 
 		printOutput(builder);		
 	}

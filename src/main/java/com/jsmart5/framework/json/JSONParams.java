@@ -21,19 +21,19 @@ package com.jsmart5.framework.json;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class JSONParams {
+public final class JsonParams {
 
-	private List<JSONParam> params = new ArrayList<JSONParam>();
+	private List<JsonParam> params = new ArrayList<JsonParam>();
 
-	public List<JSONParam> getParams() {
+	public List<JsonParam> getParams() {
 		return params;
 	}
 
-	public void setParams(List<JSONParam> params) {
+	public void setParams(List<JsonParam> params) {
 		this.params = params;
 	}
 
-	public void addParam(JSONParam param) {
+	public void addParam(JsonParam param) {
 		params.add(param);
 	}
 

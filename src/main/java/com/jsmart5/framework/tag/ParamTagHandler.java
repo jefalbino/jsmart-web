@@ -25,7 +25,6 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-
 public final class ParamTagHandler extends SmartTagHandler {
 
 	private String name;
@@ -41,6 +40,7 @@ public final class ParamTagHandler extends SmartTagHandler {
 	public void executeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof SmartTagHandler) {
+
 			String key = getTagName(J_TAG, name);
 			Object obj = getTagValue(value);
 			putParam((SmartTagHandler) parent, key, obj);

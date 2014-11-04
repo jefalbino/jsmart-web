@@ -26,7 +26,6 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-
 public final class TabItemTagHandler extends SmartTagHandler {
 
 	private String label;
@@ -38,16 +37,19 @@ public final class TabItemTagHandler extends SmartTagHandler {
 	private String tabClass;
 
 	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof TabTagHandler) {
+
+			((TabTagHandler) parent).addTabItem(this);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
-	public void doTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TabTagHandler) {
-			((TabTagHandler) parent).addTabItem(this);
-		}
+	public void validateTag() throws JspException {
+		// DO NOTHING
 	}
 
 	@Override

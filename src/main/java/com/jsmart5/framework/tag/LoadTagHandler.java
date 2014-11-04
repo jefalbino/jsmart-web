@@ -28,6 +28,8 @@ import javax.servlet.jsp.JspException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class LoadTagHandler extends SmartTagHandler {
 
@@ -70,13 +72,13 @@ public final class LoadTagHandler extends SmartTagHandler {
 			builder.append(OPEN_SPAN_TAG);
 
 			if (size.equals(LARGE)) {
-				appendClass(builder, CssConstants.CSS_LOAD_LARGE);
+				appendClass(builder, CSS_LOAD_LARGE);
 
 			} else if (size.equals(MEDIUM)) {
-				appendClass(builder, CssConstants.CSS_LOAD_MEDIUM);
+				appendClass(builder, CSS_LOAD_MEDIUM);
 
 			} else {
-				appendClass(builder, CssConstants.CSS_LOAD_SMALL);
+				appendClass(builder, CSS_LOAD_SMALL);
 			}
 			builder.append(">" + CLOSE_SPAN_TAG);
 		}
@@ -107,7 +109,7 @@ public final class LoadTagHandler extends SmartTagHandler {
 
 		builder.append(CLOSE_DIV_TAG);		
 
-		appendScript(new StringBuilder(JSConstants.JSMART_LOAD.format(id)));
+		appendScript(new StringBuilder(JSMART_LOAD.format(id)));
 
 		printOutput(builder);
 	}

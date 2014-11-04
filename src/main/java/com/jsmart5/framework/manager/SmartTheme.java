@@ -34,8 +34,7 @@ package com.jsmart5.framework.manager;
 	BLACK, 
 	YELLOW, 
 	GRAY, 
-	WHITE, 
-	NONE;
+	WHITE;
 
 	public static boolean contains(String theme) {
 		for (SmartTheme smartTheme : values()) {

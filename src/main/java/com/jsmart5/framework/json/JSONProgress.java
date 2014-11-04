@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONProgress {
+public final class JsonProgress {
 
 	private String ajax;
 

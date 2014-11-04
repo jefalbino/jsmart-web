@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONScroll {
+public final class JsonScroll {
 
 	private Object name;
 

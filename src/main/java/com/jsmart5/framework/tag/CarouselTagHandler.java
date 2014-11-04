@@ -25,10 +25,12 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 
 public final class CarouselTagHandler extends SmartTagHandler {
@@ -57,9 +59,19 @@ public final class CarouselTagHandler extends SmartTagHandler {
 
 	private Integer timer;
 
-
 	public CarouselTagHandler() {
 		items = new ArrayList<CarouselItemTagHandler>();
+	}
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -92,7 +104,7 @@ public final class CarouselTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_CAROUSEL);
+			appendClass(builder, CSS_CAROUSEL);
 		}
 
 		builder.append("width=\"" + width + "\" ");
@@ -106,14 +118,14 @@ public final class CarouselTagHandler extends SmartTagHandler {
 			builder.append("transitionTime=\"" + transitionTime + "\" ");
 		}
 
-		builder.append(">");
+		builder.append(CLOSE_TAG);
 
 		if (title != null) {
 			builder.append(OPEN_PARAGRAPH_TAG + getTagValue(title) + CLOSE_PARAGRAPH_TAG);
 		}
 
 		builder.append(OPEN_DIV_TAG);
-		appendClass(builder, CssConstants.CSS_CAROUSEL_SLIDES);
+		appendClass(builder, CSS_CAROUSEL_SLIDES);
 		builder.append(">");
 
 		for (int i = 0; i < items.size(); i++) {
@@ -127,18 +139,18 @@ public final class CarouselTagHandler extends SmartTagHandler {
 		if (NUMBERED.equals(type)) {
 			// Numbers
 			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CssConstants.CSS_CAROUSEL_CONTROL);
+			appendClass(builder, CSS_CAROUSEL_CONTROL);
 			builder.append(" align=\"center\" >");
 			builder.append(OPEN_DIV_TAG + "align=\"right\" >");
 			for (int i = 0; i < items.size(); i++) {
-				builder.append(OPEN_SPAN_TAG + ">" + (i + 1) + CLOSE_SPAN_TAG);
+				builder.append(OPEN_SPAN_TAG + CLOSE_TAG + (i + 1) + CLOSE_SPAN_TAG);
 			}
 			builder.append(CLOSE_DIV_TAG + CLOSE_DIV_TAG);
 
 			// Arrows Previous and Next
 			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CssConstants.CSS_CAROUSEL_CONTROL_ARROW);
-			builder.append(">");
+			appendClass(builder, CSS_CAROUSEL_CONTROL_ARROW);
+			builder.append(CLOSE_TAG);
 			builder.append(OPEN_SPAN_TAG + "direction=\"prev\" >");
 			builder.append(OPEN_DIV_TAG + ">" + CLOSE_DIV_TAG);
 			builder.append(CLOSE_SPAN_TAG);
@@ -150,7 +162,7 @@ public final class CarouselTagHandler extends SmartTagHandler {
 
 		builder.append(CLOSE_DIV_TAG + CLOSE_DIV_TAG);
 
-		StringBuilder scriptBuilder = new StringBuilder(JSConstants.JSMART_CAROUSEL.format(id));
+		StringBuilder scriptBuilder = new StringBuilder(JsConstants.JSMART_CAROUSEL.format(id));
 
 		appendScript(scriptBuilder);
 

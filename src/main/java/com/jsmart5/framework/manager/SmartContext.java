@@ -18,6 +18,7 @@
 
 package com.jsmart5.framework.manager;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -44,7 +45,9 @@ import com.jsmart5.framework.annotation.SmartBean;
  * This class also include methods to add message to client side, check if request is Ajax request or 
  * retrieve attributes from the request, session or application.
  */
-public final class SmartContext {
+public final class SmartContext implements Serializable {
+
+	private static final long serialVersionUID = -3910553204750683737L;
 
 	private static final JspFactory JSP_FACTORY = JspFactory.getDefaultFactory();
 

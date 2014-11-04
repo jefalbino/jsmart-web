@@ -26,11 +26,15 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JSONParam;
-import com.jsmart5.framework.json.JSONParams;
+import com.jsmart5.framework.json.JsonParam;
+import com.jsmart5.framework.json.JsonParams;
 import com.jsmart5.framework.manager.SmartTagHandler;
-import static com.jsmart5.framework.tag.JSConstants.*;
+
+import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.HtmlConstants.*;
 
 
 public final class ListTagHandler extends SmartTagHandler {
@@ -53,10 +57,21 @@ public final class ListTagHandler extends SmartTagHandler {
 
 	private boolean async = true;
 
-	private final List<RowTagHandler> items;
+	private final List<RowTagHandler> rows;
 
 	public ListTagHandler() {
-		items = new ArrayList<RowTagHandler>();
+		rows = new ArrayList<RowTagHandler>();
+	}
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -82,13 +97,13 @@ public final class ListTagHandler extends SmartTagHandler {
 		StringBuilder builder = new StringBuilder();
 
 		if (type != null && type.equals(DEFINITION)) {
-			builder.append(HtmlConstants.OPEN_DEFINITION_LIST_TAG);
+			builder.append(OPEN_DEFINITION_LIST_TAG);
 
 		} else if (type != null && type.equals(ORDERED)) {
-			builder.append(HtmlConstants.OPEN_ORDERED_LIST_TAG);
+			builder.append(OPEN_ORDERED_LIST_TAG);
 
 		} else { // UNORDERED
-			builder.append(HtmlConstants.OPEN_UNORDERED_LIST_TAG);
+			builder.append(OPEN_UNORDERED_LIST_TAG);
 		}
 
 		if (id != null) {
@@ -100,10 +115,11 @@ public final class ListTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_LIST);
+			appendClass(builder, CSS_LIST);
 		}
 
-		builder.append(">");
+		appendEvent(builder);
+		builder.append(CLOSE_TAG);
 
 		Object object = getTagValue(value);
 		if (object instanceof List<?>) {
@@ -115,11 +131,11 @@ public final class ListTagHandler extends SmartTagHandler {
 				String command = ajaxCommand;
 
  				if (select != null) {
- 					JSONParams jsonParams = new JSONParams();
- 					jsonParams.addParam(new JSONParam(getTagName(J_SEL, select), getTagName(J_SEL, value)));
- 					jsonParams.addParam(new JSONParam(getTagName(J_SEL_VAL, select), "%s"));
+ 					JsonParams jsonParams = new JsonParams();
+ 					jsonParams.addParam(new JsonParam(getTagName(J_SEL, select), getTagName(J_SEL, value)));
+ 					jsonParams.addParam(new JsonParam(getTagName(J_SEL_VAL, select), "%s"));
 
- 					String parameters = "ajaxoutside=\"" + getJSONValue(jsonParams) + "\" ";
+ 					String parameters = "ajaxoutside=\"" + getJsonValue(jsonParams) + "\" ";
 
  					if (command != null) {
  						if (command.startsWith(ON_CLICK)) {
@@ -139,21 +155,21 @@ public final class ListTagHandler extends SmartTagHandler {
 				for (int i = 0; i < list.size(); i++) {
 					request.setAttribute(var, list.get(i));
 
-					for (RowTagHandler item : items) {
+					for (RowTagHandler row : rows) {
 	 					StringWriter sw = new StringWriter();
-	 					item.setOutputWriter(sw);
-	 					item.setType(type);
-	 					setEvents(item);
+	 					row.setOutputWriter(sw);
+	 					row.setType(type);
+	 					setEvents(row);
 
 	 					if (command != null) {
 	 						if (select != null) {
-	 							item.setAjaxCommand(String.format(command, i));
+	 							row.setAjaxCommand(String.format(command, i));
 	 						} else {
-	 							item.setAjaxCommand(command);
+	 							row.setAjaxCommand(command);
 	 						}
 	 					}
 
-	 					item.executeTag();
+	 					row.executeTag();
 	 					builder.append(sw.toString());
 	 				}
 
@@ -164,47 +180,30 @@ public final class ListTagHandler extends SmartTagHandler {
 
 				String empty = (String) (emptyMessage != null ? getTagValue(emptyMessage) : "");
 				if (type.equals(DEFINITION)) {
-					builder.append(HtmlConstants.OPEN_DEFINITION_TITLE_TAG + empty + HtmlConstants.CLOSE_DEFINITION_TITLE_TAG);
+					builder.append(OPEN_DEFINITION_TITLE_TAG + empty + CLOSE_DEFINITION_TITLE_TAG);
 				} else {
-					builder.append(HtmlConstants.OPEN_LIST_ITEM_TAG);
-					appendClass(builder, CssConstants.CSS_LIST_ROW);
-					builder.append(">");
+					builder.append(OPEN_LIST_ITEM_TAG);
+					appendClass(builder, CSS_LIST_ROW);
+					builder.append(CLOSE_TAG);
 					builder.append(empty);
-					builder.append(HtmlConstants.CLOSE_LIST_ITEM_TAG);
-				}				
+					builder.append(CLOSE_LIST_ITEM_TAG);
+				}
 			}
 		}
 		
 		if (type != null && type.equals(DEFINITION)) {
-			builder.append(HtmlConstants.CLOSE_DEFINITION_LIST_TAG);
+			builder.append(CLOSE_DEFINITION_LIST_TAG);
 		} else if (type != null && type.equals(ORDERED)) {
-			builder.append(HtmlConstants.CLOSE_ORDERED_LIST_TAG);
+			builder.append(CLOSE_ORDERED_LIST_TAG);
 		} else { // UNORDERED
-			builder.append(HtmlConstants.CLOSE_UNORDERED_LIST_TAG);
+			builder.append(CLOSE_UNORDERED_LIST_TAG);
 		}
 		
 		printOutput(builder);
 	}
 
-	/*package*/ void addItem(RowTagHandler item) {
-		items.add(item);
-	}
-
-	private void setEvents(RowTagHandler item) {
-		item.setOnClick(onClick);
-		item.setOnDblClick(onDblClick);
-		item.setOnMouseDown(onMouseDown);
-		item.setOnMouseMove(onMouseMove);
-		item.setOnMouseOver(onMouseOver);
-		item.setOnMouseOut(onMouseOut);
-		item.setOnMouseUp(onMouseUp);
-		item.setOnKeyDown(onKeyDown);
-		item.setOnKeyPress(onKeyPress);
-		item.setOnKeyUp(onKeyUp);
-		item.setOnBlur(onBlur);
-		item.setOnChange(onChange);
-		item.setOnFocus(onFocus);
-		item.setOnSelect(onSelect);
+	/*package*/ void addRow(RowTagHandler row) {
+		rows.add(row);
 	}
 
 	public void setValue(String value) {

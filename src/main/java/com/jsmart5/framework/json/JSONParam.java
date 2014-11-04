@@ -18,17 +18,17 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONParam {
+public final class JsonParam {
 
 	private String name;
 
 	private Object value;
 
-	public JSONParam() {
+	public JsonParam() {
 		
 	}
 
-	public JSONParam(String name, Object value) {
+	public JsonParam(String name, Object value) {
 		this.name = name;
 		this.value = value;
 	}

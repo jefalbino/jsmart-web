@@ -30,16 +30,19 @@ import com.jsmart5.framework.manager.SmartTagHandler;
 public final class OtherwiseTagHandler extends SmartTagHandler {
 
 	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof AuthorizeTagHandler) {
+
+			((AuthorizeTagHandler) parent).setOtherwise(this);
+			return false;
+		}
+		return true;
 	}
 
 	@Override
-	public void doTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof AuthorizeTagHandler) {
-			((AuthorizeTagHandler) parent).setOtherwise(this);
-		}
+	public void validateTag() throws JspException {
+		// DO NOTHING
 	}
 
 	@Override

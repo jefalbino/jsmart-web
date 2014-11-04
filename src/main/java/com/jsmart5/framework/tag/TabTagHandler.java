@@ -26,11 +26,12 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.json.JSONTab;
+import com.jsmart5.framework.json.JsonTab;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.JSConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class TabTagHandler extends SmartTagHandler {
 
@@ -93,16 +94,16 @@ public final class TabTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_TABS);
+			appendClass(builder, CSS_TABS);
 		}
 
-		JSONTab jsonTab = new JSONTab();
+		JsonTab jsonTab = new JsonTab();
 		jsonTab.setAjax(String.valueOf(ajax));
 		jsonTab.setCollapsible(String.valueOf(collapsible));
 		jsonTab.setPosition(position);
 		jsonTab.setHover(String.valueOf(hover));
 
-		builder.append("ajax=\"" + getJSONValue(jsonTab) + "\" ");
+		builder.append("ajax=\"" + getJsonValue(jsonTab) + "\" ");
 
 		builder.append(">");
 
@@ -126,13 +127,13 @@ public final class TabTagHandler extends SmartTagHandler {
 				builder.append("class=\"" + tabItem.getStyleClass() + "\" ");
 			} else {
 				if (TOP.equals(position)) { 
-					appendClass(builder, CssConstants.CSS_TAB_CONTENT_TOP);
+					appendClass(builder, CSS_TAB_CONTENT_TOP);
 				} else if (LEFT.equals(position)) {
-					appendClass(builder, CssConstants.CSS_TAB_CONTENT_LEFT);
+					appendClass(builder, CSS_TAB_CONTENT_LEFT);
 				} else if (BOTTOM.equals(position)) {
-					appendClass(builder, CssConstants.CSS_TAB_CONTENT_BOTTOM);
+					appendClass(builder, CSS_TAB_CONTENT_BOTTOM);
 				} else if (RIGHT.equals(position)) {
-					appendClass(builder, CssConstants.CSS_TAB_CONTENT_RIGHT);
+					appendClass(builder, CSS_TAB_CONTENT_RIGHT);
 				}
 			}
 
@@ -162,7 +163,7 @@ public final class TabTagHandler extends SmartTagHandler {
 		}
 
 		if (value != null) {
-			builder.append(HtmlConstants.INPUT_TAG);
+			builder.append(INPUT_TAG);
 
 			builder.append("id=\"" + id + TAB_INDEX + "\" type=\"hidden\" ");
 
@@ -188,9 +189,9 @@ public final class TabTagHandler extends SmartTagHandler {
 		builder.append(OPEN_UNORDERED_LIST_TAG);
 
 		if (TOP.equals(position) || BOTTOM.equals(position)) {
-			appendClass(builder, CssConstants.CSS_TABS_UL_HORIZONTAL);
+			appendClass(builder, CSS_TABS_UL_HORIZONTAL);
 		} else {
-			appendClass(builder, CssConstants.CSS_TABS_UL_VERTICAL);
+			appendClass(builder, CSS_TABS_UL_VERTICAL);
 		}
 
 		appendEvent(builder);
@@ -207,13 +208,13 @@ public final class TabTagHandler extends SmartTagHandler {
 				builder.append("class=\"" + tabItem.getTabClass() + "\" ");
 			} else {
 				if (TOP.equals(position)) {
-					appendClass(builder, CssConstants.CSS_TABS_LI_TOP);
+					appendClass(builder, CSS_TABS_LI_TOP);
 				} else if (LEFT.equals(position)) {
-					appendClass(builder, CssConstants.CSS_TABS_LI_LEFT);
+					appendClass(builder, CSS_TABS_LI_LEFT);
 				} else if (BOTTOM.equals(position)) {
-					appendClass(builder, CssConstants.CSS_TABS_LI_BOTTOM);
+					appendClass(builder, CSS_TABS_LI_BOTTOM);
 				} else if (RIGHT.equals(position)) {
-					appendClass(builder, CssConstants.CSS_TABS_LI_RIGHT);
+					appendClass(builder, CSS_TABS_LI_RIGHT);
 				}
 			}
 

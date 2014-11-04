@@ -27,6 +27,8 @@ import javax.servlet.jsp.tagext.JspFragment;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class MenuTagHandler extends SmartTagHandler {
 
@@ -68,9 +70,9 @@ public final class MenuTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (MENU_TOP.equals(type) || MENU_BOTTOM.equals(type)) {
-				appendClass(builder, CssConstants.CSS_MENU_HORIZONTAL);
+				appendClass(builder, CSS_MENU_HORIZONTAL);
 			} else {
-				appendClass(builder, CssConstants.CSS_MENU_VERTICAL);
+				appendClass(builder, CSS_MENU_VERTICAL);
 			}
 		}
 
@@ -80,7 +82,7 @@ public final class MenuTagHandler extends SmartTagHandler {
 		builder.append(sw);
 		builder.append(CLOSE_UNORDERED_LIST_TAG + CLOSE_NAV_TAG);
 
-		appendScript(new StringBuilder(JSConstants.JSMART_MENU.format(id)));
+		appendScript(new StringBuilder(JSMART_MENU.format(id)));
 
 		printOutput(builder);
 	}

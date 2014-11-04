@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONAutoComplete {
+public final class JsonAutoComplete {
 
 	private String name;
 

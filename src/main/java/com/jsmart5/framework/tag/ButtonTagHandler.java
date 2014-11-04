@@ -18,7 +18,9 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.JSConstants.*;
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,9 +28,10 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JSONAjax;
-import com.jsmart5.framework.json.JSONParam;
+import com.jsmart5.framework.json.JsonAjax;
+import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 /*
@@ -79,6 +82,17 @@ public final class ButtonTagHandler extends SmartTagHandler {
 	}
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
@@ -108,15 +122,15 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		StringBuilder builder = new StringBuilder();	
 		
 		if (!actionItems.isEmpty()) {
-			builder.append(HtmlConstants.OPEN_DIV_TAG);
-			appendClass(builder, CssConstants.CSS_BUTTON_GROUP);
-			builder.append(">");
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CSS_BUTTON_GROUP);
+			builder.append(CLOSE_TAG);
 		}
 
 		if (image != null) {
-			builder.append(HtmlConstants.INPUT_TAG);
+			builder.append(INPUT_TAG);
 		} else {
-			builder.append(HtmlConstants.OPEN_BUTTON_TAG);
+			builder.append(OPEN_BUTTON_TAG);
 		}
 
 		if (id != null) {
@@ -129,19 +143,19 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
 			if (image != null) {
-				appendClass(builder, CssConstants.CSS_BUTTON_IMAGE);
+				appendClass(builder, CSS_BUTTON_IMAGE);
 			} else {
 				if (parentGroup) {
 					if (!actionItems.isEmpty()) {
-						appendClass(builder, CssConstants.CSS_BUTTON_DEFAULT_GROUP_ITEM);
+						appendClass(builder, CSS_BUTTON_DEFAULT_GROUP_ITEM);
 					} else {
-						appendClass(builder, CssConstants.CSS_BUTTON_GROUP_ITEM);
+						appendClass(builder, CSS_BUTTON_GROUP_ITEM);
 					}
 				} else {
 					if (!actionItems.isEmpty()) {
-						appendClass(builder, CssConstants.CSS_BUTTON_DEFAULT);
+						appendClass(builder, CSS_BUTTON_DEFAULT);
 					} else {
-						appendClass(builder, CssConstants.CSS_BUTTON);
+						appendClass(builder, CSS_BUTTON);
 					}
 				}
 			}
@@ -165,22 +179,28 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 			builder.append(ON_CLICK + JSMART_BUTTON.format(async, "$(this)") + "return false;\" ");
 
-			JSONAjax jsonAjax = new JSONAjax();
+			JsonAjax jsonAjax = new JsonAjax();
 			if (action != null) {
 				jsonAjax.setMethod("post");
 				jsonAjax.setAction(getTagName(J_SBMT, action));
 				
 				for (String name : params.keySet()) {						
-					jsonAjax.getParams().add(new JSONParam(name, params.get(name)));
+					jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
 				}
 			} else if (update != null) {
 				jsonAjax.setMethod("get");
 			}
-			jsonAjax.setUpdate(update);
-			jsonAjax.setBefore(beforeAjax);
-			jsonAjax.setExec(afterAjax);
+			if (update != null) {
+				jsonAjax.setUpdate(update.trim());
+			}
+			if (beforeAjax != null) {
+				jsonAjax.setBefore(beforeAjax.trim());
+			}
+			if (afterAjax != null) {
+				jsonAjax.setExec(afterAjax.trim());
+			}
 
-			builder.append("ajax=\"" + getJSONValue(jsonAjax) + "\" ");
+			builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" ");
 
 		} else {
 			if (action != null) {
@@ -220,26 +240,26 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		if (image != null) {
 			builder.append((val != null ? "value=\"" + val + "\"" : "") + " />");
 		} else {
-			builder.append(">");
+			builder.append(CLOSE_TAG);
 
 			if (icon != null) {
-				builder.append(HtmlConstants.IMG_TAG);
-				appendClass(builder, CssConstants.CSS_BUTTON_ICON);
+				builder.append(IMG_TAG);
+				appendClass(builder, CSS_BUTTON_ICON);
 				builder.append("src=\"" + icon + "\" alt=\"" + icon + "\" >");
 			}
 
 			builder.append(val != null ? val : "");
-			builder.append(HtmlConstants.CLOSE_BUTTON_TAG);
+			builder.append(CLOSE_BUTTON_TAG);
 		}
 
 		if (!actionItems.isEmpty()) {
 			
-			builder.append(HtmlConstants.OPEN_BUTTON_TAG);
+			builder.append(OPEN_BUTTON_TAG);
 			
 			if (parentGroup) {
-				appendClass(builder, CssConstants.CSS_BUTTON_DROPDOWN_GROUP_ITEM);
+				appendClass(builder, CSS_BUTTON_DROPDOWN_GROUP_ITEM);
 			} else {
-				appendClass(builder, CssConstants.CSS_BUTTON_DROPDOWN);
+				appendClass(builder, CSS_BUTTON_DROPDOWN);
 			}
 
 			if (disabled) {
@@ -249,43 +269,52 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			builder.append(ON_CLICK + JSMART_BUTTON_DROPDOWN.format("$(this)") + "return false;\" ");
 
 			builder.append("type=\"button\" >&nbsp;");
-			builder.append(HtmlConstants.OPEN_DIV_TAG);
-			appendClass(builder, CssConstants.CSS_BUTTON_DROPDOWN_ARROW);
-			builder.append(">");
-			builder.append(HtmlConstants.CLOSE_DIV_TAG);
-			builder.append("&nbsp;" + HtmlConstants.CLOSE_BUTTON_TAG);
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CSS_BUTTON_DROPDOWN_ARROW);
+			builder.append(CLOSE_TAG);
+			builder.append(CLOSE_DIV_TAG);
+			builder.append("&nbsp;" + CLOSE_BUTTON_TAG);
 
-			builder.append(HtmlConstants.OPEN_UNORDERED_LIST_TAG);
-			appendClass(builder, CssConstants.CSS_BUTTON_DROPDOWN_LIST);
-			builder.append(">");
-
+			builder.append(OPEN_UNORDERED_LIST_TAG);
+			appendClass(builder, CSS_BUTTON_DROPDOWN_LIST);
+			builder.append(CLOSE_TAG);
+	
 			for (ButtonActionTagHandler actionItem : actionItems) {
-				builder.append(HtmlConstants.OPEN_LIST_ITEM_TAG + ">");
-				builder.append(HtmlConstants.OPEN_LINK_TAG);
+				
+				if (actionItem instanceof SeparatorTagHandler) {
+					builder.append(OPEN_LIST_ITEM_TAG);
+					appendClass(builder, CSS_BUTTON_DROPDOWN_SEPARATOR);
+					builder.append(CLOSE_TAG);
+					builder.append(CLOSE_LIST_ITEM_TAG);
 
-				builder.append(ON_CLICK + JSMART_BUTTON.format(async, "$(this)") + "return false;\" ");
-
-				JSONAjax jsonAjax = new JSONAjax();
-				jsonAjax.setMethod("post");
-				jsonAjax.setAction(getTagName(J_SBMT, actionItem.getAction()));
-
-				for (String name : actionItem.getParams().keySet()) {						
-					jsonAjax.getParams().add(new JSONParam(name, actionItem.getParams().get(name)));
+				} else {
+					builder.append(OPEN_LIST_ITEM_TAG + CLOSE_TAG);
+					builder.append(OPEN_LINK_TAG);
+	
+					builder.append(ON_CLICK + JSMART_BUTTON.format(async, "$(this)") + "return false;\" ");
+	
+					JsonAjax jsonAjax = new JsonAjax();
+					jsonAjax.setMethod("post");
+					jsonAjax.setAction(getTagName(J_SBMT, actionItem.getAction()));
+	
+					for (String name : actionItem.getParams().keySet()) {						
+						jsonAjax.getParams().add(new JsonParam(name, actionItem.getParams().get(name)));
+					}
+	
+					jsonAjax.setUpdate(update);
+					jsonAjax.setBefore(beforeAjax);
+					jsonAjax.setExec(afterAjax);
+					builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" >");
+	
+					builder.append(getTagValue(actionItem.getLabel()));
+	
+					builder.append(CLOSE_LINK_TAG);
+					builder.append(CLOSE_LIST_ITEM_TAG);
 				}
-
-				jsonAjax.setUpdate(update);
-				jsonAjax.setBefore(beforeAjax);
-				jsonAjax.setExec(afterAjax);
-				builder.append("ajax=\"" + getJSONValue(jsonAjax) + "\" >");
-
-				builder.append(getTagValue(actionItem.getLabel()));
-
-				builder.append(HtmlConstants.CLOSE_LINK_TAG);
-				builder.append(HtmlConstants.CLOSE_LIST_ITEM_TAG);
 			}
 
-			builder.append(HtmlConstants.CLOSE_UNORDERED_LIST_TAG);
-			builder.append(HtmlConstants.CLOSE_DIV_TAG);
+			builder.append(CLOSE_UNORDERED_LIST_TAG);
+			builder.append(CLOSE_DIV_TAG);
 		}
 
 		printOutput(builder);

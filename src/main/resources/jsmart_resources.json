@@ -2,6 +2,7 @@
 	"resources": [
 		"js/jsmart5.min.js",
 		"css/jsmart5.min.css",
+		"css/img/general_image.png",
 		"css/img/water_image.png",
 		"css/img/blue_image.png",
 		"css/img/black_image.png",
@@ -17,8 +18,6 @@
 		"css/img/yellow_image.png",
 		"css/img/gray_image.png",
 		"css/img/white_image.png",
-		"css/img/none_image.png",
-		"css/img/message_image.png",
 		"css/img/enable_select.png",
 		"css/img/disable_select.png",
 		"css/img/load_small.gif",

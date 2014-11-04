@@ -87,6 +87,10 @@ var Jsmart5 = (function() {
 		rest: function (async, element, timeout) {
 			doRest(async, element, timeout);
 		},
+		
+		buttonRestArray: function (id, operation) {
+			doButtonRestArray(id, operation);
+		},
 			
 		load: function (id) {
 			doLoad(id);
@@ -217,6 +221,26 @@ var Jsmart5 = (function() {
 		
 		autocomplete: function (async, id, event) {
 			doAutoComplete(async, id, event);
+		},
+
+		resetAutocomplete: function (id) {
+			resetAutocomplete(id);
+		},
+
+		search: function (async, id, event) {
+			return doSearch(async, id, event);
+		},
+		
+		resetSearch: function (id) {
+			resetSearch(id);
+		},
+		
+		removeSearch: function (id, close) {
+			doRemoveSearch(id, close);
+		},
+
+		tree: function (id) {
+			doTree(id);
 		}
 	};
 	// end public interface
@@ -379,6 +403,39 @@ var Jsmart5 = (function() {
 		}
 	}
 
+	function doButtonRestArray(id, operation) {
+		if (id && id.length > 0) {
+			var arrayElement = $(getId(id));
+			var arrayLength = arrayElement.parent().find('[id^="' + id + '"]').length;
+
+			if (operation == 'add') {
+				var maxItems = null;
+				if (arrayElement.attr('maxItems')) {
+					maxItems = parseInt(arrayElement.attr('maxItems'));
+				}
+
+				if (!maxItems || arrayLength < maxItems) {
+					var cloneElement = arrayElement.clone();
+					cloneElement.attr('id', id + '_' + arrayLength);
+
+					cloneElement.find('*[id]').each(function(index) {
+						$(this).attr('id', $(this).attr('id') + '_' + arrayLength);
+					});
+
+					if (arrayLength == 1) {
+						arrayElement.after(cloneElement);
+					} else {
+						$(getId(id + '_' + (arrayLength - 1))).after(cloneElement);
+					}
+				}
+			} else if (operation == 'remove') {
+				if (arrayLength > 1) {
+					$(getId(id + '_' + (arrayLength - 1))).remove();
+				}
+			}
+		}
+	}
+
 	function doLoad(id) {
 		if (id && id.length > 0) {
 			var loadElement = $(getId(id)); 
@@ -469,10 +526,15 @@ var Jsmart5 = (function() {
 							validated = false;
 						}
 					} else {
-						var type = $(this).is('input') && $(this).attr('switch') ? 'switch' : 'general';
+						var type = $(this).is('input') && $(this).attr('switch') ? 'switch' : 
+								   $(this).is('input') && ($(this).attr('autocomplete') || $(this).attr('search')) ? 'inputgroup' : 'general';
 
 						if (type == 'switch') {
 							$(this).closest('div').removeClass('jsmart5_validate_target');
+
+						} else if (type == 'inputgroup') {
+							$(this).parents('div:eq(2)').removeClass('jsmart5_validate_target');
+
 						} else {
 							$(this).removeClass('jsmart5_validate_target');
 						}
@@ -521,6 +583,10 @@ var Jsmart5 = (function() {
 		} else if (type == 'switch') {
 			element.closest('div').addClass('jsmart5_validate_target');
 			element.closest('div').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
+
+		} else if (type == 'inputgroup') {
+			element.parents('div:eq(2)').addClass('jsmart5_validate_target');
+			element.parents('div:eq(3)').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
 
 		} else {
 			element.addClass('jsmart5_validate_target');
@@ -1119,12 +1185,24 @@ var Jsmart5 = (function() {
 			});
 		}
 	}
-
+	
 	function resetSwitch(id) {
+		if ($(getId(id)).is('div[switch="switch"]')) {
+			doResetSwitch(id);
+		} else {
+			$(getId(id)).find('div[switch="switch"]').each(function(index) {
+				doResetSwitch($(this).attr("id"));
+			});
+		}
+	}
+
+	function doResetSwitch(id) {
 		if (id && id.length > 0) {
 			var switchElement = $(getId(id));
 			if (switchElement.attr('switch') && !switchElement.attr('resized')) {
 				switchElement.attr('resized', 'true');
+
+				doResetLabel(switchElement, switchElement);
 
 				var switchButton = $(getId(id + SWITCH_BUTTON));
 				var switchSpanOn = $(getId(id + SWITCH_SPAN_ON));
@@ -1462,6 +1540,26 @@ var Jsmart5 = (function() {
 		}
 	}
 
+	function resetMenu(id) {
+		if ($(getId(id)).is('ul[menu="menu"]')) {
+			doMenu(id);
+		} else {
+			$(getId(id)).find('ul[menu="menu"]').each(function(index) {
+				doMenu($(this).attr("id"));
+			});
+		}
+	}
+	
+	function applyMenu(menu, level) {
+		menu.find('>li').each(function() {
+			$(this).find('>ul').each(function() {
+				$(this).attr('level', level);
+				$(this).hide();
+				applyMenu($(this), level + 1);
+			})
+		});
+	}
+
 	function doMenu(id) {
 		if (id && id.length > 0) {
 			var menu = $(getId(id));
@@ -1508,6 +1606,50 @@ var Jsmart5 = (function() {
 						subMenu.hide();
 				    }
 				}
+			});
+		}
+	}
+
+	function resetTree(id) {
+		if ($(getId(id)).is('ul[tree="tree"]')) {
+			doTree(id);
+		} else {
+			$(getId(id)).find('ul[tree="tree"]').each(function(index) {
+				doTree($(this).attr("id"));
+			});
+		}
+	}
+
+	function doTree(id) {
+		if (id && id.length > 0) {
+			var tree = $(getId(id));
+			
+			tree.find('ul').each(function(index) {
+				$(this).hide();
+			});
+
+			tree.find('li').click(function(index) {
+				var triangle = $(this).find('div:not([class="jsmart5_tree_item_mark_empty"])').first();
+
+				var ul = $(this).find('ul').first();
+				if (ul) {
+					if (ul.attr('opened')) {
+						if (triangle) {
+							triangle.removeClass('jsmart5_tree_item_mark_opened');
+							triangle.addClass('jsmart5_tree_item_mark_closed');
+						}
+						ul.removeAttr('opened');
+						ul.hide();					
+					} else {
+						if (triangle) {
+							triangle.removeClass('jsmart5_tree_item_mark_closed');
+							triangle.addClass('jsmart5_tree_item_mark_opened');
+						}
+						ul.attr('opened', 'true');
+						ul.show();						
+					}
+				}
+				return false;
 			});
 		}
 	}
@@ -2064,6 +2206,9 @@ var Jsmart5 = (function() {
 					resetProgress(id);
 					resetRange(id);
 					resetMenu(id);
+					resetTree(id);
+					resetAutocomplete(id);
+					resetSearch(id);
 				}
 			}
 		}
@@ -2648,9 +2793,9 @@ var Jsmart5 = (function() {
 	}
 	
 	function openBalloon(target, position, length, message) {
-	    var spikeLength = 20;
-	    var spikeWidth = 10;
-	    var spikeSkew = 15;
+	    var spikeLength = 10;
+	    var spikeWidth = 8;
+	    var spikeSkew = 0;
 	    
 	    var canvasMargin = 1;
 	    var canvasX = canvasMargin;
@@ -2678,7 +2823,7 @@ var Jsmart5 = (function() {
 	    }
 	
 	    if (!radius || radius.length == 0) {
-	    	radius = 5;
+	    	radius = 4;
 	    } else {
 	    	radius = parseInt(radius.replace('px', ''));
 	    }
@@ -2706,9 +2851,17 @@ var Jsmart5 = (function() {
 	    var text = $('<div></div>').css({'padding': padding, 'position': 'absolute', 'color': fontColor}).text(message);
 	    var box = $('<div id="' + target + BALLOON_WRAPPER + '"></div>').css({'position': 'absolute'}).append(text).appendTo(parent);
 	
+	    var canvas = document.createElement('canvas');
+	    var context = canvas.getContext("2d");
+	    
 	    // Set dimensions and position for content
+	    var metrics = context.measureText(message);
+
+	    if (metrics.width < length) {
+	    	length = metrics.width + (padding * 4);
+	    }
 	    text.css({'width': length});
-	
+
 	    if (position == 'right') {
 	    	canvasX = canvasMargin + spikeLength;
 	    	text.css({'left': canvasX});
@@ -2726,7 +2879,6 @@ var Jsmart5 = (function() {
 	    }
 	
 	    // Positionate canvas
-	    var canvas = document.createElement('canvas');
 	    $(canvas).attr('width', box.outerWidth()).attr('height', box.outerHeight()).appendTo(box);
 	
 	    // Positionate div wrapper
@@ -2740,7 +2892,7 @@ var Jsmart5 = (function() {
 	    	box.css({'top': targetPosition.top + ((targetHeight - box.outerHeight()) / 2), 'left': targetPosition.left + targetWidth});
 	    }
 	
-	    drawBalloon(position, canvas.getContext("2d"), canvasX, canvasY, text.outerWidth(), text.outerHeight(), 
+	    drawBalloon(position, context, canvasX, canvasY, text.outerWidth(), text.outerHeight(), 
 	    			radius, spikeLength, spikeWidth, spikeSkew, strokeWidth, strokeColor, fillColor);
 	}
 	
@@ -2753,38 +2905,40 @@ var Jsmart5 = (function() {
 	function drawBalloon(position, ctx, x, y, width, height, radius, spikeLen, spikeW, spikeSkew, strokeW, strokeColor, fillColor) {
 		ctx.beginPath();
 		ctx.moveTo(x + radius, y);
+		
+		var skewFactor = spikeSkew > 0 ? (spikeW * 2) : 0;
 	
 		if (position == 'bottom') { 
-			ctx.lineTo(((x + width + (spikeW * 2)) / 2) - (spikeW / 2), y);
-			ctx.lineTo(((x + width + (spikeW * 2)) / 2) + spikeSkew,    y - spikeLen);
-			ctx.lineTo(((x + width + (spikeW * 2)) / 2) + (spikeW / 2), y);
+			ctx.lineTo(((x + width + skewFactor) / 2) - (spikeW / 2), y);
+			ctx.lineTo(((x + width + skewFactor) / 2) + spikeSkew,    y - spikeLen);
+			ctx.lineTo(((x + width + skewFactor) / 2) + (spikeW / 2), y);
 		}
 	
 		ctx.lineTo(x + width - radius, y);
 		ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
 	
 		if (position == 'left') {
-			ctx.lineTo(x + width,            ((y + height + (spikeW * 2)) / 2) - (spikeW / 2));
-			ctx.lineTo(x + width + spikeLen, ((y + height + (spikeW * 2)) / 2) - spikeSkew);
-			ctx.lineTo(x + width,            ((y + height + (spikeW * 2)) / 2) + (spikeW / 2));
+			ctx.lineTo(x + width,            ((y + height + skewFactor) / 2) - (spikeW / 2));
+			ctx.lineTo(x + width + spikeLen, ((y + height + skewFactor) / 2) - spikeSkew);
+			ctx.lineTo(x + width,            ((y + height + skewFactor) / 2) + (spikeW / 2));
 		}
 		
 		ctx.lineTo(x + width, y + height - radius);
 		ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
 	
 		if (position == 'top') {
-			ctx.lineTo(((x + width + (spikeW * 2)) / 2) + (spikeW / 2), y + height);
-			ctx.lineTo(((x + width + (spikeW * 2)) / 2) - spikeSkew,    y + height + spikeLen);
-			ctx.lineTo(((x + width + (spikeW * 2)) / 2) - (spikeW / 2), y + height);
+			ctx.lineTo(((x + width + skewFactor) / 2) + (spikeW / 2), y + height);
+			ctx.lineTo(((x + width + skewFactor) / 2) - spikeSkew,    y + height + spikeLen);
+			ctx.lineTo(((x + width + skewFactor) / 2) - (spikeW / 2), y + height);
 		}
 	
 		ctx.lineTo(x + radius, y + height);
 		ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
 	
 		if (position == 'right') {
-			ctx.lineTo(x,            ((y + height + (spikeW * 2)) / 2) - (spikeW / 2));
-			ctx.lineTo(x - spikeLen, ((y + height + (spikeW * 2)) / 2) - spikeSkew);
-			ctx.lineTo(x,            ((y + height + (spikeW * 2)) / 2) + (spikeW / 2));
+			ctx.lineTo(x,            ((y + height + skewFactor) / 2) - (spikeW / 2));
+			ctx.lineTo(x - spikeLen, ((y + height + skewFactor) / 2) - spikeSkew);
+			ctx.lineTo(x,            ((y + height + skewFactor) / 2) + (spikeW / 2));
 		}
 	
 		ctx.lineTo(x, y + radius);
@@ -3031,26 +3185,6 @@ var Jsmart5 = (function() {
 			}
 		});
 	}
-
-	function resetMenu(id) {
-		if ($(getId(id)).is('ul[menu="menu"]')) {
-			doMenu(id);
-		} else {
-			$(getId(id)).find('ul[menu="menu"]').each(function(index) {
-				doMenu($(this).attr("id"));
-			});
-		}
-	}
-	
-	function applyMenu(menu, level) {
-		menu.find('>li').each(function() {
-			$(this).find('>ul').each(function() {
-				$(this).attr('level', level);
-				$(this).hide();
-				applyMenu($(this), level + 1);
-			})
-		});
-	}
 	
 	function resetProgress(id) {
 		if ($(getId(id)).is('div[progress="progress"]')) {
@@ -3143,7 +3277,7 @@ var Jsmart5 = (function() {
 	}
 	
 	function doProgressAction(id, update) {
-		var options = getBasicAjaxOptions(true);
+		var options = getBasicAjaxOptions(false);
 		var input = $(getId(id + PROGRESS_INPUT));
 		var postParam = [{name: input.attr("name"), value: input.val()}];
 	
@@ -3353,6 +3487,30 @@ var Jsmart5 = (function() {
 		return '';
 	}
 
+	function resetAutocomplete(id) {
+		if ($(getId(id)).is('input[autocomplete="autocomplete"]')) {
+			doResetAutocomplete(id);
+		} else {
+			$(getId(id)).find('input[autocomplete="autocomplete"]').each(function(index) {
+				doResetAutocomplete($(this).attr("id"));
+			});
+		}
+	}
+
+	function doResetAutocomplete(id) {
+		var element = $(getId(id));
+		var divGroup = element.closest('div.jsmart5_auto_complete_group');
+		divGroup.height(element.outerHeight());
+
+		doResetLabel(element, divGroup);
+
+		divGroup.focusin(function() {
+			$(this).addClass('jsmart5_auto_complete_group_focus');
+		}).focusout(function() {
+			$(this).removeClass('jsmart5_auto_complete_group_focus');
+		});
+	}
+
 	function doAutoComplete(async, id, event) {
 		var element = $(getId(id));
 		if (element && element.attr('ajax')) {
@@ -3411,12 +3569,13 @@ var Jsmart5 = (function() {
 
 						if (div && div.length > 0) {
 							var itemsLength = $(div).find('>ul li').length;
+							var divGroup = element.closest('div.jsmart5_auto_complete_group');
 
 							if (itemsLength > 0) {
-								element.after($(div));
+								divGroup.after($(div));
 
-								var itemHeight = element.outerHeight();
-								$(div).outerWidth(element.outerWidth(true));
+								var itemHeight = divGroup.outerHeight();
+								$(div).outerWidth(divGroup.outerWidth(true));
 
 								var totalHeight = itemHeight * itemsLength;
 								if (itemsLength > 10) {
@@ -3445,7 +3604,7 @@ var Jsmart5 = (function() {
 									$(div).remove();
 								});
 
-								$(div).css({'left': element.position().left, 'top': element.position().top + itemHeight});
+								$(div).css({'left': divGroup.position().left, 'top': divGroup.position().top + itemHeight});
 								$(div).show();
 							}
 						}
@@ -3490,6 +3649,154 @@ var Jsmart5 = (function() {
 				showOnConsole(err.message); 
 			}
 		}
+	}
+	
+	function doResetLabel(element, parent) {
+		var inputGroup = element.closest('div.jsmart5_input_group');
+		if (inputGroup) {
+			inputGroup.height(parent.outerHeight());
+		}
+
+		var label = inputGroup.find('>span');
+		if (label) {
+			var padding = 2;
+			var border = 2;
+			if (label.css('paddingTop')) {
+				padding = parseInt(label.css('paddingTop').replace('px', '')) * 2;
+			}
+			if (label.css('borderWidth')) {
+				border = parseInt(label.css('borderWidth').replace('px', '')) * 2;
+			}
+			label.height(parent.outerHeight() - padding - border);
+			label.css({'lineHeight': (parent.outerHeight() - padding - border) + 'px'});
+		}
+		
+		var button = inputGroup.find('>button');
+		if (button) {
+			var padding = 2;
+			var border = 2;
+			if (button.css('paddingTop')) {
+				padding = parseInt(button.css('paddingTop').replace('px', '')) * 2;
+			}
+			if (button.css('borderWidth')) {
+				border = parseInt(button.css('borderWidth').replace('px', '')) * 2;
+			}
+			button.height(parent.outerHeight() - padding - border);
+		}
+	}
+	
+	function resetSearch(id) {
+		if ($(getId(id)).is('input[search="search"]')) {
+			doResetSearch(id);
+		} else {
+			$(getId(id)).find('input[search="search"]').each(function(index) {
+				doResetSearch($(this).attr("id"));
+			});
+		}
+	}
+	
+	function doResetSearch(id) {
+		var element = $(getId(id));
+		var divGroup = element.closest('div[class^="jsmart5_search_group"]');
+		element.attr('defaultWidth', element.width());
+		divGroup.height(element.outerHeight());
+
+		doResetLabel(element, divGroup);
+		
+		divGroup.focusin(function() {
+			$(this).addClass('jsmart5_search_group_focus');
+		}).focusout(function() {
+			$(this).removeClass('jsmart5_search_group_focus');
+		});
+	}
+	
+	function doSearch(async, id, event) {
+		var element = $(getId(id));
+
+		if (element && element.attr('ajax') && event && (event.keyCode == 0 || event.keyCode == 13)) {
+
+			var search = element.val();
+			if ($.trim(search).length <= 0) {
+				return false;
+			}
+			
+			var minWidth = 40;
+			if (element.css('minWidth')) {
+				var minW = parseInt(element.css('minWidth').replace('px', ''));
+				if (minW > 0) {
+					minWidth = minW;
+				}
+			}
+
+			var ajax = $.parseJSON($(element).attr('ajax'));
+
+			// Find previous searches to avoid repeated ones
+			if (ajax.track) {
+
+				var repeated = false;
+				var divGroup = element.closest('div[class^="jsmart5_search_group"]');
+	
+				divGroup.find('div.jsmart5_search_close').each(function() {
+					var text = $(this).find('>span').text();
+					if ($.trim(text) == $.trim(search)) {
+						repeated = true;
+					}
+				});
+				
+				if (repeated) {
+					element.val('');
+					return false;
+				}
+			}
+
+			ajax.method = 'post';
+			var options = getAjaxOptions(async, ajax);
+			var postParam = getAjaxParams(element);
+
+			var closestForm = element.closest('form');
+			if (closestForm && closestForm.length > 0) {
+				if (!doValidate($(closestForm).attr('id'))) {
+					return false;
+				}
+			} else {
+				postParam = $.param(postParam);
+			}
+			options.data = postParam;
+
+			options.complete = function (xhr, status) {
+				jQuery.event.trigger('ajaxStop');
+				
+				if (ajax.track) {
+					var prevSearch = $('<div class="jsmart5_search_close"><span>' + element.val() + '</span><a onClick="Jsmart5.removeSearch(\'' + id + '\',$(this));"></a></div>');
+					element.parent().before(prevSearch);
+					element.attr('value', '');
+	
+					if (element.width() - prevSearch.outerWidth() > minWidth) {
+						element.width(element.width() - prevSearch.outerWidth());
+					} else {
+						element.width(minWidth);
+					}
+				}
+			};
+
+			if (closestForm && closestForm.length > 0) {
+				doFormPlaceHolders(closestForm);
+				$(closestForm).ajaxSubmit(options);
+			} else {
+				$.ajax(options);
+			}
+			return false;
+		}
+	}
+
+	function doRemoveSearch(id, close) {
+		var input = $(getId(id));
+		if (input.width() + close.parent().outerWidth() < input.attr('defaultWidth')) {
+			input.width(input.width() + close.parent().outerWidth());
+		} else {
+			input.width(input.attr('defaultWidth'));
+		}
+		close.parent().remove();
 	}
 
 	function getId(id) {

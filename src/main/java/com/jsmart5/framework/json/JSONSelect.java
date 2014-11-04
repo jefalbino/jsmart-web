@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONSelect {
+public final class JsonSelect {
 
 	private String id;
 

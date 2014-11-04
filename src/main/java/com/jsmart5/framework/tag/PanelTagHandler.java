@@ -26,6 +26,10 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
+
 public final class PanelTagHandler extends SmartTagHandler {
 
 	private static final String PANEL_COLLAPSE = "_panel_collpase";
@@ -65,7 +69,7 @@ public final class PanelTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_DIV_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
 
 		builder.append("id=\"" + id + "\" type=\"panel\" ");
 
@@ -80,7 +84,7 @@ public final class PanelTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_PANEL);
+			appendClass(builder, CSS_PANEL);
 		}
 
 		if (ajaxCommand != null) {
@@ -92,28 +96,28 @@ public final class PanelTagHandler extends SmartTagHandler {
 		builder.append(">");
 		
 		if (collapsible || SECTION_TYPE.equals(type) || label != null) {
-			builder.append(HtmlConstants.OPEN_DIV_TAG + "id=\"" + id + PANEL_COLLAPSE + "\" ");
-			appendClass(builder, CssConstants.CSS_PANEL_HEADER);
+			builder.append(OPEN_DIV_TAG + "id=\"" + id + PANEL_COLLAPSE + "\" ");
+			appendClass(builder, CSS_PANEL_HEADER);
 			builder.append(">");
 
 			// Triangle to represent if panel is opened or closed
 			if (collapsible) {
-				builder.append(HtmlConstants.OPEN_DIV_TAG + (closed ? "closed=\"true\"" : ""));
-				builder.append(">" + HtmlConstants.CLOSE_DIV_TAG);
+				builder.append(OPEN_DIV_TAG + (closed ? "closed=\"true\"" : ""));
+				builder.append(">" + CLOSE_DIV_TAG);
 			}
 
 			if (label != null) {
 				builder.append(getTagValue(label));
 			}
-			builder.append(HtmlConstants.CLOSE_DIV_TAG);
+			builder.append(CLOSE_DIV_TAG);
 		}
 
 		if (FIELDSET_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_FIELDSET_TAG);
+			builder.append(OPEN_FIELDSET_TAG);
 		} else if (SECTION_TYPE.equals(type)) {
-			builder.append(HtmlConstants.OPEN_SECTION_TAG);
+			builder.append(OPEN_SECTION_TAG);
 		} else {
-			builder.append(HtmlConstants.OPEN_DIV_TAG);
+			builder.append(OPEN_DIV_TAG);
 		}
 
 		builder.append("id=\"" + id + PANEL_CONTENT + "\" ");
@@ -122,23 +126,23 @@ public final class PanelTagHandler extends SmartTagHandler {
 			builder.append("closed=\"true\" ");
 		}
 
-		appendClass(builder, CssConstants.CSS_PANEL_CONTENT);
+		appendClass(builder, CSS_PANEL_CONTENT);
 		builder.append(">");
 
 	    builder.append(sw.toString());
 
 	    if (FIELDSET_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_FIELDSET_TAG);
+			builder.append(CLOSE_FIELDSET_TAG);
 		} else if (SECTION_TYPE.equals(type)) {
-			builder.append(HtmlConstants.CLOSE_SECTION_TAG);
+			builder.append(CLOSE_SECTION_TAG);
 		} else {
-			builder.append(HtmlConstants.CLOSE_DIV_TAG);
+			builder.append(CLOSE_DIV_TAG);
 		}
 
-	    builder.append(HtmlConstants.CLOSE_DIV_TAG);
+	    builder.append(CLOSE_DIV_TAG);
 
 	    if (collapsible) {
-	    	appendScript(new StringBuilder(JSConstants.JSMART_PANEL.format(id)));
+	    	appendScript(new StringBuilder(JSMART_PANEL.format(id)));
 	    }
 
 		printOutput(builder);

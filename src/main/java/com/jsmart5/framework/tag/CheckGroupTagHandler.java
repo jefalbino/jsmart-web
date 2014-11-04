@@ -25,9 +25,12 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
 
 public final class CheckGroupTagHandler extends SmartTagHandler {
 
@@ -48,6 +51,17 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 	}
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
@@ -61,7 +75,7 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_DIV_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
 
 		builder.append("id=\"" + id + "\" ");
 
@@ -69,26 +83,26 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 	 		builder.append("align=\"" + align + "\" ");
 		}
 
-	 	appendClass(builder, CssConstants.CSS_CHECKGROUP);
+	 	appendClass(builder, CSS_CHECKGROUP);
 		builder.append(">");
 
-		builder.append(HtmlConstants.OPEN_TABLE_TAG);
-		appendClass(builder, CssConstants.CSS_CHECKGROUP_TABLE);
+		builder.append(OPEN_TABLE_TAG);
+		appendClass(builder, CSS_CHECKGROUP_TABLE);
 		builder.append(">");
 
 		if (!items.isEmpty()) {
 
- 	 		String columnStyle = CssConstants.CSS_CHECKGROUP_TABLE_COLUMN;
- 	 		builder.append(HtmlConstants.OPEN_TABLE_ROW_TAG);
- 	 		appendClass(builder, CssConstants.CSS_CHECKGROUP_TABLE_ROW);
+ 	 		String columnStyle = CSS_CHECKGROUP_TABLE_COLUMN;
+ 	 		builder.append(OPEN_TABLE_ROW_TAG);
+ 	 		appendClass(builder, CSS_CHECKGROUP_TABLE_ROW);
  	 		builder.append(">");
 
  	 		int index = 0;
  			for (GroupItemTagHandler item : items) {
  				
  				if (!inline && items.indexOf(item) != 0) {
- 		 	 		builder.append(HtmlConstants.OPEN_TABLE_ROW_TAG);
- 		 	 		appendClass(builder, CssConstants.CSS_CHECKGROUP_TABLE_ROW);
+ 		 	 		builder.append(OPEN_TABLE_ROW_TAG);
+ 		 	 		appendClass(builder, CSS_CHECKGROUP_TABLE_ROW);
  		 	 		builder.append(">");
  				}
 
@@ -107,46 +121,29 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 				item.setOutputWriter(sw);
 				item.executeTag();
 
-				builder.append(HtmlConstants.OPEN_TABLE_COLUMN_TAG);
+				builder.append(OPEN_TABLE_COLUMN_TAG);
 				appendClass(builder, columnStyle);
 				builder.append(">");
 				builder.append(sw.toString());
-				builder.append(HtmlConstants.CLOSE_TABLE_COLUMN_TAG);
+				builder.append(CLOSE_TABLE_COLUMN_TAG);
 
 				if (!inline) {
-					builder.append(HtmlConstants.CLOSE_TABLE_ROW_TAG);
+					builder.append(CLOSE_TABLE_ROW_TAG);
 				}
 			}
 
  			if (inline) {
- 				builder.append(HtmlConstants.CLOSE_TABLE_ROW_TAG);
+ 				builder.append(CLOSE_TABLE_ROW_TAG);
  			}
 		}
 
-		builder.append(HtmlConstants.CLOSE_TABLE_TAG);
+		builder.append(CLOSE_TABLE_TAG);
 
-		printOutput(builder.append(HtmlConstants.CLOSE_DIV_TAG));
+		printOutput(builder.append(CLOSE_DIV_TAG));
 	}
 
 	/*package*/ void addItem(GroupItemTagHandler item) {
 		this.items.add(item);
-	}
-
-	private void setEvents(GroupItemTagHandler item) {
-		item.setOnClick(onClick);
-		item.setOnDblClick(onDblClick);
-		item.setOnMouseDown(onMouseDown);
-		item.setOnMouseMove(onMouseMove);
-		item.setOnMouseOver(onMouseOver);
-		item.setOnMouseOut(onMouseOut);
-		item.setOnMouseUp(onMouseUp);
-		item.setOnKeyDown(onKeyDown);
-		item.setOnKeyPress(onKeyPress);
-		item.setOnKeyUp(onKeyUp);
-		item.setOnBlur(onBlur);
-		item.setOnChange(onChange);
-		item.setOnFocus(onFocus);
-		item.setOnSelect(onSelect);
 	}
 
 	public void setAlign(String align) {

@@ -18,23 +18,50 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_DIV_TAG;
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 public final class RestArrayTagHandler extends SmartTagHandler {
 
+	private static final String ADD_ARRAY_ITEM = "add";
+
+	private static final String REMOVE_ARRAY_ITEM = "remove";
+
 	private String align;
+
+	private boolean dynamic;
+
+	private Integer maxItems;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (dynamic && id == null) {
+			throw new JspException("Attribute id must be specified case dynamic attribute is true for restarray tag");
+		}
+		if (maxItems != null && maxItems <= 0) {
+			throw new JspException("Attribute maxItems must be greater than zero for restarray tag");
+		}
 	}
 
 	@Override
@@ -46,7 +73,7 @@ public final class RestArrayTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_DIV_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
 
 		builder.append("type=\"restarray\" ");
 
@@ -65,17 +92,46 @@ public final class RestArrayTagHandler extends SmartTagHandler {
 		} else {
 			builder.append("align=\"left\" ");
 		}
+		if (maxItems != null) {
+			builder.append("maxItems=\"" + maxItems + "\" ");
+		}
 
 		appendRest(builder);
 		builder.append(">");
 		builder.append(sw);
 		builder.append(CLOSE_DIV_TAG);
-		
+
+		if (dynamic) {
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CSS_REST_ARRAY_GROUP);
+			builder.append(">");
+			appendButton(builder, "+", ADD_ARRAY_ITEM);
+			appendButton(builder, "-", REMOVE_ARRAY_ITEM);
+			builder.append(CLOSE_DIV_TAG);
+		}
+
 		printOutput(builder);
+	}
+
+	private void appendButton(StringBuilder builder, String text, String operation) throws JspException, IOException  {
+		builder.append(OPEN_BUTTON_TAG);
+		builder.append("type=\"button\" ");
+		appendClass(builder, CSS_REST_ARRAY_BUTTON);
+		builder.append(ON_CLICK + JSMART_BUTTON_RESTARRAY.format(id, operation) + "return false;\" >");
+		builder.append(text);
+		builder.append(CLOSE_BUTTON_TAG);
 	}
 
 	public void setAlign(String align) {
 		this.align = align;
+	}
+
+	public void setDynamic(boolean dynamic) {
+		this.dynamic = dynamic;
+	}
+
+	public void setMaxItems(Integer maxItems) {
+		this.maxItems = maxItems;
 	}
 
 }

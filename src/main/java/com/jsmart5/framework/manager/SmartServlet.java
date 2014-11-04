@@ -35,7 +35,7 @@ import static com.jsmart5.framework.manager.SmartHandler.*;
 
 public final class SmartServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4462762772195421585L;
 
 	private static final Logger LOGGER = Logger.getLogger(SmartServlet.class.getPackage().getName());
 

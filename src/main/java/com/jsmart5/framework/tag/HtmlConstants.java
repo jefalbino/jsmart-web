@@ -20,6 +20,10 @@ package com.jsmart5.framework.tag;
 
 /*package*/ interface HtmlConstants {
 
+	public static final String CLOSE_TAG = ">";
+
+	public static final String CLOSE_INLINE_TAG = "/>";
+
 	public static final String OPEN_FORM_TAG = "<form ";
 
 	public static final String CLOSE_FORM_TAG = "</form>";

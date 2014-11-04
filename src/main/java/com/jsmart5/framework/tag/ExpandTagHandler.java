@@ -26,7 +26,6 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-
 public final class ExpandTagHandler extends SmartTagHandler {
 
 	@Override
@@ -35,11 +34,14 @@ public final class ExpandTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void doTag() throws JspException, IOException {
+	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof TableTagHandler) {
+
 			((TableTagHandler) parent).setItemExpand(this);
+			return false;
 		}
+		return true;
 	}
 
 	@Override

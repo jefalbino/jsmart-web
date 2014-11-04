@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.json;
 
-public final class JSONTab {
+public final class JsonTab {
 
 	private String ajax;
 

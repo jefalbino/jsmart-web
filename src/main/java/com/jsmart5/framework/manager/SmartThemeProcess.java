@@ -40,7 +40,9 @@ public final class SmartThemeProcess {
 
 	private static final Logger LOGGER = Logger.getLogger(SmartThemeProcess.class.getPackage().getName());
 
-	private static final int STREAM_BUFFER = 4096;
+	private static final String DEFAULT_THEME = "default";
+
+	private static final int STREAM_BUFFER = 8192;
 
 	private static final Pattern CSS_MARK_PATTERN = Pattern.compile("@.{1,20}?@");
 
@@ -68,6 +70,8 @@ public final class SmartThemeProcess {
             	int count = 0;
             	byte data[] = new byte[STREAM_BUFFER];
             	BufferedInputStream bis = new BufferedInputStream(getResource(BASE_CSS));
+            	
+            	JSONObject defaultStyle = jsonStyles.getJSONObject(DEFAULT_THEME);
             	JSONObject jsonStyle = jsonStyles.getJSONObject(theme.toString());
             	
             	LOGGER.log(Level.INFO, "Generating css for theme: " + theme);
@@ -80,6 +84,8 @@ public final class SmartThemeProcess {
     					String match = cssMatcher.group();
     					if (jsonStyle.has(match)) {
     						cssData = cssData.replace(match, jsonStyle.getString(match));
+    					} else if (defaultStyle.has(match)) {
+    						cssData = cssData.replace(match, defaultStyle.getString(match));
     					}
     				}
     				bos.write(cssData.getBytes(), 0, cssData.length());

@@ -22,8 +22,13 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+
+import static com.jsmart5.framework.tag.HtmlConstants.*;
+import static com.jsmart5.framework.tag.CssConstants.*;
+import static com.jsmart5.framework.tag.JsConstants.*;
 
 
 public final class CheckboxTagHandler extends SmartTagHandler {
@@ -35,6 +40,17 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 	private boolean disabled;
 
 	private Integer tabIndex;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof GridTagHandler) {
+
+			((GridTagHandler) parent).addTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -50,7 +66,7 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		StringBuilder builder = new StringBuilder(HtmlConstants.OPEN_DIV_TAG);
+		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
 
 		if (style != null) {
 			builder.append("style=\"" + style + "\" ");
@@ -58,10 +74,10 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 		if (styleClass != null) {
 			builder.append("class=\"" + styleClass + "\" ");
 		} else {
-			appendClass(builder, CssConstants.CSS_CHECKBOX);
+			appendClass(builder, CSS_CHECKBOX);
 		}
 
-		builder.append(">" + HtmlConstants.CHECKBOX_TAG);
+		builder.append(CLOSE_TAG + CHECKBOX_TAG);
 
 		builder.append("id=\"" + id + "\" ");
 
@@ -90,29 +106,29 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 
 		if (ajaxCommand != null) {
 			if (ajaxCommand.startsWith(ON_CLICK)) {
-				builder.append(ajaxCommand.replace(ON_CLICK, ON_CLICK + JSConstants.JSMART_CHECKBOX.format("$(this)")));
+				builder.append(ajaxCommand.replace(ON_CLICK, ON_CLICK + JSMART_CHECKBOX.format("$(this)")));
 			} else {
-				builder.append(ajaxCommand + ON_CLICK + JSConstants.JSMART_CHECKBOX.format("$(this)") + "\" ");
+				builder.append(ajaxCommand + ON_CLICK + JSMART_CHECKBOX.format("$(this)") + "\" ");
 			}
 		} else {
-			builder.append(ON_CLICK + JSConstants.JSMART_CHECKBOX.format("$(this)") + "\" ");
+			builder.append(ON_CLICK + JSMART_CHECKBOX.format("$(this)") + "\" ");
 		}
 
 		appendEvent(builder);
 
-		builder.append("/>" + HtmlConstants.OPEN_LABEL_TAG);
+		builder.append(CLOSE_INLINE_TAG + OPEN_LABEL_TAG);
 
 		builder.append("for=\"" + id + "\" ");
 
-		builder.append(">" + HtmlConstants.CLOSE_LABEL_TAG);
+		builder.append(CLOSE_TAG + CLOSE_LABEL_TAG);
 
-		builder.append(HtmlConstants.CLOSE_DIV_TAG);
+		builder.append(CLOSE_DIV_TAG);
 
-		builder.append(HtmlConstants.OPEN_SPAN_TAG + ">");
+		builder.append(OPEN_SPAN_TAG + CLOSE_TAG);
 
 		builder.append(label != null ? "&nbsp; " + getTagValue(label) : "");
 
-		builder.append(HtmlConstants.CLOSE_SPAN_TAG);
+		builder.append(CLOSE_SPAN_TAG);
 
 		printOutput(builder); 
 	}
