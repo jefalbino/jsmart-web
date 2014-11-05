@@ -84,8 +84,8 @@
 }
 
 .jsmart5_grid_table_border_column {
-	border-bottom: solid 1px #cccccc;
-	border-right: solid 1px #cccccc;
+	border-bottom: solid 1px #eaeaea;
+	border-right: solid 1px #eaeaea;
 }
 
 .jsmart5_grid_table_border_column:last-child {

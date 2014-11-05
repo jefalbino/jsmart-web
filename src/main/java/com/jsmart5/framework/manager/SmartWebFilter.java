@@ -132,8 +132,15 @@ public final class SmartWebFilter implements Filter {
 
         try {
         	html = getCompleteHtml(httpRequest, responseWrapper);
+
         } catch (JSONException ex) {
         	throw new ServletException(ex);
+
+        } finally {
+        	// Remove script and ajax builder attributes
+        	httpRequest.getSession().removeAttribute(AJAX_ATTR);
+        	httpRequest.getSession().removeAttribute(AJAX_RESET_ATTR);
+            httpRequest.getSession().removeAttribute(SCRIPT_BUILDER_ATTR);
         }
 
         // Close bean context based on current thread instance
@@ -144,9 +151,6 @@ public final class SmartWebFilter implements Filter {
 
         // Case internal server error
 		if (throwable != null) {
-			// Remove script builder
-			httpRequest.getSession().removeAttribute(SCRIPT_BUILDER_ATTR);
-
 			responseWrapper.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
 			if (throwable instanceof IOException) {
@@ -225,8 +229,6 @@ public final class SmartWebFilter implements Filter {
 					String formMatch = formMatcher.group();
 					html = html.replace(formMatch, formMatch + REDIRECT_AJAX_TAG + ajaxPath + END_AJAX_TAG);
 				}
-
-				httpRequest.getSession().removeAttribute(AJAX_ATTR);
 			}
 
 			// Case reset via ajax, place tag to force javascript reset the page
@@ -239,8 +241,6 @@ public final class SmartWebFilter implements Filter {
 						html = html.replaceFirst(formMatch, formMatch + RESET_AJAX_TAG);
 					}
 				}
-
-				httpRequest.getSession().removeAttribute(AJAX_RESET_ATTR);
 	        }
 
 			StringBuilder[] scriptBuilders = (StringBuilder[]) httpRequest.getSession().getAttribute(SCRIPT_BUILDER_ATTR);
@@ -254,9 +254,6 @@ public final class SmartWebFilter implements Filter {
 				}
 			}
         }
-
-		// Remove script builder
-        httpRequest.getSession().removeAttribute(SCRIPT_BUILDER_ATTR);
 		return html;
 	}
 
