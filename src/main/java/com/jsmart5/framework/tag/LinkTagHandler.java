@@ -20,6 +20,8 @@ package com.jsmart5.framework.tag;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -69,6 +71,12 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 	private boolean async = true;
 
+	private List<SmartTagHandler> actionItems;
+
+	public LinkTagHandler() {
+		actionItems = new ArrayList<SmartTagHandler>();
+	}
+
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
@@ -97,7 +105,15 @@ public final class LinkTagHandler extends SmartTagHandler {
 		}
 
 		HttpServletRequest request = getRequest();
-		StringBuilder builder = new StringBuilder(OPEN_LINK_TAG);
+		StringBuilder builder = new StringBuilder();
+
+		if (!actionItems.isEmpty()) {
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CSS_LINK_GROUP);
+			builder.append(CLOSE_TAG);
+		}
+
+		builder.append(OPEN_LINK_TAG);
 
 		StringBuilder urlParams = new StringBuilder("?");
 		for (String key : params.keySet()) {
@@ -137,25 +153,25 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 			builder.append(ON_CLICK + JSMART_LINK.format(async, "$(this)") + "return false;\" ");
 
-			JsonLink jsonAjax = new JsonLink();
+			JsonLink jsonLink = new JsonLink();
 			if (action != null) {
-				jsonAjax.setMethod("post");
-				jsonAjax.setAction(getTagName(J_SBMT, action));
+				jsonLink.setMethod("post");
+				jsonLink.setAction(getTagName(J_SBMT, action));
 
 				for (String name : params.keySet()) {						
-					jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
+					jsonLink.getParams().add(new JsonParam(name, params.get(name)));
 				}
 				if (update == null && afterAjax == null) {
-					jsonAjax.setUrl(url);
+					jsonLink.setUrl(url);
 				}
 			} else if (update != null) {
-				jsonAjax.setMethod("get");
+				jsonLink.setMethod("get");
 			}
-			jsonAjax.setUpdate(update);
-			jsonAjax.setBefore(beforeAjax);
-			jsonAjax.setExec(afterAjax);
+			jsonLink.setUpdate(update);
+			jsonLink.setBefore(beforeAjax);
+			jsonLink.setExec(afterAjax);
 
-			builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" ");
+			builder.append("ajax=\"" + getJsonValue(jsonLink) + "\" ");
 		}
 
 		appendEvent(builder);
@@ -183,7 +199,63 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 		builder.append(CLOSE_LINK_TAG);
 
+		if (!actionItems.isEmpty()) {
+			
+			builder.append(OPEN_DIV_TAG);
+			appendClass(builder, CSS_LINK_DROPDOWN_ARROW);
+			builder.append(ON_CLICK + JSMART_LINK_DROPDOWN.format("$(this)") + "return false;\" ");
+			builder.append(CLOSE_TAG + CLOSE_DIV_TAG);
+
+			builder.append(OPEN_UNORDERED_LIST_TAG);
+			appendClass(builder, CSS_LINK_DROPDOWN_LIST);
+			builder.append(CLOSE_TAG);
+	
+			for (SmartTagHandler actionItem : actionItems) {
+				
+				if (actionItem instanceof SeparatorTagHandler) {
+					builder.append(OPEN_LIST_ITEM_TAG);
+					appendClass(builder, CSS_LINK_DROPDOWN_SEPARATOR);
+					builder.append(CLOSE_TAG);
+					builder.append(CLOSE_LIST_ITEM_TAG);
+
+				} else if (actionItem instanceof LinkActionTagHandler) {
+
+					LinkActionTagHandler linkActionItem = (LinkActionTagHandler) actionItem;
+
+					builder.append(OPEN_LIST_ITEM_TAG + CLOSE_TAG);
+					builder.append(OPEN_LINK_TAG);
+	
+					builder.append(ON_CLICK + JSMART_LINK.format(async, "$(this)") + "return false;\" ");
+	
+					JsonLink jsonLink = new JsonLink();
+					jsonLink.setMethod("post");
+					jsonLink.setAction(getTagName(J_SBMT, linkActionItem.getAction()));
+	
+					for (String name : linkActionItem.getParams().keySet()) {						
+						jsonLink.getParams().add(new JsonParam(name, linkActionItem.getParams().get(name)));
+					}
+	
+					jsonLink.setUpdate(update);
+					jsonLink.setBefore(beforeAjax);
+					jsonLink.setExec(afterAjax);
+					builder.append("ajax=\"" + getJsonValue(jsonLink) + "\" >");
+	
+					builder.append(getTagValue(linkActionItem.getLabel()));
+	
+					builder.append(CLOSE_LINK_TAG);
+					builder.append(CLOSE_LIST_ITEM_TAG);
+				}
+			}
+
+			builder.append(CLOSE_UNORDERED_LIST_TAG);
+			builder.append(CLOSE_DIV_TAG);
+		}
+
 		printOutput(builder);
+	}
+
+	/*package*/ void addActionItem(SmartTagHandler actionItem) {
+		this.actionItems.add(actionItem);
 	}
 
 	public void setLabel(String label) {

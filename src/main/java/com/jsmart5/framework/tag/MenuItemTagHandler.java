@@ -111,8 +111,14 @@ public final class MenuItemTagHandler extends SmartTagHandler {
 					appendClass(builder, CSS_MENU_ITEM_LEFT);
 				}
 			} else {
-				appendClass(builder, CSS_MENU_ITEM);
-			}			
+				if (MenuTagHandler.MENU_RIGHT.equals(type)) {
+					appendClass(builder, CSS_MENU_ITEM_RIGHT);
+				} else if (MenuTagHandler.MENU_LEFT.equals(type)) {
+					appendClass(builder, CSS_MENU_ITEM_LEFT);
+				} else {
+					appendClass(builder, CSS_MENU_ITEM);
+				}
+			}
 		}
 
 		appendEvent(builder);

@@ -384,7 +384,6 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 			}
 
  	 			String rowStyle = select != null || itemExpand != null ? CSS_TABLE_BODY_ROW_SELECTION : CSS_TABLE_BODY_ROW;
- 	 			String rowStyleNth = select != null || itemExpand != null ? CSS_TABLE_BODY_ROW_SELECTION_NTH : CSS_TABLE_BODY_ROW_NTH;
 
  	 			for (int i = 0; i < size; i++) {
  	 				request.setAttribute(var, list.get(i));
@@ -405,17 +404,9 @@ public final class TableTagHandler extends SmartTableTagHandler {
  	 				appendEvent(builder);
 
  	 				if (paginator == null && scrollable && pageSize % 2 != 0 && getPageFirst() % 2 != 0) {
- 	 					if (i % 2 == 0) {
- 	 						appendClass(builder, rowStyleNth);
- 	 					} else {
- 	 						appendClass(builder, rowStyle);
- 	 					}
+ 	 					appendClass(builder, rowStyle);
  	 				} else {
- 	 					if (i % 2 == 0) {
- 	 						appendClass(builder, rowStyle);
- 	 					} else {
- 	 						appendClass(builder, rowStyleNth);
- 	 					}
+ 	 					appendClass(builder, rowStyle);
  	 				}
  	 				builder.append(">");
 

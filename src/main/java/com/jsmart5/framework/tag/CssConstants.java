@@ -110,11 +110,7 @@ package com.jsmart5.framework.tag;
 
 	public static final String CSS_TABLE_BODY_ROW = "jsmart5_table_%s_row";
 
-	public static final String CSS_TABLE_BODY_ROW_NTH = "jsmart5_table_%s_row_nth";
-
 	public static final String CSS_TABLE_BODY_ROW_SELECTION = "jsmart5_table_%s_row_selection";
-
-	public static final String CSS_TABLE_BODY_ROW_SELECTION_NTH = "jsmart5_table_%s_row_selection_nth";
 
 	public static final String CSS_TABLE_BODY_COLUMN = "jsmart5_table_%s_column";
 
@@ -187,7 +183,7 @@ package com.jsmart5.framework.tag;
 	public static final String CSS_RADIOGROUP_ITEM = "jsmart5_radiogroup_item";
 
 
-	public static final String CSS_BUTTON_GROUP = "jsmart5_button_%s_group";
+	public static final String CSS_BUTTON_GROUP = "jsmart5_button_group";
 
 	public static final String CSS_BUTTON_GROUP_HORIZONTAL = "jsmart5_button_%s_group_horizontal";
 
@@ -272,7 +268,15 @@ package com.jsmart5.framework.tag;
 	public static final String CSS_UPLOAD = "jsmart5_input_text jsmart5_upload_text";
 
 
+	public static final String CSS_LINK_GROUP = "jsmart5_link_group";
+
 	public static final String CSS_LINK = "jsmart5_link";
+
+	public static final String CSS_LINK_DROPDOWN_ARROW = "jsmart5_link_%s_dropdown_arrow";
+
+	public static final String CSS_LINK_DROPDOWN_LIST = "jsmart5_link_%s_dropdown_list";
+
+	public static final String CSS_LINK_DROPDOWN_SEPARATOR = "jsmart5_link_dropdown_separator";
 
 
 	public static final String CSS_LIST = "jsmart5_list_%s";

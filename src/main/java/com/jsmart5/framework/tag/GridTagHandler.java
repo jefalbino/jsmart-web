@@ -43,6 +43,8 @@ public class GridTagHandler extends SmartTagHandler {
 
 	private Integer columns;
 
+	private String columnStyle;
+
 	// Division follows the pattern of 30%,70%,..
 	private String division;
 
@@ -53,6 +55,8 @@ public class GridTagHandler extends SmartTagHandler {
 	private boolean foundRows;
 
 	private boolean foundGeneralTags;
+
+	private int totalColumns;
 
 	public GridTagHandler() {
 		rows = new ArrayList<SmartTagHandler>();
@@ -131,11 +135,15 @@ public class GridTagHandler extends SmartTagHandler {
 
  		for (SmartTagHandler row : rows) {
  			StringWriter sw = new StringWriter();
- 			row.setOutputWriter(sw);
- 			row.setAjaxCommand(ajaxCommand);
- 			((RowTagHandler) row).setBorder(!noLines);
- 			setEvents(row);
- 			row.executeTag();
+ 			RowTagHandler rowTag = (RowTagHandler) row;
+
+ 			rowTag.setOutputWriter(sw);
+ 			rowTag.setAjaxCommand(ajaxCommand);
+ 			rowTag.setBorder(!noLines);
+ 			rowTag.setTotalColumns(totalColumns);
+ 			setEvents(rowTag);
+
+ 			rowTag.executeTag();
  			builder.append(sw.toString());
  		}
  
@@ -209,9 +217,9 @@ public class GridTagHandler extends SmartTagHandler {
 			}
 
 			if (parts != null) {
-				builder.append("style=\"width: " + parts[i % columns] + ";\" ");
+				builder.append("style=\"" + (columnStyle != null ? columnStyle : "") + "; width: " + parts[i % columns] + ";\" ");
 			} else {
-				builder.append("style=\"width: " + percentage + "%;\" ");
+				builder.append("style=\"" + (columnStyle != null ? columnStyle : "") + ";width: " + percentage + "%;\" ");
 			}
 
 			appendClass(builder, CSS_GRID_DIV_COLUMN);
@@ -241,6 +249,10 @@ public class GridTagHandler extends SmartTagHandler {
 		this.columns = columns;
 	}
 
+	public void setColumnStyle(String columnStyle) {
+		this.columnStyle = columnStyle;
+	}
+
 	public void setDivision(String division) {
 		this.division = division;
 	}
@@ -257,6 +269,12 @@ public class GridTagHandler extends SmartTagHandler {
 	/*package*/ void addTag(SmartTagHandler tag) {
 		this.foundGeneralTags = true;
 		this.rows.add(tag);
+	}
+
+	/*package*/ void setTotalColumns(int totalColumns) {
+		if (totalColumns > this.totalColumns) {
+			this.totalColumns = totalColumns;
+		}
 	}
 
 }

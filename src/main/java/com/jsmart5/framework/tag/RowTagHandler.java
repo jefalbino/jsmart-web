@@ -52,6 +52,8 @@ public final class RowTagHandler extends SmartTagHandler {
 	// Used for rows inside grid tag
 	private List<ColumnTagHandler> columns;
 
+	private int totalColumns;
+
 	public RowTagHandler() {
 		columns = new ArrayList<ColumnTagHandler>();
 	}
@@ -59,15 +61,22 @@ public final class RowTagHandler extends SmartTagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof ListTagHandler) {
 
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}
+
+		if (parent instanceof ListTagHandler) {
 			theme = ((ListTagHandler) parent).getTheme();
 			((ListTagHandler) parent).addRow(this);
 			return false;
 
 		} else if (parent instanceof GridTagHandler) {
-			theme = ((GridTagHandler) parent).getTheme();
-			((GridTagHandler) parent).addRow(this);
+			GridTagHandler gridParent = (GridTagHandler) parent; 
+			gridParent.addRow(this);
+			gridParent.setTotalColumns(this.columns.size());
+			theme = gridParent.getTheme();
 			return false;
 		}
 		return true;
@@ -76,6 +85,7 @@ public final class RowTagHandler extends SmartTagHandler {
 	@Override
 	public void validateTag() throws JspException {
 		JspTag parent = getParent();
+
 		if (parent instanceof ListTagHandler) {
 			if (value == null) {
 				throw new JspException("Attribute value is required for row tag inside list tag");
@@ -95,8 +105,8 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-
 		JspTag parent = getParent();
+
 		if (parent instanceof ListTagHandler) {
 			executeListTag();
 
@@ -155,11 +165,6 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	private void executeGridTag() throws JspException, IOException {
 
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-
 		boolean rowHeader = Boolean.parseBoolean(header);
 		boolean rowFooter = Boolean.parseBoolean(footer);
 
@@ -210,6 +215,10 @@ public final class RowTagHandler extends SmartTagHandler {
 						CSS_GRID_FOOTER_COLUMN : border ? CSS_GRID_BORDER_COLUMN : CSS_GRID_COLUMN);
 			}
 
+			if (columns.size() < totalColumns) {
+				builder.append("shrunken=\"true\" ");
+			}
+
 			if (column.getColspan() != null) {
 				builder.append("colspan=\"" + column.getColspan() + "\" ");
 			}
@@ -244,6 +253,10 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	/*package*/ void setType(String type) {
 		this.type = type;
+	}
+
+	/*package*/ void setTotalColumns(int totalColumns) {
+		this.totalColumns = totalColumns;
 	}
 
 	public void setHeader(String header) {

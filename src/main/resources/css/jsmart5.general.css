@@ -88,7 +88,7 @@
 	border-right: solid 1px #eaeaea;
 }
 
-.jsmart5_grid_table_border_column:last-child {
+.jsmart5_grid_table_border_column:not([shrunken="true"]):last-child {
 	border-right: 0 none;
 }
 
@@ -483,13 +483,17 @@
 	
 }
 
+.jsmart5_button_group, .jsmart5_link_group {
+	display: inline-block;
+}
+
 .jsmart5_button_restarray_group {
 	margin: 5px 5px 0px 0px;
 	display: inline-block;
 	vertical-align: top;
 }
 
-.jsmart5_button_dropdown_separator {
+.jsmart5_button_dropdown_separator, .jsmart5_link_dropdown_separator {
 	background-color: #e5e5e5;
 	height: 1px !important;
 	overflow: hidden;
@@ -497,7 +501,7 @@
 }
 
 .jsmart5_upload_text {
-	width: inherit !important;
+	width: 300px !important;
 	height: 22px !important;
 }
 

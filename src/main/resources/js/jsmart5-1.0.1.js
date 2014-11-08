@@ -73,6 +73,10 @@ var Jsmart5 = (function() {
 		link: function (async, element) {
 			doButton(async, element);
 		},
+		
+		linkDropDown: function (element) {
+			doLinkDropDown(element);
+		},
 
 		// Button ajax={'method': '', 'action': '','update': '','before': '','exec': ''}
 		button: function (async, element) {
@@ -1519,11 +1523,34 @@ var Jsmart5 = (function() {
 	
 	function doButtonDropDown(element) {
 		if (element) {
-			var dropDown = $(element).closest('div').find('>ul');
-			var button = $(element).closest('div').find('>button, >input');
+			var dropDown = $(element).closest('div.jsmart5_button_group').find('>ul');
+			var button = $(element).closest('div.jsmart5_button_group').find('>button, >input');
 
 			$(dropDown).css({'position': 'absolute'});
 			$(dropDown).css({'left': $(button).position().left, 'top': $(button).position().top + $(button).outerHeight(true)});
+			$(dropDown).show();
+
+			if ($(element).attr('dropdown')) {
+				$(dropDown).hide();
+				$(element).removeAttr('dropdown');
+			} else {
+				$(element).attr('dropdown', 'opened');
+
+				$(dropDown).find('li').click(function() {
+					$(dropDown).hide();
+					$(element).removeAttr('dropdown');
+				});
+			}
+		}
+	}
+
+	function doLinkDropDown(element) {
+		if (element) {
+			var dropDown = $(element).closest('div.jsmart5_link_group').find('>ul');
+			var link = $(element).closest('div.jsmart5_link_group').find('>a.jsmart5_link');
+
+			$(dropDown).css({'position': 'absolute'});
+			$(dropDown).css({'left': $(link).position().left, 'top': $(link).position().top + $(link).outerHeight(true)});
 			$(dropDown).show();
 
 			if ($(element).attr('dropdown')) {
@@ -3586,6 +3613,7 @@ var Jsmart5 = (function() {
 								$(div).find('>ul').height($(div).height());
 								$(div).find('>ul li').each(function (index) {
 									$(this).height(itemHeight);
+									$(this).css({'lineHeight': itemHeight + 'px'});
 
 									$(this).click(function() {
 										if (ajax.multiple == 'true') {

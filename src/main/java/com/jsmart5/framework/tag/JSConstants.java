@@ -63,6 +63,7 @@ package com.jsmart5.framework.tag;
 	JSMART_TREE("Jsmart5.tree", "('%s');"),
 	JSMART_SELECT("Jsmart5.select", "(%s,'%s');"),
 	JSMART_BUTTON_DROPDOWN("Jsmart5.buttonDropDown", "(%s);"),
+	JSMART_LINK_DROPDOWN("Jsmart5.linkDropDown", "(%s);"),
 
 	JSMART_BUTTON_RESTARRAY("Jsmart5.buttonRestArray", "('%s','%s');"),
 

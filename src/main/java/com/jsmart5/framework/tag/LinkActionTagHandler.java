@@ -16,21 +16,40 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.CssConstants.CSS_LINK_DROPDOWN_SEPARATOR;
-import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_LIST_ITEM_TAG;
-import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_TAG;
-import static com.jsmart5.framework.tag.HtmlConstants.OPEN_LIST_ITEM_TAG;
-
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-public class SeparatorTagHandler extends SmartTagHandler {
+public class LinkActionTagHandler extends SmartTagHandler {
+
+	private String label;
+
+	private String action;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof LinkTagHandler) {
+			
+			// Just to call nested tags
+			JspFragment body = getJspBody();
+			if (body != null) {
+				body.invoke(null);
+			}
+
+			((LinkTagHandler) parent).addActionItem(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -39,21 +58,27 @@ public class SeparatorTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		JspTag parent = getParent();
+		// DO NOTHING
+	}
 
-		if (parent instanceof ButtonTagHandler) {
-			((ButtonTagHandler) parent).addActionItem(this);
+	/*package*/ String getLabel() {
+		return label;
+	}
 
-		} else if (parent instanceof LinkTagHandler) {
-			((LinkTagHandler) parent).addActionItem(this);
-		
-		} else if (parent instanceof MenuItemTagHandler) {
-			StringBuilder builder = new StringBuilder(OPEN_LIST_ITEM_TAG);
-			appendClass(builder, CSS_LINK_DROPDOWN_SEPARATOR);
-			builder.append(CLOSE_TAG);
-			builder.append(CLOSE_LIST_ITEM_TAG);
-			printOutput(builder);
-		}
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	/*package*/ String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	/*package*/ Map<String, Object> getParams() {
+		return params;
 	}
 
 }

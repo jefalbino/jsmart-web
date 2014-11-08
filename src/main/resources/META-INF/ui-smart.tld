@@ -185,7 +185,7 @@
 	<tag>
         <name>separator</name>
         <tag-class>com.jsmart5.framework.tag.SeparatorTagHandler</tag-class>
-        <body-content>scriptless</body-content>
+        <body-content>empty</body-content>
 	</tag>
 	
 	<tag>
@@ -329,6 +329,20 @@
             <required>false</required>
         </attribute>
     </tag>
+
+	<tag>
+        <name>linkaction</name>
+        <tag-class>com.jsmart5.framework.tag.LinkActionTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>label</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>action</name>
+            <required>true</required>
+        </attribute>
+	</tag>
 
 	<tag>
         <name>ajax</name>
@@ -3615,7 +3629,7 @@
         </attribute>
         <attribute>
             <name>buttonLabel</name>
-            <required>false</required>
+            <required>true</required>
         </attribute>
         <attribute>
             <name>async</name>
@@ -3725,6 +3739,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>columnStyle</name>
             <required>false</required>
         </attribute>
         <attribute>

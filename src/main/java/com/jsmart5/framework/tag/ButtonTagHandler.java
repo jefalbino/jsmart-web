@@ -75,10 +75,10 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	private boolean async = true;
 
-	private List<ButtonActionTagHandler> actionItems;
+	private List<SmartTagHandler> actionItems;
 
 	public ButtonTagHandler() {
-		actionItems = new ArrayList<ButtonActionTagHandler>();
+		actionItems = new ArrayList<SmartTagHandler>();
 	}
 
 	@Override
@@ -279,7 +279,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			appendClass(builder, CSS_BUTTON_DROPDOWN_LIST);
 			builder.append(CLOSE_TAG);
 	
-			for (ButtonActionTagHandler actionItem : actionItems) {
+			for (SmartTagHandler actionItem : actionItems) {
 				
 				if (actionItem instanceof SeparatorTagHandler) {
 					builder.append(OPEN_LIST_ITEM_TAG);
@@ -287,7 +287,10 @@ public final class ButtonTagHandler extends SmartTagHandler {
 					builder.append(CLOSE_TAG);
 					builder.append(CLOSE_LIST_ITEM_TAG);
 
-				} else {
+				} else if (actionItem instanceof ButtonActionTagHandler) {
+
+					ButtonActionTagHandler buttonActionItem = (ButtonActionTagHandler) actionItem;
+
 					builder.append(OPEN_LIST_ITEM_TAG + CLOSE_TAG);
 					builder.append(OPEN_LINK_TAG);
 	
@@ -295,10 +298,10 @@ public final class ButtonTagHandler extends SmartTagHandler {
 	
 					JsonAjax jsonAjax = new JsonAjax();
 					jsonAjax.setMethod("post");
-					jsonAjax.setAction(getTagName(J_SBMT, actionItem.getAction()));
+					jsonAjax.setAction(getTagName(J_SBMT, buttonActionItem.getAction()));
 	
-					for (String name : actionItem.getParams().keySet()) {						
-						jsonAjax.getParams().add(new JsonParam(name, actionItem.getParams().get(name)));
+					for (String name : buttonActionItem.getParams().keySet()) {						
+						jsonAjax.getParams().add(new JsonParam(name, buttonActionItem.getParams().get(name)));
 					}
 	
 					jsonAjax.setUpdate(update);
@@ -306,7 +309,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 					jsonAjax.setExec(afterAjax);
 					builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" >");
 	
-					builder.append(getTagValue(actionItem.getLabel()));
+					builder.append(getTagValue(buttonActionItem.getLabel()));
 	
 					builder.append(CLOSE_LINK_TAG);
 					builder.append(CLOSE_LIST_ITEM_TAG);
@@ -320,7 +323,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		printOutput(builder);
 	}
 
-	/*package*/ void addActionItem(ButtonActionTagHandler actionItem) {
+	/*package*/ void addActionItem(SmartTagHandler actionItem) {
 		this.actionItems.add(actionItem);
 	}
 

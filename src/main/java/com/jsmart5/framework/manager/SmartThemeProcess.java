@@ -42,7 +42,7 @@ public final class SmartThemeProcess {
 
 	private static final String DEFAULT_THEME = "default";
 
-	private static final int STREAM_BUFFER = 8192;
+	private static final int STREAM_BUFFER = 10000;
 
 	private static final Pattern CSS_MARK_PATTERN = Pattern.compile("@.{1,20}?@");
 

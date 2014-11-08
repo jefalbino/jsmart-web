@@ -145,25 +145,22 @@
 	
 }
 
-.jsmart5_table_%s_row_nth, .jsmart5_table_%s_row_selection_nth {
-    
-}
-
-.jsmart5_table_%s_row_selection:hover, .jsmart5_table_%s_row_selection_nth:hover {
+.jsmart5_table_%s_row_selection:hover {
 	background-color: @bckghover@;
 }
 
 .jsmart5_table_%s_row_column_expanded {
-	background-color: @bckgstrong@;
+	background-color: @bckghover@;
     border-collapse: collapse;
 }
 
-.jsmart5_table_%s_row_selection, .jsmart5_table_%s_row_selection_nth {
+.jsmart5_table_%s_row_selection {
 	cursor: pointer;
 }
 
 .jsmart5_table_%s_page_header {
-	padding-bottom: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	text-align: center;
 	border-left-style: hidden;
 	border-top-style: hidden;
@@ -171,7 +168,8 @@
 }
 
 .jsmart5_table_%s_page_footer {
-	padding-top: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	text-align: center;
 	border-left-style: hidden;
 	border-bottom-style: hidden;
@@ -192,26 +190,26 @@
 
 .jsmart5_table_%s_page_first, .jsmart5_table_%s_page_prev, .jsmart5_table_%s_page_next, .jsmart5_table_%s_page_last {
 	width: 24px;
-	height: 22px;
+	height: 20px;
 	cursor: pointer;
 	display: inline-block;
 	background: url('@image@') no-repeat;
 }
 
 .jsmart5_table_%s_page_first {
-	background-position: -1px -12px;
+	background-position: -1px -16px;
 }
 
 .jsmart5_table_%s_page_prev {
-	background-position: -34px -12px;
+	background-position: -34px -16px;
 }
 
 .jsmart5_table_%s_page_next {
-	background-position: -1px -35px;
+	background-position: -1px -40px;
 }
 
 .jsmart5_table_%s_page_last {
-	background-position: -33px -35px;
+	background-position: -33px -40px;
 }
 
 .jsmart5_table_%s_page_span {
@@ -285,6 +283,7 @@
 	padding: 0px 5px;
 	width: 100%;
 	text-align: left;
+	vertical-align: middle;
 }
 
 .jsmart5_auto_complete_%s_list>ul li:hover {
@@ -359,11 +358,13 @@
 }
 
 .jsmart5_menu_%s_item_left {
+	width: 140px;
 	text-align: left;
 	padding-left: 10px;
 }
 
 .jsmart5_menu_%s_item_right {
+	width: 140px;
 	text-align: right;
 	padding-right: 10px;
 }
@@ -557,10 +558,6 @@
 	margin-left: 2px;
 }
 
-.jsmart5_button_%s_group {
-	display: inline-block;
-}
-
 .jsmart5_button_%s, .jsmart5_button_%s_default, .jsmart5_button_%s_dropdown, .jsmart5_button_%s_restarray, .jsmart5_search_button_%s {
 	min-width: 110px;
 	min-height: 34px;
@@ -632,7 +629,7 @@
 	        border-radius: 0px 5px 5px 0px;
 }
 
-.jsmart5_button_%s_dropdown_arrow {
+.jsmart5_button_%s_dropdown_arrow, .jsmart5_link_%s_dropdown_arrow {
 	width: 0px;
 	height: 0px; 
 	display: inline-block;
@@ -643,7 +640,14 @@
 	cursor: pointer;
 }
 
-.jsmart5_button_%s_dropdown_list {
+.jsmart5_link_%s_dropdown_arrow {
+	border-top: 5px solid @borderdefault@;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	margin-left: 7px;
+}
+
+.jsmart5_button_%s_dropdown_list, .jsmart5_link_%s_dropdown_list {
 	margin: 0px;
 	padding: 0px;
 	display: none;
@@ -657,7 +661,7 @@
     	    border-radius: 4px;
 }
 
-.jsmart5_button_%s_dropdown_list li {
+.jsmart5_button_%s_dropdown_list li, .jsmart5_link_%s_dropdown_list li {
 	width: 150px;
 	height: 31px;
 	line-height: 2.1em;
@@ -665,11 +669,11 @@
 	padding-left: 10px;
 }
 
-.jsmart5_button_%s_dropdown_list li:hover {
+.jsmart5_button_%s_dropdown_list li:hover, .jsmart5_link_%s_dropdown_list li:hover {
 	background-color: @bckghover@;
 }
 
-.jsmart5_button_%s_dropdown_list li a {
+.jsmart5_button_%s_dropdown_list li a, .jsmart5_link_%s_dropdown_list li a {
 	cursor: pointer;
 	margin: 4px;
 	width: 100%;
@@ -1356,7 +1360,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 .jsmart5_progress_%s_bar, .jsmart5_progress_%s_bar_disabled {
 	width: 0px;
 	height: 100%;
-	background-color: @bckg@;
+	background-color: @bckgprogress@;
 	-webkit-border-radius: 4px;
   	   -moz-border-radius: 4px;
 	   		border-radius: 4px;
@@ -1473,7 +1477,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	cursor: pointer;
 	color: @font@;
 	background: url('@image@') no-repeat;
-	background-position: 0px 2px;
+	background-position: 2px 2px;
 }
 
 .jsmart5_dialog_%s_titlebar_close:hover, .jsmart5_dialog_%s_titlebar_close:focus {

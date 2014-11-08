@@ -20,7 +20,8 @@ package com.jsmart5.framework.manager;
 
 /*package*/ enum SmartTheme {
 
-	WATER, 
+	WATER,
+	DARK_WATER,
 	BLUE, 
 	DARK_BLUE, 
 	GREEN, 
@@ -29,7 +30,9 @@ package com.jsmart5.framework.manager;
 	DARK_PURPLE, 
 	PINK, 
 	ORANGE, 
+	DARK_ORANGE,
 	RED, 
+	DARK_RED,
 	BROWN, 
 	BLACK, 
 	YELLOW, 
