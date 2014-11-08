@@ -21,13 +21,9 @@ package com.jsmart5.framework.tag;
 import java.util.List;
 import java.util.Map;
 
-/**
- * This abstract class must be extended to allow table component mapped on the returned page 
- * to be paginated or scrolled dynamically based on action triggered by table component.  
- *
- * @param <T> the type of the element being loaded inside the {@link List} of elements.
- */
-public abstract class SmartTableAdapter<T> {
+import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
+
+public abstract class TableAdapterHandler<T> {
 
 	private long first;
 
@@ -190,28 +186,6 @@ public abstract class SmartTableAdapter<T> {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * This enumerator represents the sort order triggered per column by table component
-	 * to specify the order in which the elements must be presented on table.
-	 * <br>
-	 * Values are ASC (ascendant) or DESC (descendant). Default value is ASC.
-	 */
-	public static enum SortOrder {
-
-		ASC, DESC;
-
-		public static SortOrder valueBy(String string) {
-			if (string != null) {
-				for (SortOrder sortOrder : values()) {
-					if (sortOrder.toString().equalsIgnoreCase(string)) {
-						return sortOrder;
-					}
-				}
-			}
-			return null;
-		}
 	}
 
 }

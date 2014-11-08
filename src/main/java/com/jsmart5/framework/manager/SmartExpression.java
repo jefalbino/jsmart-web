@@ -46,7 +46,7 @@ import org.json.JSONObject;
 
 import com.jsmart5.framework.annotation.ScopeType;
 import com.jsmart5.framework.annotation.SmartBean;
-import com.jsmart5.framework.tag.SmartTableAdapter;
+import com.jsmart5.framework.tag.TableAdapterHandler;
 
 import static com.jsmart5.framework.manager.SmartConfig.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
@@ -189,10 +189,10 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 
 				Object value = null;
 				
-				if (object instanceof SmartTableAdapter) {
+				if (object instanceof TableAdapterHandler) {
 					List<Object> list = null;
 					Set<Object> objs = getExpressionBeans(expr);
-					SmartTableAdapter adapter = (SmartTableAdapter<Object>) object;
+					TableAdapterHandler adapter = (TableAdapterHandler<Object>) object;
 
 					for (Object obj : objs) {
 						if (obj.getClass().getAnnotation(SmartBean.class).scope() == ScopeType.REQUEST_SCOPE) {
@@ -266,17 +266,17 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 
 				List values = new ArrayList(indexes.length);
 	
-				if (object instanceof SmartTableAdapter) {
+				if (object instanceof TableAdapterHandler) {
 					List<Object> list = null;
 					Set<Object> objs = getExpressionBeans(expr);
-					SmartTableAdapter adapter = (SmartTableAdapter<Object>) object;
+					TableAdapterHandler adapter = (TableAdapterHandler<Object>) object;
 	
 					for (Object obj : objs) {
 						if (obj.getClass().getAnnotation(SmartBean.class).scope() == ScopeType.REQUEST_SCOPE) {
 							list = adapter.loadData(first, size.intValue(), getActionSortBy(jsonAction), 
 									getActionSortOrder(jsonAction), getActionFilters(jsonAction));
 						} else {
-							list = ((SmartTableAdapter<Object>) object).getLoaded();
+							list = ((TableAdapterHandler<Object>) object).getLoaded();
 						}
 						break;
 					}

@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag;
+package com.jsmart5.framework.adapter;
 
 import com.jsmart5.framework.annotation.SmartBean;
 import com.jsmart5.framework.manager.SmartUtils;

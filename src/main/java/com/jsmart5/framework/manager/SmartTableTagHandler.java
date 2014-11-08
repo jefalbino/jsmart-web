@@ -26,7 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jsmart5.framework.tag.SmartTableAdapter;
+import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
 
 public abstract class SmartTableTagHandler extends SmartTagHandler {
 
@@ -142,12 +142,12 @@ public abstract class SmartTableTagHandler extends SmartTagHandler {
 		return null;
 	}
 
-	protected static SmartTableAdapter.SortOrder getActionSortOrder(JSONObject jsonAction) throws JSONException {
+	protected static SortOrder getActionSortOrder(JSONObject jsonAction) throws JSONException {
 		if (jsonAction != null && jsonAction.has("sort") && !jsonAction.isNull("sort")) {
 			JSONObject sortObject = (JSONObject) jsonAction.get("sort");
-			return SmartTableAdapter.SortOrder.valueBy(sortObject.getString("order"));
+			return SortOrder.valueBy(sortObject.getString("order"));
 		}
-		return SmartTableAdapter.SortOrder.ASC;
+		return SortOrder.ASC;
 	}
 
 	protected static String getActionFilter(JSONObject jsonAction) throws JSONException {

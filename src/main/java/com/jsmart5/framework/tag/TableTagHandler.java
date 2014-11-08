@@ -33,6 +33,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
 import com.jsmart5.framework.json.JsonEdit;
 import com.jsmart5.framework.json.JsonScroll;
 import com.jsmart5.framework.json.JsonSelect;
@@ -158,7 +159,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
 	private Collection<Object> collectionItems;
 
-	private SmartTableAdapter<Object> tableAdapter;
+	private TableAdapterHandler<Object> tableAdapter;
 
 	private long collectionIndex = DEFAULT_VALUE;
 
@@ -559,12 +560,12 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
 		if (item.getSortBy() != null) {
 			String sortBy = getActionSortBy(jsonAction);
-			SmartTableAdapter.SortOrder sortOrder = getActionSortOrder(jsonAction);
+			SortOrder sortOrder = getActionSortOrder(jsonAction);
 
 			builder.append(OPEN_DIV_TAG + "style=\"float: right;\">");
 
 			builder.append(OPEN_DIV_TAG);
-			if (item.getSortBy().equals(sortBy) && sortOrder == SmartTableAdapter.SortOrder.ASC) {
+			if (item.getSortBy().equals(sortBy) && sortOrder == SortOrder.ASC) {
 				if (item.getFilterBy() != null) {
 					appendClass(builder, CSS_TABLE_HEAD_SELECTED_SORT_FILTER_UP);
 				} else {
@@ -581,7 +582,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 			builder.append(">" + CLOSE_DIV_TAG);
 
 			builder.append(OPEN_DIV_TAG);
-			if (item.getSortBy().equals(sortBy) && sortOrder == SmartTableAdapter.SortOrder.DESC) {
+			if (item.getSortBy().equals(sortBy) && sortOrder == SortOrder.DESC) {
 				if (item.getFilterBy() != null) {
 					appendClass(builder, CSS_TABLE_HEAD_SELECTED_SORT_FILTER_DOWN);
 				} else {
@@ -717,11 +718,11 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		long first = getActionFirst(jsonAction);
 		ACTION action = getAction(jsonAction);
 		String sortBy = getActionSortBy(jsonAction);
-		SmartTableAdapter.SortOrder sortOrder = getActionSortOrder(jsonAction);
+		SortOrder sortOrder = getActionSortOrder(jsonAction);
 		Map<String, String> filterBy = getActionFilters(jsonAction);
 
-		if (value instanceof SmartTableAdapter) {
-			tableAdapter = (SmartTableAdapter) value;
+		if (value instanceof TableAdapterHandler) {
+			tableAdapter = (TableAdapterHandler) value;
 			boolean shallReload = tableAdapter.shallReload(first, sortBy, sortOrder, filterBy);
 
 			if (shallReload) {

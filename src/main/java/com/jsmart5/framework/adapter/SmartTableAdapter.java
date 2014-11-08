@@ -16,28 +16,39 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag;
+package com.jsmart5.framework.adapter;
 
 import java.util.List;
 
+import com.jsmart5.framework.tag.TableAdapterHandler;
+
 /**
- * This abstract class must be extended to allow autocomplete component mapped on the 
- * returned page to dynamically search for results based on action triggered by the component.  
+ * This abstract class must be extended to allow table component mapped on the returned page 
+ * to be paginated or scrolled dynamically based on action triggered by table component.  
  *
  * @param <T> the type of the element being loaded inside the {@link List} of elements.
  */
-public abstract class SmartSearchAdapter<T> {
+public abstract class SmartTableAdapter<T> extends TableAdapterHandler<T> {
 
 	/**
-	 * Method must be implemented to search values for autocomplete component.
-	 * 
-	 * @param value
-	 * 			value inputed for searching criteria
-	 * @param maxResults
-	 * 			maximum search results to be returned
-	 * 
-	 * @return {@link List} of elements of type <T>
+	 * This enumerator represents the sort order triggered per column by table component
+	 * to specify the order in which the elements must be presented on table.
+	 * <br>
+	 * Values are ASC (ascendant) or DESC (descendant). Default value is ASC.
 	 */
-	public abstract List<T> search(String value, int maxResults);
+	public static enum SortOrder {
 
+		ASC, DESC;
+
+		public static SortOrder valueBy(String string) {
+			if (string != null) {
+				for (SortOrder sortOrder : values()) {
+					if (sortOrder.toString().equalsIgnoreCase(string)) {
+						return sortOrder;
+					}
+				}
+			}
+			return null;
+		}
+	}
 }

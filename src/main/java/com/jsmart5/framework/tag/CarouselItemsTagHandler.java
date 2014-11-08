@@ -24,6 +24,7 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.adapter.SmartCarouselItem;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
 

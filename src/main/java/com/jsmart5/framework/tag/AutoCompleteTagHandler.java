@@ -32,6 +32,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.adapter.SmartSearchAdapter;
 import com.jsmart5.framework.json.JsonAutoComplete;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
