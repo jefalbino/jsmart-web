@@ -48,16 +48,15 @@ public final class SmartThemeProcess {
 
 	private static final String BASE_CSS = "css/jsmart5.base.css";
 
-	private static final String FINAL_CSS = "/css/jsmart5-%s.css";
+	private static final String THEME_CSS = "/css/jsmart5-theme.css";
 
 	public static void main(String[] args) {
 		try {
-			String version = args[0].replace("-SNAPSHOT", "");
 			JSONObject jsonStyles = new JSONObject(convertResourceToString(FILTER_STYLES));
 
         	// Always create new file
         	URL resourceURL = Thread.currentThread().getContextClassLoader().getResource(".");
-        	File outputCss = new File(resourceURL.getPath().replace("/target/classes", "/src/main/resources") + String.format(FINAL_CSS, version));
+        	File outputCss = new File(resourceURL.getPath().replace("/target/classes", "/src/main/resources") + THEME_CSS);
         	if (outputCss.exists()) {
         		outputCss.delete();
         	}
