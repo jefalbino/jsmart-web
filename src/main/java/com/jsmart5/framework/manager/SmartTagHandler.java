@@ -211,9 +211,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	}
 
 	public void setAjaxCommand(String ajaxCommand) {
-		if (this.ajaxCommand == null) {
-			this.ajaxCommand = ajaxCommand;
-		}
+		this.ajaxCommand = ajaxCommand;
 	}
 
 	public void setId(String id) {
