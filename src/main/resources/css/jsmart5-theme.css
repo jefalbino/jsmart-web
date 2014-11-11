@@ -55,9 +55,9 @@
 .jsmart5_table_water_head_row>th, .jsmart5_table_water_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -224,9 +224,9 @@
 .jsmart5_grid_table_water_row_header>th, .jsmart5_grid_table_water_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -353,7 +353,7 @@
 .jsmart5_menu_water_item, .jsmart5_menu_water_item_left, .jsmart5_menu_water_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -436,7 +436,7 @@
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -562,7 +562,7 @@
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #008b91;
@@ -578,7 +578,7 @@
 }
 
 .jsmart5_button_water_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -664,7 +664,7 @@
 .jsmart5_button_water_dropdown_list li, .jsmart5_link_water_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -736,7 +736,7 @@
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -770,8 +770,8 @@ dl.jsmart5_list_water {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -802,14 +802,15 @@ ol.jsmart5_list_water>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_water>dt {
 	color: #ffffff;
 	background-color: #008b91;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -844,8 +845,8 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_panel_water_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #008b91;
@@ -897,7 +898,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -943,7 +944,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_balloon_water {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #016b75;
 	background-color: #008b91;
 	-webkit-border-radius: 4px;
@@ -966,7 +967,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 
 .jsmart5_date_water table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -1072,8 +1073,8 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -1349,7 +1350,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 
 .jsmart5_progress_water_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -1448,10 +1449,11 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 
 .jsmart5_dialog_water_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #008b91;
@@ -1468,7 +1470,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 
 .jsmart5_dialog_water_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -1487,7 +1489,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_dialog_water_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -1564,9 +1566,9 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_table_dark_water_head_row>th, .jsmart5_table_dark_water_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -1733,9 +1735,9 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_grid_table_dark_water_row_header>th, .jsmart5_grid_table_dark_water_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -1862,7 +1864,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_menu_dark_water_item, .jsmart5_menu_dark_water_item_left, .jsmart5_menu_dark_water_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -1945,7 +1947,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -2071,7 +2073,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #1c5288;
@@ -2087,7 +2089,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 }
 
 .jsmart5_button_dark_water_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -2173,7 +2175,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 .jsmart5_button_dark_water_dropdown_list li, .jsmart5_link_dark_water_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -2245,7 +2247,7 @@ ul.jsmart5_list_water>li, .jsmart5_list_water>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -2279,8 +2281,8 @@ dl.jsmart5_list_dark_water {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -2311,14 +2313,15 @@ ol.jsmart5_list_dark_water>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_dark_water>dt {
 	color: #ffffff;
 	background-color: #1c5288;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -2353,8 +2356,8 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 .jsmart5_panel_dark_water_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #1c5288;
@@ -2406,7 +2409,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -2452,7 +2455,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 .jsmart5_balloon_dark_water {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #194071;
 	background-color: #1c5288;
 	-webkit-border-radius: 4px;
@@ -2475,7 +2478,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 
 .jsmart5_date_dark_water table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -2581,8 +2584,8 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -2858,7 +2861,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 
 .jsmart5_progress_dark_water_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -2957,10 +2960,11 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 
 .jsmart5_dialog_dark_water_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #1c5288;
@@ -2977,7 +2981,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 
 .jsmart5_dialog_dark_water_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -2996,7 +3000,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 .jsmart5_dialog_dark_water_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -3073,9 +3077,9 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 .jsmart5_table_blue_head_row>th, .jsmart5_table_blue_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -3242,9 +3246,9 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 .jsmart5_grid_table_blue_row_header>th, .jsmart5_grid_table_blue_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -3371,7 +3375,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 .jsmart5_menu_blue_item, .jsmart5_menu_blue_item_left, .jsmart5_menu_blue_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -3454,7 +3458,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -3580,7 +3584,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #428bca;
@@ -3596,7 +3600,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 }
 
 .jsmart5_button_blue_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -3682,7 +3686,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 .jsmart5_button_blue_dropdown_list li, .jsmart5_link_blue_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -3754,7 +3758,7 @@ ul.jsmart5_list_dark_water>li, .jsmart5_list_dark_water>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -3788,8 +3792,8 @@ dl.jsmart5_list_blue {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -3820,14 +3824,15 @@ ol.jsmart5_list_blue>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_blue>dt {
 	color: #ffffff;
 	background-color: #428bca;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -3862,8 +3867,8 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_panel_blue_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #428bca;
@@ -3915,7 +3920,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -3961,7 +3966,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_balloon_blue {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #357ebd;
 	background-color: #428bca;
 	-webkit-border-radius: 4px;
@@ -3984,7 +3989,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 
 .jsmart5_date_blue table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -4090,8 +4095,8 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -4367,7 +4372,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 
 .jsmart5_progress_blue_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -4466,10 +4471,11 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 
 .jsmart5_dialog_blue_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #428bca;
@@ -4486,7 +4492,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 
 .jsmart5_dialog_blue_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -4505,7 +4511,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_dialog_blue_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -4582,9 +4588,9 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_table_dark_blue_head_row>th, .jsmart5_table_dark_blue_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -4751,9 +4757,9 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_grid_table_dark_blue_row_header>th, .jsmart5_grid_table_dark_blue_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -4880,7 +4886,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_menu_dark_blue_item, .jsmart5_menu_dark_blue_item_left, .jsmart5_menu_dark_blue_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -4963,7 +4969,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -5089,7 +5095,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #4d4d99;
@@ -5105,7 +5111,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 }
 
 .jsmart5_button_dark_blue_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -5191,7 +5197,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 .jsmart5_button_dark_blue_dropdown_list li, .jsmart5_link_dark_blue_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -5263,7 +5269,7 @@ ul.jsmart5_list_blue>li, .jsmart5_list_blue>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -5297,8 +5303,8 @@ dl.jsmart5_list_dark_blue {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -5329,14 +5335,15 @@ ol.jsmart5_list_dark_blue>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_dark_blue>dt {
 	color: #ffffff;
 	background-color: #4d4d99;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -5371,8 +5378,8 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_panel_dark_blue_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #4d4d99;
@@ -5424,7 +5431,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -5470,7 +5477,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_balloon_dark_blue {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #494587;
 	background-color: #4d4d99;
 	-webkit-border-radius: 4px;
@@ -5493,7 +5500,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 
 .jsmart5_date_dark_blue table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -5599,8 +5606,8 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -5876,7 +5883,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 
 .jsmart5_progress_dark_blue_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -5975,10 +5982,11 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 
 .jsmart5_dialog_dark_blue_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #4d4d99;
@@ -5995,7 +6003,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 
 .jsmart5_dialog_dark_blue_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -6014,7 +6022,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_dialog_dark_blue_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -6091,9 +6099,9 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_table_green_head_row>th, .jsmart5_table_green_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -6260,9 +6268,9 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_grid_table_green_row_header>th, .jsmart5_grid_table_green_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -6389,7 +6397,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_menu_green_item, .jsmart5_menu_green_item_left, .jsmart5_menu_green_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -6472,7 +6480,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -6598,7 +6606,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #5cb85c;
@@ -6614,7 +6622,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 }
 
 .jsmart5_button_green_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -6700,7 +6708,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 .jsmart5_button_green_dropdown_list li, .jsmart5_link_green_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -6772,7 +6780,7 @@ ul.jsmart5_list_dark_blue>li, .jsmart5_list_dark_blue>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -6806,8 +6814,8 @@ dl.jsmart5_list_green {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -6838,14 +6846,15 @@ ol.jsmart5_list_green>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_green>dt {
 	color: #ffffff;
 	background-color: #5cb85c;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -6880,8 +6889,8 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_panel_green_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #5cb85c;
@@ -6933,7 +6942,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -6979,7 +6988,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_balloon_green {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #4cae4c;
 	background-color: #5cb85c;
 	-webkit-border-radius: 4px;
@@ -7002,7 +7011,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 
 .jsmart5_date_green table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -7108,8 +7117,8 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -7385,7 +7394,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 
 .jsmart5_progress_green_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -7484,10 +7493,11 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 
 .jsmart5_dialog_green_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #5cb85c;
@@ -7504,7 +7514,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 
 .jsmart5_dialog_green_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -7523,7 +7533,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_dialog_green_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -7600,9 +7610,9 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_table_dark_green_head_row>th, .jsmart5_table_dark_green_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -7769,9 +7779,9 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_grid_table_dark_green_row_header>th, .jsmart5_grid_table_dark_green_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -7898,7 +7908,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_menu_dark_green_item, .jsmart5_menu_dark_green_item_left, .jsmart5_menu_dark_green_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -7981,7 +7991,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -8107,7 +8117,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #147134;
@@ -8123,7 +8133,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 }
 
 .jsmart5_button_dark_green_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -8209,7 +8219,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 .jsmart5_button_dark_green_dropdown_list li, .jsmart5_link_dark_green_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -8281,7 +8291,7 @@ ul.jsmart5_list_green>li, .jsmart5_list_green>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -8315,8 +8325,8 @@ dl.jsmart5_list_dark_green {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -8347,14 +8357,15 @@ ol.jsmart5_list_dark_green>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_dark_green>dt {
 	color: #ffffff;
 	background-color: #147134;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -8389,8 +8400,8 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_panel_dark_green_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #147134;
@@ -8442,7 +8453,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -8488,7 +8499,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_balloon_dark_green {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #115a2d;
 	background-color: #147134;
 	-webkit-border-radius: 4px;
@@ -8511,7 +8522,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 
 .jsmart5_date_dark_green table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -8617,8 +8628,8 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -8894,7 +8905,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 
 .jsmart5_progress_dark_green_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -8993,10 +9004,11 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 
 .jsmart5_dialog_dark_green_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #147134;
@@ -9013,7 +9025,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 
 .jsmart5_dialog_dark_green_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -9032,7 +9044,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_dialog_dark_green_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -9109,9 +9121,9 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_table_purple_head_row>th, .jsmart5_table_purple_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -9278,9 +9290,9 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_grid_table_purple_row_header>th, .jsmart5_grid_table_purple_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -9407,7 +9419,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_menu_purple_item, .jsmart5_menu_purple_item_left, .jsmart5_menu_purple_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -9490,7 +9502,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -9616,7 +9628,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #8f37af;
@@ -9632,7 +9644,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 }
 
 .jsmart5_button_purple_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -9718,7 +9730,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 .jsmart5_button_purple_dropdown_list li, .jsmart5_link_purple_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -9790,7 +9802,7 @@ ul.jsmart5_list_dark_green>li, .jsmart5_list_dark_green>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -9824,8 +9836,8 @@ dl.jsmart5_list_purple {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -9856,14 +9868,15 @@ ol.jsmart5_list_purple>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_purple>dt {
 	color: #ffffff;
 	background-color: #8f37af;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -9898,8 +9911,8 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_panel_purple_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #8f37af;
@@ -9951,7 +9964,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -9997,7 +10010,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_balloon_purple {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #83329a;
 	background-color: #8f37af;
 	-webkit-border-radius: 4px;
@@ -10020,7 +10033,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 
 .jsmart5_date_purple table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -10126,8 +10139,8 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -10403,7 +10416,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 
 .jsmart5_progress_purple_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -10502,10 +10515,11 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 
 .jsmart5_dialog_purple_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #8f37af;
@@ -10522,7 +10536,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 
 .jsmart5_dialog_purple_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -10541,7 +10555,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_dialog_purple_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -10618,9 +10632,9 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_table_dark_purple_head_row>th, .jsmart5_table_dark_purple_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -10787,9 +10801,9 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_grid_table_dark_purple_row_header>th, .jsmart5_grid_table_dark_purple_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -10916,7 +10930,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_menu_dark_purple_item, .jsmart5_menu_dark_purple_item_left, .jsmart5_menu_dark_purple_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -10999,7 +11013,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -11125,7 +11139,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #3c0e80;
@@ -11141,7 +11155,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 }
 
 .jsmart5_button_dark_purple_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -11227,7 +11241,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 .jsmart5_button_dark_purple_dropdown_list li, .jsmart5_link_dark_purple_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -11299,7 +11313,7 @@ ul.jsmart5_list_purple>li, .jsmart5_list_purple>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -11333,8 +11347,8 @@ dl.jsmart5_list_dark_purple {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -11365,14 +11379,15 @@ ol.jsmart5_list_dark_purple>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_dark_purple>dt {
 	color: #ffffff;
 	background-color: #3c0e80;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -11407,8 +11422,8 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_panel_dark_purple_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #3c0e80;
@@ -11460,7 +11475,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -11506,7 +11521,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_balloon_dark_purple {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #340c64;
 	background-color: #3c0e80;
 	-webkit-border-radius: 4px;
@@ -11529,7 +11544,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 
 .jsmart5_date_dark_purple table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -11635,8 +11650,8 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -11912,7 +11927,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 
 .jsmart5_progress_dark_purple_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -12011,10 +12026,11 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 
 .jsmart5_dialog_dark_purple_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #3c0e80;
@@ -12031,7 +12047,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 
 .jsmart5_dialog_dark_purple_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -12050,7 +12066,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_dialog_dark_purple_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -12127,9 +12143,9 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_table_pink_head_row>th, .jsmart5_table_pink_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -12296,9 +12312,9 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_grid_table_pink_row_header>th, .jsmart5_grid_table_pink_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -12425,7 +12441,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_menu_pink_item, .jsmart5_menu_pink_item_left, .jsmart5_menu_pink_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -12508,7 +12524,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -12634,7 +12650,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #d0347d;
@@ -12650,7 +12666,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 }
 
 .jsmart5_button_pink_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -12736,7 +12752,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 .jsmart5_button_pink_dropdown_list li, .jsmart5_link_pink_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -12808,7 +12824,7 @@ ul.jsmart5_list_dark_purple>li, .jsmart5_list_dark_purple>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -12842,8 +12858,8 @@ dl.jsmart5_list_pink {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -12874,14 +12890,15 @@ ol.jsmart5_list_pink>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_pink>dt {
 	color: #ffffff;
 	background-color: #d0347d;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -12916,8 +12933,8 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_panel_pink_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #d0347d;
@@ -12969,7 +12986,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -13015,7 +13032,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_balloon_pink {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #b92d69;
 	background-color: #d0347d;
 	-webkit-border-radius: 4px;
@@ -13038,7 +13055,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 
 .jsmart5_date_pink table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -13144,8 +13161,8 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -13421,7 +13438,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 
 .jsmart5_progress_pink_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -13520,10 +13537,11 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 
 .jsmart5_dialog_pink_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #d0347d;
@@ -13540,7 +13558,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 
 .jsmart5_dialog_pink_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -13559,7 +13577,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_dialog_pink_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -13636,9 +13654,9 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_table_orange_head_row>th, .jsmart5_table_orange_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -13805,9 +13823,9 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_grid_table_orange_row_header>th, .jsmart5_grid_table_orange_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -13934,7 +13952,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_menu_orange_item, .jsmart5_menu_orange_item_left, .jsmart5_menu_orange_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -14017,7 +14035,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -14143,7 +14161,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #f0ad4e;
@@ -14159,7 +14177,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 }
 
 .jsmart5_button_orange_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -14245,7 +14263,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 .jsmart5_button_orange_dropdown_list li, .jsmart5_link_orange_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -14317,7 +14335,7 @@ ul.jsmart5_list_pink>li, .jsmart5_list_pink>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -14351,8 +14369,8 @@ dl.jsmart5_list_orange {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -14383,14 +14401,15 @@ ol.jsmart5_list_orange>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_orange>dt {
 	color: #ffffff;
 	background-color: #f0ad4e;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -14425,8 +14444,8 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_panel_orange_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #f0ad4e;
@@ -14478,7 +14497,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -14524,7 +14543,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_balloon_orange {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #eea236;
 	background-color: #f0ad4e;
 	-webkit-border-radius: 4px;
@@ -14547,7 +14566,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 
 .jsmart5_date_orange table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -14653,8 +14672,8 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -14930,7 +14949,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 
 .jsmart5_progress_orange_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -15029,10 +15048,11 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 
 .jsmart5_dialog_orange_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #f0ad4e;
@@ -15049,7 +15069,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 
 .jsmart5_dialog_orange_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -15068,7 +15088,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_dialog_orange_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -15145,9 +15165,9 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_table_dark_orange_head_row>th, .jsmart5_table_dark_orange_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -15314,9 +15334,9 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_grid_table_dark_orange_row_header>th, .jsmart5_grid_table_dark_orange_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -15443,7 +15463,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_menu_dark_orange_item, .jsmart5_menu_dark_orange_item_left, .jsmart5_menu_dark_orange_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -15526,7 +15546,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -15652,7 +15672,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #c68200;
@@ -15668,7 +15688,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 }
 
 .jsmart5_button_dark_orange_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -15754,7 +15774,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 .jsmart5_button_dark_orange_dropdown_list li, .jsmart5_link_dark_orange_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -15826,7 +15846,7 @@ ul.jsmart5_list_orange>li, .jsmart5_list_orange>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -15860,8 +15880,8 @@ dl.jsmart5_list_dark_orange {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -15892,14 +15912,15 @@ ol.jsmart5_list_dark_orange>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_dark_orange>dt {
 	color: #ffffff;
 	background-color: #c68200;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -15934,8 +15955,8 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 .jsmart5_panel_dark_orange_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #c68200;
@@ -15987,7 +16008,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -16033,7 +16054,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 .jsmart5_balloon_dark_orange {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #a77501;
 	background-color: #c68200;
 	-webkit-border-radius: 4px;
@@ -16056,7 +16077,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 
 .jsmart5_date_dark_orange table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -16162,8 +16183,8 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -16439,7 +16460,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 
 .jsmart5_progress_dark_orange_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -16538,10 +16559,11 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 
 .jsmart5_dialog_dark_orange_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #c68200;
@@ -16558,7 +16580,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 
 .jsmart5_dialog_dark_orange_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -16577,7 +16599,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 .jsmart5_dialog_dark_orange_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -16654,9 +16676,9 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 .jsmart5_table_red_head_row>th, .jsmart5_table_red_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -16823,9 +16845,9 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 .jsmart5_grid_table_red_row_header>th, .jsmart5_grid_table_red_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -16952,7 +16974,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 .jsmart5_menu_red_item, .jsmart5_menu_red_item_left, .jsmart5_menu_red_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -17035,7 +17057,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -17161,7 +17183,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #d9534f;
@@ -17177,7 +17199,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 }
 
 .jsmart5_button_red_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -17263,7 +17285,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 .jsmart5_button_red_dropdown_list li, .jsmart5_link_red_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -17335,7 +17357,7 @@ ul.jsmart5_list_dark_orange>li, .jsmart5_list_dark_orange>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -17369,8 +17391,8 @@ dl.jsmart5_list_red {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -17401,14 +17423,15 @@ ol.jsmart5_list_red>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_red>dt {
 	color: #ffffff;
 	background-color: #d9534f;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -17443,8 +17466,8 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_panel_red_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #d9534f;
@@ -17496,7 +17519,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -17542,7 +17565,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_balloon_red {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #d43f3a;
 	background-color: #d9534f;
 	-webkit-border-radius: 4px;
@@ -17565,7 +17588,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 
 .jsmart5_date_red table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -17671,8 +17694,8 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -17948,7 +17971,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 
 .jsmart5_progress_red_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -18047,10 +18070,11 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 
 .jsmart5_dialog_red_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #d9534f;
@@ -18067,7 +18091,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 
 .jsmart5_dialog_red_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -18086,7 +18110,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_dialog_red_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -18163,9 +18187,9 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_table_dark_red_head_row>th, .jsmart5_table_dark_red_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -18332,9 +18356,9 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_grid_table_dark_red_row_header>th, .jsmart5_grid_table_dark_red_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -18461,7 +18485,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_menu_dark_red_item, .jsmart5_menu_dark_red_item_left, .jsmart5_menu_dark_red_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -18544,7 +18568,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -18670,7 +18694,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #a82d2d;
@@ -18686,7 +18710,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 }
 
 .jsmart5_button_dark_red_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -18772,7 +18796,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 .jsmart5_button_dark_red_dropdown_list li, .jsmart5_link_dark_red_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -18844,7 +18868,7 @@ ul.jsmart5_list_red>li, .jsmart5_list_red>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -18878,8 +18902,8 @@ dl.jsmart5_list_dark_red {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -18910,14 +18934,15 @@ ol.jsmart5_list_dark_red>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_dark_red>dt {
 	color: #ffffff;
 	background-color: #a82d2d;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -18952,8 +18977,8 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 .jsmart5_panel_dark_red_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #a82d2d;
@@ -19005,7 +19030,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -19051,7 +19076,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 .jsmart5_balloon_dark_red {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #8f2e28;
 	background-color: #a82d2d;
 	-webkit-border-radius: 4px;
@@ -19074,7 +19099,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 
 .jsmart5_date_dark_red table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -19180,8 +19205,8 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -19457,7 +19482,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 
 .jsmart5_progress_dark_red_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -19556,10 +19581,11 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 
 .jsmart5_dialog_dark_red_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #a82d2d;
@@ -19576,7 +19602,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 
 .jsmart5_dialog_dark_red_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -19595,7 +19621,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 .jsmart5_dialog_dark_red_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -19672,9 +19698,9 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 .jsmart5_table_brown_head_row>th, .jsmart5_table_brown_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -19841,9 +19867,9 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 .jsmart5_grid_table_brown_row_header>th, .jsmart5_grid_table_brown_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -19970,7 +19996,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 .jsmart5_menu_brown_item, .jsmart5_menu_brown_item_left, .jsmart5_menu_brown_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -20053,7 +20079,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -20179,7 +20205,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #6c452f;
@@ -20195,7 +20221,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 }
 
 .jsmart5_button_brown_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -20281,7 +20307,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 .jsmart5_button_brown_dropdown_list li, .jsmart5_link_brown_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -20353,7 +20379,7 @@ ul.jsmart5_list_dark_red>li, .jsmart5_list_dark_red>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -20387,8 +20413,8 @@ dl.jsmart5_list_brown {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -20419,14 +20445,15 @@ ol.jsmart5_list_brown>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_brown>dt {
 	color: #ffffff;
 	background-color: #6c452f;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -20461,8 +20488,8 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_panel_brown_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #6c452f;
@@ -20514,7 +20541,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -20560,7 +20587,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_balloon_brown {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #583b28;
 	background-color: #6c452f;
 	-webkit-border-radius: 4px;
@@ -20583,7 +20610,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 
 .jsmart5_date_brown table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -20689,8 +20716,8 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -20966,7 +20993,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 
 .jsmart5_progress_brown_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -21065,10 +21092,11 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 
 .jsmart5_dialog_brown_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #6c452f;
@@ -21085,7 +21113,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 
 .jsmart5_dialog_brown_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -21104,7 +21132,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_dialog_brown_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -21181,9 +21209,9 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_table_black_head_row>th, .jsmart5_table_black_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -21350,9 +21378,9 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_grid_table_black_row_header>th, .jsmart5_grid_table_black_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -21479,7 +21507,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_menu_black_item, .jsmart5_menu_black_item_left, .jsmart5_menu_black_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -21562,7 +21590,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -21688,7 +21716,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #000000;
@@ -21704,7 +21732,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 }
 
 .jsmart5_button_black_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -21790,7 +21818,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 .jsmart5_button_black_dropdown_list li, .jsmart5_link_black_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -21862,7 +21890,7 @@ ul.jsmart5_list_brown>li, .jsmart5_list_brown>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -21896,8 +21924,8 @@ dl.jsmart5_list_black {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -21928,14 +21956,15 @@ ol.jsmart5_list_black>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_black>dt {
 	color: #ffffff;
 	background-color: #000000;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -21970,8 +21999,8 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_panel_black_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #000000;
@@ -22023,7 +22052,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -22069,7 +22098,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_balloon_black {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #000000;
 	background-color: #000000;
 	-webkit-border-radius: 4px;
@@ -22092,7 +22121,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 
 .jsmart5_date_black table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -22198,8 +22227,8 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -22475,7 +22504,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 
 .jsmart5_progress_black_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -22574,10 +22603,11 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 
 .jsmart5_dialog_black_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #000000;
@@ -22594,7 +22624,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 
 .jsmart5_dialog_black_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -22613,7 +22643,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_dialog_black_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -22690,9 +22720,9 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_table_yellow_head_row>th, .jsmart5_table_yellow_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #0e0e0e;
 }
 
@@ -22859,9 +22889,9 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_grid_table_yellow_row_header>th, .jsmart5_grid_table_yellow_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #0e0e0e;
 }
 
@@ -22988,7 +23018,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_menu_yellow_item, .jsmart5_menu_yellow_item_left, .jsmart5_menu_yellow_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -23071,7 +23101,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #0e0e0e;
@@ -23197,7 +23227,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #0e0e0e;
 	background-color: #febf04;
@@ -23213,7 +23243,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 }
 
 .jsmart5_button_yellow_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -23299,7 +23329,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 .jsmart5_button_yellow_dropdown_list li, .jsmart5_link_yellow_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -23371,7 +23401,7 @@ ul.jsmart5_list_black>li, .jsmart5_list_black>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -23405,8 +23435,8 @@ dl.jsmart5_list_yellow {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -23437,14 +23467,15 @@ ol.jsmart5_list_yellow>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_yellow>dt {
 	color: #0e0e0e;
 	background-color: #febf04;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -23479,8 +23510,8 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_panel_yellow_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #0e0e0e;
     background-color: #febf04;
@@ -23532,7 +23563,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -23578,7 +23609,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_balloon_yellow {
 	padding: 4px;
 	color: #0e0e0e;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #feaa04;
 	background-color: #febf04;
 	-webkit-border-radius: 4px;
@@ -23601,7 +23632,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 
 .jsmart5_date_yellow table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -23707,8 +23738,8 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -23984,7 +24015,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 
 .jsmart5_progress_yellow_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -24083,10 +24114,11 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 
 .jsmart5_dialog_yellow_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #0e0e0e;
 	vertical-align: top;
 	background-color: #febf04;
@@ -24103,7 +24135,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 
 .jsmart5_dialog_yellow_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -24122,7 +24154,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_dialog_yellow_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -24199,9 +24231,9 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_table_gray_head_row>th, .jsmart5_table_gray_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -24368,9 +24400,9 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_grid_table_gray_row_header>th, .jsmart5_grid_table_gray_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 }
 
@@ -24497,7 +24529,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_menu_gray_item, .jsmart5_menu_gray_item_left, .jsmart5_menu_gray_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -24580,7 +24612,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #ffffff;
@@ -24706,7 +24738,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
 	background-color: #707377;
@@ -24722,7 +24754,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 }
 
 .jsmart5_button_gray_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -24808,7 +24840,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 .jsmart5_button_gray_dropdown_list li, .jsmart5_link_gray_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -24880,7 +24912,7 @@ ul.jsmart5_list_yellow>li, .jsmart5_list_yellow>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -24914,8 +24946,8 @@ dl.jsmart5_list_gray {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -24946,14 +24978,15 @@ ol.jsmart5_list_gray>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_gray>dt {
 	color: #ffffff;
 	background-color: #707377;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -24988,8 +25021,8 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_panel_gray_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #ffffff;
     background-color: #707377;
@@ -25041,7 +25074,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -25087,7 +25120,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_balloon_gray {
 	padding: 4px;
 	color: #ffffff;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #646668;
 	background-color: #707377;
 	-webkit-border-radius: 4px;
@@ -25110,7 +25143,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 
 .jsmart5_date_gray table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -25216,8 +25249,8 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -25493,7 +25526,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 
 .jsmart5_progress_gray_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -25592,10 +25625,11 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 
 .jsmart5_dialog_gray_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #ffffff;
 	vertical-align: top;
 	background-color: #707377;
@@ -25612,7 +25646,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 
 .jsmart5_dialog_gray_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -25631,7 +25665,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_dialog_gray_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;
@@ -25708,9 +25742,9 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_table_white_head_row>th, .jsmart5_table_white_foot_row>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #313c4e;
 }
 
@@ -25877,9 +25911,9 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_grid_table_white_row_header>th, .jsmart5_grid_table_white_row_footer>td {
 	height: 35px;
 	padding: 0px 15px;
-	font-family: Arial;
+	font-family: inherit;
 	font-weight: normal;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #313c4e;
 }
 
@@ -26006,7 +26040,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_menu_white_item, .jsmart5_menu_white_item_left, .jsmart5_menu_white_item_right {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: center;
 }
 
@@ -26089,7 +26123,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	margin: 0px;
 	cursor: pointer;
 	border: 1px solid #cccccc;
-	line-height: 2em;
+	line-height: 30px;
 	text-align: center;
 	float: left;
 	color: #313c4e;
@@ -26215,7 +26249,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	min-width: 110px;
 	min-height: 34px;
     padding: 7px 11px;
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #313c4e;
 	background-color: #ffffff;
@@ -26231,7 +26265,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 }
 
 .jsmart5_button_white_image {
-	font-size: 15px;
+	font-size: 1.1em;
 	cursor: pointer;
 }
 
@@ -26317,7 +26351,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 .jsmart5_button_white_dropdown_list li, .jsmart5_link_white_dropdown_list li {
 	width: 150px;
 	height: 31px;
-	line-height: 2.1em;
+	line-height: 31px;
 	text-align: left;
 	padding-left: 10px;
 }
@@ -26389,7 +26423,7 @@ ul.jsmart5_list_gray>li, .jsmart5_list_gray>dd {
 	display: inline-block;
 	position: relative;
 	text-align: left;
-	line-height: 1.8;
+	line-height: 28px;
 	list-style-type: none;
 	counter-reset: li-counter;
 }
@@ -26423,8 +26457,8 @@ dl.jsmart5_list_white {
     color: #ffffff;
     display: inline-block;
     float: right;
-    font-size: 12px;
-    line-height: 0.8;
+    font-size: 0.85em;
+    line-height: 0.8em;
     margin-right: 5px;
     margin-top: 8px;
     min-width: 10px;
@@ -26455,14 +26489,15 @@ ol.jsmart5_list_white>li:before {
 	counter-increment: li-counter;
 	text-align: center;
 	line-height: 1.2em;
-	font-size: 13px;
+	font-size: 1em;
 }
 
 .jsmart5_list_white>dt {
 	color: #313c4e;
 	background-color: #ffffff;
 	padding: 2px 10px;
-	line-height: 1.2;
+	height: 18px;
+	line-height: 18px;
 	-webkit-border-radius: 4px;
        -moz-border-radius: 4px;
        	-ms-border-radius: 4px;
@@ -26497,8 +26532,8 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 .jsmart5_panel_white_header {
 	height: 30px;
 	padding: 4px 10px 0 8px;
-	line-height: 1.5;
-	font-size: 15px;
+	line-height: 28px;
+	font-size: 1.1em;
 	cursor: pointer;
 	color: #313c4e;
     background-color: #ffffff;
@@ -26550,7 +26585,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 	text-align: center;
 	overflow: hidden;
 	border-width: 0;
-	font-size: 14px;
+	font-size: 1em;
 	height: 100%;
 	width: auto;
 	line-height: 2.0;
@@ -26596,7 +26631,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 .jsmart5_balloon_white {
 	padding: 4px;
 	color: #313c4e;
-	font-size: .9em;
+	font-size: 0.9em;
 	border: solid 2px #cacaca;
 	background-color: #ffffff;
 	-webkit-border-radius: 4px;
@@ -26619,7 +26654,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 
 .jsmart5_date_white table {
 	width: 100%;
-	font-size: .9em;
+	font-size: 0.9em;
 	border-collapse: collapse;
 	margin: 0 0 .4em;
 }
@@ -26725,8 +26760,8 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 	padding: 0px 8px;
 	margin: 0px 4px;
 	width: 39%;
-	height: 25px;
-	line-height: 22px; 
+	height: 23px;
+	line-height: 23px; 
 	color: inherit;
 	background: #fefefe url('img/enable_select.png') right center no-repeat;
 	font: inherit;
@@ -27002,7 +27037,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 
 .jsmart5_progress_white_label {
 	width: 100%;
-	padding: 2px;
+	padding: 3px;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -27101,10 +27136,11 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 
 .jsmart5_dialog_white_titlebar {
 	position: relative;
-	height: 1.4em;
+	height: 26px;
+	line-height: 26px;
     margin: -0.2em -0.2em 0 -0.2em;
     padding: .5em 1em;
-	font-size: 15px;
+	font-size: 1.1em;
 	color: #313c4e;
 	vertical-align: top;
 	background-color: #ffffff;
@@ -27121,7 +27157,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 
 .jsmart5_dialog_white_titlebar_close {
 	position: absolute;
-	right: .3em;
+	right: 0.3em;
 	top: 50%;
 	min-width: 19px;
 	height: 18px;
@@ -27140,7 +27176,7 @@ ul.jsmart5_list_white>li, .jsmart5_list_white>dd {
 .jsmart5_dialog_white_content {
 	border: none;
 	position: relative;
-	padding: .5em 1em;
+	padding: 0.5em 1em;
 	background: #ffffff;
 	overflow: auto;
 	zoom: 1;

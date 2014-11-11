@@ -1232,8 +1232,8 @@ var Jsmart5 = (function() {
 				switchSpanOn.outerHeight(switchHeight);
 				switchSpanOff.outerHeight(switchHeight);
 				
-				switchSpanOn.css({'line-height': switchHeight * 0.07});
-				switchSpanOff.css({'line-height': switchHeight * 0.07});
+				switchSpanOn.css({'lineHeight': switchHeight + 'px'});
+				switchSpanOff.css({'lineHeight': switchHeight + 'px'});
 
 				var state = $(getId(id + SWITCH_INPUT)).val();
 	
