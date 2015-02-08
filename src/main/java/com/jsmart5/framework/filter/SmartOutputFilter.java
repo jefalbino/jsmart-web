@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.filter;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -30,7 +30,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import static com.jsmart5.framework.manager.SmartConstants.*;
+import static com.jsmart5.framework.config.SmartConstants.*;
 import static com.jsmart5.framework.manager.SmartExpression.*;
 
 public final class SmartOutputFilter implements Filter {

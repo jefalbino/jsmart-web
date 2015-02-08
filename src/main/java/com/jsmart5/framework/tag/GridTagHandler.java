@@ -261,17 +261,17 @@ public class GridTagHandler extends SmartTagHandler {
 		this.noLines = noLines;
 	}
 
-	/*package*/ void addRow(RowTagHandler row) {
+	void addRow(RowTagHandler row) {
 		this.foundRows = true;
 		this.rows.add(row);
 	}
 
-	/*package*/ void addTag(SmartTagHandler tag) {
+	void addTag(SmartTagHandler tag) {
 		this.foundGeneralTags = true;
 		this.rows.add(tag);
 	}
 
-	/*package*/ void setTotalColumns(int totalColumns) {
+	void setTotalColumns(int totalColumns) {
 		if (totalColumns > this.totalColumns) {
 			this.totalColumns = totalColumns;
 		}

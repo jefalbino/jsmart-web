@@ -31,7 +31,7 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.json.JsonLink;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
-import com.jsmart5.framework.manager.SmartUtils;
+import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
 import static com.jsmart5.framework.tag.CssConstants.*;
@@ -254,7 +254,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 		printOutput(builder);
 	}
 
-	/*package*/ void addActionItem(SmartTagHandler actionItem) {
+	void addActionItem(SmartTagHandler actionItem) {
 		this.actionItems.add(actionItem);
 	}
 

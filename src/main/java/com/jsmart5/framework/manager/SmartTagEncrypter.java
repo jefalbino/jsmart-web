@@ -27,7 +27,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-/*package*/ final class SmartTagEncrypter {
+import com.jsmart5.framework.config.SmartConfig;
+
+final class SmartTagEncrypter {
 
 	private static final String KEY_VALUE = "Aq0Sw9De8Fr7GtH6";
 
@@ -53,7 +55,7 @@ import org.apache.commons.codec.binary.Base64;
 		}
 	}
 
-	/*package*/ static String complexEncrypt(String prefix, String value) {
+	static String complexEncrypt(String prefix, String value) {
 		try {
 			if (encryptTagEnabled) {
 	            byte[] encode = encryptCipher.doFinal(value.getBytes("UTF8"));
@@ -65,7 +67,7 @@ import org.apache.commons.codec.binary.Base64;
 		return prefix + value;
 	}
 
-	/*package*/ static String complexDecrypt(String prefix, String value) {
+	static String complexDecrypt(String prefix, String value) {
 		try {
 			if (encryptTagEnabled) {
 				byte[] decoded = Base64.decodeBase64(value.replaceFirst(prefix, ""));

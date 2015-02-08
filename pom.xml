@@ -32,12 +32,32 @@
 
 	<dependencies>
 
-		<!-- Java EE 6 Profiles -->
+		<!-- Servlet -->
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-web-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
+		<!-- JSTL -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		
+		<!-- JSP -->
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
+		<!-- Expression Language -->
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<!-- Java EE Injection -->
@@ -45,7 +65,13 @@
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
-			<scope>compile</scope>
+		</dependency>
+		
+		<!-- EJB -->
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>ejb-api</artifactId>
+			<version>3.0</version>
 		</dependency>
 
 		<!-- Spring Web -->
@@ -53,7 +79,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>4.0.0.RELEASE</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- JAXB -->
@@ -69,7 +94,6 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20090211</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Reflections powered by google -->
@@ -77,7 +101,6 @@
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
 			<version>0.9.9-RC1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Commons Lang to Escape Input -->
@@ -85,7 +108,6 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.4</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- JodaTime to support DateTime -->
@@ -93,7 +115,6 @@
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.2</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Google Html Compressor -->
@@ -101,7 +122,6 @@
 			<groupId>com.googlecode.htmlcompressor</groupId>
 			<artifactId>htmlcompressor</artifactId>
 			<version>1.4</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Apache Commons Codec for Encryption -->
@@ -109,7 +129,6 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.8</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- JUnit -->

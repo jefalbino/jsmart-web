@@ -248,7 +248,7 @@ public final class TabTagHandler extends SmartTagHandler {
 		return defaultValue;
 	}
 
-	/*package*/ void addTabItem(TabItemTagHandler tabItem) {
+	void addTabItem(TabItemTagHandler tabItem) {
 		tabItems.add(tabItem);
 	}
 

@@ -16,28 +16,31 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.util;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+/**
+ * This enumerator represents the category of messages presented on client side.
+ */
+public enum SmartMessage {
 
-/*package*/ final class SmartAttributeAdapter extends XmlAdapter<String, String[]> {
+	/**
+	 * It indicates the message as information message.
+	 */
+	INFO, 
 
-	@Override
-	public String marshal(String[] values) throws Exception {
-		String string = "";
-		for (String value : values) {
-			string += value + ",";
-		}
-		return string;
-	}
+	/**
+	 * It indicates the message as warning message.
+	 */
+	WARNING,
 
-	@Override
-	public String[] unmarshal(String value) throws Exception {
-		String[] values = value.split(",");
-		for (int i = 0; i < values.length; i++) {
-			values[i] = values[i].trim();
-		}
-		return values;
-	}
+	/**
+	 * It indicates the message as error message.
+	 */
+	ERROR, 
+
+	/**
+	 * It indicates the message as success message.
+	 */
+	SUCCESS;
 
 }

@@ -34,8 +34,10 @@ import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 
-import com.jsmart5.framework.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 import com.jsmart5.framework.annotation.SmartBean;
+import com.jsmart5.framework.util.SmartMessage;
+import com.jsmart5.framework.util.SmartUtils;
 
 /**
  * This class represents the context of the request being currently processed and it allows {@link SmartBean}
@@ -82,7 +84,7 @@ public final class SmartContext implements Serializable {
 		this.response = response;
 	}
 
-	/*package*/ static final void setServlet(final Servlet servlet) {
+	static final void setServlet(final Servlet servlet) {
 		smartServlet = servlet;
 		jspContext = JSP_FACTORY.getJspApplicationContext(servlet.getServletConfig().getServletContext());
 	}
@@ -91,11 +93,11 @@ public final class SmartContext implements Serializable {
 		return THREADS.get(Thread.currentThread());
 	}
 
-	/*package*/ static final void initCurrentInstance(final HttpServletRequest request, final HttpServletResponse response) {
+	public static final void initCurrentInstance(final HttpServletRequest request, final HttpServletResponse response) {
 		THREADS.put(Thread.currentThread(), new SmartContext(request, response));
 	}
 
-	/*package*/ static final void closeCurrentInstance() {
+	public static final void closeCurrentInstance() {
 		THREADS.remove(Thread.currentThread()).close();
 	}
 
@@ -119,7 +121,7 @@ public final class SmartContext implements Serializable {
 		pageContext = null;
 	}
 
-	/*package*/ static PageContext getPageContext() {
+	static PageContext getPageContext() {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.getPage() : null;
 	}
@@ -131,7 +133,7 @@ public final class SmartContext implements Serializable {
 		return pageContext;
 	}
 
-	/*package*/ static ExpressionFactory getExpressionFactory() {
+	static ExpressionFactory getExpressionFactory() {
 		return jspContext.getExpressionFactory();
 	}
 
@@ -178,7 +180,7 @@ public final class SmartContext implements Serializable {
 		return context != null ? context.response : null;
 	}
 
-	/*package*/ static String getRedirectTo() {
+	static String getRedirectTo() {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.redirectTo : null;
 	}
@@ -234,7 +236,7 @@ public final class SmartContext implements Serializable {
 		return request != null ? "XMLHttpRequest".equals(request.getHeader("X-Requested-With")) : false;
 	}
 
-	/*package*/ static Map<String, SmartMessage> getMessages() {
+	static Map<String, SmartMessage> getMessages() {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.messages : null;
 	}
@@ -254,7 +256,7 @@ public final class SmartContext implements Serializable {
 		}
 	}
 
-	/*package*/ static Map<String, SmartMessage> getMessages(final String id) {
+	static Map<String, SmartMessage> getMessages(final String id) {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.fixedMessages.get(id) : null;
 	}
@@ -282,7 +284,7 @@ public final class SmartContext implements Serializable {
 		}
 	}
 
-	/*package*/ static String getParameter(final String name) {
+	static String getParameter(final String name) {
 		SmartContext context = getCurrentInstance();
 		if (context != null) {
 			String object = context.parameters.get(name);
@@ -294,24 +296,24 @@ public final class SmartContext implements Serializable {
 		return null;
 	}
 
-	/*package*/ static Map<String, String> getParameters() {
+	static Map<String, String> getParameters() {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.parameters : null;
 	}
 
-	/*package*/ static void setParameters(final Map<String, String> parameters) {
+	static void setParameters(final Map<String, String> parameters) {
 		SmartContext context = getCurrentInstance();
 		if (context != null) {
 			context.parameters.putAll(parameters);
 		}
 	}
 
-	/*package*/ static String getSelectIndexes() {
+	static String getSelectIndexes() {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.selectIndexes : null;
 	}
 
-	/*package*/ static void setSelectIndexes(final Integer[] selectIndexes) {
+	static void setSelectIndexes(final Integer[] selectIndexes) {
 		SmartContext context = getCurrentInstance();
 		if (context != null) {
 			for (int i = 0; i < selectIndexes.length; i++) {
@@ -320,12 +322,12 @@ public final class SmartContext implements Serializable {
 		}
 	}
 
-	/*package*/ static boolean isEditItemTagEnabled() {
+	static boolean isEditItemTagEnabled() {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.editItemTagEnabled : false;
 	}
 
-	/*package*/ static void setEditItemTagEnabled(final boolean editItemTagEnabled) {
+	static void setEditItemTagEnabled(final boolean editItemTagEnabled) {
 		SmartContext context = getCurrentInstance();
 		if (context != null) {
 			context.editItemTagEnabled = editItemTagEnabled;
@@ -344,18 +346,20 @@ public final class SmartContext implements Serializable {
 			HttpServletRequest request = getRequest();
 			if (request != null && request.getAttribute(name) != null) {
 				return request.getAttribute(name);
-
-			} else {
-				HttpSession session = getSession();
-				if (session != null && session.getAttribute(name) != null) {
-					return session.getAttribute(name);
-
-				} else {
-					ServletContext application = getApplication();
-					if (application.getAttribute(name) != null) {
-						return application.getAttribute(name);
+			}
+			
+			HttpSession session = getSession();
+			if (session != null) {
+				synchronized (session) {
+					if (session.getAttribute(name) != null) {
+						return session.getAttribute(name);
 					}
 				}
+			}
+
+			ServletContext application = getApplication();
+			if (application.getAttribute(name) != null) {
+				return application.getAttribute(name); 
 			}
 		}
 		return null;
@@ -375,10 +379,16 @@ public final class SmartContext implements Serializable {
 			if (request != null && request.getAttribute(name) != null) {
 				return true;
 			}
+
 			HttpSession session = getSession();
-			if (session != null && session.getAttribute(name) != null) {
-				return true;
+			if (session != null) {
+				synchronized (session) {
+					if (session.getAttribute(name) != null) {
+						return true;
+					}
+				}
 			}
+
 			return getApplication().getAttribute(name) != null;
 		}
 		return false;

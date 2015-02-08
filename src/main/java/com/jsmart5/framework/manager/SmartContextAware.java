@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import static com.jsmart5.framework.manager.SmartHandler.*;
 
 @Service
-/*package*/ final class SmartContextAware implements ApplicationContextAware {
+final class SmartContextAware implements ApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

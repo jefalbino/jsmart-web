@@ -25,11 +25,11 @@ import javax.servlet.jsp.JspException;
 
 import com.jsmart5.framework.manager.SmartContext;
 import com.jsmart5.framework.manager.SmartTagHandler;
-import com.jsmart5.framework.manager.SmartMessage;
+import com.jsmart5.framework.util.SmartMessage;
 
-import static com.jsmart5.framework.manager.SmartMessage.*;
 import static com.jsmart5.framework.tag.HtmlConstants.*;
 import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.util.SmartMessage.*;
 
 public final class MessageTagHandler extends SmartTagHandler {
 

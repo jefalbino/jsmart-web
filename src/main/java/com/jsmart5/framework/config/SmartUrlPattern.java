@@ -16,38 +16,52 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-/*package*/ final class SmartCachePattern {
+import com.jsmart5.framework.util.SmartUtils;
 
-	private String cacheControl;
+public final class SmartUrlPattern {
 
-	private String[] files;
+	private String url;
 
-	@XmlAttribute
-	public String getCacheControl() {
-		return cacheControl;
+	private String jsp;
+
+	private String[] access; // *, roles allowed with comma separated
+
+	private boolean loggedAccess = true;
+
+	@XmlValue
+	public String getUrl() {
+		return url;
 	}
 
-	public void setCacheControl(String cacheControl) {
-		if (cacheControl != null && !cacheControl.trim().isEmpty()) {
-			this.cacheControl = cacheControl;
-		}
+	public void setUrl(String url) {
+		this.url = SmartUtils.decodePath(url);
+	}
+
+	@XmlAttribute
+	public String getJsp() {
+		return jsp;
+	}
+
+	public void setJsp(String jsp) {
+		this.jsp = jsp;
 	}
 
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value = SmartAttributeAdapter.class)
-	public String[] getFiles() {
-		return files;
+	public String[] getAccess() {
+		return access;
 	}
 
-	public boolean isEndedIn(String file) {
-		if (files != null && file != null) {
-			for (String fl : files) {
-				if (file.endsWith("." + fl)) {
+	public boolean containsAccess(String value) {
+		if (access != null) {
+			for (String acs : access) {
+				if (acs.equals(value)) {
 					return true;
 				}
 			}
@@ -55,8 +69,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 		return false;
 	}
 
-	public void setFiles(String[] files) {
-		this.files = files;
+	public void setAccess(String[] access) {
+		if (access != null && access.length > 0) {
+			this.access = access;
+		}
 	}
-	
+
+	@XmlAttribute
+	public boolean isLoggedAccess() {
+		return loggedAccess;
+	}
+
+	public void setLoggedAccess(boolean loggedAccess) {
+		this.loggedAccess = loggedAccess;
+	}
+
 }

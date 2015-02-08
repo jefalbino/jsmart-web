@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.filter;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -32,7 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import static com.jsmart5.framework.manager.SmartConfig.*;
+import com.jsmart5.framework.config.SmartErrorPage;
+
+import static com.jsmart5.framework.config.SmartConfig.*;
 
 public final class SmartErrorFilter implements Filter {
 

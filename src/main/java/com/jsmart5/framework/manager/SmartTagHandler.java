@@ -29,24 +29,28 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.json.JSONObject;
 
+import com.jsmart5.framework.config.SmartConstants;
+import com.jsmart5.framework.util.SmartMessage;
 
+
+import static com.jsmart5.framework.config.SmartConfig.*;
 import static com.jsmart5.framework.manager.SmartExpression.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
-import static com.jsmart5.framework.manager.SmartText.*;
-import static com.jsmart5.framework.manager.SmartConfig.*;
+import static com.jsmart5.framework.util.SmartText.*;
 
 public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	protected static final Logger LOGGER = Logger.getLogger(SmartTagHandler.class.getPackage().getName());
 
-	/*package*/ static final int J_TAG_LENGTH = 6;
+	static final int J_TAG_LENGTH = 6;
 
-	/*package*/ static final String J_TAG_INIT = "j0";
+	static final String J_TAG_INIT = "j0";
 
 	protected static final int DEFAULT_VALUE = -1;
 
@@ -344,25 +348,31 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	}
 
 	protected void appendScript(StringBuilder script, boolean appendToEnd) {
-		StringBuilder[] scriptBuilders = (StringBuilder[]) SmartContext.getSession().getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
-		if (scriptBuilders == null) {
-			scriptBuilders = new StringBuilder[] {new StringBuilder(), new StringBuilder()};
-			SmartContext.getSession().setAttribute(SmartConstants.SCRIPT_BUILDER_ATTR, scriptBuilders);
-		}
-		if (appendToEnd) {
-			scriptBuilders[1].append(script.toString());
-		} else {
-			scriptBuilders[0].append(script.toString());
+		HttpSession session = SmartContext.getSession();
+		synchronized (session) {
+			StringBuilder[] scriptBuilders = (StringBuilder[]) session.getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
+			if (scriptBuilders == null) {
+				scriptBuilders = new StringBuilder[] {new StringBuilder(), new StringBuilder()};
+				session.setAttribute(SmartConstants.SCRIPT_BUILDER_ATTR, scriptBuilders);
+			}
+			if (appendToEnd) { 
+				scriptBuilders[1].append(script.toString());
+			} else {
+				scriptBuilders[0].append(script.toString());
+			}
 		}
 	}
 
 	protected void prependScript(StringBuilder script) {
-		StringBuilder[] scriptBuilders = (StringBuilder[]) SmartContext.getSession().getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
-		if (scriptBuilders == null) {
-			scriptBuilders = new StringBuilder[] {new StringBuilder(), new StringBuilder()};
-			SmartContext.getSession().setAttribute(SmartConstants.SCRIPT_BUILDER_ATTR, scriptBuilders);
+		HttpSession session = SmartContext.getSession();
+		synchronized (session) {
+			StringBuilder[] scriptBuilders = (StringBuilder[]) session.getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
+			if (scriptBuilders == null) {
+				scriptBuilders = new StringBuilder[] {new StringBuilder(), new StringBuilder()};
+				session.setAttribute(SmartConstants.SCRIPT_BUILDER_ATTR, scriptBuilders);
+			}
+			scriptBuilders[0].insert(0, script.toString());
 		}
-		scriptBuilders[0].insert(0, script.toString());
 	}
 
 	protected void printOutput(StringBuilder builder) throws IOException {

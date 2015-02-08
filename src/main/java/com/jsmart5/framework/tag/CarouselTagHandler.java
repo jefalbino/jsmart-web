@@ -169,7 +169,7 @@ public final class CarouselTagHandler extends SmartTagHandler {
 		printOutput(builder);
 	}
 
-	/*package*/ void addItem(CarouselItemTagHandler item) {
+	void addItem(CarouselItemTagHandler item) {
 		this.items.add(item);
 	}
 

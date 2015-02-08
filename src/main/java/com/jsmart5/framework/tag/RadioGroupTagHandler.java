@@ -140,7 +140,7 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 		printOutput(builder.append(CLOSE_DIV_TAG));
 	}
 
-	/*package*/ void addItem(GroupItemTagHandler item) {
+	void addItem(GroupItemTagHandler item) {
 		this.items.add(item);
 	}
 

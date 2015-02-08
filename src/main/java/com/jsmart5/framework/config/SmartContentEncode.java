@@ -16,57 +16,36 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-/*package*/ final class SmartSecureMethod {
+public final class SmartContentEncode {
 
-	private String transport; // none, confidential (ssl)
+	private String encode;
 
-	private String[] roles; // TODO: Change to access and may remove emptyRole
-
-	private String emptyRole; // deny, permit
-
-	private String method; // *, delete, get, head, options, post, put, trace
+	private String[] mimeTypes;
 
 	@XmlAttribute
-	public String getTransport() {
-		return transport;
+	public String getEncode() {
+		return encode;
 	}
 
-	public void setTransport(String transport) {
-		this.transport = transport;
+	public void setEncode(String encode) {
+		if (encode != null) {
+			this.encode = encode.toLowerCase();
+		}
 	}
 
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value = SmartAttributeAdapter.class)
-	public String[] getRoles() {
-		return roles;
+	public String[] getMimeTypes() {
+		return mimeTypes;
 	}
 
-	public void setRoles(String[] roles) {
-		this.roles = roles;
-	}
-
-	@XmlAttribute(name = "emptyRole")
-	public String getEmptyRole() {
-		return emptyRole;
-	}
-
-	public void setEmptyRole(String emptyRole) {
-		this.emptyRole = emptyRole;
-	}
-
-	@XmlValue
-	public String getMethod() {
-		return method;
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
+	public void setMimeTypes(String[] mimeTypes) {
+		this.mimeTypes = mimeTypes;
 	}
 
 }

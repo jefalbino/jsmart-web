@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-/*package*/ final class SmartPageScope implements Serializable {
+final class SmartPageScope implements Serializable {
 
 	private static final long serialVersionUID = 4464006622540986000L;
 

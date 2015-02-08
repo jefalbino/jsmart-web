@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.tag;
 
-/*package*/ interface CssConstants {
+interface CssConstants {
 
 	public static final String CSS_MENU_HORIZONTAL = "jsmart5_menu_%s_horizontal";
 

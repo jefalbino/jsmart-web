@@ -61,7 +61,7 @@ public final class WhenTagHandler extends SmartTagHandler {
 		this.access = roles;
 	}
 
-	/*package*/ List<String> getAccess() {
+	List<String> getAccess() {
 		if (!access.trim().isEmpty()) {
 			return Arrays.asList(access.split(","));
 		}

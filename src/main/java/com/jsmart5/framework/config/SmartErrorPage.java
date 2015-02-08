@@ -16,19 +16,33 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.annotation;
+package com.jsmart5.framework.config;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlValue;
 
-/**
- * The {@link PreDestroy} annotation is used on methods as a callback notification to 
- * signal that the instance is in the process of being removed by the container.
- */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PreDestroy {
+public final class SmartErrorPage {
+	
+	private Integer code;
+
+	private String page;
+
+	@XmlAttribute
+	public Integer getCode() {
+		return code;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	@XmlValue
+	public String getPage() {
+		return page;
+	}
+
+	public void setPage(String page) {
+		this.page = page;
+	}
 
 }

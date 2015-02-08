@@ -96,19 +96,19 @@ public abstract class TableAdapterHandler<T> {
 		this.reload = true;
 	}
 
-	/*package*/ boolean isReload() {
+	boolean isReload() {
 		return this.reload;
 	}
 
-	/*package*/ void resetReload() {
+	void resetReload() {
 		this.reload = false;
 	}
 
-	/*package*/ long getFirst() {
+	long getFirst() {
 		return this.first;
 	}
 
-	/*package*/ void setFirst(long first) {
+	void setFirst(long first) {
 		this.first = first;
 	}
 
@@ -122,7 +122,7 @@ public abstract class TableAdapterHandler<T> {
 		return this.size;
 	}
 
-	/*package*/ void setSize(long size) {
+	void setSize(long size) {
 		this.size = size;
 	}
 
@@ -135,23 +135,23 @@ public abstract class TableAdapterHandler<T> {
 		return this.loaded;
 	}
 
-	/*package*/ void setLoaded(List<T> loaded) {
+	void setLoaded(List<T> loaded) {
 		this.loaded = loaded;
 	}
 
-	/*package*/ void setSortBy(String sortBy) {
+	void setSortBy(String sortBy) {
 		this.sortBy = sortBy;
 	}
 
-	/*package*/ void setSortOrder(SortOrder sortOrder) {
+	void setSortOrder(SortOrder sortOrder) {
 		this.sortOrder = sortOrder;
 	}
 
-	/*package*/ void setFilterBy(Map<String, String> filterBy) {
+	void setFilterBy(Map<String, String> filterBy) {
 		this.filterBy = filterBy;
 	}
 
-	/*package*/ boolean shallReload(String sortBy, SortOrder sortOrder, Map<String, String> filterBy) {
+	boolean shallReload(String sortBy, SortOrder sortOrder, Map<String, String> filterBy) {
 		boolean shallReload = getSize() == 0l || isReload();
 		shallReload |= sortBy != null ? !sortBy.equals(this.sortBy) : this.sortBy != null;
 		shallReload |= sortOrder != this.sortOrder;
@@ -159,7 +159,7 @@ public abstract class TableAdapterHandler<T> {
 		return shallReload;
 	}
 
-	/*package*/ boolean shallReload(long first, String sortBy, SortOrder sortOrder, Map<String, String> filterBy) {
+	boolean shallReload(long first, String sortBy, SortOrder sortOrder, Map<String, String> filterBy) {
 		boolean shallReload = getLoaded() == null || first != getFirst() || isReload();
 		shallReload |= sortBy != null ? !sortBy.equals(this.sortBy) : this.sortBy != null;
 		shallReload |= sortOrder != this.sortOrder;

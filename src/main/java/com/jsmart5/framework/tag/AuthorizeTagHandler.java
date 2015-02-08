@@ -76,11 +76,11 @@ public final class AuthorizeTagHandler extends SmartTagHandler {
 		}
 	}
 
-	/*package*/ void addWhen(WhenTagHandler when) {
+	void addWhen(WhenTagHandler when) {
 		this.whens.add(when);
 	}
 
-	/*package*/ void setOtherwise(OtherwiseTagHandler otherwise) {
+	void setOtherwise(OtherwiseTagHandler otherwise) {
 		this.otherwise = otherwise;
 	}
 

@@ -16,9 +16,9 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
-/*package*/ final class SmartConstants {
+public final class SmartConstants {
 
 	public static final String WEB_INF = "/WEB-INF";
 

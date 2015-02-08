@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,7 +39,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javax.ejb.EJB;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -51,43 +54,51 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.jsmart5.framework.annotation.AuthenticateBean;
 import com.jsmart5.framework.annotation.AuthenticateField;
 import com.jsmart5.framework.annotation.AuthorizeAccess;
 import com.jsmart5.framework.annotation.ExecuteAccess;
-import com.jsmart5.framework.annotation.PostConstruct;
 import com.jsmart5.framework.annotation.PostPreset;
 import com.jsmart5.framework.annotation.PostSubmit;
-import com.jsmart5.framework.annotation.PreDestroy;
 import com.jsmart5.framework.annotation.PreSubmit;
 import com.jsmart5.framework.annotation.ScopeType;
 import com.jsmart5.framework.annotation.SmartBean;
+import com.jsmart5.framework.annotation.SmartFilter;
 import com.jsmart5.framework.annotation.SmartListener;
 import com.jsmart5.framework.annotation.Unescape;
+import com.jsmart5.framework.config.SmartUrlPattern;
+import com.jsmart5.framework.listener.SmartContextListener;
+import com.jsmart5.framework.listener.SmartSessionListener;
+import com.jsmart5.framework.util.SmartUtils;
 
-import static com.jsmart5.framework.manager.SmartConfig.*;
-import static com.jsmart5.framework.manager.SmartConstants.*;
+import static com.jsmart5.framework.config.SmartConfig.*;
+import static com.jsmart5.framework.config.SmartConstants.*;
 import static com.jsmart5.framework.manager.SmartExpression.*;
 
-/*package*/ enum SmartHandler {
+public enum SmartHandler {
 
 	HANDLER();
 
 	private static final Logger LOGGER = Logger.getLogger(SmartHandler.class.getPackage().getName());
 
 	private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN + "|" + URL_PARAM_PATTERN + "|" + INCLUDE_JSPF_PATTERN);
-
-	/*package*/ Map<String, Class<?>> smartBeans;
-
-	/*package*/ Map<String, Class<?>> authBeans;
-
-	/*package*/ Map<String, Class<?>> smartServlets;
-
-	/*package*/ Set<SmartContextListener> contextListeners;
 	
-	/*package*/ Set<SmartSessionListener> sessionListeners;
+	private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
+
+	Map<String, Class<?>> smartBeans;
+
+	Map<String, Class<?>> authBeans;
+
+	Map<String, Class<?>> smartServlets;
+
+	Map<String, Class<?>> smartFilters;
+
+	Set<SmartContextListener> contextListeners;
+	
+	Set<SmartSessionListener> sessionListeners;
 
 	private Map<String, String> forwardPaths;
 
@@ -103,19 +114,21 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 
 	private Map<String, JspPageBean> jspPageBeans = new HashMap<String, JspPageBean>();
 
-	/*package*/ void init(ServletContext context) {
+	void init(ServletContext context) {
+		checkWebXmlPath(context);
 		initJndiMapping();
 		initAnnotatedBeans(context);
 		initForwardPaths(context);
 		initJspPageBeans(context);
 	}
 
-	/*package*/ void destroy(ServletContext context) {
+	void destroy(ServletContext context) {
         try {
         	finalizeBeans(context);
         	authBeans.clear();
         	smartBeans.clear();
         	smartServlets.clear();
+        	smartFilters.clear();
         	contextListeners.clear();
         	sessionListeners.clear();
         	forwardPaths.clear();
@@ -128,12 +141,12 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
         }
 	}
 
-	/*package*/ void setSpringContext(ApplicationContext springContext) {
+	void setSpringContext(ApplicationContext springContext) {
 		this.springContext = springContext;
 	}
 
 	@SuppressWarnings("all")
-	/*package*/ void executePreSubmit(Object bean) {
+	void executePreSubmit(Object bean) {
 		for (Method method : getBeanMethods(bean.getClass())) {
 			if (method.isAnnotationPresent(PreSubmit.class)) {
 				try {
@@ -147,7 +160,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 	}
 
 	@SuppressWarnings("all")
-	/*package*/ void executePostSubmit(Object bean) {
+	void executePostSubmit(Object bean) {
 		for (Method method : getBeanMethods(bean.getClass())) {
 			if (method.isAnnotationPresent(PostSubmit.class)) {
 				try {
@@ -161,7 +174,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 	}
 
 	@SuppressWarnings("all")
-	/*package*/ void executePreDestroy(Object bean) {
+	void executePreDestroy(Object bean) {
 		for (Method method : getBeanMethods(bean.getClass())) {
 			if (method.isAnnotationPresent(PreDestroy.class)) {
 				try {
@@ -175,7 +188,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 	}
 
 	@SuppressWarnings("all")
-	/*package*/ void executePostConstruct(Object bean) {
+	void executePostConstruct(Object bean) {
 		for (Method method : getBeanMethods(bean.getClass())) {
 			if (method.isAnnotationPresent(PostConstruct.class)) {
 				try {
@@ -188,7 +201,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		}
 	}
 
-	/*package*/ void executeUrlParams(String name, Set<String> urlParams) {
+	void executeUrlParams(String name, Set<String> urlParams) {
 		if (urlParams != null && !urlParams.isEmpty()) {
 			Set<String> tempPresets = new HashSet<String>();
 
@@ -206,7 +219,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		}
 	}
 
-	/*package*/ void executePostPreset(String name, Object bean, Map<String, String> expressions) {
+	void executePostPreset(String name, Object bean, Map<String, String> expressions) {
 		try {
 			if (expressions != null) {
 				for (Field field : getBeanFields(bean.getClass())) {
@@ -228,7 +241,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		}
 	}
 
-	/*package*/ boolean containsUnescapeMethod(String[] names) {
+	boolean containsUnescapeMethod(String[] names) {
 		if (names != null && names.length > 1) {
 			Class<?> clazz = smartBeans.get(names[0]);
 			if (clazz != null) {
@@ -242,11 +255,11 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		return false;
 	}
 
-	/*package*/ Map<String, String> getRequestExpressions() {
+	Map<String, String> getRequestExpressions() {
 		return EXPRESSIONS.getRequestExpressions();
 	}
 
-	/*package*/ String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
+	String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
 		String submitExpression = null;
 		for (Entry<String, String> expr : expressions.entrySet()) {
 			String expression = EXPRESSIONS.handleRequestExpression(expr.getKey(), expr.getValue());
@@ -257,7 +270,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		return submitExpression;
 	}
 
-	/*package*/ void instantiateBeans(String path, Map<String, String> expressions) throws Exception {
+	void instantiateBeans(String path, Map<String, String> expressions) throws Exception {
 		JspPageBean jspPageBean = jspPageBeans.get(path);
 		if (jspPageBean != null) {
 
@@ -269,43 +282,61 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 
 			// Include into session the path with respective page scoped bean names
 			if (!pageScope.getNames().isEmpty()) {
-				SmartContext.getSession().setAttribute(path, pageScope);
+				HttpSession session = SmartContext.getSession();
+				synchronized (session) {
+					session.setAttribute(path, pageScope);
+				}
 			}
 		}
 	}
 
 	private Object instantiateBean(String name, Map<String, String> expressions, Set<String> urlParams, SmartPageScope pageScope) throws Exception {
 		Object bean = null;
+		ServletContext context = SmartContext.getApplication();
+		HttpSession session = SmartContext.getSession();
+		HttpServletRequest request = SmartContext.getRequest();
 
-		if (SmartContext.getRequest().getAttribute(name) != null) {
-			bean = SmartContext.getRequest().getAttribute(name);
+		if (request.getAttribute(name) != null) {
+			bean = request.getAttribute(name);
 			executeInjection(bean, pageScope);
+			return bean;
+		}
 
-		} else if (SmartContext.getSession().getAttribute(name) != null) {
-			bean = SmartContext.getSession().getAttribute(name);
+		synchronized (session) {
+			if (session.getAttribute(name) != null) {
+				bean = session.getAttribute(name);
+				executeInjection(bean, pageScope);
+				return bean;
+			}
+		}
+
+		if (context.getAttribute(name) != null) {
+			bean = context.getAttribute(name);
 			executeInjection(bean, pageScope);
+			return bean;
+		}
 
-		} else if (SmartContext.getApplication().getAttribute(name) != null) {
-			bean = SmartContext.getApplication().getAttribute(name);
-			executeInjection(bean, pageScope);
-
-		} else if (smartBeans.containsKey(name)) {
+		if (smartBeans.containsKey(name)) {
 			Class<?> clazz = smartBeans.get(name);
 			bean = clazz.newInstance();
 
 			SmartBean servletBean = clazz.getAnnotation(SmartBean.class);
 			if (servletBean.scope().equals(ScopeType.REQUEST_SCOPE)) {
-				SmartContext.getRequest().setAttribute(name, bean);
+				request.setAttribute(name, bean);
 
 			} else if (servletBean.scope().equals(ScopeType.PAGE_SCOPE)) {
-				pageScope.addName(name);
-				SmartContext.getSession().setAttribute(name, bean);
+				synchronized (session) {
+					pageScope.addName(name);
+					session.setAttribute(name, bean);
+				}
 
 			} else if (servletBean.scope().equals(ScopeType.SESSION_SCOPE)) {
-				SmartContext.getSession().setAttribute(name, bean);
+				synchronized (session) {
+					session.setAttribute(name, bean);
+				}
 
 			} else if (servletBean.scope().equals(ScopeType.APPLICATION_SCOPE)) {
-				SmartContext.getApplication().setAttribute(name, bean);
+				context.setAttribute(name, bean);
 
 			} else {
 				return null;
@@ -319,7 +350,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		return bean;
 	}
 
-	/*package*/ void executeInjection(Object bean) {
+	void executeInjection(Object bean) {
 		executeInjection(bean, null);
 	}
 
@@ -347,6 +378,14 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		return servlet.name();
 	}
 
+	private String getClassName(SmartFilter filter, Class<?> filterClass) {
+		if (filter.name() == null || filter.name().isEmpty()) {
+			String filterName = filterClass.getSimpleName();
+			return filterName.replaceFirst(filterName.substring(0, 1), filterName.substring(0, 1).toLowerCase());
+		}
+		return filter.name();
+	}
+
 	private void executeInjection(Object bean, SmartPageScope pageScope) {
 		try {
 			for (Field field : getBeanFields(bean.getClass())) {
@@ -370,15 +409,23 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 				// Inject dependencies
 				if (field.getAnnotations().length > 0) {
 
-					if (initialContext != null && field.isAnnotationPresent(EJB.class) && jndiMapping.containsKey(field.getType())) {
+					if (initialContext != null && jndiMapping.containsKey(field.getType())) {
 						field.setAccessible(true);
 						field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
 						continue;
 					}
 
-					if (springContext != null && springContext.containsBean(field.getName())) {
-						field.setAccessible(true);
-						field.set(bean, springContext.getBean(field.getType()));
+					if (springContext != null) {
+						if (springContext.containsBean(field.getName())) {
+							field.setAccessible(true);
+							field.set(bean, springContext.getBean(field.getType()));
+
+						} else if (field.isAnnotationPresent(Value.class)) {
+							String propertyName = field.getAnnotation(Value.class).value();
+							propertyName = SPRING_VALUE_PATTERN.matcher(propertyName).replaceAll("");
+							field.setAccessible(true);
+							field.set(bean, springContext.getEnvironment().getProperty(propertyName, field.getType()));
+						}
 					}
 				}
 			}
@@ -387,7 +434,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		}
 	}
 
-	/*package*/ void finalizeBeans(ServletContext servletContext) {
+	void finalizeBeans(ServletContext servletContext) {
 		List<String> names = Collections.list(servletContext.getAttributeNames());
 		for (String name : names) {
 			Object bean = servletContext.getAttribute(name);
@@ -411,46 +458,52 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		}
 	}
 
-	/*package*/ void finalizeBeans(HttpSession session) {
-		List<String> names = Collections.list(session.getAttributeNames());
-		for (String name : names) {
-			Object bean = session.getAttribute(name);
-			if (bean != null) {
+	void finalizeBeans(HttpSession session) {
+		synchronized (session) {
+			List<String> names = Collections.list(session.getAttributeNames());
+			for (String name : names) {
+				Object bean = session.getAttribute(name);
+				if (bean != null) {
 
-				if (bean.getClass().isAnnotationPresent(SmartBean.class)) {
-					finalizeBean(bean, session);
+					if (bean.getClass().isAnnotationPresent(SmartBean.class)) {
+						finalizeBean(bean, session);
 
-				} else if (bean.getClass().isAnnotationPresent(AuthenticateBean.class)) {
-					finalizeAuthBean(bean, session);
+					} else if (bean.getClass().isAnnotationPresent(AuthenticateBean.class)) {
+						finalizeAuthBean(bean, session);
+					}
 				}
 			}
 		}
 	}
 
-	/*package*/ void finalizeBeans(String path, HttpSession session) {
-		List<String> names = Collections.list(session.getAttributeNames());
-		for (String attrname : names) {
-			Object object = session.getAttribute(attrname);
+	void finalizeBeans(String path, HttpSession session) {
+		synchronized (session) {
+			List<String> names = Collections.list(session.getAttributeNames());
+			for (String attrname : names) {
+				Object object = session.getAttribute(attrname);
 
-			if (!attrname.equals(path) && object instanceof SmartPageScope) {
-				
-				for (String name : ((SmartPageScope) object).getNames()) {
+				if (!attrname.equals(path) && object instanceof SmartPageScope) {
+					
+					for (String name : ((SmartPageScope) object).getNames()) {
+						finalizeBean(session.getAttribute(name), session);
+					}
+					session.removeAttribute(attrname);
+				}
+			}
+		}
+	}
+
+	void finalizeBean(String path, HttpSession session) {
+		synchronized (session) {
+			Object pageScope = session.getAttribute(path);
+			if (pageScope instanceof SmartPageScope) {
+
+				for (String name : ((SmartPageScope) pageScope).getNames()) {
 					finalizeBean(session.getAttribute(name), session);
 				}
-				session.removeAttribute(attrname);
 			}
+			session.removeAttribute(path);
 		}
-	}
-
-	/*package*/ void finalizeBean(String path, HttpSession session) {
-		Object pageScope = session.getAttribute(path);
-		if (pageScope instanceof SmartPageScope) {
-
-			for (String name : ((SmartPageScope) pageScope).getNames()) {
-				finalizeBean(session.getAttribute(name), session);
-			}
-		}
-		session.removeAttribute(path);
 	}
 
 	private void finalizeBean(Object bean, HttpSession session) {
@@ -464,7 +517,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		}
 	}
 
-	/*package*/ void finalizeBeans(HttpServletRequest request) {
+	public void finalizeBeans(HttpServletRequest request) {
 		List<String> names = Collections.list(request.getAttributeNames());
 		for (String name : names) {
 
@@ -528,7 +581,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		}
 	}
 
-	/*package*/ void instantiateAuthBean(HttpSession session) {
+	void instantiateAuthBean(HttpSession session) {
 		for (String name : authBeans.keySet()) {
 			instantiateAuthBean(name, session);
 
@@ -538,34 +591,45 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 	}
 
 	private Object instantiateAuthBean(String name, HttpSession session) {
-		Object bean = session.getAttribute(name);
-		if (bean == null) {
-			try {
-				bean = authBeans.get(name).newInstance();
-				for (Field field : getBeanFields(bean.getClass())) {
+		synchronized (session) {
+			Object bean = session.getAttribute(name);
 
-					if (field.getAnnotations().length > 0) {
+			if (bean == null) {
+				try {
+					bean = authBeans.get(name).newInstance();
+					for (Field field : getBeanFields(bean.getClass())) {
 
-						if (initialContext != null && field.isAnnotationPresent(EJB.class) && jndiMapping.containsKey(field.getType())) {
-							field.setAccessible(true);
-							field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
-							continue;
-						}
+						if (field.getAnnotations().length > 0) {
 
-						if (springContext != null && springContext.containsBean(field.getName())) {
-							field.setAccessible(true);
-							field.set(bean, springContext.getBean(field.getType()));
+							if (initialContext != null && jndiMapping.containsKey(field.getType())) {
+								field.setAccessible(true);
+								field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
+								continue;
+							}
+
+							if (springContext != null) {
+								if (springContext.containsBean(field.getName())) {
+									field.setAccessible(true);
+									field.set(bean, springContext.getBean(field.getType()));
+
+								} else if (field.isAnnotationPresent(Value.class)) {
+									String propertyName = field.getAnnotation(Value.class).value();
+									propertyName = SPRING_VALUE_PATTERN.matcher(propertyName).replaceAll("");
+									field.setAccessible(true);
+									field.set(bean, springContext.getEnvironment().getProperty(propertyName, field.getType()));
+								}
+							}
 						}
 					}
-				}
 
-				executePostConstruct(bean);
-				session.setAttribute(name, bean);
-			} catch (Exception ex) {
-				LOGGER.log(Level.INFO, "Injection on authentication smart bean " + bean + " failure: " + ex.getMessage());
+					executePostConstruct(bean);
+					session.setAttribute(name, bean);
+				} catch (Exception ex) {
+					LOGGER.log(Level.INFO, "Injection on authentication smart bean " + bean + " failure: " + ex.getMessage());
+				}
 			}
+			return bean;
 		}
-		return bean;
 	}
 
 	private void finalizeAuthBean(Object bean, HttpSession session) {
@@ -587,7 +651,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		bean = null;
 	}
 
-	/*package*/ String checkAuthentication(String path) throws ServletException {
+	String checkAuthentication(String path) throws ServletException {
 
 		if (authBeans.isEmpty() && !CONFIG.getContent().getSecureUrls().isEmpty()) {
 			throw new ServletException("Not found authentication bean mapped in your system. Once your system has secure urls, please use @AuthenticateBean!");
@@ -596,37 +660,40 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		boolean authenticated = true;
 		AuthenticateBean authBean = null;
 
-		for (String name : authBeans.keySet()) {
+		HttpSession session = SmartContext.getSession();
+		synchronized (session) {
 
-			authBean = authBeans.get(name).getAnnotation(AuthenticateBean.class);
-			Object bean = SmartContext.getSession().getAttribute(name);
+			for (String name : authBeans.keySet()) {
+				authBean = authBeans.get(name).getAnnotation(AuthenticateBean.class);
+				Object bean = session.getAttribute(name);
 
-			if (bean != null) {
-				boolean foundField = false;
+				if (bean != null) {
+					boolean foundField = false;
 
-				for (Field field : getBeanFields(bean.getClass())) {
-	
-					if (field.isAnnotationPresent(AuthenticateField.class)) {
-						try {
-							foundField = true;
-							field.setAccessible(true);
-							if (field.get(bean) == null) {
-								authenticated = false;
-								break;
+					for (Field field : getBeanFields(bean.getClass())) {
+		
+						if (field.isAnnotationPresent(AuthenticateField.class)) {
+							try {
+								foundField = true;
+								field.setAccessible(true);
+								if (field.get(bean) == null) {
+									authenticated = false;
+									break;
+								}
+							} catch (Exception ex) {
+								throw new ServletException("Authentication field not accessible: " + ex.getMessage(), ex);
 							}
-						} catch (Exception ex) {
-							throw new ServletException("Authentication field not accessible: " + ex.getMessage(), ex);
 						}
+					}
+
+					if (!foundField) {
+						throw new ServletException("None authenticateField found in authenticateBean!");
 					}
 				}
 
-				if (!foundField) {
-					throw new ServletException("None authenticateField found in authenticateBean!");
-				}
+				// We must have only one authentication bean mapped
+				break;
 			}
-
-			// We must have only one authentication bean mapped
-			break;
 		}
 
 		// Access secure url
@@ -660,7 +727,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 	}
 
 	@SuppressWarnings("all")
-	/*package*/ Integer checkAuthorization(String path) {
+	Integer checkAuthorization(String path) {
 		if (CONFIG.getContent().containsSecureUrl(path)) {
 
 			Collection<String> userAccess = getUserAuthorizationAccess();
@@ -690,43 +757,47 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 	}
 
 	@SuppressWarnings("unchecked")
-	/*package*/ Collection<String> getUserAuthorizationAccess() {
-		if (SmartContext.getRequest().getAttribute(USER_ACCESS) == null) {
+	Collection<String> getUserAuthorizationAccess() {
+		HttpServletRequest request = SmartContext.getRequest();
+
+		if (request.getAttribute(USER_ACCESS) == null) {
 
 			Collection<String> userAccess = new HashSet<String>();
 
-			for (String name : authBeans.keySet()) {
-				Object bean = SmartContext.getSession().getAttribute(name);
+			HttpSession session = SmartContext.getSession();
+			synchronized (session) {
 
-				if (bean != null) {
-					for (Field field : getBeanFields(bean.getClass())) {
+				for (String name : authBeans.keySet()) {
+					Object bean = session.getAttribute(name);
 
-						if (field.isAnnotationPresent(AuthorizeAccess.class)) {
-							try {
-								field.setAccessible(true);
-								Object object = field.get(bean);
-								if (object != null) {
-									userAccess.addAll((Collection<String>) object);
+					if (bean != null) {
+						for (Field field : getBeanFields(bean.getClass())) {
+
+							if (field.isAnnotationPresent(AuthorizeAccess.class)) {
+								try {
+									field.setAccessible(true);
+									Object object = field.get(bean);
+									if (object != null) {
+										userAccess.addAll((Collection<String>) object);
+									}
+								} catch (Exception ex) {
+									LOGGER.log(Level.INFO, "Authorize access mapped on smart bean " + bean + " could not be cast to Collection<String>: " + ex.getMessage());
 								}
-							} catch (Exception ex) {
-								LOGGER.log(Level.INFO, "Authorize access mapped on smart bean " + bean + " could not be cast to Collection<String>: " + ex.getMessage());
+								break;
 							}
-							break;
 						}
 					}
+
+					// We must have only one authentication bean mapped
+					break;
 				}
-
-				// We must have only one authentication bean mapped
-				break;
 			}
-
-			SmartContext.getRequest().setAttribute(USER_ACCESS, userAccess);
-
+			request.setAttribute(USER_ACCESS, userAccess);
 		}
-		return (Collection<String>) SmartContext.getRequest().getAttribute(USER_ACCESS);
+		return (Collection<String>) request.getAttribute(USER_ACCESS);
 	}
 
-	/*package*/ boolean checkExecuteAuthorization(Object bean, String expression) {
+	boolean checkExecuteAuthorization(Object bean, String expression) {
 
 		for (Method method : getBeanMethods(bean.getClass())) {
 
@@ -755,6 +826,7 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		smartBeans = new HashMap<String, Class<?>>();
 		authBeans = new HashMap<String, Class<?>>();
 		smartServlets = new HashMap<String, Class<?>>();
+		smartFilters = new HashMap<String, Class<?>>();
 		contextListeners = new HashSet<SmartContextListener>();
 		sessionListeners = new HashSet<SmartSessionListener>();
 
@@ -808,6 +880,15 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 			setBeanMethods(clazz);
 			smartServlets.put(getClassName(servlet, clazz), clazz);
 		}
+		
+		annotations = reflections.getTypesAnnotatedWith(SmartFilter.class);
+		for (Class<?> clazz : annotations) {
+			SmartFilter filter = clazz.getAnnotation(SmartFilter.class);
+			LOGGER.log(Level.INFO, "Mapping SmartFilter class: " + clazz);
+			setBeanFields(clazz);
+			setBeanMethods(clazz);
+			smartFilters.put(getClassName(filter, clazz), clazz);
+		}
 
 		annotations = reflections.getTypesAnnotatedWith(SmartListener.class);
 		for (Class<?> clazz : annotations) {
@@ -839,12 +920,15 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 		if (smartServlets.isEmpty()) {
 			LOGGER.log(Level.INFO, "SmartServlets were not mapped!");
 		}
+		if (smartFilters.isEmpty()) {
+			LOGGER.log(Level.INFO, "SmartFilters were not mapped!");
+		}
 		if (contextListeners.isEmpty() && sessionListeners.isEmpty()) {
 			LOGGER.log(Level.INFO, "SmartListeners were not mapped!");
 		}
     }
 
-	/*package*/ String getForwardPath(String path) {
+	public String getForwardPath(String path) {
     	if (path != null) {
     		return forwardPaths.get(path);
     	}
@@ -888,6 +972,17 @@ import static com.jsmart5.framework.manager.SmartExpression.*;
 	    			lookupInResourcePath(servletContext, res);
 	    		}
 	    	}
+    	}
+    }
+
+    private void checkWebXmlPath(ServletContext servletContext) {
+    	try {
+	    	URL webXml = servletContext.getResource("/WEB-INF/web.xml");
+	    	if (webXml != null) {
+	    		throw new RuntimeException("JSmart5 framework is not compatible with /WEB-INF/web.xml file. Please remove the web.xml and compile your project with failOnMissingWebXml set to false");
+	    	}
+    	} catch (MalformedURLException ex) {
+    		LOGGER.log(Level.WARNING, "/WEB-INF/web.xml malformed Url: " + ex.getMessage());
     	}
     }
 

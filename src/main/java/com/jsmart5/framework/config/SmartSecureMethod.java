@@ -16,70 +16,57 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-/*package*/ final class SmartUrlPattern {
+public final class SmartSecureMethod {
 
-	private String url;
+	private String transport; // none, confidential (ssl)
 
-	private String jsp;
+	private String[] roles; // TODO: Change to access and may remove emptyRole
 
-	private String[] access; // *, roles allowed with comma separated
+	private String emptyRole; // deny, permit
 
-	private boolean loggedAccess = true;
-
-	@XmlValue
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = SmartUtils.decodePath(url);
-	}
+	private String method; // *, delete, get, head, options, post, put, trace
 
 	@XmlAttribute
-	public String getJsp() {
-		return jsp;
+	public String getTransport() {
+		return transport;
 	}
 
-	public void setJsp(String jsp) {
-		this.jsp = jsp;
+	public void setTransport(String transport) {
+		this.transport = transport;
 	}
 
 	@XmlAttribute
 	@XmlJavaTypeAdapter(value = SmartAttributeAdapter.class)
-	public String[] getAccess() {
-		return access;
+	public String[] getRoles() {
+		return roles;
 	}
 
-	public boolean containsAccess(String value) {
-		if (access != null) {
-			for (String acs : access) {
-				if (acs.equals(value)) {
-					return true;
-				}
-			}
-		}
-		return false;
+	public void setRoles(String[] roles) {
+		this.roles = roles;
 	}
 
-	public void setAccess(String[] access) {
-		if (access != null && access.length > 0) {
-			this.access = access;
-		}
+	@XmlAttribute(name = "emptyRole")
+	public String getEmptyRole() {
+		return emptyRole;
 	}
 
-	@XmlAttribute
-	public boolean isLoggedAccess() {
-		return loggedAccess;
+	public void setEmptyRole(String emptyRole) {
+		this.emptyRole = emptyRole;
 	}
 
-	public void setLoggedAccess(boolean loggedAccess) {
-		this.loggedAccess = loggedAccess;
+	@XmlValue
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
 	}
 
 }

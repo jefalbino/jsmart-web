@@ -16,36 +16,33 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlValue;
 
-/*package*/ final class SmartContentEncode {
+public final class SmartInitParam {
 
-	private String encode;
+	private String name;
 
-	private String[] mimeTypes;
-
-	@XmlAttribute
-	public String getEncode() {
-		return encode;
-	}
-
-	public void setEncode(String encode) {
-		if (encode != null) {
-			this.encode = encode.toLowerCase();
-		}
-	}
+	private String value;
 
 	@XmlAttribute
-	@XmlJavaTypeAdapter(value = SmartAttributeAdapter.class)
-	public String[] getMimeTypes() {
-		return mimeTypes;
+	public String getName() {
+		return name;
 	}
 
-	public void setMimeTypes(String[] mimeTypes) {
-		this.mimeTypes = mimeTypes;
+	public void setName(String name) {
+		this.name = name;
 	}
 
+	@XmlValue
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
 }

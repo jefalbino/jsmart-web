@@ -16,33 +16,55 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
-/*package*/ final class SmartHtmlCompress {
+public final class SmartUploadConfig {
 
-	private boolean compressHtml = true;
+	private String location;
 
-	private boolean skipComments = false;
+	private long maxFileSize;
+
+	private long maxRequestSize;
+
+	private int fileSizeThreshold;
 
 	@XmlValue
-	public boolean isCompressHtml() {
-		return compressHtml;
+	public String getLocation() {
+		return location;
 	}
 
-	public void setCompressHtml(boolean compressHtml) {
-		this.compressHtml = compressHtml;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	@XmlAttribute
-	public boolean isSkipComments() {
-		return skipComments;
+	public long getMaxFileSize() {
+		return maxFileSize;
 	}
 
-	public void setSkipComments(boolean skipComments) {
-		this.skipComments = skipComments;
+	public void setMaxFileSize(long maxFileSize) {
+		this.maxFileSize = maxFileSize;
+	}
+
+	@XmlAttribute
+	public long getMaxRequestSize() {
+		return maxRequestSize;
+	}
+
+	public void setMaxRequestSize(long maxRequestSize) {
+		this.maxRequestSize = maxRequestSize;
+	}
+
+	@XmlAttribute
+	public int getFileSizeThreshold() {
+		return fileSizeThreshold;
+	}
+
+	public void setFileSizeThreshold(int fileSizeThreshold) {
+		this.fileSizeThreshold = fileSizeThreshold;
 	}
 
 }

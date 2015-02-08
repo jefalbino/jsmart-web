@@ -19,7 +19,7 @@
 package com.jsmart5.framework.adapter;
 
 import com.jsmart5.framework.annotation.SmartBean;
-import com.jsmart5.framework.manager.SmartUtils;
+import com.jsmart5.framework.util.SmartUtils;
 
 /**
  * This class represents the carousel item to be presented on carousel component.

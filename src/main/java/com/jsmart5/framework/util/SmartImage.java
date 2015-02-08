@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +37,7 @@ public enum SmartImage {
 
 	private Map<String, Map<String, String>> libraries =  new HashMap<String, Map<String,String>>();
 
-	/*package*/ void init(ServletContext servletContext) {
+	public void init(ServletContext servletContext) {
 		lookupInResourcePath(servletContext, "/");
 	}
 

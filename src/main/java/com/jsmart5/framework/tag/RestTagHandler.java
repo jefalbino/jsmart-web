@@ -27,7 +27,7 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.json.JsonRest;
 import com.jsmart5.framework.manager.SmartTagHandler;
-import com.jsmart5.framework.manager.SmartUtils;
+import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
 import static com.jsmart5.framework.tag.CssConstants.*;

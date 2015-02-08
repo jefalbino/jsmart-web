@@ -26,7 +26,7 @@ public abstract class SmartValidateTagHandler extends SmartTagHandler {
 
 	private Integer minLength;
 
-	/*package*/ String getMessage() {
+	String getMessage() {
 		return message;
 	}
 
@@ -34,7 +34,7 @@ public abstract class SmartValidateTagHandler extends SmartTagHandler {
 		this.message = message;
 	}
 
-	/*package*/ String getMaxLength() {
+	String getMaxLength() {
 		return maxLength;
 	}
 
@@ -42,7 +42,7 @@ public abstract class SmartValidateTagHandler extends SmartTagHandler {
 		this.maxLength = maxLength;
 	}
 
-	/*package*/ Integer getMinLength() {
+	Integer getMinLength() {
 		return minLength;
 	}
 

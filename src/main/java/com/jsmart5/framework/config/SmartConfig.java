@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,7 +28,8 @@ import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-/*package*/ enum SmartConfig {
+
+public enum SmartConfig {
 
 	CONFIG();
 
@@ -38,7 +39,7 @@ import javax.xml.bind.Unmarshaller;
 
 	private List<String> mappedUrls = new ArrayList<String>();
 
-	/*package*/ void init(ServletContext context) {
+	public void init(ServletContext context) {
 		try (InputStream is = context.getResourceAsStream(SmartConstants.JSMART5_XML_PATH)) {
 			JAXBContext jaxbContext = JAXBContext.newInstance(SmartConfigContent.class);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

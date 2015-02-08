@@ -65,19 +65,19 @@ public final class TabItemTagHandler extends SmartTagHandler {
 		super.appendEvent(builder);
 	}
 
-	/*package*/ String getId() {
+	String getId() {
 		return id;
 	}
 
-	/*package*/ String getStyle() {
+	String getStyle() {
 		return style;
 	}
 
-	/*package*/ String getStyleClass() {
+	String getStyleClass() {
 		return styleClass;
 	}
 
-	/*package*/ String getLabel() {
+	String getLabel() {
 		return label;
 	}
 
@@ -85,7 +85,7 @@ public final class TabItemTagHandler extends SmartTagHandler {
 		this.label = label;
 	}
 
-	/*package*/ String getValue() {
+	String getValue() {
 		return value;
 	}
 
@@ -93,7 +93,7 @@ public final class TabItemTagHandler extends SmartTagHandler {
 		this.value = value;
 	}
 
-	/*package*/ String getTabStyle() {
+	String getTabStyle() {
 		return tabStyle;
 	}
 
@@ -101,7 +101,7 @@ public final class TabItemTagHandler extends SmartTagHandler {
 		this.tabStyle = tabStyle;
 	}
 
-	/*package*/ String getTabClass() {
+	String getTabClass() {
 		return tabClass;
 	}
 

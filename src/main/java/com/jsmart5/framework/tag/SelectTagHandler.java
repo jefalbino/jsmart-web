@@ -186,7 +186,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 		printOutput(builder);
 	}
 
-	/*package*/ void addOption(OptionTagHandler option) {
+	void addOption(OptionTagHandler option) {
 		this.options.add(option);
 	}
 

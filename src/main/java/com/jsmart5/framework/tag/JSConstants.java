@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.tag;
 
-/*package*/ enum JsConstants {
+enum JsConstants {
 
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
 

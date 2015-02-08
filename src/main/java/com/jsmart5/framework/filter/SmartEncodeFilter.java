@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.filter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,11 +39,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import static com.jsmart5.framework.manager.SmartConfig.*;
+import com.jsmart5.framework.config.SmartContentEncode;
+
+import static com.jsmart5.framework.config.SmartConfig.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
 
 public final class SmartEncodeFilter implements Filter {
@@ -228,26 +231,68 @@ public final class SmartEncodeFilter implements Filter {
 	private class SmartEncodingServletOutputStream extends ServletOutputStream {
 
 	    private final OutputStream outputStream;
+	    
+	    private WriteListener writeListener;
 
 	    public SmartEncodingServletOutputStream(final OutputStream outputStream) {
 	        this.outputStream = outputStream;
 	    }
 
 	    public void write(final int b) throws IOException {
-	    	outputStream.write(b);
+	    	try {
+		    	outputStream.write(b);
+		    	if (writeListener != null) {
+		    		writeListener.onWritePossible();
+		    	}
+	    	} catch (IOException ex) {
+	    		if (writeListener != null) {
+		    		writeListener.onError(ex);
+		    	}
+	    		throw ex;
+	    	}
 	    }
 
 	    public void write(final byte[] b) throws IOException {
-	    	outputStream.write(b);
+	    	try {
+		    	outputStream.write(b);
+		    	if (writeListener != null) {
+		    		writeListener.onWritePossible();
+		    	}
+	    	} catch (IOException ex) {
+	    		if (writeListener != null) {
+		    		writeListener.onError(ex);
+		    	}
+	    		throw ex;
+	    	}
 	    }
 
 	    public void write(final byte[] b, final int off, final int len) throws IOException {
-	    	outputStream.write(b, off, len);
+	    	try {
+	    		outputStream.write(b, off, len);
+	    		if (writeListener != null) {
+		    		writeListener.onWritePossible();
+		    	}
+	    	} catch (IOException ex) {
+	    		if (writeListener != null) {
+		    		writeListener.onError(ex);
+		    	}
+	    		throw ex;
+	    	}
 	    }
 
 		@Override
 		public void flush() throws IOException {
 			outputStream.flush();
+		}
+
+		@Override
+		public boolean isReady() {
+			return false;
+		}
+
+		@Override
+		public void setWriteListener(WriteListener writeListener) {
+			this.writeListener = writeListener;
 		}
 	}
 

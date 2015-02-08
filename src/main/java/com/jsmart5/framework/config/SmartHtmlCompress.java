@@ -16,41 +16,33 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
-/*package*/ enum SmartTheme {
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlValue;
 
-	WATER,
-	DARK_WATER,
-	BLUE, 
-	DARK_BLUE, 
-	GREEN, 
-	DARK_GREEN, 
-	PURPLE, 
-	DARK_PURPLE, 
-	PINK, 
-	ORANGE, 
-	DARK_ORANGE,
-	RED, 
-	DARK_RED,
-	BROWN, 
-	BLACK, 
-	YELLOW, 
-	GRAY, 
-	WHITE;
+public final class SmartHtmlCompress {
 
-	public static boolean contains(String theme) {
-		for (SmartTheme smartTheme : values()) {
-			if (smartTheme.toString().equalsIgnoreCase(theme)) {
-				return true;
-			}
-		}
-		return false;
+	private boolean compressHtml = true;
+
+	private boolean skipComments = false;
+
+	@XmlValue
+	public boolean isCompressHtml() {
+		return compressHtml;
 	}
 
-	@Override
-	public String toString() {
-		return super.toString().toLowerCase();
+	public void setCompressHtml(boolean compressHtml) {
+		this.compressHtml = compressHtml;
+	}
+
+	@XmlAttribute
+	public boolean isSkipComments() {
+		return skipComments;
+	}
+
+	public void setSkipComments(boolean skipComments) {
+		this.skipComments = skipComments;
 	}
 
 }

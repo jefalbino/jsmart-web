@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.manager;
 
-import static com.jsmart5.framework.manager.SmartConstants.FILTER_STYLES;
+import static com.jsmart5.framework.config.SmartConstants.FILTER_STYLES;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.jsmart5.framework.config.SmartTheme;
 
 public final class SmartThemeProcess {
 

@@ -251,11 +251,11 @@ public final class RowTagHandler extends SmartTagHandler {
 		printOutput(builder);
 	}
 
-	/*package*/ void setType(String type) {
+	void setType(String type) {
 		this.type = type;
 	}
 
-	/*package*/ void setTotalColumns(int totalColumns) {
+	void setTotalColumns(int totalColumns) {
 		this.totalColumns = totalColumns;
 	}
 
@@ -275,11 +275,11 @@ public final class RowTagHandler extends SmartTagHandler {
 		this.badge = badge;
 	}
 
-	/*package*/ void addColumn(ColumnTagHandler column) {
+	void addColumn(ColumnTagHandler column) {
 		this.columns.add(column);
 	}
 
-	/*package*/ void setBorder(boolean border) {
+	void setBorder(boolean border) {
 		this.border = border;
 	}
 

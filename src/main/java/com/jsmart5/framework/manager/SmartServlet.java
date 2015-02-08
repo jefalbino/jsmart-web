@@ -29,6 +29,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.jsmart5.framework.config.SmartConstants;
+import com.jsmart5.framework.listener.SmartContextListener;
+import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.manager.SmartExpression.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
@@ -145,7 +150,10 @@ public final class SmartServlet extends HttpServlet {
 			// Case is ajax post action, let JavaScript redirect page
 			if (SmartContext.isAjaxRequest()) {
 				if (redirectAjax) {
-					request.getSession().setAttribute(SmartConstants.AJAX_ATTR, (responsePath.startsWith("/") ? request.getContextPath() : "") + responsePath);
+					HttpSession session = request.getSession();
+					synchronized (session) {
+						session.setAttribute(SmartConstants.AJAX_ATTR, (responsePath.startsWith("/") ? request.getContextPath() : "") + responsePath);
+					}
 				}
 				responsePath = path;
 			}
@@ -182,7 +190,10 @@ public final class SmartServlet extends HttpServlet {
 
     	// Case is ajax post action, let JavaScript redirect page
 		if (SmartContext.isAjaxRequest()) {
-			request.getSession().setAttribute(SmartConstants.AJAX_ATTR, (path.startsWith("/") ? request.getContextPath() : "") + path);
+			HttpSession session = request.getSession();
+			synchronized (session) {
+				session.setAttribute(SmartConstants.AJAX_ATTR, (path.startsWith("/") ? request.getContextPath() : "") + path);
+			}
 		}
 
         // Use Forward request internally case is the same page

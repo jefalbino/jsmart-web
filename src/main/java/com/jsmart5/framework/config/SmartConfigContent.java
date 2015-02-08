@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +27,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+
 @XmlRootElement(name = "jsmart5")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-/*package*/ final class SmartConfigContent {
+public final class SmartConfigContent {
 
 	private SmartUrlPattern[] urlPatterns;
 
@@ -42,8 +43,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 	private String[] messageFiles;
 
 	private String defaultLocale;
-
-	private SmartCustomFilter[] customFilters;
 
 	private SmartUploadConfig uploadConfig;
 
@@ -73,7 +72,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 	private List<String> nonSecureUrlsOnly;
 
-	/*package*/ SmartConfigContent() {
+	SmartConfigContent() {
 		secureUrls = new ArrayList<String>();
 		nonSecureUrls = new ArrayList<String>();
 		nonSecureUrlsOnly = new ArrayList<String>();
@@ -196,18 +195,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 	public void setDefaultLocale(String defaultLocale) {
 		if (defaultLocale != null && !defaultLocale.trim().isEmpty()) {
 			this.defaultLocale = defaultLocale;
-		}
-	}
-
-	@XmlElement(name = "custom-filter")
-	@XmlElementWrapper(name = "custom-filters")
-	public SmartCustomFilter[] getCustomFilters() {
-		return customFilters;
-	}
-
-	public void setCustomFilters(SmartCustomFilter[] customFilters) {
-		if (customFilters != null && customFilters.length > 0) {
-			this.customFilters = customFilters;
 		}
 	}
 

@@ -61,7 +61,7 @@ public class ButtonActionTagHandler extends SmartTagHandler {
 		// DO NOTHING
 	}
 
-	/*package*/ String getLabel() {
+	String getLabel() {
 		return label;
 	}
 
@@ -69,7 +69,7 @@ public class ButtonActionTagHandler extends SmartTagHandler {
 		this.label = label;
 	}
 
-	/*package*/ String getAction() {
+	String getAction() {
 		return action;
 	}
 
@@ -77,7 +77,7 @@ public class ButtonActionTagHandler extends SmartTagHandler {
 		this.action = action;
 	}
 
-	/*package*/ Map<String, Object> getParams() {
+	Map<String, Object> getParams() {
 		return params;
 	}
 

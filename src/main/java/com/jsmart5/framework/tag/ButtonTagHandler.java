@@ -323,7 +323,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		printOutput(builder);
 	}
 
-	/*package*/ void addActionItem(SmartTagHandler actionItem) {
+	void addActionItem(SmartTagHandler actionItem) {
 		this.actionItems.add(actionItem);
 	}
 

@@ -107,7 +107,7 @@ public final class OptionTagHandler extends SmartTagHandler {
 		return false;
 	}
 
-	/*package*/ void setName(String name) {
+	void setName(String name) {
 		this.name = name;
 	}
 

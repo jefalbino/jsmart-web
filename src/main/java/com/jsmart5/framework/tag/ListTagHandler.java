@@ -39,11 +39,11 @@ import static com.jsmart5.framework.tag.HtmlConstants.*;
 
 public final class ListTagHandler extends SmartTagHandler {
 
-	/*package*/ static final String ORDERED = "ordered";
+	static final String ORDERED = "ordered";
 
-	/*package*/ static final String UNORDERED = "unordered";
+	static final String UNORDERED = "unordered";
 
-	/*package*/ static final String DEFINITION = "definition";
+	static final String DEFINITION = "definition";
 
 	private String var;
 
@@ -202,7 +202,7 @@ public final class ListTagHandler extends SmartTagHandler {
 		printOutput(builder);
 	}
 
-	/*package*/ void addRow(RowTagHandler row) {
+	void addRow(RowTagHandler row) {
 		rows.add(row);
 	}
 

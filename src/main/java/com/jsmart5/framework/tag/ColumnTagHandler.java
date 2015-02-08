@@ -87,11 +87,11 @@ public final class ColumnTagHandler extends SmartTagHandler {
 		}
 	}
 
-	/*package*/ String getId() {
+	String getId() {
 		return id;
 	}
 
-	/*package*/ Integer getColspan() {
+	Integer getColspan() {
 		return colspan;
 	}
 
@@ -99,7 +99,7 @@ public final class ColumnTagHandler extends SmartTagHandler {
 		this.colspan = colspan;
 	}
 
-	/*package*/ Integer getRowspan() {
+	Integer getRowspan() {
 		return rowspan;
 	}
 
@@ -107,7 +107,7 @@ public final class ColumnTagHandler extends SmartTagHandler {
 		this.rowspan = rowspan;
 	}
 
-	/*package*/ String getHeader() {
+	String getHeader() {
 		return header;
 	}
 
@@ -115,7 +115,7 @@ public final class ColumnTagHandler extends SmartTagHandler {
 		this.header = header;
 	}
 
-	/*package*/ boolean isSelectable() {
+	boolean isSelectable() {
 		return selectable;
 	}
 
@@ -123,7 +123,7 @@ public final class ColumnTagHandler extends SmartTagHandler {
 		this.selectable = selectable;
 	}
 
-	/*package*/ String getSortBy() {
+	String getSortBy() {
 		return sortBy;
 	}
 
@@ -131,7 +131,7 @@ public final class ColumnTagHandler extends SmartTagHandler {
 		this.sortBy = sortBy;
 	}
 
-	/*package*/ String getFilterBy() {
+	String getFilterBy() {
 		return filterBy;
 	}
 

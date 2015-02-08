@@ -22,7 +22,10 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import static com.jsmart5.framework.manager.SmartConfig.*;
+import com.jsmart5.framework.config.SmartConstants;
+import com.jsmart5.framework.listener.SmartSessionListener;
+
+import static com.jsmart5.framework.config.SmartConfig.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
 
 public final class SmartSessionControl implements HttpSessionListener {
@@ -30,30 +33,34 @@ public final class SmartSessionControl implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
+		synchronized (session) {
 
-		session.setAttribute(SmartConstants.AJAX_RESET_ATTR, SmartConstants.SESSION_CREATED_FLAG);
-		HANDLER.instantiateAuthBean(session);
+			session.setAttribute(SmartConstants.AJAX_RESET_ATTR, SmartConstants.SESSION_CREATED_FLAG);
+			HANDLER.instantiateAuthBean(session);
 
-		if (CONFIG.getContent().getSessionTimeout() > 0) {
-			session.setMaxInactiveInterval(CONFIG.getContent().getSessionTimeout() * 60);
-		}
+			if (CONFIG.getContent().getSessionTimeout() > 0) {
+				session.setMaxInactiveInterval(CONFIG.getContent().getSessionTimeout() * 60);
+			}
 
-		// Call registered SmartSessionListeners
-		for (SmartSessionListener sessionListener : HANDLER.sessionListeners) {
-			HANDLER.executeInjection(sessionListener);
-			sessionListener.sessionCreated(session);
+			// Call registered SmartSessionListeners
+			for (SmartSessionListener sessionListener : HANDLER.sessionListeners) {
+				HANDLER.executeInjection(sessionListener);
+				sessionListener.sessionCreated(session);
+			}
 		}
 	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
+		synchronized (session) {
 
-		// Call registered SmartSessionListeners
-		for (SmartSessionListener sessionListener : HANDLER.sessionListeners) {
-			sessionListener.sessionDestroyed(session);
+			// Call registered SmartSessionListeners
+			for (SmartSessionListener sessionListener : HANDLER.sessionListeners) {
+				sessionListener.sessionDestroyed(session);
+			}
+			HANDLER.finalizeBeans(session);
 		}
-		HANDLER.finalizeBeans(session);
 	}
 
 }

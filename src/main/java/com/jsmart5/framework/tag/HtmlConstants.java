@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.tag;
 
-/*package*/ interface HtmlConstants {
+interface HtmlConstants {
 
 	public static final String CLOSE_TAG = ">";
 

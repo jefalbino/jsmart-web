@@ -16,55 +16,48 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-/*package*/ final class SmartUploadConfig {
 
-	private String location;
+public final class SmartCachePattern {
 
-	private long maxFileSize;
+	private String cacheControl;
 
-	private long maxRequestSize;
+	private String[] files;
 
-	private int fileSizeThreshold;
-
-	@XmlValue
-	public String getLocation() {
-		return location;
+	@XmlAttribute
+	public String getCacheControl() {
+		return cacheControl;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setCacheControl(String cacheControl) {
+		if (cacheControl != null && !cacheControl.trim().isEmpty()) {
+			this.cacheControl = cacheControl;
+		}
 	}
 
 	@XmlAttribute
-	public long getMaxFileSize() {
-		return maxFileSize;
+	@XmlJavaTypeAdapter(value = SmartAttributeAdapter.class)
+	public String[] getFiles() {
+		return files;
 	}
 
-	public void setMaxFileSize(long maxFileSize) {
-		this.maxFileSize = maxFileSize;
+	public boolean isEndedIn(String file) {
+		if (files != null && file != null) {
+			for (String fl : files) {
+				if (file.endsWith("." + fl)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
-	@XmlAttribute
-	public long getMaxRequestSize() {
-		return maxRequestSize;
+	public void setFiles(String[] files) {
+		this.files = files;
 	}
-
-	public void setMaxRequestSize(long maxRequestSize) {
-		this.maxRequestSize = maxRequestSize;
-	}
-
-	@XmlAttribute
-	public int getFileSizeThreshold() {
-		return fileSizeThreshold;
-	}
-
-	public void setFileSizeThreshold(int fileSizeThreshold) {
-		this.fileSizeThreshold = fileSizeThreshold;
-	}
-
+	
 }

@@ -16,33 +16,33 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.listener;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import com.jsmart5.framework.annotation.SmartListener;
 
 /**
- * This interface is used to notify the application about {@link ServletContext} 
- * initialization and its destruction, so the application can execute any steps needed
- * after the context is initialized and before it is destroyed.
+ * This interface is used to notify the application about {@link HttpSession} 
+ * creation and its destruction, so the application can execute any steps needed
+ * after the session is created and before it is destroyed.
  * <br>
  * The class implementing this interface must be annotated with {@link SmartListener} annotation.
  */
-public interface SmartContextListener {
+public interface SmartSessionListener {
 
 	/**
-	 * It indicates that the context of application has been initialized.
+	 * It indicates that the session of specific client is created.
 	 * 
-	 * @param context {@link ServletContext} object to the application.
+	 * @param session {@link HttpSession} object
 	 */
-	public void contextInitialized(ServletContext context);
+	public void sessionCreated(HttpSession session);
 
 	/**
-	 * It indicates that the context of application has been destroyed.
+	 * It indicates that the session of specific client has been destroyed.
 	 * 
-	 * @param context {@link ServletContext} object to the application.
+	 * @param session {@link HttpSession} object
 	 */
-	public void contextDestroyed(ServletContext context);
+	public void sessionDestroyed(HttpSession session);
 
 }

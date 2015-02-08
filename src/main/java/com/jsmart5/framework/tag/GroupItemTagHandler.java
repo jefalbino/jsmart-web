@@ -35,9 +35,9 @@ import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class GroupItemTagHandler extends SmartTagHandler {
 
-	/*package*/ static final String CHECKBOX = "checkbox";
+	static final String CHECKBOX = "checkbox";
 
-	/*package*/ static final String RADIO = "radio";
+	static final String RADIO = "radio";
 
 	private String itemId;
 
@@ -177,15 +177,15 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 		return false;
 	}
 
-	/*package*/ void setItemId(String itemId) {
+	void setItemId(String itemId) {
 		this.itemId = itemId;
 	}
 
-	/*package*/ void setType(String type) {
+	void setType(String type) {
 		this.type = type;
 	}
 
-	/*package*/ void setName(String name) {
+	void setName(String name) {
 		this.name = name;
 	}
 
@@ -197,15 +197,15 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 		this.value = value;
 	}
 
-	/*package*/ void setAjax(boolean ajax) {
+	void setAjax(boolean ajax) {
 		this.ajax = ajax;
 	}
 
-	/*package*/ void setAsync(boolean async) {
+	void setAsync(boolean async) {
 		this.async = async;
 	}
 
-	/*package*/ void setValidator(SmartValidateTagHandler validator) {
+	void setValidator(SmartValidateTagHandler validator) {
 		this.validator = validator;
 	}
 

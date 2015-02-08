@@ -16,33 +16,41 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
+public enum SmartTheme {
 
-/*package*/ final class SmartInitParam {
+	WATER,
+	DARK_WATER,
+	BLUE, 
+	DARK_BLUE, 
+	GREEN, 
+	DARK_GREEN, 
+	PURPLE, 
+	DARK_PURPLE, 
+	PINK, 
+	ORANGE, 
+	DARK_ORANGE,
+	RED, 
+	DARK_RED,
+	BROWN, 
+	BLACK, 
+	YELLOW, 
+	GRAY, 
+	WHITE;
 
-	private String name;
-
-	private String value;
-
-	@XmlAttribute
-	public String getName() {
-		return name;
+	public static boolean contains(String theme) {
+		for (SmartTheme smartTheme : values()) {
+			if (smartTheme.toString().equalsIgnoreCase(theme)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	@Override
+	public String toString() {
+		return super.toString().toLowerCase();
 	}
 
-	@XmlValue
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-	
 }

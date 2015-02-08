@@ -16,37 +16,28 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.config;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-/*package*/ final class SmartCustomFilter {
+public final class SmartAttributeAdapter extends XmlAdapter<String, String[]> {
 
-	private String value;
-
-	private SmartInitParam[] initParams;
-
-	@XmlAttribute
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	@XmlElement(name = "init-param")
-	@XmlElementWrapper(name = "init-params")
-	public SmartInitParam[] getInitParams() {
-		return initParams;
-	}
-
-	public void setInitParams(SmartInitParam[] initParams) {
-		if (initParams != null && initParams.length > 0) {
-			this.initParams = initParams;
+	@Override
+	public String marshal(String[] values) throws Exception {
+		String string = "";
+		for (String value : values) {
+			string += value + ",";
 		}
+		return string;
+	}
+
+	@Override
+	public String[] unmarshal(String value) throws Exception {
+		String[] values = value.split(",");
+		for (int i = 0; i < values.length; i++) {
+			values[i] = values[i].trim();
+		}
+		return values;
 	}
 
 }

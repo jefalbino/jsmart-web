@@ -16,31 +16,22 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.util;
 
-/**
- * This enumerator represents the category of messages presented on client side.
- */
-public enum SmartMessage {
+import java.net.MalformedURLException;
+import java.net.URL;
 
-	/**
-	 * It indicates the message as information message.
-	 */
-	INFO, 
+public class SmartUtils {
 
-	/**
-	 * It indicates the message as warning message.
-	 */
-	WARNING,
-
-	/**
-	 * It indicates the message as error message.
-	 */
-	ERROR, 
-
-	/**
-	 * It indicates the message as success message.
-	 */
-	SUCCESS;
+	public static String decodePath(String path) {
+		if (path != null && !path.startsWith("/")) {
+			try {
+				new URL(path);
+			} catch (MalformedURLException ex) {
+				path = "/" + path;
+			}
+		}
+		return path;
+	}
 
 }

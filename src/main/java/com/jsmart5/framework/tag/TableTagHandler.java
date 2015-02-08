@@ -958,7 +958,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 		this.itemExpand = itemExpand;
 	}
 
-	/*package*/ void addColumn(ColumnTagHandler column) {
+	void addColumn(ColumnTagHandler column) {
 		column.setId(String.valueOf(columns.size() + 1));
 		this.columns.add(column);
 	}

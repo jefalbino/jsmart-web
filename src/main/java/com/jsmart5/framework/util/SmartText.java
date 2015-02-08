@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.util;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +26,8 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.jsmart5.framework.manager.SmartContext;
 
 /**
  * This class represents the container of text resources mapped on configuration file
@@ -46,7 +48,7 @@ public enum SmartText {
 
 	private Locale defaultLocale;
 
-	/*package*/ void init(String[] messageFiles, String defaultLocale) {
+	public void init(String[] messageFiles, String defaultLocale) {
 		if (messageFiles != null) {
 			for (String msg : messageFiles) {
 				this.resources.add(msg);

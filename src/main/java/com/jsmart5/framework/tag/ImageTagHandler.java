@@ -24,8 +24,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartImage;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.util.SmartImage;
 
 import static com.jsmart5.framework.tag.HtmlConstants.*;
 import static com.jsmart5.framework.tag.CssConstants.*;

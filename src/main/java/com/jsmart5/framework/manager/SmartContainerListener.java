@@ -20,6 +20,8 @@ package com.jsmart5.framework.manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.EventListener;
 import java.util.HashSet;
@@ -46,10 +48,16 @@ import javax.servlet.annotation.WebListener;
 
 import org.springframework.web.context.ContextLoader;
 
-import static com.jsmart5.framework.manager.SmartImage.*;
-import static com.jsmart5.framework.manager.SmartConfig.*;
+import com.jsmart5.framework.annotation.SmartFilter;
+import com.jsmart5.framework.config.SmartInitParam;
+import com.jsmart5.framework.config.SmartSecureMethod;
+import com.jsmart5.framework.config.SmartUploadConfig;
+import com.jsmart5.framework.config.SmartUrlPattern;
+
+import static com.jsmart5.framework.config.SmartConfig.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
-import static com.jsmart5.framework.manager.SmartText.*;
+import static com.jsmart5.framework.util.SmartImage.*;
+import static com.jsmart5.framework.util.SmartText.*;
 
 @WebListener
 public final class SmartContainerListener implements ServletContextListener {
@@ -123,7 +131,7 @@ public final class SmartContainerListener implements ServletContextListener {
 	        servletReg.addMapping(servletMapping);
 
 	        // SmartErrorFilter -> @WebFilter(urlPatterns = {"/*"})
-	        Filter errorFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.SmartErrorFilter"));
+	        Filter errorFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.SmartErrorFilter"));
 	        FilterRegistration.Dynamic errorFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("SmartErrorFilter", errorFilter);
 
 	        errorFilterReg.setAsyncSupported(true);
@@ -131,7 +139,7 @@ public final class SmartContainerListener implements ServletContextListener {
 	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "/*");
 
 	        // SmartEncodeFilter -> @WebFilter(urlPatterns = {"/*"})
-	        Filter encodeFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.SmartEncodeFilter"));
+	        Filter encodeFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.SmartEncodeFilter"));
 	        FilterRegistration.Dynamic encodeFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("SmartEncodeFilter", encodeFilter);
 
 	        encodeFilterReg.setAsyncSupported(true);
@@ -139,7 +147,7 @@ public final class SmartContainerListener implements ServletContextListener {
 	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "/*");
 
 	        // SmartCacheFilter -> @WebFilter(urlPatterns = {"/*"})
-	        Filter cacheFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.SmartCacheFilter"));
+	        Filter cacheFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.SmartCacheFilter"));
 	        FilterRegistration.Dynamic cacheFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("SmartCacheFilter", cacheFilter);
 
 	        cacheFilterReg.setAsyncSupported(true);
@@ -147,25 +155,25 @@ public final class SmartContainerListener implements ServletContextListener {
 	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "/*");
 
 	        // Add custom filters defined by client
-	        if (CONFIG.getContent().getCustomFilters() != null) {
-	        	for (SmartCustomFilter customFilter : CONFIG.getContent().getCustomFilters()) {
+	        for (String filterName : sortCustomFilters()) {
+	        	Filter customFilter = servletContext.createFilter((Class<? extends Filter>) HANDLER.smartFilters.get(filterName));
+	        	HANDLER.executeInjection(customFilter);
 
-	        		Filter filter = servletContext.createFilter((Class<? extends Filter>) Class.forName(customFilter.getValue()));
-	     	        FilterRegistration.Dynamic customFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter(customFilter.getValue(), filter);
+	        	SmartFilter customSmartFilter = customFilter.getClass().getAnnotation(SmartFilter.class);
+     	        FilterRegistration.Dynamic customFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter(filterName, customFilter);
 
-	     	        if (customFilter.getInitParams() != null) {
-	     	        	for (SmartInitParam initParam : customFilter.getInitParams()) {
-	     	        		customFilterReg.setInitParameter(initParam.getName(), initParam.getValue());
-	     	        	}
-	     	        }
-	     	        customFilterReg.setAsyncSupported(true);
-	     	        customFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
-	     	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "/*");
-	        	}
+     	        if (customSmartFilter.initParams() != null) {
+     	        	for (WebInitParam initParam : customSmartFilter.initParams()) {
+     	        		customFilterReg.setInitParameter(initParam.name(), initParam.value());
+     	        	}
+     	        }
+
+     	        customFilterReg.setAsyncSupported(customSmartFilter.asyncSupported());
+     	        customFilterReg.addMappingForUrlPatterns(EnumSet.copyOf(Arrays.asList(customSmartFilter.dispatcherTypes())), true, customSmartFilter.urlPatterns());
 	        }
 
 	        // SmartWebFilter -> @WebFilter(servletNames = {"SmartServlet"})
-	        Filter webFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.SmartWebFilter"));
+	        Filter webFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.SmartWebFilter"));
 	        FilterRegistration.Dynamic webFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("SmartWebFilter", webFilter);
 
 	        webFilterReg.setAsyncSupported(true);
@@ -173,12 +181,13 @@ public final class SmartContainerListener implements ServletContextListener {
 	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "SmartServlet");
 
 	        // SmartOutputFilter -> @WebFilter(servletNames = {"SmartServlet"})
-	        Filter outputFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.SmartOutputFilter"));
+	        Filter outputFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.SmartOutputFilter"));
 	        FilterRegistration.Dynamic outputFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("SmartOutputFilter", outputFilter);
 
 	        outputFilterReg.setAsyncSupported(true);
 	        outputFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
 	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "SmartServlet");
+
 
 	        // SmartSessionControl - > @WebListener
 	        EventListener smartSessionListener = servletContext.createListener((Class<? extends EventListener>) Class.forName("com.jsmart5.framework.manager.SmartSessionControl"));
@@ -220,6 +229,22 @@ public final class SmartContainerListener implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent sce) {
 		HANDLER.destroy(sce.getServletContext());
 		CONTEXT_LOADER.closeWebApplicationContext(sce.getServletContext());
+	}
+
+	private List<String> sortCustomFilters() {
+		// Sort the custom filter by the order specified
+        List<String> customFilters = new ArrayList<String>(HANDLER.smartFilters.keySet());
+        Collections.sort(customFilters, new Comparator<String>() {
+
+			@Override
+			public int compare(String filterNameOne, String filterNameTwo) {
+				SmartFilter smartFilterOne = HANDLER.smartFilters.get(filterNameOne).getAnnotation(SmartFilter.class);
+				SmartFilter smartFilterTwo = HANDLER.smartFilters.get(filterNameTwo).getAnnotation(SmartFilter.class);
+				return Integer.compare(smartFilterOne.order(), smartFilterTwo.order());
+			}
+        });
+
+        return customFilters;
 	}
 
 	private MultipartConfigElement getServletMultipartElement() {

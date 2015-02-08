@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.filter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,9 +42,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,14 +55,16 @@ import org.reflections.vfs.Vfs;
 import org.reflections.vfs.Vfs.Dir;
 
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
+import com.jsmart5.framework.config.SmartHtmlCompress;
+import com.jsmart5.framework.manager.SmartContext;
 
+import static com.jsmart5.framework.config.SmartConfig.*;
+import static com.jsmart5.framework.config.SmartConstants.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
-import static com.jsmart5.framework.manager.SmartConstants.*;
-import static com.jsmart5.framework.manager.SmartConfig.*;
 
 public final class SmartWebFilter implements Filter {
 
-	/*package*/ static final String ENCODING = "UTF-8";
+	public static final String ENCODING = "UTF-8";
 
 	private static final int STREAM_BUFFER = 2048;
 
@@ -109,7 +113,10 @@ public final class SmartWebFilter implements Filter {
 		SmartContext.initCurrentInstance(httpRequest, httpResponse);
 
 		// Remove script builder
-		httpRequest.getSession().removeAttribute(SCRIPT_BUILDER_ATTR);
+		HttpSession session = httpRequest.getSession();
+		synchronized (session) {
+			session.removeAttribute(SCRIPT_BUILDER_ATTR);
+		}
 
 		// Anonymous subclass to wrap HTTP response to print output
 		SmartWebServletResponseWrapper responseWrapper = new SmartWebServletResponseWrapper(httpResponse);
@@ -138,9 +145,11 @@ public final class SmartWebFilter implements Filter {
 
         } finally {
         	// Remove script and ajax builder attributes
-        	httpRequest.getSession().removeAttribute(AJAX_ATTR);
-        	httpRequest.getSession().removeAttribute(AJAX_RESET_ATTR);
-            httpRequest.getSession().removeAttribute(SCRIPT_BUILDER_ATTR);
+        	synchronized (session) {
+        		session.removeAttribute(AJAX_ATTR);
+            	session.removeAttribute(AJAX_RESET_ATTR);
+            	session.removeAttribute(SCRIPT_BUILDER_ATTR);
+        	}
         }
 
         // Close bean context based on current thread instance
@@ -221,36 +230,40 @@ public final class SmartWebFilter implements Filter {
 		    }
 
 	        // Case redirect via ajax, place tag with path to be handled b javascript
-			String ajaxPath = (String) httpRequest.getSession().getAttribute(AJAX_ATTR);
-			if (ajaxPath != null) {
+		    HttpSession session = httpRequest.getSession();
+		    synchronized (session) {
 
-				Matcher formMatcher = FORM_PATTERN.matcher(html);
-				if (formMatcher.find()) {
-					String formMatch = formMatcher.group();
-					html = html.replace(formMatch, formMatch + REDIRECT_AJAX_TAG + ajaxPath + END_AJAX_TAG);
-				}
-			}
-
-			// Case reset via ajax, place tag to force javascript reset the page
-			if (httpRequest.getSession().getAttribute(AJAX_RESET_ATTR) != null) {
-				if (ajaxPath == null && SmartContext.isAjaxRequest()) {
+		    	String ajaxPath = (String) session.getAttribute(AJAX_ATTR);
+				if (ajaxPath != null) {
 
 					Matcher formMatcher = FORM_PATTERN.matcher(html);
 					if (formMatcher.find()) {
 						String formMatch = formMatcher.group();
-						html = html.replaceFirst(formMatch, formMatch + RESET_AJAX_TAG);
+						html = html.replace(formMatch, formMatch + REDIRECT_AJAX_TAG + ajaxPath + END_AJAX_TAG);
 					}
 				}
-	        }
 
-			StringBuilder[] scriptBuilders = (StringBuilder[]) httpRequest.getSession().getAttribute(SCRIPT_BUILDER_ATTR);
-			if (scriptBuilders != null) {
-				Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
+				// Case reset via ajax, place tag to force javascript reset the page
+				if (session.getAttribute(AJAX_RESET_ATTR) != null) {
+					if (ajaxPath == null && SmartContext.isAjaxRequest()) {
 
-				if (closeBodyMatcher.find()) {
-					String closeBodyMatch = closeBodyMatcher.group();
-					String compressedScript = String.format(SCRIPT_READY_AJAX_TAG, scriptBuilders[0].append(scriptBuilders[1]));
-					html = html.replace(closeBodyMatch, compressedScript + closeBodyMatch);
+						Matcher formMatcher = FORM_PATTERN.matcher(html);
+						if (formMatcher.find()) {
+							String formMatch = formMatcher.group();
+							html = html.replaceFirst(formMatch, formMatch + RESET_AJAX_TAG);
+						}
+					}
+		        }
+
+				StringBuilder[] scriptBuilders = (StringBuilder[]) session.getAttribute(SCRIPT_BUILDER_ATTR);
+				if (scriptBuilders != null) {
+					Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
+
+					if (closeBodyMatcher.find()) {
+						String closeBodyMatch = closeBodyMatcher.group();
+						String compressedScript = String.format(SCRIPT_READY_AJAX_TAG, scriptBuilders[0].append(scriptBuilders[1]));
+						html = html.replace(closeBodyMatch, compressedScript + closeBodyMatch);
+					}
 				}
 			}
         }
@@ -389,6 +402,8 @@ public final class SmartWebFilter implements Filter {
 	private class SmartWebServletOutputStream extends ServletOutputStream {
 
 		private StringWriter writer = new StringWriter();
+		
+		private WriteListener writeListener;
 
 		public StringWriter getWriter() {
 			return writer;
@@ -400,17 +415,47 @@ public final class SmartWebFilter implements Filter {
 
 		@Override
 		public void write(int b) throws IOException {
-			writer.write(b);
+			try {
+				writer.write(b);
+				if (writeListener != null) {
+		    		writeListener.onWritePossible();
+		    	}
+	    	} catch (IOException ex) {
+	    		if (writeListener != null) {
+		    		writeListener.onError(ex);
+		    	}
+	    		throw ex;
+	    	}
 		}
 
 		@Override
 		public void write(byte[] b) throws IOException {
-			writer.write(new String(b));
+			try {
+				writer.write(new String(b));
+				if (writeListener != null) {
+		    		writeListener.onWritePossible();
+		    	}
+	    	} catch (IOException ex) {
+	    		if (writeListener != null) {
+		    		writeListener.onError(ex);
+		    	}
+	    		throw ex;
+	    	}
 		}
 
 		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
-			writer.write(new String(b), off, len);
+			try {
+				writer.write(new String(b), off, len);
+				if (writeListener != null) {
+		    		writeListener.onWritePossible();
+		    	}
+	    	} catch (IOException ex) {
+	    		if (writeListener != null) {
+		    		writeListener.onError(ex);
+		    	}
+	    		throw ex;
+	    	}
 		}
 
 		@Override
@@ -426,6 +471,16 @@ public final class SmartWebFilter implements Filter {
 		@Override
 		public String toString() {
 			return writer.toString();
+		}
+
+		@Override
+		public boolean isReady() {
+			return false;
+		}
+
+		@Override
+		public void setWriteListener(WriteListener writeListener) {
+			this.writeListener = writeListener;
 		}
 	}
 

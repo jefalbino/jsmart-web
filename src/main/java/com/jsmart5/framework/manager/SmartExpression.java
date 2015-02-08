@@ -37,7 +37,7 @@ import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -46,18 +46,20 @@ import org.json.JSONObject;
 
 import com.jsmart5.framework.annotation.ScopeType;
 import com.jsmart5.framework.annotation.SmartBean;
+import com.jsmart5.framework.config.SmartConstants;
+import com.jsmart5.framework.filter.SmartWebFilter;
 import com.jsmart5.framework.tag.TableAdapterHandler;
 
-import static com.jsmart5.framework.manager.SmartConfig.*;
+import static com.jsmart5.framework.config.SmartConfig.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
-import static com.jsmart5.framework.manager.SmartText.*;
 import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
+import static com.jsmart5.framework.util.SmartText.*;
 
-/*package*/ enum SmartExpression {
+public enum SmartExpression {
 
 	EXPRESSIONS();
 
-	/*package*/ Map<String, String> getRequestExpressions() {
+	Map<String, String> getRequestExpressions() {
 		Map<String, String> expressions = new LinkedHashMap<String, String>();
 		for (String param : SmartContext.getRequest().getParameterMap().keySet()) {
 			String expr = extractExpression(param);
@@ -79,7 +81,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		return null;
 	}
 
-	/*package*/ String handleRequestExpression(String param, String expr) throws ServletException, IOException {
+	String handleRequestExpression(String param, String expr) throws ServletException, IOException {
 		String submitExpression = null;
 		String jTag = param.substring(0, SmartTagHandler.J_TAG_LENGTH);
 
@@ -114,7 +116,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		return submitExpression;
 	}
 
-	/*package*/ String submitExpression(String expr) {
+	String submitExpression(String expr) {
 		String retExpr = null;
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
@@ -147,7 +149,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 	}
 
 	@SuppressWarnings("all")
-	/*package*/ void setSelectionValue(String expr, String param) {
+	void setSelectionValue(String expr, String param) {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
 			String[] names = expr.replace(SmartConstants.START_EL, "").replace(SmartConstants.END_EL, "").split(SmartConstants.EL_SEPARATOR);
@@ -173,7 +175,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 	 * {"edit": "", "index": "", "varname": "", "values": [{"name": "", "value": ""}, ...], "first": "", "size": "", "sort": {"name": "", "order": ""}, "filters": [{"name": "", "field": "", "value": ""}, ...]}
 	 */
 	@SuppressWarnings("all")
-	/*package*/ void setTableEditionValue(String expr, String param) throws ServletException, IOException {
+	void setTableEditionValue(String expr, String param) throws ServletException, IOException {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 			try {
 				expr = expr.replace(SmartConstants.START_EL, SmartConstants.JSP_EL);
@@ -249,7 +251,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 	 * {"action": "", "type": "SINGLE/MULTI", "indexes": [], "first": "", "size": "", "sort": {"name": "", "order": ""}, "filters": [{"name": "", "field": "", "value": ""}, ...]}
 	 */
 	@SuppressWarnings("all")
-	/*package*/ void setTableSelectionValue(String expr, String param) throws ServletException {
+	void setTableSelectionValue(String expr, String param) throws ServletException {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 			try {
 				expr = expr.replace(SmartConstants.START_EL, SmartConstants.JSP_EL);
@@ -317,7 +319,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		}
 	}
 
-	/*package*/ void setExpressionValue(String expr, String param, boolean isUrl) {
+	void setExpressionValue(String expr, String param, boolean isUrl) {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
 			if (isReadOnlyParameter(param)) {
@@ -347,7 +349,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		}
 	}
 
-	/*package*/ void setAttributeValue(String expr, Object value) {
+	void setAttributeValue(String expr, Object value) {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
 			String[] names = expr.replace(SmartConstants.START_EL, "").replace(SmartConstants.END_EL, "").split(SmartConstants.EL_SEPARATOR);
@@ -362,7 +364,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		}
 	}
 
-	/*package*/ void setExpressionValues(String expr, String param) {
+	void setExpressionValues(String expr, String param) {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
 			if (isReadOnlyParameter(param)) {
@@ -397,7 +399,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		}
 	}
 
-	/*package*/ void setExpressionFilePart(String expr, String file) throws ServletException, IOException {
+	void setExpressionFilePart(String expr, String file) throws ServletException, IOException {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
 			String[] names = expr.replace(SmartConstants.START_EL, "").replace(SmartConstants.END_EL, "").split(SmartConstants.EL_SEPARATOR);
@@ -413,7 +415,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		}
 	}
 
-	/*package*/ void setExpressionDate(String expr, String date) throws ServletException {
+	void setExpressionDate(String expr, String date) throws ServletException {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
 			String[] names = expr.replace(SmartConstants.START_EL, "").replace(SmartConstants.END_EL, "").split(SmartConstants.EL_SEPARATOR);
@@ -451,7 +453,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		}
 	}
 
-	/*package*/ void setExpressionCaptcha(String expr, String param) throws ServletException {
+	void setExpressionCaptcha(String expr, String param) throws ServletException {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
 			String[] names = expr.replace(SmartConstants.START_EL, "").replace(SmartConstants.END_EL, "").split(SmartConstants.EL_SEPARATOR);
@@ -470,7 +472,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		}
 	}
 
-	/*package*/ Object getExpressionValue(Object expr) {
+	public Object getExpressionValue(Object expr) {
 		if (expr != null) {
 			String union = expr.toString();
 			Matcher matcher = Pattern.compile(SmartConstants.EL_PATTERN).matcher(expr.toString());
@@ -532,7 +534,7 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 		return expr;
 	}
 
-	/*package*/ Object getResourceValue(String expr) {
+	Object getResourceValue(String expr) {
 		if (expr != null && expr.startsWith(SmartConstants.START_EL) && expr.endsWith(SmartConstants.END_EL)) {
 
 			String[] exprs = expr.replace(SmartConstants.START_EL, "").replace(SmartConstants.END_EL, "").split(SmartConstants.EL_SEPARATOR, 2);
@@ -567,7 +569,9 @@ import static com.jsmart5.framework.manager.SmartTableTagHandler.*;
 
 	private Object escapeValue(String value) {
 		if (value != null && CONFIG.getContent().isEscapeRequest()) {
-			value = StringUtils.replaceEach(value, new String[]{"&", "\"", "<", ">", "$", "#"}, new String[]{"&amp;", "&quot;", "&lt;", "&gt;", "&#36;", "&#35;"});
+			value = StringEscapeUtils.escapeJavaScript(value);
+			value = StringEscapeUtils.escapeHtml(value);
+			//value = StringUtils.replaceEach(value, new String[]{"&", "\"", "<", ">", "$", "#"}, new String[]{"&amp;", "&quot;", "&lt;", "&gt;", "&#36;", "&#35;"});
 		}
     	return value;
     }
