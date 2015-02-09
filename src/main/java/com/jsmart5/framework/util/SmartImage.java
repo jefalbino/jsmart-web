@@ -44,14 +44,22 @@ public enum SmartImage {
 	/**
 	 * Returns the image path according to its library and image name.
 	 * 
-	 * @param library folder name containing the desired image.
+	 * @param library folder path name containing the desired image.
 	 * @param name name of the image including its extension.
 	 * @return the path to get the image resource.
 	 */
-	public String getImage(final String library, final String name) {
-		Map<String, String> names = libraries.get(library);
-		if (names != null) {
-			return names.get(name);
+	public String getImage(String library, String name) {
+		if (library != null) {
+			if (!library.startsWith("/")) {
+				library = "/" + library;
+			}
+			if (library.endsWith("/")) {
+				library = library.substring(0, library.length() - 1);
+			}
+			Map<String, String> names = libraries.get(library);
+			if (names != null) {
+				return names.get(name);
+			}
 		}
 		return null;
 	}
@@ -75,8 +83,7 @@ public enum SmartImage {
 
 			// Add library to libraries
 			if (library != null) {
-				String[] bars = path.substring(0, path.length() -1).split("/");
-				libraries.put(bars[bars.length -1], library);
+				libraries.put(path.substring(0, path.length() -1), library);
 			}
 		}
 	}

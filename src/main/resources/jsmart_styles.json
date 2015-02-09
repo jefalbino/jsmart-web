@@ -8,7 +8,7 @@
 		"@borderdisabled@": "#a3a3a3"
 	},
 	"water": {
-		"@image@": "img/water_image.png",
+		"@image@": "images/water_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#016b75",
 		"@border@": "#016b75",
@@ -18,7 +18,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"dark_water": {
-		"@image@": "img/dark_water_image.png",
+		"@image@": "images/dark_water_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#194071",
 		"@border@": "#194071",
@@ -28,7 +28,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"blue": {
-		"@image@": "img/blue_image.png",
+		"@image@": "images/blue_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#357ebd",
 		"@border@": "#357ebd",
@@ -38,7 +38,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"dark_blue": {
-		"@image@": "img/dark_blue_image.png",
+		"@image@": "images/dark_blue_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#494587",
 		"@border@": "#494587",
@@ -48,7 +48,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"green": {
-		"@image@": "img/green_image.png",
+		"@image@": "images/green_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#4cae4c",
 		"@border@": "#4cae4c",
@@ -58,7 +58,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"dark_green": {
-		"@image@": "img/dark_green_image.png",
+		"@image@": "images/dark_green_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#115a2d",
 		"@border@": "#115a2d",
@@ -68,7 +68,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"purple": {
-		"@image@": "img/purple_image.png",
+		"@image@": "images/purple_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#83329a",
 		"@border@": "#83329a",
@@ -78,7 +78,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"dark_purple": {
-		"@image@": "img/dark_purple_image.png",
+		"@image@": "images/dark_purple_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#340c64",
 		"@border@": "#340c64",
@@ -88,7 +88,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"pink": {
-		"@image@": "img/pink_image.png",
+		"@image@": "images/pink_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#b92d69",
 		"@border@": "#b92d69",
@@ -98,7 +98,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"orange": {
-		"@image@": "img/orange_image.png",
+		"@image@": "images/orange_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#eea236",
 		"@border@": "#eea236",
@@ -108,7 +108,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"dark_orange": {
-		"@image@": "img/dark_orange_image.png",
+		"@image@": "images/dark_orange_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#a77501",
 		"@border@": "#a77501",
@@ -118,7 +118,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"red": {
-		"@image@": "img/red_image.png",
+		"@image@": "images/red_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#d43f3a",
 		"@border@": "#d43f3a",
@@ -128,7 +128,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"dark_red": {
-		"@image@": "img/dark_red_image.png",
+		"@image@": "images/dark_red_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#8f2e28",
 		"@border@": "#8f2e28",
@@ -138,7 +138,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"brown": {
-		"@image@": "img/brown_image.png",
+		"@image@": "images/brown_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#583b28",
 		"@border@": "#583b28",
@@ -148,7 +148,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"black": {
-		"@image@": "img/black_image.png",
+		"@image@": "images/black_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#000000",
 		"@border@": "#000000",
@@ -158,7 +158,7 @@
 		"@arrowselect@": "#ffffff"
 	},	
 	"yellow": {
-		"@image@": "img/yellow_image.png",
+		"@image@": "images/yellow_image.png",
 		"@font@": "#0e0e0e",
 		"@fontstrong@": "#feaa04",
 		"@border@": "#feaa04",
@@ -168,7 +168,7 @@
 		"@arrowselect@": "#ffffff"
 	},
 	"gray": {
-		"@image@": "img/gray_image.png",
+		"@image@": "images/gray_image.png",
 		"@font@": "#ffffff",
 		"@fontstrong@": "#646668",
 		"@border@": "#646668",
@@ -178,7 +178,7 @@
 		"@arrowselect@": "#000000"
 	},
 	"white": {
-		"@image@": "img/white_image.png",
+		"@image@": "images/white_image.png",
 		"@font@": "#313c4e",
 		"@fontstrong@": "#313c4e",
 		"@border@": "#cacaca",

@@ -163,7 +163,7 @@
 }
 
 .jsmart5_auto_complete_load, .jsmart5_auto_complete_load:focus {
-	background: url("img/load_dots.gif") no-repeat scroll right center transparent;
+	background: url("images/load_dots.gif") no-repeat scroll right center transparent;
 }
 
 .jsmart5_auto_complete_group, .jsmart5_search_group, .jsmart5_search_group_no_label {
@@ -183,7 +183,7 @@
 	width: 20px;
 	height: 20px;
 	vertical-align: middle;
-	background: url('img/general_image.png') right center no-repeat;
+	background: url('images/general_image.png') right center no-repeat;
 	background-position: -2px -61px;
 	margin-bottom: 2px;
 }
@@ -226,7 +226,7 @@
 }
 
 .jsmart5_search_close > a {
-	background: url('img/general_image.png') no-repeat;
+	background: url('images/general_image.png') no-repeat;
 	background-position: -3px -84px;
 	width: 10px;
 	height: 12px;
@@ -242,7 +242,7 @@
 	height: 28px;
 	padding: 2px 8px;
 	text-align: left;
-	background: #fefefe url('img/enable_select.png') right center no-repeat;
+	background: #fefefe url('images/enable_select.png') right center no-repeat;
 	font-family: serif;
 	font: inherit;
 	color: inherit;
@@ -255,11 +255,11 @@
 }
 
 .jsmart5_select[disabled="disabled"] {
-	background: #fefefe url('img/disable_select.png') right center no-repeat;
+	background: #fefefe url('images/disable_select.png') right center no-repeat;
 }
 
 .jsmart5_select:focus {
-	background: #ffffff url('img/enable_select.png') right center no-repeat;
+	background: #ffffff url('images/enable_select.png') right center no-repeat;
 }
 
 .jsmart5_select::-ms-expand, .jsmart5_select_multi::-ms-expand {
@@ -523,21 +523,21 @@
 	width: 16px;
 	height: 16px;
 	display: inline-block;
-	background-image: url('img/load_small.gif');
+	background-image: url('images/load_small.gif');
 }
 
 .jsmart5_load_medium {
 	width: 32px;
 	height: 32px;
 	display: inline-block;
-	background: url('img/load_medium.gif');
+	background: url('images/load_medium.gif');
 }
 
 .jsmart5_load_large {
 	width: 66px;
 	height: 66px;
 	display: inline-block;
-	background-image: url('img/load_large.gif');
+	background-image: url('images/load_large.gif');
 }
 
 .jsmart5_validate {
@@ -699,7 +699,7 @@
     position: absolute;
     left: 0;
     top: 0;
-	background: url('img/general_image.png') no-repeat;
+	background: url('images/general_image.png') no-repeat;
 	background-position: 3px -26px;
 }
 
@@ -722,7 +722,7 @@
     position: absolute;
     left: 0;
     top: 0;
-	background: url('img/general_image.png') no-repeat;
+	background: url('images/general_image.png') no-repeat;
 	background-position: -25px -3px;
 }
 
@@ -745,7 +745,7 @@
     position: absolute;
     left: 0;
     top: 0;
-	background: url('img/general_image.png') no-repeat;
+	background: url('images/general_image.png') no-repeat;
 	background-position: 2px 3px;
 }
 
@@ -768,7 +768,7 @@
     position: absolute;
     left: 0;
     top: 0;
-	background: url('img/general_image.png') no-repeat;
+	background: url('images/general_image.png') no-repeat;
     background-position: -22px -26px;
 }
 

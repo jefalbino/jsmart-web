@@ -25,14 +25,12 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
-
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Input;
+import com.jsmart5.framework.tag.html.Span;
 
 public final class InputTagHandler extends SmartTagHandler {
-
-	private static final String MASK_SCRIPT = "$('#%s').mask('%s');";
 
 	private static final String TEXT_TYPE = "text";
 
@@ -165,130 +163,79 @@ public final class InputTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		StringBuilder builder = new StringBuilder();
+		Div div = new Div();
+		String addonId = getRandonId();
 
 		if (label != null) {
-			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CSS_INPUT_GROUP);
-			builder.append(">");
+			div.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			builder.append(OPEN_SPAN_TAG);
-			appendClass(builder, CSS_INPUT_LABEL);
-			builder.append(">");
+			Span span = new Span();
+			span.addAttribute("id", "basic-addon-" + addonId)
+				.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+				.setText((String) getTagValue(label));
 
-			String labelVal = (String) getTagValue(label);
-			if (labelVal != null) {
-				builder.append(labelVal);
-			}
-			builder.append(CLOSE_SPAN_TAG);
+			div.addTag(span);
 		}
 
-		builder.append(INPUT_TAG);
-
-		if (id != null) {
-			builder.append("id=\"" + id + "\" ");
-		}
-
-		String name = getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : "");
-		if (name != null) {
-			builder.append("name=\"" + name + "\" ");
-		}
-
-		appendFormValidator(builder);
-
-		appendRest(builder);
-
-		builder.append("type=\"" + type + "\" ");
+		Input input = new Input();
+		input.addAttribute("id", id)
+			 .addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+			 .addAttribute("type", type)
+			 .addAttribute("style", style)
+			 .addAttribute("class", Bootstrap.FORM_CONTROL)
+			 .addAttribute("class", styleClass)
+			 .addAttribute("tabindex", tabIndex)
+			 .addAttribute("maxlength", length)
+			 .addAttribute("size", size)
+			 .addAttribute("readonly", readOnly ? readOnly : null)
+			 .addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null)
+			 .addAttribute("placeholder", getResourceString(placeHolder))
+			 .addAttribute("datatype", type)
+			 .addAttribute("pattern", pattern)
+			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
 		
+		if (label != null) {
+			input.addAttribute("aria-describedby", "basic-addon-" + addonId);
+			div.addTag(input);
+		}
+
 		if (NUMBER_TYPE.equals(type) || RANGE_TYPE.equals(type)) {
-			if (minValue != null) {
-				builder.append("min=\"" + minValue + "\" ");
-			}
-			if (maxValue != null) {
-				builder.append("max=\"" + maxValue + "\" ");
-			}
-			if (stepValue != null) {
-				builder.append("step=\"" + stepValue + "\" ");
-			}
+			input.addAttribute("min", minValue)
+				 .addAttribute("max", maxValue)
+				 .addAttribute("step", stepValue);
 		}
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_INPUT);
-		}
-		if (tabIndex != null) {
-			builder.append("tabindex=\"" + tabIndex + "\" ");
-		}
-		if (length != null) {
-			builder.append("maxlength=\"" + length + "\" ");
-		}
-		if (size != null) {
-			builder.append("size=\"" + size + "\" ");
-		}
-		if (readOnly) {
-			builder.append("readonly=\"true\" ");
-		}
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
-		if (placeHolder != null) {
-			builder.append("placeholder=\"" + getResourceString(placeHolder) + "\" ");
-			if (type != null) {
-				builder.append("datatype=\"" + type + "\" ");
-			}
-		}
-		if (pattern != null) {
-			builder.append("pattern=\"" + pattern + "\" ");
-		}
-		if (autoFocus) {
-			builder.append("autofocus=\"autofocus\" ");
-		}
-
+		
 		if (!PASSWORD_TYPE.equals(type)) {
-			Object object = getTagValue(value);
-			if (object != null) {
-				builder.append("value=\"" + object + "\" ");
-			}
+			input.addAttribute("value", getTagValue(value));
 		} else {
 			setTagValue(value, null);
 		}
 
-		if (mask != null) {
-			builder.append("mask=\"" + mask + "\" ");
-			appendScript(new StringBuilder(String.format(MASK_SCRIPT, id, mask)));
-		}
+//		appendFormValidator(builder);
 
-		if (ajaxCommand != null) {
-			if (ajaxCommand.startsWith(ON_BLUR) && NUMBER_TYPE.equals(type)) {
-				builder.append(ajaxCommand.replace(ON_BLUR, ON_BLUR + JSMART_NUMBER.format("$(this)")));
-				builder.append(ajaxCommand.replace(ON_FOCUS, ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)")));
-			} else {
-				if (NUMBER_TYPE.equals(type)) {
-					builder.append(ON_BLUR + JSMART_NUMBER.format("$(this)") + "\" ");
-					builder.append(ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)") + " return false;\" ");
-				}
-				builder.append(ajaxCommand);
-			}
-		} else {
-			if (NUMBER_TYPE.equals(type)) {
-				builder.append(ON_BLUR + JSMART_NUMBER.format("$(this)") + "\" ");
-				builder.append(ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)") + " return false;\" ");
-			}
-		}
+//		appendRest(builder);
 
-		appendEvent(builder);
+//		if (ajaxCommand != null) {
+//			if (ajaxCommand.startsWith(ON_BLUR) && NUMBER_TYPE.equals(type)) {
+//				builder.append(ajaxCommand.replace(ON_BLUR, ON_BLUR + JSMART_NUMBER.format("$(this)")));
+//				builder.append(ajaxCommand.replace(ON_FOCUS, ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)")));
+//			} else {
+//				if (NUMBER_TYPE.equals(type)) {
+//					builder.append(ON_BLUR + JSMART_NUMBER.format("$(this)") + "\" ");
+//					builder.append(ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)") + " return false;\" ");
+//				}
+//				builder.append(ajaxCommand);
+//			}
+//		} else {
+//			if (NUMBER_TYPE.equals(type)) {
+//				builder.append(ON_BLUR + JSMART_NUMBER.format("$(this)") + "\" ");
+//				builder.append(ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)") + " return false;\" ");
+//			}
+//		}
+//
+//		appendEvent(builder);
 
-		builder.append("/>");
-
-		if (label != null) {
-			builder.append(CLOSE_DIV_TAG);
-		}
-
-		printOutput(builder);
+		printOutput(label != null ? div.getHtml() : input.getHtml());
 	}
 
 	public void setType(String type) {

@@ -86,14 +86,14 @@ public final class SmartWebFilter implements Filter {
 
 	private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
 
-	private static JSONObject jsonResources;
+	private static final StringBuilder headerScripts = new StringBuilder();;
 
-	private static JSONObject jsonHeaders;
+	private static final StringBuilder headerStyles = new StringBuilder();
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
-		initJsonResources();
-		initFileResources(config);
+		initHeaders();
+		initResources(config);
 	}
 
 	@Override
@@ -203,7 +203,7 @@ public final class SmartWebFilter implements Filter {
         	Matcher startHeadMatcher = START_HEAD_PATTERN.matcher(html);
 		    if (startHeadMatcher.find()) {
 		    	String startHeadMatch = startHeadMatcher.group();
-		    	html = html.replaceFirst(startHeadMatch, startHeadMatch + jsonHeaders.getString("style"));
+		    	html = html.replaceFirst(startHeadMatch, startHeadMatch + headerStyles);
 
 		    	// Try to place the javascript as the first script before no other inside head content
 		    	Matcher headContentMatcher = HEAD_CONTENT_PATTERN.matcher(html);
@@ -213,20 +213,20 @@ public final class SmartWebFilter implements Filter {
 		    		Matcher scriptHeadMatcher = SCRIPT_HEAD_PATTERN.matcher(headContentMatch);
 					if (scriptHeadMatcher.find()) {
 						String scriptHeadMatch = scriptHeadMatcher.group();
-						html = html.replaceFirst(scriptHeadMatch, jsonHeaders.getString("script") + scriptHeadMatch);
+						html = html.replaceFirst(scriptHeadMatch, headerScripts + scriptHeadMatch);
 
 					} else {
 						Matcher closeHeadMatcher = CLOSE_HEAD_PATTERN.matcher(html);
 						if (closeHeadMatcher.find()) {
 							String closeHeadMatch = closeHeadMatcher.group();
-							html = html.replaceFirst(closeHeadMatch, jsonHeaders.getString("script") + closeHeadMatch);
+							html = html.replaceFirst(closeHeadMatch, headerScripts + closeHeadMatch);
 						}
 					}
 		    	}
 
 		    } else {
 		    	String htmlMatch = htmlMatcher.group();
-		    	html = html.replaceFirst(htmlMatch, htmlMatch + START_HEAD_TAG + jsonHeaders.getString("style") + jsonHeaders.getString("script") + END_HEAD_TAG);
+		    	html = html.replaceFirst(htmlMatch, htmlMatch + START_HEAD_TAG + headerStyles + headerScripts + END_HEAD_TAG);
 		    }
 
 	        // Case redirect via ajax, place tag with path to be handled b javascript
@@ -270,10 +270,19 @@ public final class SmartWebFilter implements Filter {
 		return html;
 	}
 
-	private void initJsonResources() {
+	private void initHeaders() {
 		try {
-			jsonResources = new JSONObject(convertResourceToString(FILTER_RESOURCES));
-			jsonHeaders = new JSONObject(convertResourceToString(FILTER_HEADERS));
+			JSONObject jsonHeaders = new JSONObject(convertResourceToString(FILTER_HEADERS));
+
+			JSONArray styles = jsonHeaders.getJSONArray("styles");
+			for (int i = 0; i < styles.length(); i++) {
+				headerStyles.append(styles.getString(i));
+			}
+
+			JSONArray scripts = jsonHeaders.getJSONArray("scripts");
+			for (int i = 0; i < scripts.length(); i++) {
+				headerScripts.append(scripts.getString(i));
+			}
 		} catch (Exception ex) {
 			LOGGER.log(Level.SEVERE, "Failure to load JSON resources: " + ex.getMessage(), ex);
 		}
@@ -286,7 +295,7 @@ public final class SmartWebFilter implements Filter {
 		return scanner.hasNext() ? scanner.next() : "";
 	}
 
-	private void initFileResources(FilterConfig config) {
+	private void initResources(FilterConfig config) {
 		try {
 			ServletContext context = config.getServletContext();
 			Set<String> libs = context.getResourcePaths(LIB_FILE_PATH);
@@ -309,6 +318,8 @@ public final class SmartWebFilter implements Filter {
 				LOGGER.log(Level.SEVERE, "Could not find the JSmart5 library JAR file inside " + LIB_FILE_PATH);
 				return;
 			}
+
+			JSONObject jsonResources = new JSONObject(convertResourceToString(FILTER_RESOURCES));
 
 			File libFile = new File(context.getRealPath(libFilePath));
 			Dir content = Vfs.fromURL(libFile.toURI().toURL());

@@ -130,7 +130,8 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 
 		captchaScript.append("$('#" + id + "').keyup(function(){this.value=this.value.toUpperCase();});");
 
-		appendScript(captchaScript);
+		// TODO
+		// appendScript(captchaScript);
 
 		appendEvent(builder);
 

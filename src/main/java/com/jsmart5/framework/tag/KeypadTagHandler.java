@@ -106,7 +106,8 @@ public final class KeypadTagHandler extends SmartTagHandler {
 
 		scriptBuilder.append(KEYPAD_SCRIPT_CLOSE);
 
-		appendScript(scriptBuilder);
+		// TODO
+		//appendScript(scriptBuilder);
 
 		StringBuilder builder = new StringBuilder(INPUT_TAG);
 

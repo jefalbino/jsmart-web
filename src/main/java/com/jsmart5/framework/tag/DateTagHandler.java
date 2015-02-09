@@ -206,7 +206,8 @@ public final class DateTagHandler extends SmartTagHandler {
 		StringBuilder scriptBuilder = new StringBuilder(String.format(REGIONAL_SCRIPT, locale.getLanguage()));
 		scriptBuilder.append(String.format(DATE_SCRIPT, id, optionsBuilder));
 
-		appendScript(scriptBuilder);
+		// TODO
+//		appendScript(scriptBuilder);
 
 		builder.append("date=\"" + scriptBuilder + "\" ");
 

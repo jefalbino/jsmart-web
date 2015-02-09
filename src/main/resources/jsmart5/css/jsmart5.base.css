@@ -1022,7 +1022,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
     height: 25px;
 	border: none;
     margin-left: 5px;
-    background: url('img/general_image.png') no-repeat;
+    background: url('images/general_image.png') no-repeat;
     background-position: -24px -59px;
 	cursor: pointer;
 	vertical-align: middle;
@@ -1076,7 +1076,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	height: 23px;
 	line-height: 23px; 
 	color: inherit;
-	background: #fefefe url('img/enable_select.png') right center no-repeat;
+	background: #fefefe url('images/enable_select.png') right center no-repeat;
 	font: inherit;
 	text-align: left;
 	text-indent: 0.01px; /* Removes default arrow from firefox */
@@ -1095,11 +1095,11 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 }
 
 .jsmart5_date_%s_title select[disabled="disabled"] {
-	background: #fefefe url('img/disable_select.png') right center no-repeat;
+	background: #fefefe url('images/disable_select.png') right center no-repeat;
 }
 
 .jsmart5_date_%s_title select:focus {
-	background: @bckgdefault@ url('img/enable_select.png') right center no-repeat;
+	background: @bckgdefault@ url('images/enable_select.png') right center no-repeat;
 	outline: none;
 }
 
@@ -1215,7 +1215,7 @@ ul.jsmart5_list_%s>li, .jsmart5_list_%s>dd {
 	margin-left: 5px;
 	border: none;
 	vertical-align: middle;
-	background: url('img/general_image.png') no-repeat;
+	background: url('images/general_image.png') no-repeat;
     background-position: -9px -98px;
 	cursor: pointer;
 }

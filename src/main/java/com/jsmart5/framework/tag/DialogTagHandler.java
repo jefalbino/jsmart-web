@@ -178,7 +178,8 @@ public final class DialogTagHandler extends SmartTagHandler {
 
 		scriptBuilder.append(DIALOG_SCRIPT_CLOSE);
 
-		appendScript(scriptBuilder);
+		// TODO
+//		appendScript(scriptBuilder);
 
 		printOutput(builder);
 	}

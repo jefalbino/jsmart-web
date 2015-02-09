@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import com.jsmart5.framework.config.SmartConstants;
 import com.jsmart5.framework.util.SmartMessage;
+import com.jsmart5.framework.util.SmartUtils;
 
 
 import static com.jsmart5.framework.config.SmartConfig.*;
@@ -166,6 +167,10 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	public String onSelect;
 
+	public SmartTagHandler() {
+		params = new LinkedHashMap<String, Object>();
+	}
+
 	@Override
 	public final void doTag() throws JspException, IOException {
 		// long start = System.currentTimeMillis();
@@ -190,8 +195,8 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	public abstract void executeTag() throws JspException, IOException;
 
-	public SmartTagHandler() {
-		params = new LinkedHashMap<String, Object>();
+	protected String getRandonId() {
+		return SmartUtils.randomId();
 	}
 
 	protected void putParam(SmartTagHandler parent, String key, Object value) {
