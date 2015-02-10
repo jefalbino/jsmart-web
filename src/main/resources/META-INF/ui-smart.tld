@@ -52,7 +52,11 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>image</name>
+            <name>size</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>render</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -65,10 +69,6 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -173,6 +173,11 @@
         <tag-class>com.jsmart5.framework.tag.ButtonActionTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
             <name>label</name>
             <required>true</required>
         </attribute>
@@ -202,7 +207,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>theme</name>
+            <name>size</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -668,6 +673,18 @@
         </attribute>
         <attribute>
             <name>label</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>leftAddOn</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>rightAddOn</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>helpBlock</name>
             <required>false</required>
         </attribute>
         <attribute>

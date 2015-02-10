@@ -21,8 +21,10 @@ package com.jsmart5.framework.manager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +38,9 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.json.JSONObject;
 
 import com.jsmart5.framework.config.SmartConstants;
+import com.jsmart5.framework.tag.AjaxTagHandler;
+import com.jsmart5.framework.tag.html.Script;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartMessage;
 import com.jsmart5.framework.util.SmartUtils;
 
@@ -86,7 +91,39 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected static final String J_COMPLETE = J_TAG_INIT + "015_";
 
 	protected static final String EL_PARAM_READ_ONLY = SmartConstants.EL_PARAM_READ_ONLY;
+	
+	protected static final String EVENT_SELECT = "select";
 
+	protected static final String EVENT_CHANGE = "change";
+
+	protected static final String EVENT_BLUR = "blur";
+
+	protected static final String EVENT_CLICK = "click";
+
+	protected static final String EVENT_DBL_CLICK = "dblclick";
+
+	protected static final String EVENT_MOUSE_DOWN = "mousedown";
+
+	protected static final String EVENT_MOUSE_MOVE = "mousemove";
+
+	protected static final String EVENT_MOUSE_OVER = "mouseover";
+
+	protected static final String EVENT_MOUSE_OUT = "mouseout";
+
+	protected static final String EVENT_MOUSE_UP = "mouseup";
+
+	protected static final String EVENT_KEY_DOWN = "keydown";
+
+	protected static final String EVENT_KEY_PRESS = "keypress";
+
+	protected static final String EVENT_KEY_UP = "keyup";
+
+	protected static final String EVENT_FOCUS = "focus";
+
+	protected static final String SUBMIT = "submit";
+	
+
+	
 	protected static final String ON_SELECT = "onselect=\"";
 
 	protected static final String ON_CLICK = "onclick=\"";
@@ -117,10 +154,14 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	protected static final String ON_SUBMIT = "onSubmit=\"";
 
+
 	protected final Map<String, Object> params;
 
 	protected SmartValidateTagHandler validator;
 
+	protected List<AjaxTagHandler> ajaxTags;
+
+	@Deprecated
 	protected String ajaxCommand;
 
 	protected String dateFormatRegex;
@@ -133,6 +174,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	public String rest;
 
+	@Deprecated
 	public String theme;
 
 	public String style;
@@ -169,6 +211,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	public SmartTagHandler() {
 		params = new LinkedHashMap<String, Object>();
+		ajaxTags = new ArrayList<AjaxTagHandler>();
 	}
 
 	@Override
@@ -219,8 +262,17 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		this.outputWriter = outputWriter;
 	}
 
+	@Deprecated
 	public void setAjaxCommand(String ajaxCommand) {
 		this.ajaxCommand = ajaxCommand;
+	}
+	
+	public void addAjaxTag(AjaxTagHandler ajax) {
+		this.ajaxTags.add(ajax);
+	}
+	
+	public String getId() {
+		return id;
 	}
 
 	public void setId(String id) {
@@ -348,11 +400,13 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		this.onSelect = onSelect;
 	}
 
-	protected void appendScript(StringBuilder script) {
-		appendScript(script, false);
+	@Deprecated
+	protected void appendScriptDeprecated(StringBuilder script) {
+		appendScriptDeprecated(script, false);
 	}
 
-	protected void appendScript(StringBuilder script, boolean appendToEnd) {
+	@Deprecated
+	protected void appendScriptDeprecated(StringBuilder script, boolean appendToEnd) {
 		HttpSession session = SmartContext.getSession();
 		synchronized (session) {
 			StringBuilder[] scriptBuilders = (StringBuilder[]) session.getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
@@ -368,15 +422,16 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		}
 	}
 
-	protected void prependScript(StringBuilder script) {
+	protected void appendScript(StringBuilder builder) {
 		HttpSession session = SmartContext.getSession();
 		synchronized (session) {
-			StringBuilder[] scriptBuilders = (StringBuilder[]) session.getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
-			if (scriptBuilders == null) {
-				scriptBuilders = new StringBuilder[] {new StringBuilder(), new StringBuilder()};
-				session.setAttribute(SmartConstants.SCRIPT_BUILDER_ATTR, scriptBuilders);
+			Script script = (Script) session.getAttribute(SmartConstants.NEW_SCRIPT_BUILDER_ATTR);
+
+			if (script == null) {
+				script = new Script();
+				session.setAttribute(SmartConstants.NEW_SCRIPT_BUILDER_ATTR, script);
 			}
-			scriptBuilders[0].insert(0, script.toString());
+			script.addText(builder.toString());
 		}
 	}
 
@@ -452,11 +507,26 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected Map<String, SmartMessage> getMessages(String id) {
 		return SmartContext.getMessages(id);
 	}
-
+	
+	protected String getNewJsonValue(Object object) {
+		return new JSONObject(object).toString();
+	}
+	
+	@Deprecated
 	protected String getJsonValue(Object object) {
 		return new JSONObject(object).toString().replace("\"", "&quot;");
 	}
 
+	protected void appendFormValidator(Tag tag) throws JspException, IOException {
+		if (validator != null) {
+			tag.addAttribute("validatedrequired", "true")
+				.addAttribute("validateminlength", validator.getMinLength())
+				.addAttribute("validatemaxlength", validator.getMaxLength())
+				.addAttribute("validatemessage", getTagValue(validator.getMessage()));
+		}
+	}
+
+	@Deprecated
 	protected void appendFormValidator(StringBuilder builder) throws JspException, IOException {
 		if (validator != null) {
 			builder.append("validatedrequired=\"true\" ");
@@ -472,12 +542,18 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		}
 	}
 
+	protected void appendRest(Tag tag) throws JspException, IOException {
+		tag.addAttribute("rest", rest);
+	}
+
+	@Deprecated
 	protected void appendRest(StringBuilder builder) throws JspException, IOException {
 		if (rest != null) {
 			builder.append("rest=\"" + rest + "\" ");
 		}
 	}
 
+	@Deprecated
 	protected void appendThemeOption(StringBuilder builder) throws JspException, IOException {
 		if (theme == null) {
 			theme = CONFIG.getContent().getTheme();
@@ -485,6 +561,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		builder.append("theme:'" + getTagValue(theme) + "',");
 	}
 
+	@Deprecated
 	protected void appendClass(StringBuilder builder, String styleClass) throws JspException, IOException {
 		if (theme == null) {
 			theme = CONFIG.getContent().getTheme();
@@ -495,7 +572,25 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 			builder.append("class=\"" + styleClass + "\" ");
 		}
 	}
+	
+	protected void appendEvent(Tag tag) {
+		tag.addAttribute("onclick", onClick)
+			.addAttribute("ondblclick", onDblClick)
+			.addAttribute("onmousedown", onMouseDown)
+			.addAttribute("onmousemove", onMouseMove)
+			.addAttribute("onmouseover", onMouseOver)
+			.addAttribute("onmouseout", onMouseOut)
+			.addAttribute("onmouseup", onMouseUp)
+			.addAttribute("onkeydown", onKeyDown)
+			.addAttribute("onkeypress", onKeyPress)
+			.addAttribute("onkeyup", onKeyUp)
+			.addAttribute("onblur", onBlur)
+			.addAttribute("onchange", onChange)
+			.addAttribute("onfocus", onFocus)
+			.addAttribute("onselect", onSelect);
+	}
 
+	@Deprecated
 	protected void appendEvent(StringBuilder builder) {
 		if (onClick != null) {
 			appendEvent(builder, ON_CLICK, onClick);
@@ -541,6 +636,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		}
 	}
 
+	@Deprecated
 	private void appendEvent(StringBuilder builder, String attr, String exec) {
 		int index = builder.lastIndexOf(attr);
 		if (index >= 0) {

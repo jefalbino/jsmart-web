@@ -43,34 +43,6 @@ import static com.jsmart5.framework.tag.JsConstants.*;
  */
 public final class AjaxTagHandler extends SmartTagHandler {
 
-	private static final String EVENT_SELECT = "select";
-
-	private static final String EVENT_CHANGE = "change";
-
-	private static final String EVENT_BLUR = "blur";
-
-	private static final String EVENT_CLICK = "click";
-
-	private static final String EVENT_DBL_CLICK = "dblclick";
-
-	private static final String EVENT_MOUSE_DOWN = "mousedown";
-
-	private static final String EVENT_MOUSE_MOVE = "mousemove";
-
-	private static final String EVENT_MOUSE_OVER = "mouseover";
-
-	private static final String EVENT_MOUSE_OUT = "mouseout";
-
-	private static final String EVENT_MOUSE_UP = "mouseup";
-
-	private static final String EVENT_KEY_DOWN = "keydown";
-
-	private static final String EVENT_KEY_PRESS = "keypress";
-
-	private static final String EVENT_KEY_UP = "keyup";
-
-	private static final String EVENT_FOCUS = "focus";
-
 	private String event;
 
 	private String action;
@@ -118,6 +90,12 @@ public final class AjaxTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
+		
+		JspTag parent = getParent();
+		if (parent instanceof InputTagHandler) {
+			((SmartTagHandler) parent).addAjaxTag(this);
+			return;
+		}
 
 		StringBuilder builder = new StringBuilder();
 
@@ -196,11 +174,45 @@ public final class AjaxTagHandler extends SmartTagHandler {
 
 			builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" ");
 
-			JspTag parent = getParent();
 			if (parent instanceof SmartTagHandler) {
 				((SmartTagHandler) parent).setAjaxCommand(builder.toString());
 			}
 		}
+	}
+
+	StringBuilder getFunction(String id) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(id).append("').bind('").append(event).append("', function(){");
+		
+		JsonAjax jsonAjax = new JsonAjax();
+		jsonAjax.setId(id);
+		jsonAjax.setAsync(async);
+		jsonAjax.setTimeout(timeout);
+
+		if (action != null) {
+			jsonAjax.setMethod("post");
+			jsonAjax.setAction(getTagName(J_SBMT, action));
+
+			for (String name : params.keySet()) {						
+				jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
+			}
+		} else if (update != null) {
+			jsonAjax.setMethod("get");
+		}
+		if (update != null) {
+			jsonAjax.setUpdate(update.trim());
+		}
+		if (beforeAjax != null) {
+			jsonAjax.setBefore(beforeAjax.trim());
+		}
+		if (afterAjax != null) {
+			jsonAjax.setExec(afterAjax.trim());
+		}
+
+		builder.append(JSMART_AJAX_NEW.format(getNewJsonValue(jsonAjax)));
+
+		builder.append("});");
+		return builder;
 	}
 
 	public void setEvent(String event) {

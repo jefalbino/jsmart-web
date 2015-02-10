@@ -142,7 +142,7 @@ public final class PanelTagHandler extends SmartTagHandler {
 	    builder.append(CLOSE_DIV_TAG);
 
 	    if (collapsible) {
-	    	appendScript(new StringBuilder(JSMART_PANEL.format(id)));
+	    	appendScriptDeprecated(new StringBuilder(JSMART_PANEL.format(id)));
 	    }
 
 		printOutput(builder);

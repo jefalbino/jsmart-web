@@ -161,7 +161,7 @@ public final class MessageTagHandler extends SmartTagHandler {
 				inputBuilder.append("value=\"" + scriptBuilder + "\" />");
 				printOutput(inputBuilder);
 			} else {
-				appendScript(scriptBuilder);
+				appendScriptDeprecated(scriptBuilder);
 			}
 		}
 	}

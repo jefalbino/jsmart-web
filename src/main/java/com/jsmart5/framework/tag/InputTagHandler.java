@@ -28,9 +28,14 @@ import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
-import com.jsmart5.framework.tag.html.Span;
+import com.jsmart5.framework.tag.html.Label;
+import com.jsmart5.framework.tag.html.P;
 
 public final class InputTagHandler extends SmartTagHandler {
+	
+	private static final String SMALL = "small";
+
+	private static final String LARGE = "large";
 
 	private static final String TEXT_TYPE = "text";
 
@@ -68,7 +73,7 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	private Integer length;
 
-	private Integer size;
+	private String size;
 
 	private String value;
 
@@ -83,6 +88,12 @@ public final class InputTagHandler extends SmartTagHandler {
 	private String placeHolder;
 
 	private String label;
+	
+	private String leftAddOn;
+	
+	private String rightAddOn;
+
+	private String helpBlock;
 
 	private String pattern;
 
@@ -132,10 +143,6 @@ public final class InputTagHandler extends SmartTagHandler {
 						+ DATE_TYPE + ", " + MONTH_TYPE + ", " + WEEK_TYPE + ", " + TIME_TYPE + ", "
 						+ DATETIME_TYPE + ", " + DATETIME_LOCAL_TYPE + ", " + COLOR_TYPE + ", " + PHONE_TYPE);
 		}
-
-		if (id == null && mask != null) {
-			throw new JspException("Attribute id must be provided case mask is set for input tag");
-		}
 		
 		if (maxValue != null && minValue == null) {
 			throw new JspException("Attribute minValue must be specified case maxValue is specified for input tag");
@@ -152,6 +159,9 @@ public final class InputTagHandler extends SmartTagHandler {
 		if (maxValue != null && minValue != null && stepValue != null && stepValue > (maxValue - minValue)) {
 			throw new JspException("Attribute stepValue must be less than the difference of maxValue and minValue for input tag");
 		}
+		if (size != null && !size.equals(SMALL) && !size.equals(LARGE)) {
+			throw new JspException("Invalid size value for input tag. Valid values are " + SMALL + ", " + LARGE);
+		}
 	}
 
 	@Override
@@ -162,19 +172,41 @@ public final class InputTagHandler extends SmartTagHandler {
 		if (body != null) {
 			body.invoke(null);
 		}
+		
+		if (id == null) {
+			id = getRandonId();
+		}
 
-		Div div = new Div();
-		String addonId = getRandonId();
+		Div formGroup = new Div();
+		formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
+		
+		Div inputGroup = null;
 
 		if (label != null) {
-			div.addAttribute("class", Bootstrap.INPUT_GROUP);
+			Label labelTag = new Label();
+			labelTag.addAttribute("for", id)
+					.addText((String) getTagValue(label));
+			formGroup.addTag(labelTag);
+		}
 
-			Span span = new Span();
-			span.addAttribute("id", "basic-addon-" + addonId)
-				.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-				.setText((String) getTagValue(label));
+		if (leftAddOn != null || rightAddOn != null) {
+			inputGroup = new Div();
+			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			div.addTag(span);
+			if (SMALL.equals(size)) {
+				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
+			} else if (LARGE.equals(size)) {
+				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
+			}
+
+			formGroup.addTag(inputGroup);
+		}
+		
+		if (leftAddOn != null) {
+			Div div = new Div();
+			div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+				.addText((String) getTagValue(leftAddOn));
+			inputGroup.addTag(div);
 		}
 
 		Input input = new Input();
@@ -183,27 +215,30 @@ public final class InputTagHandler extends SmartTagHandler {
 			 .addAttribute("type", type)
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
-			 .addAttribute("class", styleClass)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("maxlength", length)
-			 .addAttribute("size", size)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
 			 .addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null)
 			 .addAttribute("placeholder", getResourceString(placeHolder))
 			 .addAttribute("datatype", type)
 			 .addAttribute("pattern", pattern)
-			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
+			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
+			 .addAttribute("data-mask", mask);
 		
-		if (label != null) {
-			input.addAttribute("aria-describedby", "basic-addon-" + addonId);
-			div.addTag(input);
+		if (SMALL.equals(size)) {
+			input.addAttribute("class", Bootstrap.INPUT_SMALL);
+		} else if (LARGE.equals(size)) {
+			input.addAttribute("class", Bootstrap.INPUT_LARGE);
 		}
-
+		
 		if (NUMBER_TYPE.equals(type) || RANGE_TYPE.equals(type)) {
 			input.addAttribute("min", minValue)
 				 .addAttribute("max", maxValue)
 				 .addAttribute("step", stepValue);
 		}
+		
+		// Add the style class at last
+		input.addAttribute("class", styleClass);
 		
 		if (!PASSWORD_TYPE.equals(type)) {
 			input.addAttribute("value", getTagValue(value));
@@ -211,31 +246,37 @@ public final class InputTagHandler extends SmartTagHandler {
 			setTagValue(value, null);
 		}
 
-//		appendFormValidator(builder);
+		appendFormValidator(input);
+		appendRest(input);
+		appendEvent(input);
 
-//		appendRest(builder);
+		if (inputGroup != null) {
+			inputGroup.addTag(input);
+		} else {
+			formGroup.addTag(input);
+		}
 
-//		if (ajaxCommand != null) {
-//			if (ajaxCommand.startsWith(ON_BLUR) && NUMBER_TYPE.equals(type)) {
-//				builder.append(ajaxCommand.replace(ON_BLUR, ON_BLUR + JSMART_NUMBER.format("$(this)")));
-//				builder.append(ajaxCommand.replace(ON_FOCUS, ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)")));
-//			} else {
-//				if (NUMBER_TYPE.equals(type)) {
-//					builder.append(ON_BLUR + JSMART_NUMBER.format("$(this)") + "\" ");
-//					builder.append(ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)") + " return false;\" ");
-//				}
-//				builder.append(ajaxCommand);
-//			}
-//		} else {
-//			if (NUMBER_TYPE.equals(type)) {
-//				builder.append(ON_BLUR + JSMART_NUMBER.format("$(this)") + "\" ");
-//				builder.append(ON_FOCUS + JSMART_BACKUP_NUMBER.format("$(this)") + " return false;\" ");
-//			}
-//		}
-//
-//		appendEvent(builder);
+		if (rightAddOn != null) {
+			Div div = new Div();
+			div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+				.addText((String) getTagValue(rightAddOn));
+			inputGroup.addTag(div);
+		}
+		
+		if (helpBlock != null) {
+			P p = new P();
+			p.addAttribute("class", Bootstrap.HELP_BLOCK)
+				.addText((String) getTagValue(helpBlock));
+			formGroup.addTag(p);
+		}
 
-		printOutput(label != null ? div.getHtml() : input.getHtml());
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
+			}
+		}
+
+		printOutput(formGroup.getHtml());
 	}
 
 	public void setType(String type) {
@@ -246,7 +287,7 @@ public final class InputTagHandler extends SmartTagHandler {
 		this.length = length;
 	}
 
-	public void setSize(Integer size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 
@@ -272,6 +313,18 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public void setLeftAddOn(String leftAddOn) {
+		this.leftAddOn = leftAddOn;
+	}
+
+	public void setRightAddOn(String rightAddOn) {
+		this.rightAddOn = rightAddOn;
+	}
+
+	public void setHelpBlock(String helpBlock) {
+		this.helpBlock = helpBlock;
 	}
 
 	public void setPattern(String pattern) {

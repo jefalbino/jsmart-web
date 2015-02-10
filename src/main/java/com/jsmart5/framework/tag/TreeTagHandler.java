@@ -65,7 +65,7 @@ public class TreeTagHandler extends SmartTagHandler {
 		builder.append(sw);
 		builder.append(CLOSE_UNORDERED_LIST_TAG);
 
-		appendScript(new StringBuilder(JSMART_TREE.format(id)));
+		appendScriptDeprecated(new StringBuilder(JSMART_TREE.format(id)));
 
 		printOutput(builder);
 	}

@@ -188,7 +188,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 		printOutput(builder);
 
-		appendScript(new StringBuilder(JSMART_RANGE.format(id)));
+		appendScriptDeprecated(new StringBuilder(JSMART_RANGE.format(id)));
 	}
 
 	public void setAjax(boolean ajax) {

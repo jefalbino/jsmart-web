@@ -200,7 +200,7 @@ public final class SwitchTagHandler extends SmartTagHandler {
 
 		printOutput(builder);
 
-		appendScript(new StringBuilder(JSMART_SWITCH_RESET.format(id)));
+		appendScriptDeprecated(new StringBuilder(JSMART_SWITCH_RESET.format(id)));
 	}
 
 	public void setValue(String value) {

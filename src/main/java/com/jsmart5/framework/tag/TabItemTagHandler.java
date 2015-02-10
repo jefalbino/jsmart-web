@@ -65,10 +65,6 @@ public final class TabItemTagHandler extends SmartTagHandler {
 		super.appendEvent(builder);
 	}
 
-	String getId() {
-		return id;
-	}
-
 	String getStyle() {
 		return style;
 	}

@@ -82,7 +82,7 @@ public final class MenuTagHandler extends SmartTagHandler {
 		builder.append(sw);
 		builder.append(CLOSE_UNORDERED_LIST_TAG + CLOSE_NAV_TAG);
 
-		appendScript(new StringBuilder(JSMART_MENU.format(id)));
+		appendScriptDeprecated(new StringBuilder(JSMART_MENU.format(id)));
 
 		printOutput(builder);
 	}

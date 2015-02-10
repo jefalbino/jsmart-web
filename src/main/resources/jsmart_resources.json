@@ -2,6 +2,7 @@
 	"resources": [
 		"jsmart5/bootstrap-3.3.2/css/bootstrap.min.css",
 		"jsmart5/bootstrap-3.3.2/js/bootstrap.min.js",
+		"jsmart5/bootstrap-3.3.2/js/bootstrap-input-mask.js",
 		"jsmart5/jquery-1.11.2/jquery-1.11.2.js",
 		"jsmart5/js/jsmart5.js",
 		"jsmart5/css/jsmart5.css",

@@ -28,6 +28,9 @@ public final class SmartConstants {
 
 	public static final String AJAX_RESET_ATTR = "jsmart_reset_ajax_attr";
 
+	public static final String NEW_SCRIPT_BUILDER_ATTR = "new_jsmart_script_builder_attr";
+
+	@Deprecated
 	public static final String SCRIPT_BUILDER_ATTR = "jsmart_script_builder_attr";
 
 	public static final String USER_ACCESS = "jsmart_user_access";
@@ -36,16 +39,22 @@ public final class SmartConstants {
 
 	public static final String LIB_JAR_FILE_PATTERN = ".*jsmart5.*\\.jar";
 
+	@Deprecated
 	public static final String START_HEAD_TAG = "\t<head>";
 
+	@Deprecated
 	public static final String END_HEAD_TAG = "\t</head>";
 
+	@Deprecated
 	public static final String RESET_AJAX_TAG = "<input id=\"" + AJAX_RESET_ATTR + "\" type=\"hidden\" />";
 
+	@Deprecated
 	public static final String REDIRECT_AJAX_TAG = "<input id=\"jsmart_redirect_ajax_path\" type=\"hidden\" value=\"";
 
+	@Deprecated
 	public static final String SCRIPT_READY_AJAX_TAG = "<script type=\"text/javascript\">$(document).ready(function(){jsmartRefresh();});function jsmartRefresh(){%s};</script>";
 
+	@Deprecated
 	public static final String END_AJAX_TAG = "\" />";
 
 	public static final String URL_PARAM_TAG = ":urlparam";

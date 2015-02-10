@@ -18,9 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -29,10 +26,14 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
 
 public class ButtonGroupTagHandler extends SmartTagHandler {
 
 	private boolean inline = true;
+
+	private String size;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
@@ -47,41 +48,58 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (size != null && !size.equals(ButtonTagHandler.XSMALL) && !size.equals(ButtonTagHandler.SMALL) 
+				&& !size.equals(ButtonTagHandler.LARGE) && !size.equals(ButtonTagHandler.JUSTIFIED)) {
+			throw new JspException("Invalid size value for buttongroup tag. Valid values are " + ButtonTagHandler.XSMALL + ", " 
+				+ ButtonTagHandler.SMALL + ", " + ButtonTagHandler.LARGE + ", " + ButtonTagHandler.JUSTIFIED);
+		}
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		
+
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(sw);
 		}
 
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
+		if (id == null) {
+			id = getRandonId();
+		}
 
-		builder.append("id=\"" + id + "\" ");
+		Div buttonGroup = new Div();
+		buttonGroup.addAttribute("id", id)
+				.addAttribute("role", "group")
+				.addAttribute("style", style);
 
 		if (inline) {
-			appendClass(builder, CSS_BUTTON_GROUP_HORIZONTAL);
+			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP);
 		} else {
-			appendClass(builder, CSS_BUTTON_GROUP_VERTICAL);
+			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_VERTICAL);
 		}
 
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
+		if (ButtonTagHandler.XSMALL.equals(size)) {
+			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
+		} else if (ButtonTagHandler.SMALL.equals(size)) {
+			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
+		} else if (ButtonTagHandler.LARGE.equals(size)) {
+			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
+		} else if (ButtonTagHandler.JUSTIFIED.equals(size)) {
+			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
 		}
 
-		builder.append(CLOSE_TAG);
-		builder.append(sw);
-		builder.append(CLOSE_DIV_TAG);
+		buttonGroup.addText(sw.toString());
 
-		printOutput(builder);
+		printOutput(buttonGroup.getHtml());
 	}
 
 	public void setInline(boolean inline) {
 		this.inline = inline;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 
 }

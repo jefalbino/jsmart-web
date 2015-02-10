@@ -81,7 +81,7 @@ public final class BalloonTagHandler extends SmartTagHandler {
 		String balloonScript = JsConstants.JSMART_BALLOON.format(target, position != null ? position : "top",
 				opened, length, messageVal != null ? messageVal.toString().replace("'", "\\'") : "");
 
-		appendScript(new StringBuilder(balloonScript), true);
+		appendScriptDeprecated(new StringBuilder(balloonScript), true);
 
 		StringBuilder builder = new StringBuilder(OPEN_SPAN_TAG);
 		builder.append("id=\"" + target + BALLOON_HOLDER + "\" ");

@@ -57,6 +57,7 @@ import org.reflections.vfs.Vfs.Dir;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import com.jsmart5.framework.config.SmartHtmlCompress;
 import com.jsmart5.framework.manager.SmartContext;
+import com.jsmart5.framework.tag.html.Script;
 
 import static com.jsmart5.framework.config.SmartConfig.*;
 import static com.jsmart5.framework.config.SmartConstants.*;
@@ -254,6 +255,18 @@ public final class SmartWebFilter implements Filter {
 						}
 					}
 		        }
+				
+				Script script = (Script) session.getAttribute(NEW_SCRIPT_BUILDER_ATTR);
+				if (script != null) {
+					Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
+					
+					if (closeBodyMatcher.find()) {
+						String closeBodyMatch = closeBodyMatcher.group();
+						html = html.replace(closeBodyMatch, script.getHtml() + closeBodyMatch);
+					} else {
+						throw new RuntimeException("HTML tag 'body' could not be found. Please insert the body tag in your JSP");
+					}
+				}
 
 				StringBuilder[] scriptBuilders = (StringBuilder[]) session.getAttribute(SCRIPT_BUILDER_ATTR);
 				if (scriptBuilders != null) {

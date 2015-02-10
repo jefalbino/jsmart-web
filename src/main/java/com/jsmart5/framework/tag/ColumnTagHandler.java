@@ -87,10 +87,6 @@ public final class ColumnTagHandler extends SmartTagHandler {
 		}
 	}
 
-	String getId() {
-		return id;
-	}
-
 	Integer getColspan() {
 		return colspan;
 	}

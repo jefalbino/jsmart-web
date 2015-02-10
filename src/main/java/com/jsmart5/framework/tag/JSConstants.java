@@ -22,6 +22,9 @@ enum JsConstants {
 
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
 
+	JSMART_AJAX_NEW("Jsmart5.ajaxNew", "(%s);"),
+	JSMART_BUTTON_NEW("Jsmart5.buttonNew", "(%s);"),
+
 	JSMART_AJAX("Jsmart5.ajax", "(%s,%s,%s);"),
 	JSMART_BUTTON("Jsmart5.button", "(%s,%s);"),
 	JSMART_LINK("Jsmart5.link", "(%s,%s);"),
@@ -54,16 +57,12 @@ enum JsConstants {
 	JSMART_DATE("Jsmart5.date", "(%s);"),
 	JSMART_BACKUP_DATE("Jsmart5.backupDate", "(%s);"),
 
-	JSMART_NUMBER("Jsmart5.number", "(%s);"),
-	JSMART_BACKUP_NUMBER("Jsmart5.backupNumber", "(%s);"),
 	JSMART_MESSAGE("Jsmart5.message", "(%s,%s);"),
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
 	JSMART_UPLOAD("Jsmart5.upload", "('%s');"),
 	JSMART_MENU("Jsmart5.menu", "('%s');"),
 	JSMART_TREE("Jsmart5.tree", "('%s');"),
 	JSMART_SELECT("Jsmart5.select", "(%s,'%s');"),
-	JSMART_BUTTON_DROPDOWN("Jsmart5.buttonDropDown", "(%s);"),
-	JSMART_LINK_DROPDOWN("Jsmart5.linkDropDown", "(%s);"),
 
 	JSMART_BUTTON_RESTARRAY("Jsmart5.buttonRestArray", "('%s','%s');"),
 

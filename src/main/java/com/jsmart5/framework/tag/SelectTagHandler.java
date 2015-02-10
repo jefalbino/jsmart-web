@@ -122,7 +122,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 			}
 		}
 
-		appendScript(scriptBuilder);
+		appendScriptDeprecated(scriptBuilder);
 
 		if (disabled || isEditRowTagEnabled()) {
 			builder.append("disabled=\"disabled\" ");

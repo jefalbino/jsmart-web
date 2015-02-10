@@ -178,7 +178,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			builder.append(" />");
 		}
 
-		appendScript(new StringBuilder(JSMART_TAB.format(id)), true);
+		appendScriptDeprecated(new StringBuilder(JSMART_TAB.format(id)), true);
 		
 		printOutput(builder);
 	}

@@ -277,7 +277,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
  	 		// Check if table is scrollable to include script to perform ajax updates on scroll
  	 		if (scrollable) {
- 	 			appendScript(new StringBuilder(JSMART_TABLE_SCROLL.format(id)));
+ 	 			appendScriptDeprecated(new StringBuilder(JSMART_TABLE_SCROLL.format(id)));
 
  	 			JsonScroll jsonScroll = new JsonScroll();
  	 			jsonScroll.setName(getTagName(J_TBL, "@{" + id + "}"));
@@ -381,7 +381,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 	 	 		int size = pageSize > 0 && pageSize < list.size() ? pageSize : list.size();
 
  	 			if (itemExpand != null) {
- 	 				appendScript(new StringBuilder(JSMART_TABLE_ROW_EXPAND.format(id)));
+ 	 				appendScriptDeprecated(new StringBuilder(JSMART_TABLE_ROW_EXPAND.format(id)));
  	 			}
 
  	 			String rowStyle = select != null || itemExpand != null ? CSS_TABLE_BODY_ROW_SELECTION : CSS_TABLE_BODY_ROW;

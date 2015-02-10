@@ -212,7 +212,7 @@ public class SearchTagHandler extends SmartTagHandler {
 		
 		builder.append(CLOSE_DIV_TAG);
 
-		appendScript(new StringBuilder(JSMART_SEARCH_RESET.format(id)));
+		appendScriptDeprecated(new StringBuilder(JSMART_SEARCH_RESET.format(id)));
 
 		printOutput(builder);
 	}

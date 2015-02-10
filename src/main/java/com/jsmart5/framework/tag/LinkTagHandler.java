@@ -203,7 +203,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 			
 			builder.append(OPEN_DIV_TAG);
 			appendClass(builder, CSS_LINK_DROPDOWN_ARROW);
-			builder.append(ON_CLICK + JSMART_LINK_DROPDOWN.format("$(this)") + "return false;\" ");
+			//builder.append(ON_CLICK + JSMART_LINK_DROPDOWN.format("$(this)") + "return false;\" ");
 			builder.append(CLOSE_TAG + CLOSE_DIV_TAG);
 
 			builder.append(OPEN_UNORDERED_LIST_TAG);

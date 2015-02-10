@@ -164,7 +164,7 @@ public final class CarouselTagHandler extends SmartTagHandler {
 
 		StringBuilder scriptBuilder = new StringBuilder(JsConstants.JSMART_CAROUSEL.format(id));
 
-		appendScript(scriptBuilder);
+		appendScriptDeprecated(scriptBuilder);
 
 		printOutput(builder);
 	}

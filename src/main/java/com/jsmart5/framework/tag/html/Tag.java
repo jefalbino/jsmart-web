@@ -9,7 +9,9 @@ public abstract class Tag {
 	
 	protected String name;
 	
-	protected String text;
+	protected StringBuilder text;
+	
+	private int textPosition;
 
 	protected Map<String, Object> attributes;
 
@@ -19,6 +21,7 @@ public abstract class Tag {
 		this.name = name;
 		this.attributes = new HashMap<String, Object>();
 		this.tags = new ArrayList<Tag>();
+		this.text = new StringBuilder();
 	}
 
 	public Tag addAttribute(String name, Object value) {
@@ -33,8 +36,11 @@ public abstract class Tag {
 		return this;
 	}
 	
-	public Tag setText(String text) {
-		this.text = text;
+	public Tag addText(String text) {
+		// Set the position of text between inner tags
+		this.textPosition = tags.size() -1;
+
+		this.text.append(text);
 		return this;
 	}
 
@@ -52,12 +58,15 @@ public abstract class Tag {
 		}
 		builder.append(">");
 
-		if (text != null) {
+		if (text != null && textPosition < 0) {
 			builder.append(text);
 		}
 
-		for (Tag tag : tags) {
-			builder.append(tag.getHtml());
+		for (int i = 0; i < tags.size(); i++) {
+			builder.append(tags.get(i).getHtml());
+			if (i == textPosition) {
+				builder.append(text);
+			}
 		}
 
 		builder.append("</").append(name).append(">");

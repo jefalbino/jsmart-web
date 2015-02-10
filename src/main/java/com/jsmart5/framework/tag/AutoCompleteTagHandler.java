@@ -233,7 +233,7 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 			builder.append(CLOSE_DIV_TAG);
 		}
 
-		appendScript(new StringBuilder(JSMART_AUTOCOMPLETE_RESET.format(id)));
+		appendScriptDeprecated(new StringBuilder(JSMART_AUTOCOMPLETE_RESET.format(id)));
 
 		printOutput(builder);
 	}

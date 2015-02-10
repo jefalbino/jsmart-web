@@ -205,7 +205,7 @@ public final class ProgressTagHandler extends SmartTagHandler {
 
 		printOutput(builder);
 
-		appendScript(new StringBuilder(JSMART_PROGRESS.format(id)));
+		appendScriptDeprecated(new StringBuilder(JSMART_PROGRESS.format(id)));
 	}
 
 	public void setAjax(boolean ajax) {

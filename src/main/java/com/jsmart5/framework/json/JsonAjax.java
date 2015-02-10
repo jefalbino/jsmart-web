@@ -23,6 +23,12 @@ import java.util.List;
 
 public final class JsonAjax {
 
+	private String id;
+
+	private boolean async;
+
+	private Integer timeout;
+
 	private String method;
 
 	private String action;
@@ -34,6 +40,30 @@ public final class JsonAjax {
 	private String before;
 
 	private String exec;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public boolean isAsync() {
+		return async;
+	}
+
+	public void setAsync(boolean async) {
+		this.async = async;
+	}
+
+	public Integer getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(Integer timeout) {
+		this.timeout = timeout;
+	}
 
 	public String getMethod() {
 		return method;

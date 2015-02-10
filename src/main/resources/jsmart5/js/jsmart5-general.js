@@ -63,6 +63,14 @@ var Jsmart5 = (function() {
 
 	// begin public interface
 	return {
+		
+		ajaxNew: function(map) {
+			doAjaxNew(map);
+		},
+		
+		buttonNew: function(map) {
+			doButtonNew(map);
+		},
 
 		// Ajax ajax={'method': '', 'action': '','params': [{'name': '', 'value': ''}],'update': '','before': '','exec': ''}
 		ajax: function (async, element, timeout) {
@@ -73,18 +81,10 @@ var Jsmart5 = (function() {
 		link: function (async, element) {
 			doButton(async, element);
 		},
-		
-		linkDropDown: function (element) {
-			doLinkDropDown(element);
-		},
 
 		// Button ajax={'method': '', 'action': '','update': '','before': '','exec': ''}
 		button: function (async, element) {
 			doButton(async, element);
-		},
-
-		buttonDropDown: function (element) {
-			doButtonDropDown(element);
 		},
 
 		// Rest ajax={'method': '','content': '','bodyRoot': '','crossdomain': '', 'jsonp': '', 'jsoncallback': '','endpoint': '','params':[{'name': '', 'value': ''}],'before': '','success': '','error': ''}
@@ -157,16 +157,6 @@ var Jsmart5 = (function() {
 		
 		select: function (async, id) {
 			doSelect(async, id);
-		},
-
-		backupNumber: function (input) {
-			input.attr('nbackup', input.val());
-		},
-
-		number: function (input) {
-			if (!/^[0-9]+$/.test(input.val())) { 
-				input.attr('value', input.attr('nbackup'));
-			}
 		},
 
 		backupDate: function (input) {
@@ -248,6 +238,64 @@ var Jsmart5 = (function() {
 		}
 	};
 	// end public interface
+	
+	function doAjaxNew(map) {
+		if (map.timeout && map.timeout > 0) {
+			var timeout = map.timeout;
+			map.timeout = null;
+			setTimeout(function() {doAjax(map);}, timeout);
+
+		} else {
+			if (map.method) {
+				var element = $('#' + map.id);
+				var options = getNewAjaxOptions(map);
+				var closestForm = element.closest('form');
+
+				if (map.method == 'post') {
+					var postParam = getNewAjaxParams(map);
+
+					var outsideParams = getAjaxOutsideParams(element);
+					for (var i = 0; i < outsideParams.length; i++) {
+						postParam.push(outsideParams[i]);
+					}
+
+					// This is only works for ajax tag inside table tag
+					var evalParams = getAjaxEvalParams(element);
+					for (var i = 0; i < evalParams.length; i++) {
+						postParam.push(evalParams[i]);
+					}
+
+					if (closestForm && closestForm.length > 0) {
+						if (!doValidate($(closestForm).attr('id'))) {
+							return;
+						}
+					} else {
+						var elementParam = getElementParam(element, false);
+						for (var i = 0; i < elementParam.length; i++) {
+							postParam.push({name: elementParam[i].name, value: elementParam[i].value});
+						}
+						postParam = $.param(postParam);
+					}
+
+					options.data = postParam;
+				}
+
+				if (map.method == 'post' && closestForm && closestForm.length > 0) {
+					doFormPlaceHolders(closestForm);
+					$(closestForm).ajaxSubmit(options);
+				} else {
+					$.ajax(options);
+				}
+			} else {
+				if (map.before) {
+					doExecute(null, map.before);
+				}
+				if (map.exec) {
+					doExecute(null, map.exec);
+				}
+			}
+		}
+	}
 
 	function doAjax(async, element, timeout) {
 		if ($(element) && $(element).attr('ajax')) {
@@ -303,6 +351,42 @@ var Jsmart5 = (function() {
 						doExecute(null, ajax.exec);
 					}
 				}
+			}
+		}
+	}
+	
+	function doButtonNew(map) {
+		if (map.method) {
+			var element = $('#' + map.id);
+			var options = getNewAjaxOptions(map);
+			var closestForm = $(element).closest('form');
+			
+			if (map.method == 'post') {
+				var postParam = null;
+
+				if (closestForm && closestForm.length > 0) {
+					if (!doValidate($(closestForm).attr('id'))) {
+						return;
+					}
+					postParam = getNewAjaxParams(map);
+				} else {
+					postParam = $.param(getNewAjaxParams(map));
+				}
+				options.data = postParam;
+			}
+
+			if (map.method == 'post' && closestForm && closestForm.length > 0) {
+				doFormPlaceHolders(closestForm);
+				$(closestForm).ajaxSubmit(options);
+			} else {
+				$.ajax(options);
+			}
+		} else {
+			if (map.before) {
+				doExecute(null, map.before);
+			}
+			if (map.exec) {
+				doExecute(null, map.exec);
 			}
 		}
 	}
@@ -1520,52 +1604,6 @@ var Jsmart5 = (function() {
 			}
 		}
 	}
-	
-	function doButtonDropDown(element) {
-		if (element) {
-			var dropDown = $(element).closest('div.jsmart5_button_group').find('>ul');
-			var button = $(element).closest('div.jsmart5_button_group').find('>button, >input');
-
-			$(dropDown).css({'position': 'absolute'});
-			$(dropDown).css({'left': $(button).position().left, 'top': $(button).position().top + $(button).outerHeight(true)});
-			$(dropDown).show();
-
-			if ($(element).attr('dropdown')) {
-				$(dropDown).hide();
-				$(element).removeAttr('dropdown');
-			} else {
-				$(element).attr('dropdown', 'opened');
-
-				$(dropDown).find('li').click(function() {
-					$(dropDown).hide();
-					$(element).removeAttr('dropdown');
-				});
-			}
-		}
-	}
-
-	function doLinkDropDown(element) {
-		if (element) {
-			var dropDown = $(element).closest('div.jsmart5_link_group').find('>ul');
-			var link = $(element).closest('div.jsmart5_link_group').find('>a.jsmart5_link');
-
-			$(dropDown).css({'position': 'absolute'});
-			$(dropDown).css({'left': $(link).position().left, 'top': $(link).position().top + $(link).outerHeight(true)});
-			$(dropDown).show();
-
-			if ($(element).attr('dropdown')) {
-				$(dropDown).hide();
-				$(element).removeAttr('dropdown');
-			} else {
-				$(element).attr('dropdown', 'opened');
-
-				$(dropDown).find('li').click(function() {
-					$(dropDown).hide();
-					$(element).removeAttr('dropdown');
-				});
-			}
-		}
-	}
 
 	function resetMenu(id) {
 		if ($(getId(id)).is('ul[menu="menu"]')) {
@@ -2038,6 +2076,43 @@ var Jsmart5 = (function() {
 		};
 	}
 	
+	function getNewAjaxOptions(map) {
+		return {
+			type: map.method, 
+			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
+			beforeSend: function (data) {
+				doExecute(data, map.before);
+			},
+			success: function (data) {
+				var reset = $(data).find(RESET_PATH); 
+				if (reset && reset.length > 0) {
+					$(location).attr('href', $(location).attr('href'));
+				} else {
+					if (map.url && map.url.length > 0) {
+						$(location).attr('href', map.url);
+					} else {
+						doUpdate(data, map.update);
+						var dialogs = doExecute(data, map.exec);
+						doReset(map.update, dialogs);
+	
+						resetMessage(data);
+						var redirect = $(data).find(REDIRECT_PATH); 
+						if (redirect && redirect.length > 0) {
+							$(location).attr('href', redirect.val());
+						}
+					}
+				}
+			},
+			error: function (xhr, status, error) {
+				showOnConsole(xhr.responseText);
+			},
+			complete: function (xhr, status) {
+				jQuery.event.trigger('ajaxStop');
+			},
+			async: map.async
+		};
+	}
+	
 	function getAjaxOptions(async, ajax) {
 		return {
 			type: ajax.method, 
@@ -2073,6 +2148,20 @@ var Jsmart5 = (function() {
 			},
 			async: async
 		};
+	}
+	
+	function getNewAjaxParams(map) {
+		var params = [];
+		if (map.action) {
+			params.push({name: map.action, value: 0});
+		}
+
+		if (map.params) {
+			for (var i = 0; i < map.params.length; i++) {
+				params.push({name: map.params[i].name, value: map.params[i].value});
+			}
+		}
+		return params;
 	}
 	
 	function getAjaxParams(element) {

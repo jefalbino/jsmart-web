@@ -109,7 +109,7 @@ public final class LoadTagHandler extends SmartTagHandler {
 
 		builder.append(CLOSE_DIV_TAG);		
 
-		appendScript(new StringBuilder(JSMART_LOAD.format(id)));
+		appendScriptDeprecated(new StringBuilder(JSMART_LOAD.format(id)));
 
 		printOutput(builder);
 	}
