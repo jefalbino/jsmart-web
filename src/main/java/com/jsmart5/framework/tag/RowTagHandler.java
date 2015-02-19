@@ -31,6 +31,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
 
 public final class RowTagHandler extends SmartTagHandler {
 
@@ -42,9 +43,9 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	private String value;
 
-	private String type;
-
 	private String badge;
+	
+	private String look;
 
 	// Internally used, setup via GridTagHandler
 	private boolean border;
@@ -90,15 +91,17 @@ public final class RowTagHandler extends SmartTagHandler {
 			if (value == null) {
 				throw new JspException("Attribute value is required for row tag inside list tag");
 			}
+			if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) && !look.equalsIgnoreCase(SUCCESS)
+					&& !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(DANGER)) {
+				throw new JspException("Invalid look value for row tag. Valid values are " + DEFAULT + ", " + PRIMARY 
+						+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER);
+			}
 		} else if (parent instanceof GridTagHandler) {
 			if (value != null) {
 				throw new JspException("Attribute value cannot be used on row tag inside grid tag");
 			}
 			if (badge != null) {
 				throw new JspException("Attribute badge cannot be used on row tag inside grid tag");
-			}
-			if (type != null) {
-				throw new JspException("Attribute type cannot be used on row tag inside grid tag");
 			}
 		}
 	}
@@ -251,10 +254,6 @@ public final class RowTagHandler extends SmartTagHandler {
 		printOutput(builder);
 	}
 
-	void setType(String type) {
-		this.type = type;
-	}
-
 	void setTotalColumns(int totalColumns) {
 		this.totalColumns = totalColumns;
 	}
@@ -281,6 +280,10 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	void setBorder(boolean border) {
 		this.border = border;
+	}
+
+	public void setLook(String look) {
+		this.look = look;
 	}
 
 }

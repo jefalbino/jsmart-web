@@ -23,7 +23,6 @@ import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -33,37 +32,75 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
-
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Span;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class OutputTagHandler extends SmartTagHandler {
+	
+	private static final String LEFT = "left";
 
-	private static final String LEGEND_TYPE = "legend";
+	private static final String RIGHT = "left";
+	
+	private static final String JUSTIFY = "justify";
+	
+	private static final String CENTER = "center";
 
-	private static final String STRONG_TYPE = "strong";
+	
+	private static final String LOWERCASE = "lowercase";
+	
+	private static final String UPPERCASE = "uppercase";
+	
+	private static final String CAPITALIZE = "capitalize";
 
-	private static final String MARK_TYPE = "mark";
 
-	private static final String EM_TYPE = "em";
+	private static final String LEGEND = "legend";
 
-	private static final String SMALL_TYPE = "small";
+	private static final String BOLD = "bold";
 
-	private static final String LABEL_TYPE = "label";
+	private static final String MARK = "mark";
 
-	private static final String OUTPUT_TYPE = "output";
+	private static final String ITALIC = "italic";
+
+	private static final String SMALL = "small";
+
+	private static final String LABEL = "label";
+
+	private static final String OUTPUT = "output";
+	
+	private static final String DELETED = "delete";
+	
+	private static final String STRIKE_THROUGH = "strike";
+	
+	private static final String INSERTED = "insert";
+	
+	private static final String UNDERLINED = "underline";
+	
+	private static final String PARAGRAPH = "paragraph";
+
+	private static final String H1 = "h1";
+	
+	private static final String H2 = "h2";
+	
+	private static final String H3 = "h3";
+	
+	private static final String H4 = "h4";
+	
+	private static final String H5 = "h5";
+	
+	private static final String H6 = "h6";
 
 	private Object value;
+	
+	private String align;
+
+	private String transform;
+	
+	private String look;
 
 	private Integer length;
 
 	private boolean ellipsize;
-
-	private boolean uppercase;
-
-	private boolean lowercase;
-
-	private boolean capitalize;
 
 	private String type;
 
@@ -82,10 +119,26 @@ public final class OutputTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (type != null && !LEGEND_TYPE.equals(type) && !STRONG_TYPE.equals(type) && !MARK_TYPE.equals(type) 
-				&& !EM_TYPE.equals(type) && !SMALL_TYPE.equals(type) && !LABEL_TYPE.equals(type) && !OUTPUT_TYPE.equals(type)) {
+		if (type != null && !LEGEND.equalsIgnoreCase(type) && !BOLD.equalsIgnoreCase(type) && !MARK.equalsIgnoreCase(type)  && !ITALIC.equalsIgnoreCase(type) 
+				&& !SMALL.equalsIgnoreCase(type) && !LABEL.equalsIgnoreCase(type) && !OUTPUT.equalsIgnoreCase(type) && !DELETED.equalsIgnoreCase(type) 
+				&& !STRIKE_THROUGH.equalsIgnoreCase(type) && !INSERTED.equalsIgnoreCase(type) && !UNDERLINED.equalsIgnoreCase(type) && !PARAGRAPH.equalsIgnoreCase(type)
+				&& !H1.equalsIgnoreCase(type) && !H2.equalsIgnoreCase(type) && !H3.equalsIgnoreCase(type) && !H4.equalsIgnoreCase(type) && !H5.equalsIgnoreCase(type) 
+				&& !H6.equalsIgnoreCase(type)) {
 			throw new JspException("Invalid type value for output tag. Valid values are "
-					+ LEGEND_TYPE + ", " + STRONG_TYPE + ", " + MARK_TYPE + ", " + EM_TYPE + ", " + SMALL_TYPE + ", " + LABEL_TYPE + " and " + OUTPUT_TYPE);
+					+ LEGEND + ", " + BOLD + ", " + MARK + ", " + ITALIC + ", " + SMALL + ", " + LABEL + ", " + OUTPUT + ", "
+					+ DELETED + ", " + STRIKE_THROUGH + ", " + INSERTED + ", " + UNDERLINED + ", " + PARAGRAPH + ", "
+					+ H1 + ", " + H2 + ", " + H3 + ", " + H4 + ", " + H5 + ", " + H6);
+		}
+		if (align != null && !align.equalsIgnoreCase(LEFT) && !align.equalsIgnoreCase(RIGHT) && !align.equalsIgnoreCase(CENTER) && !align.equalsIgnoreCase(JUSTIFY)) {
+			throw new JspException("Invalid align value for output tag. Valid values are " + LEFT + ", " + RIGHT + ", " + CENTER + ", " + JUSTIFY);
+		}
+		if (transform != null && !transform.equalsIgnoreCase(CAPITALIZE) && !transform.equalsIgnoreCase(LOWERCASE) && !transform.equalsIgnoreCase(UPPERCASE)) {
+			throw new JspException("Invalid transform value for output tag. Valid values are " + CAPITALIZE + ", " + LOWERCASE + ", " + UPPERCASE);
+		}
+		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) && !look.equalsIgnoreCase(SUCCESS)
+				&& !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(DANGER) && !look.equalsIgnoreCase(MUTED)) {
+			throw new JspException("Invalid look value for output tag. Valid values are " + DEFAULT + ", " + PRIMARY 
+					+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER + ", " + MUTED);
 		}
 	}
 
@@ -101,119 +154,118 @@ public final class OutputTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 
-		StringBuilder builder = new StringBuilder();
+		Tag tag = null;
 
-		if (LEGEND_TYPE.equals(type)) {
-			builder.append(OPEN_LEGEND_TAG);
-
-		} else if (STRONG_TYPE.equals(type)) {
-			builder.append(OPEN_STRONG_TAG);
-
-		} else if (MARK_TYPE.equals(type)) {
-			builder.append(OPEN_MARK_TAG);
-
-		} else if (EM_TYPE.equals(type)) {
-			builder.append(OPEN_EM_TAG);
-
-		} else if (SMALL_TYPE.equals(type)) {
-			builder.append(OPEN_SMALL_TAG);
-
-		} else if (LABEL_TYPE.equals(type)) {
-			builder.append(OPEN_LABEL_TAG);
-
-		} else if (OUTPUT_TYPE.equals(type)) {
-			builder.append(OPEN_OUTPUT_TAG);
-
+		if (LEGEND.equals(type)) {
+			tag =  new Tag("legend");
+		} else if (BOLD.equals(type)) {
+			tag =  new Tag("strong");
+		} else if (MARK.equals(type)) {
+			tag =  new Tag("mark");
+		} else if (ITALIC.equals(type)) {
+			tag =  new Tag("em");
+		} else if (SMALL.equals(type)) {
+			tag =  new Tag("small");
+		} else if (LABEL.equals(type)) {
+			tag =  new Tag("label");
+		} else if (OUTPUT.equals(type)) {
+			tag =  new Tag("output");
+		} else if (DELETED.equals(type)) {
+			tag =  new Tag("del");
+		} else if (STRIKE_THROUGH.equals(type)) {
+			tag =  new Tag("s");
+		} else if (INSERTED.equals(type)) {
+			tag =  new Tag("ins");
+		} else if (UNDERLINED.equals(type)) {
+			tag =  new Tag("u");
+		} else if (PARAGRAPH.equals(type)) {
+			tag =  new Tag("p");
+		} else if (H1.equals(type)) {
+			tag =  new Tag("h1");
+		} else if (H2.equals(type)) {
+			tag =  new Tag("h2");
+		} else if (H3.equals(type)) {
+			tag =  new Tag("h3");
+		} else if (H4.equals(type)) {
+			tag =  new Tag("h4");
+		} else if (H5.equals(type)) {
+			tag =  new Tag("h5");
+		} else if (H6.equals(type)) {
+			tag =  new Tag("h6");
 		} else {
-			builder.append(OPEN_SPAN_TAG);
+			tag =  new Span();
 		}
 
-		if (id != null) {
-			builder.append("id=\"" + id + "\" ");
+		tag.addAttribute("id", id)
+			.addAttribute("style", style);
+
+		if (CAPITALIZE.equalsIgnoreCase(transform)) {
+			tag.addAttribute("class", Bootstrap.TEXT_CAPITALIZE);
+		} else if (UPPERCASE.equalsIgnoreCase(transform)) {
+			tag.addAttribute("class", Bootstrap.TEXT_UPPERCASE);
+		} else if (LOWERCASE.equalsIgnoreCase(transform)) {
+			tag.addAttribute("class", Bootstrap.TEXT_LOWERCASE);
+		}
+		
+		if (LEFT.equalsIgnoreCase(align)) {
+			tag.addAttribute("class", Bootstrap.TEXT_LEFT);
+		} else if (RIGHT.equalsIgnoreCase(align)) {
+			tag.addAttribute("class", Bootstrap.TEXT_RIGHT);
+		} else if (CENTER.equalsIgnoreCase(align)) {
+			tag.addAttribute("class", Bootstrap.TEXT_CENTER);
+		} else if (JUSTIFY.equalsIgnoreCase(align)) {
+			tag.addAttribute("class", Bootstrap.TEXT_JUSTIFY);
+		}
+		
+		if (PRIMARY.equalsIgnoreCase(look)) {
+			tag.addAttribute("class", Bootstrap.TEXT_PRIMARY);
+		} else if (SUCCESS.equalsIgnoreCase(look)) {
+			tag.addAttribute("class", Bootstrap.TEXT_SUCCESS);
+		} else if (INFO.equalsIgnoreCase(look)) {
+			tag.addAttribute("class", Bootstrap.TEXT_INFO);
+		} else if (WARNING.equalsIgnoreCase(look)) {
+			tag.addAttribute("class", Bootstrap.TEXT_WARNING);
+		} else if (DANGER.equalsIgnoreCase(look)) {
+			tag.addAttribute("class", Bootstrap.TEXT_DANGER);
+		} else if (MUTED.equalsIgnoreCase(look)) {
+			tag.addAttribute("class", Bootstrap.TEXT_MUTED);
 		}
 
-		String outputTransform = "";
+		// Add the style class at last
+		tag.addAttribute("class", styleClass);
 
-		if (capitalize) {
-			outputTransform += (style != null ? "; " : "") + "text-transform: capitalize";
-		} else if (uppercase) {
-			outputTransform += (style != null ? "; " : "") + "text-transform: uppercase";
-		} else if (lowercase) {
-			outputTransform += (style != null ? "; " : "") + "text-transform: lowercase";
+		if (target != null && (LABEL.equals(type) || OUTPUT.equals(type))) {
+			tag.addAttribute("for", target);
 		}
 
-		if (style != null) {
-			builder.append("style=\"" + style + outputTransform + "\" ");
-		} else if (!outputTransform.isEmpty()) {
-			builder.append("style=\"" + outputTransform + "\" ");
-		}
-
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_OUTPUT);
-		}
-
-		if (target != null && (LABEL_TYPE.equals(type) || OUTPUT_TYPE.equals(type))) {
-			builder.append("for=\"" + target + "\" ");
-		}
-
-		builder.append(">");
-
-		String val = "";
 		Object obj = getTagValue(value);
-
 		if (obj != null) {
-			Locale locale = getRequest().getLocale();
-
 			if (dateFormatRegex != null) {
 				if (obj instanceof Date) {
-					val = new SimpleDateFormat(dateFormatRegex, locale).format(obj) + sw.toString();
+					tag.addText(new SimpleDateFormat(dateFormatRegex, getRequest().getLocale()).format(obj));
 
 				} else if (obj instanceof DateTime) {
-					val = ((DateTime)obj).toString(DateTimeFormat.forPattern(dateFormatRegex).withLocale(locale)) + sw.toString();
+					tag.addText(((DateTime) obj).toString(DateTimeFormat.forPattern(dateFormatRegex).withLocale(getRequest().getLocale())));
 				}
-
 			} else if (numberFormatRegex != null) {
-				DecimalFormat decimalFormat = new DecimalFormat(numberFormatRegex);
-				val = decimalFormat.format(obj) + sw.toString();
-
+				tag.addText(new DecimalFormat(numberFormatRegex).format(obj));
 			} else {
-				val = obj.toString() + sw.toString();
+				tag.addText(obj.toString());
 			}
-		} else {
-			val = sw.toString();
 		}
+		tag.addText(sw.toString());
 
-		if (length != null && length > 0 && val != null && val.length() >= length) {
+		String text = tag.getText();
+		if (length != null && length > 0 && text.length() >= length) {
 			if (ellipsize && length > 4) {
-				val = val.substring(0, length - 4) + " ...";
+				text = text.substring(0, length - 4) + " ...";
 			} else {
-				val = val.substring(0, length);
+				text = text.substring(0, length);
 			}
+			tag.setText(text);
 		}
-
-		builder.append(val);
-
-		if (LEGEND_TYPE.equals(type)) {
-			builder.append(CLOSE_LEGEND_TAG);
-		} else if (STRONG_TYPE.equals(type)) {
-			builder.append(CLOSE_STRONG_TAG);
-		} else if (MARK_TYPE.equals(type)) {
-			builder.append(CLOSE_MARK_TAG);
-		} else if (EM_TYPE.equals(type)) {
-			builder.append(CLOSE_EM_TAG);
-		} else if (SMALL_TYPE.equals(type)) {
-			builder.append(CLOSE_SMALL_TAG);
-		} else if (LABEL_TYPE.equals(type)) {
-			builder.append(CLOSE_LABEL_TAG);
-		} else if (OUTPUT_TYPE.equals(type)) {
-			builder.append(CLOSE_OUTPUT_TAG);
-		} else {
-			builder.append(CLOSE_SPAN_TAG);
-		}
-
-		printOutput(builder);
+	
+		printOutput(tag.getHtml());
 	}
 
 	public void setValue(Object value) {
@@ -228,24 +280,24 @@ public final class OutputTagHandler extends SmartTagHandler {
 		this.ellipsize = ellipsize;
 	}
 
-	public void setUppercase(boolean uppercase) {
-		this.uppercase = uppercase;
-	}
-
-	public void setLowercase(boolean lowercase) {
-		this.lowercase = lowercase;
-	}
-
-	public void setCapitalize(boolean capitalize) {
-		this.capitalize = capitalize;
-	}
-
 	public void setType(String type) {
 		this.type = type;
 	}
 
 	public void setTarget(String target) {
 		this.target = target;
+	}
+	
+	public void setLook(String look) {
+		this.look = look;
+	}
+
+	public void setAlign(String align) {
+		this.align = align;
+	}
+
+	public void setTransform(String transform) {
+		this.transform = transform;
 	}
 
 }

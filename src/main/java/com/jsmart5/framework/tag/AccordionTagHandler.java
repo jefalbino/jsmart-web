@@ -16,69 +16,50 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.util.Map;
+import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
 
-public class ButtonActionTagHandler extends SmartTagHandler {
+public final class AccordionTagHandler extends SmartTagHandler {
 
-	private String label;
-
-	private String action;
-
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof ButtonTagHandler) {
-			
-			// Just to call nested tags
-			JspFragment body = getJspBody();
-			if (body != null) {
-				body.invoke(null);
-			}
-
-			((ButtonTagHandler) parent).addActionItem(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		// DO NOTHING
-	}
 
-	String getLabel() {
-		return label;
-	}
+		if (id == null) {
+			id = getRandonId();
+		}
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+		StringWriter sw = new StringWriter();
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(sw);
+		}
 
-	String getAction() {
-		return action;
-	}
+		Div div = new Div();
+		div.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("class", Bootstrap.PANEL_GROUP)
+			.addAttribute("class", styleClass)
+			.addAttribute("role", "tablist")
+			.addAttribute("aria-multiselectable", "true");
+		
+		div.addText(sw.toString());
+		
+		appendEvent(div);
 
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	Map<String, Object> getParams() {
-		return params;
+		printOutput(div.getHtml());
 	}
 
 }

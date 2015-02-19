@@ -19,18 +19,28 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
 
+public final class FooterTagHandler extends SmartTagHandler {
+	
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof ModalTagHandler) {
 
-public final class GroupItemsTagHandler extends SmartTagHandler {
-
-	private String value;
+			((ModalTagHandler) parent).setFooter(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -38,32 +48,19 @@ public final class GroupItemsTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void executeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		Object object = getTagValue(value);
 
-		if (object instanceof Map) {
-			Map<Object, Object> map = (Map<Object, Object>) object;
-
-			for (Entry<Object, Object> entry : map.entrySet()) {
-
-				GroupItemTagHandler item = new GroupItemTagHandler();
-				item.setValue(entry.getKey());
-				item.setLabel(entry.getValue() != null ? entry.getValue().toString() : null);
-
-				if (parent instanceof RadioGroupTagHandler) {
-					((RadioGroupTagHandler) parent).addItem(item);
-
-				} else if (parent instanceof CheckGroupTagHandler) {
-					((CheckGroupTagHandler) parent).addItem(item);
-				}
-			}
+		StringWriter sw = new StringWriter();
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(sw);
 		}
-	}
 
-	public void setValue(String value) {
-		this.value = value;
+		Div footer = new Div();
+		footer.addAttribute("class", Bootstrap.MODAL_FOOTER)
+			.addText(sw.toString());
+
+		printOutput(footer.getHtml());
 	}
 
 }

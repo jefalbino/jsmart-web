@@ -32,6 +32,8 @@ public final class JsonAjax {
 	private String method;
 
 	private String action;
+	
+	private String url;
 
 	private List<JsonParam> params = new ArrayList<JsonParam>();
 
@@ -79,6 +81,14 @@ public final class JsonAjax {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public List<JsonParam> getParams() {

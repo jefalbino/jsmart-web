@@ -48,12 +48,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.reflections.vfs.Vfs;
 import org.reflections.vfs.Vfs.Dir;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import com.jsmart5.framework.config.SmartHtmlCompress;
 import com.jsmart5.framework.manager.SmartContext;
@@ -68,6 +69,8 @@ public final class SmartWebFilter implements Filter {
 	public static final String ENCODING = "UTF-8";
 
 	private static final int STREAM_BUFFER = 2048;
+	
+	private static final Gson GSON = new Gson();
 
 	private static final Logger LOGGER = Logger.getLogger(SmartWebFilter.class.getPackage().getName());
 
@@ -141,9 +144,6 @@ public final class SmartWebFilter implements Filter {
         try {
         	html = getCompleteHtml(httpRequest, responseWrapper);
 
-        } catch (JSONException ex) {
-        	throw new ServletException(ex);
-
         } finally {
         	// Remove script and ajax builder attributes
         	synchronized (session) {
@@ -193,7 +193,7 @@ public final class SmartWebFilter implements Filter {
 		}
 	}
 
-	private String getCompleteHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper responseWrapper) throws JSONException {
+	private String getCompleteHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper responseWrapper) {
 		String html = responseWrapper.toString();
         Matcher htmlMatcher = HTML_PATTERN.matcher(html);
 
@@ -284,20 +284,16 @@ public final class SmartWebFilter implements Filter {
 	}
 
 	private void initHeaders() {
-		try {
-			JSONObject jsonHeaders = new JSONObject(convertResourceToString(FILTER_HEADERS));
+		JsonObject jsonHeaders = GSON.toJsonTree(convertResourceToString(FILTER_HEADERS)).getAsJsonObject();
 
-			JSONArray styles = jsonHeaders.getJSONArray("styles");
-			for (int i = 0; i < styles.length(); i++) {
-				headerStyles.append(styles.getString(i));
-			}
+		JsonArray styles = jsonHeaders.getAsJsonArray("styles");
+		for (int i = 0; i < styles.size(); i++) {
+			headerStyles.append(styles.get(i).getAsString());
+		}
 
-			JSONArray scripts = jsonHeaders.getJSONArray("scripts");
-			for (int i = 0; i < scripts.length(); i++) {
-				headerScripts.append(scripts.getString(i));
-			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.SEVERE, "Failure to load JSON resources: " + ex.getMessage(), ex);
+		JsonArray scripts = jsonHeaders.getAsJsonArray("scripts");
+		for (int i = 0; i < scripts.size(); i++) {
+			headerScripts.append(scripts.get(i).getAsString());
 		}
 	}
 
@@ -332,7 +328,7 @@ public final class SmartWebFilter implements Filter {
 				return;
 			}
 
-			JSONObject jsonResources = new JSONObject(convertResourceToString(FILTER_RESOURCES));
+			JsonObject jsonResources = GSON.toJsonTree(convertResourceToString(FILTER_RESOURCES)).getAsJsonObject();
 
 			File libFile = new File(context.getRealPath(libFilePath));
 			Dir content = Vfs.fromURL(libFile.toURI().toURL());
@@ -341,10 +337,10 @@ public final class SmartWebFilter implements Filter {
 			while (files.hasNext()) {
 				Vfs.File file = files.next();
 
-				JSONArray resources = jsonResources.getJSONArray("resources");
-				for (int i = 0; i < resources.length(); i++) {
+				JsonArray resources = jsonResources.getAsJsonArray("resources");
+				for (int i = 0; i < resources.size(); i++) {
 
-					if (resources.getString(i).equals(file.getRelativePath())) {
+					if (resources.get(i).getAsString().equals(file.getRelativePath())) {
 						initDirResources(context.getRealPath(SEPARATOR), file.getRelativePath());
 
 						int count = 0;

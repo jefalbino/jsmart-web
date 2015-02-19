@@ -22,34 +22,34 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JsonLink;
+import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.A;
+import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Li;
+import com.jsmart5.framework.tag.html.Span;
+import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.util.SmartUtils;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
 import static com.jsmart5.framework.tag.JsConstants.*;
 
-/*
- * Link uses a json structure
- * 
- * {
- * 	  'method': '',
- *    'action': '',
- *    'url': '',
- *    'update': '',
- *    'before': '',
- *    'exec': ''
- *  }
- */
 public final class LinkTagHandler extends SmartTagHandler {
+	
+	static final String JUSTIFIED = "justified";
+	
+	static final String LARGE = "large";
+
+	static final String SMALL = "small";
+
+	static final String XSMALL = "xsmall";
 
 	private String label;
 
@@ -68,13 +68,17 @@ public final class LinkTagHandler extends SmartTagHandler {
 	private String afterAjax;
 
 	private Integer tabIndex;
+	
+	private String size;
 
 	private boolean async = true;
+	
+	private boolean dropUp;
 
-	private List<SmartTagHandler> actionItems;
+	private List<DropTagHandler> drops;
 
 	public LinkTagHandler() {
-		actionItems = new ArrayList<SmartTagHandler>();
+		drops = new ArrayList<DropTagHandler>();
 	}
 
 	@Override
@@ -90,7 +94,10 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (size != null && !size.equalsIgnoreCase(XSMALL) && !size.equalsIgnoreCase(SMALL) 
+				&& !size.equalsIgnoreCase(LARGE) && !size.equalsIgnoreCase(JUSTIFIED)) {
+			throw new JspException("Invalid size value for link tag. Valid values are " + XSMALL + ", " + SMALL + ", " + LARGE + ", " + JUSTIFIED);
+		}
 	}
 
 	@Override
@@ -103,159 +110,194 @@ public final class LinkTagHandler extends SmartTagHandler {
 		if (body != null) {
 			body.invoke(sw);
 		}
-
-		HttpServletRequest request = getRequest();
-		StringBuilder builder = new StringBuilder();
-
-		if (!actionItems.isEmpty()) {
-			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CSS_LINK_GROUP);
-			builder.append(CLOSE_TAG);
+		
+		if (id == null) {
+			id = getRandonId();
 		}
 
-		builder.append(OPEN_LINK_TAG);
+		Div linkGroup = null;
+
+		if (!drops.isEmpty()) {
+			linkGroup = new Div();
+			linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP)
+				.addAttribute("role", "group");
+			
+			if (XSMALL.equalsIgnoreCase(size)) {
+				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
+			} else if (SMALL.equalsIgnoreCase(size)) {
+				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
+			} else if (LARGE.equalsIgnoreCase(size)) {
+				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
+			} else if (JUSTIFIED.equalsIgnoreCase(size)) {
+				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
+			}
+			
+			if (dropUp) {
+				linkGroup.addAttribute("class", Bootstrap.DROPUP);
+			}
+		}
+		
+		A link = new A();
+		link.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("class", Bootstrap.BUTTON)
+			.addAttribute("tabindex", tabIndex)
+			.addAttribute("class", Bootstrap.BUTTON_LINK);
 
 		StringBuilder urlParams = new StringBuilder("?");
 		for (String key : params.keySet()) {
 			urlParams.append(key + "=" + params.get(key) + "&");
 		}
 
-		if (id != null) {
-			builder.append("id=\"" + id + "\" ");
-		}
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_LINK);
-		}
-		if (tabIndex != null) {
-			builder.append("tabindex=\"" + tabIndex + "\" ");
-		}
-
-		String outcomeVal = null; 
-		if (outcome != null) {
-			outcomeVal = SmartUtils.decodePath((String) getTagValue(outcome));
-		}
-
 		String url = "";
 		String href = "#";
+		String outcomeVal = SmartUtils.decodePath((String) getTagValue(outcome)); 
+
 		if (outcomeVal != null) {
 			url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal) + urlParams.substring(0, urlParams.length() -1);
-			href = (!url.startsWith("http") && !url.startsWith("mailto") ? request.getContextPath() + "/" : "") + url;
+			href = (!url.startsWith("http") && !url.startsWith("mailto") ? getRequest().getContextPath() + "/" : "") + url;
 		}
 
-		builder.append("href=\"" + href + "\" ");
-
-		if (action != null || update != null || beforeAjax != null || afterAjax != null) {
-
-			builder.append(ON_CLICK + JSMART_LINK.format(async, "$(this)") + "return false;\" ");
-
-			JsonLink jsonLink = new JsonLink();
-			if (action != null) {
-				jsonLink.setMethod("post");
-				jsonLink.setAction(getTagName(J_SBMT, action));
-
-				for (String name : params.keySet()) {						
-					jsonLink.getParams().add(new JsonParam(name, params.get(name)));
-				}
-				if (update == null && afterAjax == null) {
-					jsonLink.setUrl(url);
-				}
-			} else if (update != null) {
-				jsonLink.setMethod("get");
-			}
-			jsonLink.setUpdate(update);
-			jsonLink.setBefore(beforeAjax);
-			jsonLink.setExec(afterAjax);
-
-			builder.append("ajax=\"" + getJsonValue(jsonLink) + "\" ");
+		link.addAttribute("href", href);
+		
+		if (iconTag != null && IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+			link.addText(getIconTag());
 		}
 
-		appendEvent(builder);
-
-		builder.append(">");
-
-		Object labelVal = getTagValue(label);
-
-		if (labelVal != null && labelVal instanceof String) {
-			if (length != null && length > 0 && labelVal.toString().length() >= length) {
+		Object val = getTagValue(label);
+		if (val != null && val instanceof String) {
+			if (length != null && length > 0 && val.toString().length() >= length) {
 				if (ellipsize && length > 4) {
-					labelVal = labelVal.toString().substring(0, length - 4) + " ...";
+					val = val.toString().substring(0, length - 4) + " ...";
 				} else {
-					labelVal = labelVal.toString().substring(0, length);
+					val = val.toString().substring(0, length);
 				}
 			}
-			builder.append(labelVal);
+			link.addText((String) val);
 
 		} else if (!sw.toString().isEmpty()) {
-			builder.append(sw.toString());
-
+			link.addText(sw.toString());
 		} else {
-			builder.append(href);
+			link.addText(href);
+		}
+		
+		if (iconTag != null && IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+			link.addText(getIconTag());
+		}
+		
+		if (XSMALL.equalsIgnoreCase(size)) {
+			link.addAttribute("class", Bootstrap.BUTTON_XSMALL);
+		} else if (SMALL.equalsIgnoreCase(size)) {
+			link.addAttribute("class", Bootstrap.BUTTON_SMALL);
+		} else if (LARGE.equalsIgnoreCase(size)) {
+			link.addAttribute("class", Bootstrap.BUTTON_LARGE);
+		} else if (JUSTIFIED.equalsIgnoreCase(size)) {
+			link.addAttribute("class", Bootstrap.BUTTON_JUSTIFIED);
 		}
 
-		builder.append(CLOSE_LINK_TAG);
-
-		if (!actionItems.isEmpty()) {
+		appendEvent(link);
+		
+		if (linkGroup != null) {
+			link.addAttribute("data-toggle", "dropdown")
+				.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+				.addAttribute("role", "button")
+				.addAttribute("aria-expanded", false);
 			
-			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CSS_LINK_DROPDOWN_ARROW);
-			//builder.append(ON_CLICK + JSMART_LINK_DROPDOWN.format("$(this)") + "return false;\" ");
-			builder.append(CLOSE_TAG + CLOSE_DIV_TAG);
+			Span caret = new Span();
+			caret.addAttribute("class", Bootstrap.CARET);
+			link.addTag(caret);
 
-			builder.append(OPEN_UNORDERED_LIST_TAG);
-			appendClass(builder, CSS_LINK_DROPDOWN_LIST);
-			builder.append(CLOSE_TAG);
-	
-			for (SmartTagHandler actionItem : actionItems) {
+			linkGroup.addTag(link);
+		}
+
+		// Add the style class at last
+		link.addAttribute("class", styleClass);
+		
+		if (action != null || update != null || beforeAjax != null || afterAjax != null) {
+			appendScript(getFunction(id, action, url, params));
+		}
+
+		if (linkGroup != null) {
+
+			Ul ul = new Ul();
+			ul.addAttribute("role", "menu")
+				.addAttribute("class", Bootstrap.DROPDOWN_MENU);
+			linkGroup.addTag(ul);
+
+			for (DropTagHandler drop : drops) {
 				
-				if (actionItem instanceof SeparatorTagHandler) {
-					builder.append(OPEN_LIST_ITEM_TAG);
-					appendClass(builder, CSS_LINK_DROPDOWN_SEPARATOR);
-					builder.append(CLOSE_TAG);
-					builder.append(CLOSE_LIST_ITEM_TAG);
-
-				} else if (actionItem instanceof LinkActionTagHandler) {
-
-					LinkActionTagHandler linkActionItem = (LinkActionTagHandler) actionItem;
-
-					builder.append(OPEN_LIST_ITEM_TAG + CLOSE_TAG);
-					builder.append(OPEN_LINK_TAG);
-	
-					builder.append(ON_CLICK + JSMART_LINK.format(async, "$(this)") + "return false;\" ");
-	
-					JsonLink jsonLink = new JsonLink();
-					jsonLink.setMethod("post");
-					jsonLink.setAction(getTagName(J_SBMT, linkActionItem.getAction()));
-	
-					for (String name : linkActionItem.getParams().keySet()) {						
-						jsonLink.getParams().add(new JsonParam(name, linkActionItem.getParams().get(name)));
-					}
-	
-					jsonLink.setUpdate(update);
-					jsonLink.setBefore(beforeAjax);
-					jsonLink.setExec(afterAjax);
-					builder.append("ajax=\"" + getJsonValue(jsonLink) + "\" >");
-	
-					builder.append(getTagValue(linkActionItem.getLabel()));
-	
-					builder.append(CLOSE_LINK_TAG);
-					builder.append(CLOSE_LIST_ITEM_TAG);
+				if (drop.getId() == null) {
+					drop.setId(getRandonId());
 				}
+				
+				if (drop.getHeader() != null) {
+					Li headerLi = new Li();
+					headerLi.addAttribute("role", "presentation")
+						.addAttribute("class", Bootstrap.DROPDOWN_HEADER)
+						.addText((String) getTagValue(drop.getHeader()));
+					ul.addTag(headerLi);
+				}
+
+				Li li = new Li();
+				li.addAttribute("id", drop.getId())
+					.addAttribute("role", "presentation")
+					.addAttribute("class", drop.isDisabled() ? Bootstrap.DISABLED : null);
+				ul.addTag(li);
+
+				A a = new A();
+				a.addAttribute("href", "#")
+					.addText((String) getTagValue(drop.getLabel()));
+				li.addTag(a);
+
+				if (drop.hasDivider()) {
+					Li dividerLi = new Li();
+					dividerLi.addAttribute("class", Bootstrap.DIVIDER);
+					ul.addTag(li);
+				}
+				
+				appendScript(getFunction(drop.getId(), drop.getAction(), url, drop.getParams()));
+			}
+		}
+
+		printOutput(linkGroup != null ? linkGroup.getHtml() : link.getHtml());
+	}
+	
+	private StringBuilder getFunction(String id, String action, String url, Map<String, Object> params) {
+		JsonAjax jsonAjax = new JsonAjax();
+		jsonAjax.setId(id);
+		jsonAjax.setAsync(async);
+
+		if (action != null) {
+			jsonAjax.setMethod("post");
+			jsonAjax.setAction(getTagName(J_SBMT, action));
+
+			for (String name : params.keySet()) {						
+				jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
 			}
 
-			builder.append(CLOSE_UNORDERED_LIST_TAG);
-			builder.append(CLOSE_DIV_TAG);
+			if (update == null && afterAjax == null) {
+				jsonAjax.setUrl(url);
+			}
+		} else if (update != null) {
+			jsonAjax.setMethod("get");
+		}
+		if (update != null) {
+			jsonAjax.setUpdate(update.trim());
+		}
+		if (beforeAjax != null) {
+			jsonAjax.setBefore(beforeAjax.trim());
+		}
+		if (afterAjax != null) {
+			jsonAjax.setExec(afterAjax.trim());
 		}
 
-		printOutput(builder);
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_BUTTON_NEW.format(getNewJsonValue(jsonAjax)) + "return false;");
+		return getFunction(id, EVENT_CLICK, builder);
 	}
 
-	void addActionItem(SmartTagHandler actionItem) {
-		this.actionItems.add(actionItem);
+	void addDrop(DropTagHandler drop) {
+		this.drops.add(drop);
 	}
 
 	public void setLabel(String label) {
@@ -296,6 +338,10 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 	public void setAsync(boolean async) {
 		this.async = async;
+	}
+
+	public void setDropUp(boolean dropUp) {
+		this.dropUp = dropUp;
 	}
 
 }

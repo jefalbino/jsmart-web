@@ -19,30 +19,46 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Map;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
-import com.jsmart5.framework.tag.html.Option;
 
-public final class OptionTagHandler extends SmartTagHandler {
-
-	private String name;
+public class DropTagHandler extends SmartTagHandler {
+	
+	private String header;
 
 	private String label;
-
-	private Object value;
-
+	
 	private boolean disabled;
+
+	private String action;
+	
+	private boolean divider;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof SelectTagHandler) {
+		if (parent instanceof ButtonTagHandler || parent instanceof LinkTagHandler) {
 			
-			((SelectTagHandler) parent).addOption(this);
+			// Just to call nested tags for parameters
+			JspFragment body = getJspBody();
+			if (body != null) {
+				body.invoke(null);
+			}
+
+			if (parent instanceof ButtonTagHandler) {
+				((ButtonTagHandler) parent).addDrop(this);
+			} else {
+				((LinkTagHandler) parent).addDrop(this);
+			}
+			return false;
+
+		} else if (parent instanceof TabPaneTagHandler) {
+			((TabPaneTagHandler) parent).addDrop(this);
 			return false;
 		}
 		return true;
@@ -55,54 +71,58 @@ public final class OptionTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		Option option = new Option();
-		option.addAttribute("id", id)
-			.addAttribute("style", style)
-			.addAttribute("class", styleClass)
-			.addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null)
-			.addText((String) getTagValue(label));
+		JspTag parent = getParent();
+		if (parent instanceof TabPaneTagHandler) {
 
-		Object object = getTagValue(value);
-		option.addAttribute("value", object)
-			.addAttribute("selected", verifySelection(object) ? "selected" : null);
-			
-		printOutput(option.getHtml());
-	}
-
-	@SuppressWarnings("rawtypes")
-	private boolean verifySelection(Object value) {
-		// Get selected values
-		Object values = getTagValue(name);
-
-		if (values != null && value != null) {
-			if (values instanceof Collection) {
-				for (Object obj : (Collection) values) {
-					if (obj != null && obj.toString().equals(value.toString())) {
-						return true;
-					}
-				}
-			} else {
-				return values.equals(value);
+			JspFragment body = getJspBody();
+			if (body != null) {
+				body.invoke(outputWriter);
 			}
 		}
-
-		return false;
 	}
 
-	void setName(String name) {
-		this.name = name;
+	String getHeader() {
+		return header;
+	}
+
+	public void setHeader(String header) {
+		this.header = header;
+	}
+
+	String getLabel() {
+		return label;
 	}
 
 	public void setLabel(String label) {
 		this.label = label;
 	}
 
-	public void setValue(Object value) {
-		this.value = value;
+	boolean isDisabled() {
+		return disabled;
 	}
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	boolean hasDivider() {
+		return divider;
+	}
+
+	public void setDivider(boolean divider) {
+		this.divider = divider;
+	}
+
+	Map<String, Object> getParams() {
+		return params;
 	}
 
 }

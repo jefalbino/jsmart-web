@@ -16,36 +16,33 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Span;
 
-public class LinkActionTagHandler extends SmartTagHandler {
+public final class IconTagHandler extends SmartTagHandler {
 
-	private String label;
+	static final String LEFT = "left";
+	
+	static final String RIGHT = "right";
 
-	private String action;
+	private String name;
+
+	private String side = LEFT;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof LinkTagHandler) {
-			
-			// Just to call nested tags
-			JspFragment body = getJspBody();
-			if (body != null) {
-				body.invoke(null);
-			}
+		if (parent instanceof SmartTagHandler) {
 
-			((LinkTagHandler) parent).addActionItem(this);
+			((SmartTagHandler) parent).setIconTag(this);
 			return false;
 		}
 		return true;
@@ -53,32 +50,31 @@ public class LinkActionTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (side != null && !side.equalsIgnoreCase(LEFT) && !side.equalsIgnoreCase(RIGHT)) {
+			throw new JspException("Invalid side value for icon tag. Valid values are " + LEFT + ", " + RIGHT);
+		}
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		// DO NOTHING
+		Span span = new Span();
+		span.addAttribute("class", Bootstrap.GLYPHICON)
+			.addAttribute("class", getTagValue(name))
+			.addAttribute("aria-hidden", "true");
+
+		printOutput(span.getHtml());
 	}
 
-	String getLabel() {
-		return label;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	String getSide() {
+		return side;
 	}
 
-	String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	Map<String, Object> getParams() {
-		return params;
+	public void setSide(String side) {
+		this.side = side;
 	}
 
 }

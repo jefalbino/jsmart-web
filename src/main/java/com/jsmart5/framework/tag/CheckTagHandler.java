@@ -25,21 +25,20 @@ import java.util.Collection;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartValidateTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Input;
+import com.jsmart5.framework.tag.html.Label;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
 import static com.jsmart5.framework.tag.JsConstants.*;
 
-
-public final class GroupItemTagHandler extends SmartTagHandler {
+public final class CheckTagHandler extends SmartTagHandler {
 
 	static final String CHECKBOX = "checkbox";
 
 	static final String RADIO = "radio";
-
-	private String itemId;
 
 	private Object value;
 
@@ -52,17 +51,19 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 	private boolean ajax;
 
 	private boolean async;
+	
+	private boolean inline;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 
 		if (parent instanceof RadioGroupTagHandler) {
-			((RadioGroupTagHandler) parent).addItem(this);
+			((RadioGroupTagHandler) parent).addCheck(this);
 			return false;
 
 		} else if (parent instanceof CheckGroupTagHandler) {
-			((CheckGroupTagHandler) parent).addItem(this);
+			((CheckGroupTagHandler) parent).addCheck(this);
 			return false;
 		}
 		return true;
@@ -76,86 +77,71 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 	@Override
 	public void executeTag() throws JspException, IOException {
 
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
+		Label lb = new Label();
+		lb.addAttribute("style", style);
+		
+		if (inline) {
 			if (CHECKBOX.equals(type)) {
-				appendClass(builder, CSS_CHECKGROUP_ITEM);
-
-			} else if (RADIO.equals(type)) {
-				appendClass(builder, CSS_RADIOGROUP_ITEM);
+				lb.addAttribute("class", Bootstrap.CHECKBOX_INLINE);
+			} else {
+				lb.addAttribute("class", Bootstrap.RADION_INLINE);
 			}
 		}
+		
+		lb.addAttribute("class", styleClass);
 
-		builder.append(">" + INPUT_TAG);
-
-		builder.append("id=\"" + itemId + "\" ");
-
+		Input input = new Input();
+		input.addAttribute("id", id)
+			.addAttribute("type", type);
+		
 		if (CHECKBOX.equals(type)) {
-			builder.append("checkgroup=\"checkgroup\" ");
-
+			input.addAttribute("checkgroup", "checkgroup");
 		} else if (RADIO.equals(type)) {
-			builder.append("radiogroup=\"radiogroup\" ");
+			input.addAttribute("radiogroup", "radiogroup");
 		}
 
-		String name = getTagName((type == null || type.equals(RADIO) ? J_TAG : J_ARRAY), this.name != null ? this.name : (value != null ? value.toString() : null));
+		String name = getTagName((type == null || type.equals(RADIO) ? J_TAG : J_ARRAY), 
+				this.name != null ? this.name : (value != null ? value.toString() : null));
 		if (name != null) {
-			builder.append("name=\"" + name + "\" ");
+			input.addAttribute("name", name);
 		}
 
-		appendFormValidator(builder);
-
-		appendRest(builder);
-
-		if (type != null) {
-			builder.append("type=\"" + type +"\" ");
-		}
+		appendFormValidator(input);
+		appendRest(input);
+		appendEvent(input);
 
 		Object object = getTagValue(value);
-		if (object != null) {
-			builder.append("value=\"" + object + "\" ");
-		}
+		input.addAttribute("value", object)
+			.addAttribute("checked", verifyCheck(object) ? "checked" : null);
+		
+		lb.addTag(input).addText((String) getTagValue(label));
 
-		if (verifyCheck(object)) {
-			builder.append("checked=\"checked\" ");
-		}
-
-		String command = ajaxCommand;
-
-		if (ajax) {
-			if (command != null) {
-				if (command.startsWith(ON_CLICK)) {
-					if (!command.contains(JSMART_AJAX.toString())) {
-						command = command.replace(ON_CLICK, ON_CLICK + JSMART_GROUPITEM.format(async, name, "$(this)"));
-					}
-				} else {
-					command += ON_CLICK + JSMART_GROUPITEM.format(async, name, "$(this)") + "\" ";
-				}
-			} else {
-				command = ON_CLICK + JSMART_GROUPITEM.format(async, name, "$(this)") + "\" ";
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
 			}
 		}
 
-		if (command != null) {
-			builder.append(command);
+		if (ajax) {
+			appendScript(getFunction());
 		}
 
-		appendEvent(builder);
+		printOutput(lb.getHtml());
+	}
 
-		builder.append("/>" + OPEN_LABEL_TAG);
+	private StringBuilder getFunction() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(id).append("').bind('").append(EVENT_CLICK).append("', function(){");
 
-		builder.append("for=\"" + itemId + "\" ");
+		JsonAjax jsonAjax = new JsonAjax();
+		jsonAjax.setId(id);
+		jsonAjax.setAsync(async);
+		jsonAjax.setMethod("post");
 
-		builder.append(">" + CLOSE_LABEL_TAG);
+		builder.append(JSMART_CHECK.format(getNewJsonValue(jsonAjax)));
 
-		builder.append(CLOSE_DIV_TAG);
-
-		printOutput(builder.append("&nbsp; " + getTagValue(label)));
+		builder.append("});");
+		return builder;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -177,16 +163,16 @@ public final class GroupItemTagHandler extends SmartTagHandler {
 		return false;
 	}
 
-	void setItemId(String itemId) {
-		this.itemId = itemId;
-	}
-
 	void setType(String type) {
 		this.type = type;
 	}
 
 	void setName(String name) {
 		this.name = name;
+	}
+	
+	void setInline(boolean inline) {
+		this.inline = inline;
 	}
 
 	public void setLabel(String label) {

@@ -49,22 +49,8 @@ public final class ButtonTagHandler extends SmartTagHandler {
 	static final String SMALL = "small";
 
 	static final String XSMALL = "xsmall";
-	
-	private static final String DEFAULT = "default";
 
-	private static final String PRIMARY = "primary";
-
-	private static final String SUCCESS = "success";
-	
-	private static final String INFO = "info";
-
-	private static final String WARNING = "warning";
-
-	private static final String DANGER = "danger";
-	
-	private static final String LINK = "link";
-
-	private String render;
+	private String look;
 
 	private String label;
 
@@ -73,8 +59,6 @@ public final class ButtonTagHandler extends SmartTagHandler {
 	private boolean ellipsize;
 
 	private String size;
-
-	private String icon;
 
 	private String action;
 	
@@ -94,10 +78,14 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	private boolean async = true;
 
-	private List<SmartTagHandler> actionItems;
+	private boolean dropSegmented;
+
+	private boolean dropUp;
+
+	private List<DropTagHandler> drops;
 
 	public ButtonTagHandler() {
-		actionItems = new ArrayList<SmartTagHandler>();
+		drops = new ArrayList<DropTagHandler>();
 	}
 
 	@Override
@@ -107,24 +95,37 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 			((GridTagHandler) parent).addTag(this);
 			return false;
+
+		} else if (parent instanceof InputTagHandler) {
+			((InputTagHandler) parent).setChildAddOn(this);
+			return false;
+
+		} else if (parent instanceof SelectTagHandler) {
+			((SelectTagHandler) parent).setChildAddOn(this);
+			return false;
 		}
 		return true;
 	}
 
 	@Override
 	public void validateTag() throws JspException {
-		if (size != null && !size.equals(XSMALL) && !size.equals(SMALL) && !size.equals(LARGE) && !size.equals(JUSTIFIED)) {
+		if (size != null && !size.equalsIgnoreCase(XSMALL) && !size.equalsIgnoreCase(SMALL) 
+				&& !size.equalsIgnoreCase(LARGE) && !size.equalsIgnoreCase(JUSTIFIED)) {
 			throw new JspException("Invalid size value for button tag. Valid values are " + XSMALL + ", " + SMALL + ", " + LARGE + ", " + JUSTIFIED);
 		}
-		if (render != null && !render.equals(DEFAULT) && !render.equals(PRIMARY) && !render.equals(SUCCESS) && !render.equals(INFO) 
-				&& !render.equals(WARNING) && !render.equals(DANGER) && !render.equals(LINK)) {
-			throw new JspException("Invalid render value for button tag. Valid values are " + DEFAULT + ", " + PRIMARY + ", " + SUCCESS + ", " + INFO
-					+ ", " + WARNING + ", " + DANGER + ", " + LINK);
+		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) 
+				&& !look.equalsIgnoreCase(SUCCESS) && !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING)
+				&& !look.equalsIgnoreCase(DANGER) && !look.equalsIgnoreCase(LINK)) {
+			throw new JspException("Invalid look value for button tag. Valid values are " + DEFAULT + ", " + PRIMARY 
+					+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER + ", " + LINK);
 		}
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
+
+		JspTag parent = getParent();
+		boolean inputAddOn = parent instanceof InputTagHandler || parent instanceof SelectTagHandler;
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -138,19 +139,27 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 		Div buttonGroup = null;
 
-		if (!actionItems.isEmpty()) {
+		if (!drops.isEmpty() || inputAddOn) {
 			buttonGroup = new Div();
-			buttonGroup.addAttribute("role", "group")
-				.addAttribute("class", Bootstrap.BUTTON_GROUP);
 			
-			if (XSMALL.equals(size)) {
+			if (inputAddOn) {
+				buttonGroup.addAttribute("class", Bootstrap.INPUT_GROUP_BUTTON);
+			} else {
+				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP);
+			}
+			
+			if (XSMALL.equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-			} else if (SMALL.equals(size)) {
+			} else if (SMALL.equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-			} else if (LARGE.equals(size)) {
+			} else if (LARGE.equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
-			} else if (JUSTIFIED.equals(size)) {
+			} else if (JUSTIFIED.equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
+			}
+			
+			if (dropUp) {
+				buttonGroup.addAttribute("class", Bootstrap.DROPUP);
 			}
 		}
 
@@ -161,40 +170,36 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			.addAttribute("tabindex", tabIndex)
 			.addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null);
 		
-		String renderVal = Bootstrap.BUTTON_DEFAULT;
+		String lookVal = Bootstrap.BUTTON_DEFAULT;
 		
-		if (PRIMARY.equals(render)) {
-			renderVal = Bootstrap.BUTTON_PRIMARY;
-		} else if (SUCCESS.equals(render)) {
-			renderVal = Bootstrap.BUTTON_SUCCESS;
-		} else if (INFO.equals(render)) {
-			renderVal = Bootstrap.BUTTON_INFO;
-		} else if (WARNING.equals(render)) {
-			renderVal = Bootstrap.BUTTON_WARNING;
-		} else if (DANGER.equals(render)) {
-			renderVal = Bootstrap.BUTTON_DANGER;
-		} else if (LINK.equals(render)) {
-			renderVal = Bootstrap.BUTTON_LINK;
+		if (PRIMARY.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_PRIMARY;
+		} else if (SUCCESS.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_SUCCESS;
+		} else if (INFO.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_INFO;
+		} else if (WARNING.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_WARNING;
+		} else if (DANGER.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_DANGER;
+		} else if (LINK.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_LINK;
 		}
 
-		button.addAttribute("class", renderVal);
+		button.addAttribute("class", lookVal);
 			
-		if (XSMALL.equals(size)) {
+		if (XSMALL.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_XSMALL);
-		} else if (SMALL.equals(size)) {
+		} else if (SMALL.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_SMALL);
-		} else if (LARGE.equals(size)) {
+		} else if (LARGE.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_LARGE);
-		} else if (JUSTIFIED.equals(size)) {
+		} else if (JUSTIFIED.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_JUSTIFIED);
 		}
 		
-		if (icon != null) {
-			Span span = new Span();
-			span.addAttribute("class", Bootstrap.GLYPHICON)
-					.addAttribute("class", icon)
-					.addAttribute("aria-hidden", "true");
-			button.addTag(span);
+		if (iconTag != null && IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+			button.addText(getIconTag());
 		}
 
 		String val = (String) getTagValue(label);
@@ -206,33 +211,39 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			}
 		}
 		button.addText(val);
-		
-		
-//		 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-//	        <span class="caret"></span>
-//	        <span class="sr-only">Toggle Dropdown</span>
-//	      </button>
-	      
-		if (buttonGroup != null) {
-			Button dropDown = new Button();
-			dropDown.addAttribute("type", "button")
-				.addAttribute("class", Bootstrap.BUTTON)
-				.addAttribute("class", renderVal)
-				.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
-				.addAttribute("data-toggle", "dropdown")
-				.addAttribute("aria-expanded", false);
-			
-			Span caret = new Span();
-			caret.addAttribute("class", Bootstrap.DROPDOWN_CARET);
-			dropDown.addTag(caret);
-			
-			Span srOnly = new Span();
-			srOnly.addAttribute("class", Bootstrap.SR_ONLY)
-				.addText("Toggle Dropdown");
-			dropDown.addTag(srOnly);
 
+		if (iconTag != null && IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+			button.addText(getIconTag());
+		}
+
+		if (buttonGroup != null) {
 			buttonGroup.addTag(button);
-			buttonGroup.addTag(dropDown);
+		}
+
+		if (!drops.isEmpty()) {
+			Span caret = new Span();
+			caret.addAttribute("class", Bootstrap.CARET);
+
+			if (dropSegmented) {
+				Button dropDown = new Button();
+				dropDown.addAttribute("type", "button")
+					.addAttribute("class", Bootstrap.BUTTON)
+					.addAttribute("class", lookVal)
+					.addAttribute("role", "button")
+					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+					.addAttribute("data-toggle", "dropdown")
+					.addAttribute("aria-expanded", false);
+
+				dropDown.addTag(caret);
+				buttonGroup.addTag(dropDown);
+			} else {
+				button.addAttribute("role", "button")
+					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+					.addAttribute("data-toggle", "dropdown")
+					.addAttribute("aria-expanded", false);
+
+				button.addTag(caret);
+			}
 		}
 
 		// Add the style class at last
@@ -261,39 +272,46 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			}
 		}
 
-		if (buttonGroup != null) {
+		if (!drops.isEmpty()) {
 			
 			Ul ul = new Ul();
 			ul.addAttribute("role", "menu")
 				.addAttribute("class", Bootstrap.DROPDOWN_MENU);
 			buttonGroup.addTag(ul);
 
-			for (SmartTagHandler actionItem : actionItems) {
-				
-				if (actionItem instanceof SeparatorTagHandler) {
-					Li li = new Li();
-					li.addAttribute("class", Bootstrap.DIVIDER);
-					ul.addTag(li);
-					
-				} else if (actionItem instanceof ButtonActionTagHandler) {
+			for (DropTagHandler drop : drops) {
 
-					ButtonActionTagHandler buttonActionItem = (ButtonActionTagHandler) actionItem;
-
-					if (buttonActionItem.getId() == null) {
-						buttonActionItem.setId(getRandonId());
-					}
-
-					Li li = new Li();
-					li.addAttribute("id", buttonActionItem.getId());
-					ul.addTag(li);
-
-					A a = new A();
-					a.addAttribute("href", "#")
-						.addText((String) getTagValue(buttonActionItem.getLabel()));
-					li.addTag(a);
-					
-					appendScript(getFunction(buttonActionItem.getId(), buttonActionItem.getAction(), buttonActionItem.getParams()));
+				if (drop.getId() == null) {
+					drop.setId(getRandonId());
 				}
+				
+				if (drop.getHeader() != null) {
+					Li headerLi = new Li();
+					headerLi.addAttribute("role", "presentation")
+						.addAttribute("class", Bootstrap.DROPDOWN_HEADER)
+						.addText((String) getTagValue(drop.getHeader()));
+					ul.addTag(headerLi);
+				}
+
+				Li li = new Li();
+				li.addAttribute("id", drop.getId())
+					.addAttribute("role", "presentation")
+					.addAttribute("class", drop.isDisabled() ? Bootstrap.DISABLED : null);
+				ul.addTag(li);
+
+				A a = new A();
+				a.addAttribute("href", "#")
+					.addText((String) getTagValue(drop.getLabel()));
+				li.addTag(a);
+				
+				if (drop.hasDivider()) {
+					Li dividerLi = new Li();
+					dividerLi.addAttribute("class", Bootstrap.DIVIDER);
+					ul.addTag(li);
+				}
+				
+				appendScript(getFunction(drop.getId(), drop.getAction(), drop.getParams()));
+				
 			}
 		}
 
@@ -302,18 +320,11 @@ public final class ButtonTagHandler extends SmartTagHandler {
 	
 	private StringBuilder getFunction(String id, String exec) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').bind('").append(EVENT_CLICK).append("', function(){");
-
-		builder.append(JSMART_EXEC.format(exec) + "return false;");
-
-		builder.append("});");
-		return builder;
+		builder.append(JSMART_EXEC.format(exec) + "return false;");	
+		return getFunction(id, EVENT_CLICK, builder);
 	}
 	
 	private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').bind('").append(EVENT_CLICK).append("', function(){");
-		
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
 		jsonAjax.setAsync(async);
@@ -338,18 +349,17 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			jsonAjax.setExec(afterAjax.trim());
 		}
 
+		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BUTTON_NEW.format(getNewJsonValue(jsonAjax)) + "return false;");
-
-		builder.append("});");
-		return builder;
+		return getFunction(id, EVENT_CLICK, builder);
 	}
 
-	void addActionItem(SmartTagHandler actionItem) {
-		this.actionItems.add(actionItem);
+	void addDrop(DropTagHandler drop) {
+		this.drops.add(drop);
 	}
 
-	public void setRender(String render) {
-		this.render = render;
+	public void setLook(String look) {
+		this.look = look;
 	}
 
 	public void setLabel(String label) {
@@ -366,10 +376,6 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	public void setSize(String size) {
 		this.size = size;
-	}
-
-	public void setIcon(String icon) {
-		this.icon = icon;
 	}
 
 	public void setAction(String action) {
@@ -406,6 +412,14 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	public void setAsync(boolean async) {
 		this.async = async;
+	}
+
+	public void setDropSegmented(boolean dropSegmented) {
+		this.dropSegmented = dropSegmented;
+	}
+
+	public void setDropUp(boolean dropUp) {
+		this.dropUp = dropUp;
 	}
 
 }

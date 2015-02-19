@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Tag {
+public class Tag {
 	
 	protected String name;
 	
@@ -36,11 +36,20 @@ public abstract class Tag {
 		return this;
 	}
 	
+	public String getText() {
+		return text.toString();
+	}
+	
 	public Tag addText(String text) {
 		// Set the position of text between inner tags
 		this.textPosition = tags.size() -1;
 
 		this.text.append(text);
+		return this;
+	}
+
+	public Tag setText(String text) {
+		this.text = new StringBuilder(text);
 		return this;
 	}
 

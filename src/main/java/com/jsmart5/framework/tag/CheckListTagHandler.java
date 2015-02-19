@@ -18,19 +18,19 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.CssConstants.CSS_LINK_DROPDOWN_SEPARATOR;
-import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_LIST_ITEM_TAG;
-import static com.jsmart5.framework.tag.HtmlConstants.CLOSE_TAG;
-import static com.jsmart5.framework.tag.HtmlConstants.OPEN_LIST_ITEM_TAG;
-
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-public class SeparatorTagHandler extends SmartTagHandler {
+
+public final class CheckListTagHandler extends SmartTagHandler {
+
+	private String value;
 
 	@Override
 	public void validateTag() throws JspException {
@@ -38,22 +38,32 @@ public class SeparatorTagHandler extends SmartTagHandler {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void executeTag() throws JspException, IOException {
 		JspTag parent = getParent();
+		Object object = getTagValue(value);
 
-		if (parent instanceof ButtonTagHandler) {
-			((ButtonTagHandler) parent).addActionItem(this);
+		if (object instanceof Map) {
+			Map<Object, Object> map = (Map<Object, Object>) object;
 
-		} else if (parent instanceof LinkTagHandler) {
-			((LinkTagHandler) parent).addActionItem(this);
-		
-		} else if (parent instanceof MenuItemTagHandler) {
-			StringBuilder builder = new StringBuilder(OPEN_LIST_ITEM_TAG);
-			appendClass(builder, CSS_LINK_DROPDOWN_SEPARATOR);
-			builder.append(CLOSE_TAG);
-			builder.append(CLOSE_LIST_ITEM_TAG);
-			printOutput(builder);
+			for (Entry<Object, Object> entry : map.entrySet()) {
+
+				CheckTagHandler check = new CheckTagHandler();
+				check.setValue(entry.getKey());
+				check.setLabel(entry.getValue() != null ? entry.getValue().toString() : null);
+
+				if (parent instanceof RadioGroupTagHandler) {
+					((RadioGroupTagHandler) parent).addCheck(check);
+
+				} else if (parent instanceof CheckGroupTagHandler) {
+					((CheckGroupTagHandler) parent).addCheck(check);
+				}
+			}
 		}
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 }

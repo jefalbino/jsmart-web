@@ -35,15 +35,14 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import org.json.JSONObject;
-
+import com.google.gson.Gson;
 import com.jsmart5.framework.config.SmartConstants;
 import com.jsmart5.framework.tag.AjaxTagHandler;
+import com.jsmart5.framework.tag.IconTagHandler;
 import com.jsmart5.framework.tag.html.Script;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartMessage;
 import com.jsmart5.framework.util.SmartUtils;
-
 
 import static com.jsmart5.framework.config.SmartConfig.*;
 import static com.jsmart5.framework.manager.SmartExpression.*;
@@ -53,6 +52,8 @@ import static com.jsmart5.framework.util.SmartText.*;
 public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	protected static final Logger LOGGER = Logger.getLogger(SmartTagHandler.class.getPackage().getName());
+	
+	protected static final Gson GSON = new Gson();
 
 	static final int J_TAG_LENGTH = 6;
 
@@ -120,8 +121,24 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	protected static final String EVENT_FOCUS = "focus";
 
-	protected static final String SUBMIT = "submit";
+	protected static final String EVENT_SUBMIT = "submit";
 	
+
+	public static final String DEFAULT = "default";
+
+	public static final String PRIMARY = "primary";
+
+	public static final String SUCCESS = "success";
+	
+	public static final String INFO = "info";
+
+	public static final String WARNING = "warning";
+
+	public static final String DANGER = "danger";
+	
+	public static final String MUTED = "muted";
+	
+	public static final String LINK = "link";
 
 	
 	protected static final String ON_SELECT = "onselect=\"";
@@ -160,6 +177,8 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected SmartValidateTagHandler validator;
 
 	protected List<AjaxTagHandler> ajaxTags;
+	
+	protected IconTagHandler iconTag;
 
 	@Deprecated
 	protected String ajaxCommand;
@@ -266,9 +285,32 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	public void setAjaxCommand(String ajaxCommand) {
 		this.ajaxCommand = ajaxCommand;
 	}
+
+	public void setIconTag(IconTagHandler iconTag) {
+		this.iconTag = iconTag;
+	}
 	
 	public void addAjaxTag(AjaxTagHandler ajax) {
 		this.ajaxTags.add(ajax);
+	}
+	
+	public void addAllAjaxTag(List<AjaxTagHandler> list) {
+		this.ajaxTags.addAll(list);
+	}
+	
+	protected String getIconTag() throws JspException, IOException {
+		StringWriter swIcon = new StringWriter();
+		iconTag.setOutputWriter(swIcon);
+		iconTag.executeTag();
+		return swIcon.toString();
+	}
+	
+	protected StringBuilder getFunction(String id, String event, StringBuilder script) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(id).append("').on('").append(event).append("', function(e){");
+		builder.append(script);
+		builder.append("});");
+		return builder;
 	}
 	
 	public String getId() {
@@ -290,9 +332,17 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	public String getTheme() {
 		return theme;
 	}
+	
+	public String getStyle() {
+		return style;
+	}
 
 	public void setStyle(String style) {
 		this.style = style;
+	}
+	
+	public String getStyleClass() {
+		return styleClass;
 	}
 
 	public void setStyleClass(String styleClass) {
@@ -507,14 +557,14 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected Map<String, SmartMessage> getMessages(String id) {
 		return SmartContext.getMessages(id);
 	}
-	
+
 	protected String getNewJsonValue(Object object) {
-		return new JSONObject(object).toString();
+		return GSON.toJson(object).replace("\u0027", "'");
 	}
-	
+
 	@Deprecated
 	protected String getJsonValue(Object object) {
-		return new JSONObject(object).toString().replace("\"", "&quot;");
+		return GSON.toJson(object).replace("\"", "&quot;");
 	}
 
 	protected void appendFormValidator(Tag tag) throws JspException, IOException {

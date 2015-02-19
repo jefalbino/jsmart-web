@@ -28,13 +28,11 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
-
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
+import com.jsmart5.framework.tag.html.Div;
 
 public final class CheckGroupTagHandler extends SmartTagHandler {
 
-	protected final List<GroupItemTagHandler> items;
+	protected final List<CheckTagHandler> checks;
 
 	private String align;
 
@@ -47,7 +45,7 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 	private boolean async = false;
 
 	public CheckGroupTagHandler() {
-		items = new ArrayList<GroupItemTagHandler>();
+		checks = new ArrayList<CheckTagHandler>();
 	}
 
 	@Override
@@ -75,75 +73,41 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
+		if (id == null) {
+			id = getRandonId();
+		}
+		
+		Div div = new Div();
+		div.addAttribute("id", id)
+			.addAttribute("align", align);
 
-		builder.append("id=\"" + id + "\" ");
+ 		int index = 0;
+		for (CheckTagHandler check : checks) {
+			StringWriter sw = new StringWriter();
 
-	 	if (align != null) {
-	 		builder.append("align=\"" + align + "\" ");
+			check.setId(id + "_" + index++);
+			check.setStyle(style);
+			check.setStyleClass(styleClass);
+			check.setInline(inline);
+			check.setValidator(validator);
+			check.setRest(rest);
+			check.setName(value);
+			check.setAjax(ajax);
+			check.setAsync(async);
+			check.addAllAjaxTag(ajaxTags);
+			check.setType(CheckTagHandler.CHECKBOX);
+			setEvents(check);
+			check.setOutputWriter(sw);
+			check.executeTag();
+
+			div.addText(sw.toString());
 		}
 
-	 	appendClass(builder, CSS_CHECKGROUP);
-		builder.append(">");
-
-		builder.append(OPEN_TABLE_TAG);
-		appendClass(builder, CSS_CHECKGROUP_TABLE);
-		builder.append(">");
-
-		if (!items.isEmpty()) {
-
- 	 		String columnStyle = CSS_CHECKGROUP_TABLE_COLUMN;
- 	 		builder.append(OPEN_TABLE_ROW_TAG);
- 	 		appendClass(builder, CSS_CHECKGROUP_TABLE_ROW);
- 	 		builder.append(">");
-
- 	 		int index = 0;
- 			for (GroupItemTagHandler item : items) {
- 				
- 				if (!inline && items.indexOf(item) != 0) {
- 		 	 		builder.append(OPEN_TABLE_ROW_TAG);
- 		 	 		appendClass(builder, CSS_CHECKGROUP_TABLE_ROW);
- 		 	 		builder.append(">");
- 				}
-
-				StringWriter sw = new StringWriter();
-				item.setItemId(id + "_" + index++);
-				item.setStyle(style);
-				item.setStyleClass(styleClass);
-				item.setValidator(validator);
-				item.setRest(rest);
-				item.setName(value);
-				item.setAjax(ajax);
-				item.setAsync(async);
-				item.setAjaxCommand(ajaxCommand);
-				item.setType(GroupItemTagHandler.CHECKBOX);
-				setEvents(item);
-				item.setOutputWriter(sw);
-				item.executeTag();
-
-				builder.append(OPEN_TABLE_COLUMN_TAG);
-				appendClass(builder, columnStyle);
-				builder.append(">");
-				builder.append(sw.toString());
-				builder.append(CLOSE_TABLE_COLUMN_TAG);
-
-				if (!inline) {
-					builder.append(CLOSE_TABLE_ROW_TAG);
-				}
-			}
-
- 			if (inline) {
- 				builder.append(CLOSE_TABLE_ROW_TAG);
- 			}
-		}
-
-		builder.append(CLOSE_TABLE_TAG);
-
-		printOutput(builder.append(CLOSE_DIV_TAG));
+		printOutput(div.getHtml());
 	}
 
-	void addItem(GroupItemTagHandler item) {
-		this.items.add(item);
+	void addCheck(CheckTagHandler check) {
+		this.checks.add(check);
 	}
 
 	public void setAlign(String align) {

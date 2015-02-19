@@ -19,6 +19,7 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -105,6 +106,8 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	private boolean disabled;
 
+	private SmartTagHandler childAddOn;
+
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
@@ -177,10 +180,25 @@ public final class InputTagHandler extends SmartTagHandler {
 			id = getRandonId();
 		}
 
-		Div formGroup = new Div();
-		formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
-		
+		Div formGroup = null;
 		Div inputGroup = null;
+		
+		JspTag parent = getParent();
+		if (label != null || helpBlock != null || parent instanceof FormTagHandler) {
+			formGroup = new Div();
+			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
+			
+			if (parent instanceof FormTagHandler) {
+				String size = ((FormTagHandler) parent).getSize();
+
+				if (FormTagHandler.LARGE.equalsIgnoreCase(size)) {
+					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
+
+				} else if (FormTagHandler.SMALL.equalsIgnoreCase(size)) {
+					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
+				}
+			}
+		}
 
 		if (label != null) {
 			Label labelTag = new Label();
@@ -199,14 +217,23 @@ public final class InputTagHandler extends SmartTagHandler {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
 			}
 
-			formGroup.addTag(inputGroup);
+			if (formGroup != null) {
+				formGroup.addTag(inputGroup);
+			}
 		}
 		
 		if (leftAddOn != null) {
-			Div div = new Div();
-			div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-				.addText((String) getTagValue(leftAddOn));
-			inputGroup.addTag(div);
+			if (childAddOn != null && leftAddOn.equalsIgnoreCase(childAddOn.getId())) {
+				StringWriter sw = new StringWriter();
+				childAddOn.setOutputWriter(sw);
+				childAddOn.executeTag();
+				inputGroup.addText(sw.toString());
+			} else {
+				Div div = new Div();
+				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+					.addText((String) getTagValue(leftAddOn));
+				inputGroup.addTag(div);
+			}
 		}
 
 		Input input = new Input();
@@ -252,17 +279,24 @@ public final class InputTagHandler extends SmartTagHandler {
 
 		if (inputGroup != null) {
 			inputGroup.addTag(input);
-		} else {
+		} else if (formGroup != null) {
 			formGroup.addTag(input);
 		}
 
 		if (rightAddOn != null) {
-			Div div = new Div();
-			div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-				.addText((String) getTagValue(rightAddOn));
-			inputGroup.addTag(div);
+			if (childAddOn != null && rightAddOn.equalsIgnoreCase(childAddOn.getId())) {
+				StringWriter sw = new StringWriter();
+				childAddOn.setOutputWriter(sw);
+				childAddOn.executeTag();
+				inputGroup.addText(sw.toString());
+			} else {
+				Div div = new Div();
+				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+					.addText((String) getTagValue(rightAddOn));
+				inputGroup.addTag(div);
+			}
 		}
-		
+
 		if (helpBlock != null) {
 			P p = new P();
 			p.addAttribute("class", Bootstrap.HELP_BLOCK)
@@ -276,7 +310,17 @@ public final class InputTagHandler extends SmartTagHandler {
 			}
 		}
 
-		printOutput(formGroup.getHtml());
+		if (formGroup != null) {
+			printOutput(formGroup.getHtml());
+		} else if (inputGroup != null) {
+			printOutput(inputGroup.getHtml());
+		} else {
+			printOutput(input.getHtml());
+		}
+	}
+	
+	void setChildAddOn(SmartTagHandler childAddOn) {
+		this.childAddOn = childAddOn;
 	}
 
 	public void setType(String type) {

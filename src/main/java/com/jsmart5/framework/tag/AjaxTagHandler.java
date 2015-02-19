@@ -21,7 +21,6 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.json.JsonAjax;
@@ -29,18 +28,6 @@ import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import static com.jsmart5.framework.tag.JsConstants.*;
 
-/*
- * Ajax uses a json structure
- * 
- * {
- * 	  'method': '',
- *    'action': '',
- *    'params': [{'name': '', 'value': ''}],
- *    'update': '',
- *    'before': '',
- *    'exec': ''
- *  }
- */
 public final class AjaxTagHandler extends SmartTagHandler {
 
 	private String event;
@@ -90,93 +77,10 @@ public final class AjaxTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		
 		JspTag parent = getParent();
-		if (parent instanceof InputTagHandler) {
+		if (parent instanceof SmartTagHandler) {
+
 			((SmartTagHandler) parent).addAjaxTag(this);
-			return;
-		}
-
-		StringBuilder builder = new StringBuilder();
-
-		// Look for parameters
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-
-		if (event.equals(EVENT_SELECT)) {
-			builder.append(ON_SELECT);
-
-		} else if (event.equals(EVENT_CLICK)) {
-			builder.append(ON_CLICK);
-			
-		} else if (event.equals(EVENT_DBL_CLICK)) {
-			builder.append(ON_DBL_CLICK);
-			
-		} else if (event.equals(EVENT_MOUSE_DOWN)) {
-			builder.append(ON_MOUSE_DOWN);
-			
-		} else if (event.equals(EVENT_MOUSE_MOVE)) {
-			builder.append(ON_MOUSE_MOVE);
-			
-		} else if (event.equals(EVENT_MOUSE_OVER)) {
-			builder.append(ON_MOUSE_OVER);
-			
-		} else if (event.equals(EVENT_MOUSE_OUT)) {
-			builder.append(ON_MOUSE_OUT);
-			
-		} else if (event.equals(EVENT_MOUSE_UP)) {
-			builder.append(ON_KEY_UP);
-			
-		} else if (event.equals(EVENT_KEY_DOWN)) {
-			builder.append(ON_KEY_DOWN);
-			
-		} else if (event.equals(EVENT_KEY_PRESS)) {
-			builder.append(ON_KEY_PRESS);
-			
-		} else if (event.equals(EVENT_KEY_UP)) {
-			builder.append(ON_KEY_UP);
-			
-		} else if (event.equals(EVENT_FOCUS)) {
-			builder.append(ON_FOCUS);
-
-		} else if (event.equals(EVENT_CHANGE)) {
-			builder.append(ON_CHANGE);
-
-		} else if (event.equals(EVENT_BLUR)) {
-			builder.append(ON_BLUR);
-		}
-
-		if (builder.length() > 0) {
-			builder.append(JSMART_AJAX.format(async, "$(this)", timeout != null ? timeout : 0) + "\" ");
-
-			JsonAjax jsonAjax = new JsonAjax();
-			if (action != null) {
-				jsonAjax.setMethod("post");
-				jsonAjax.setAction(getTagName(J_SBMT, action));
-
-				for (String name : params.keySet()) {						
-					jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
-				}
-			} else if (update != null) {
-				jsonAjax.setMethod("get");
-			}
-			if (update != null) {
-				jsonAjax.setUpdate(update.trim());
-			}
-			if (beforeAjax != null) {
-				jsonAjax.setBefore(beforeAjax.trim());
-			}
-			if (afterAjax != null) {
-				jsonAjax.setExec(afterAjax.trim());
-			}
-
-			builder.append("ajax=\"" + getJsonValue(jsonAjax) + "\" ");
-
-			if (parent instanceof SmartTagHandler) {
-				((SmartTagHandler) parent).setAjaxCommand(builder.toString());
-			}
 		}
 	}
 

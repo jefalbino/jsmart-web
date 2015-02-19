@@ -149,14 +149,17 @@ var Jsmart5 = (function() {
 		tableEditCancel: function (id, item, index, first) {
 			doTableEditCancel(id, item, index, first);
 		},
-		
-		// Tab ajax={'ajax':'', 'collapsible':'', 'position':'', 'hover':''}
+
 		tab: function (id) {
 			doTab(id);
 		},
 		
-		select: function (async, id) {
-			doSelect(async, id);
+		tabpane: function (id) {
+			doTabPane(id);
+		},
+		
+		select: function (map) {
+			doSelect(map);
 		},
 
 		backupDate: function (input) {
@@ -166,17 +169,13 @@ var Jsmart5 = (function() {
 		date: function (input) {
 			doDate(input);
 		},
-
-		panel: function (id) {
-			doPanel(id);
+		
+		checkbox: function (id) {
+			doCheckbox(id);
 		},
 		
-		checkbox: function (input) {
-			doCheckbox(input);
-		},
-		
-		groupItem: function (async, name, element) {
-			doGroupItem(async, name, element);
+		check: function (map) {
+			doCheck(map);
 		},
 		
 		xswitch: function (id, async, ajax) {
@@ -198,10 +197,6 @@ var Jsmart5 = (function() {
 		message: function (messages, options) {
 			doMessage(messages, options);
 		},
-		
-		menu: function (id) {
-			doMenu(id);
-		},
 
 		// Table ajax={'ajax': '', 'max': '', 'min': '', 'interval': '', 'complete': '', 'callback': ''}
 		progress: function (id) {
@@ -219,14 +214,6 @@ var Jsmart5 = (function() {
 
 		resetAutocomplete: function (id) {
 			resetAutocomplete(id);
-		},
-
-		search: function (async, id, event) {
-			return doSearch(async, id, event);
-		},
-		
-		resetSearch: function (id) {
-			resetSearch(id);
 		},
 		
 		removeSearch: function (id, close) {
@@ -1016,6 +1003,7 @@ var Jsmart5 = (function() {
 	}
 
 	function doTab(id) {
+		// TODO
 		if (id && id.length > 0) {
 			var tabElement = $(getId(id));
 			var ajaxAttr = tabElement.attr('ajax');
@@ -1064,37 +1052,40 @@ var Jsmart5 = (function() {
 			}
 		}
 	}
+	
+	function doTabPane(id) {
+		// TODO
+	}
 
-	function doSelect(async, id) {
-		if (id && id.length > 0) {
-			var postParam = [];
-			var selectElement = $(getId(id));
-			var options = getBasicAjaxOptions(async);
-			var closestForm = selectElement.closest('form');
-			var elementParam = getElementParam(selectElement, false);
-			
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
-					return;
-				}
-				if (elementParam.length > 0 && elementParam[0].value == null) {
-					postParam.push({name: elementParam[0].name, value: elementParam[0].value});
-				}
-			} else {
-				for (var i = 0; i < elementParam.length; i++) {
-					postParam.push({name: elementParam[i].name, value: elementParam[i].value});
-				}
-				postParam = $.param(postParam);			
+	function doSelect(map) {
+
+		var postParam = [];
+		var element = $(getId(map.id));
+		var options = getNewAjaxOptions(map);
+		var closestForm = element.closest('form');
+		var elementParam = getElementParam(element, false);
+		
+		if (closestForm && closestForm.length > 0) {
+			if (!doValidate($(closestForm).attr('id'))) {
+				return;
 			}
-	
-			options.data = postParam;
-	
-			if (closestForm && closestForm.length > 0) {
-				doFormPlaceHolders(closestForm);
-				$(closestForm).ajaxSubmit(options);
-			} else {
-				$.ajax(options);
+			if (elementParam.length > 0 && elementParam[0].value == null) {
+				postParam.push({name: elementParam[0].name, value: elementParam[0].value});
 			}
+		} else {
+			for (var i = 0; i < elementParam.length; i++) {
+				postParam.push({name: elementParam[i].name, value: elementParam[i].value});
+			}
+			postParam = $.param(postParam);			
+		}
+
+		options.data = postParam;
+
+		if (closestForm && closestForm.length > 0) {
+			doFormPlaceHolders(closestForm);
+			$(closestForm).ajaxSubmit(options);
+		} else {
+			$.ajax(options);
 		}
 	}
 
@@ -1140,82 +1131,27 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doPanel(id) {
-		if (id && id.length > 0) {
-			var panelCollapse = $(getId(id + PANEL_COLLAPSE));
-			if (panelCollapse) {
-				var panelContent = $(getId(id + PANEL_CONTENT));
-	
-				panelCollapse.click(function() {
-					var collapse = $(this);
-	
-					if (panelContent.attr("closed")) {
-						panelContent.removeAttr("closed");
-	
-						panelContent.slideDown("slow", function() {
-							// Animation complete.
-							collapse.css({'border-bottom-width': '1px'});
-	
-							var triangle = $(getId(id + PANEL_COLLAPSE) + '>div');
-							if (triangle && triangle.length > 0) {
-								triangle.css({
-									'border-top': '5px solid',
-									'border-top-color': triangle.css('borderLeftColor'),
-									'border-left': '5px solid transparent',
-									'border-bottom': '0px',
-									'border-right': '5px solid transparent'
-								});
-							}
-						});
-	
-					} else {
-						panelContent.attr("closed", "true");
-	
-						panelContent.slideUp("slow", function() {
-							// Animation complete.
-							collapse.css({'border-bottom-width': '0px'});
-	
-							var triangle = $(getId(id + PANEL_COLLAPSE) + '>div');
-							if (triangle && triangle.length > 0) {
-								triangle.css({
-									'border-top': '5px solid transparent',
-									'border-left': '5px solid',
-									'border-left-color': triangle.css('borderTopColor'),
-									'border-bottom': '5px solid transparent',
-									'border-right': '0px'
-								});
-							}
-						});
-					}
-				});
-	
-				if (panelContent.attr("closed")) {
-					panelContent.hide();
-					panelCollapse.css({'border-bottom-width': '0px'});
-				}
-			}
-		}
-	}
-
-	function doCheckbox(input) {
-		var value = $(input).val();
-		var name = $(input).attr("name");
+	function doCheckbox(id) {
+		var element = $('#' + id);
+		var value = element.val();
+		var name = element.attr("name");
 	
 		if (!value || value == 'false') {
-			$(input).attr('value', 'true');
+			element.attr('value', 'true');
 			$("input:hidden[name='" + name + "']").each(function(index) {
 				$(this).remove();
 			});
 		} else {
-			$(input).attr('value', 'false');
-			$(input).after($('<input type="hidden" name="' + name + '" value="false" />'));
+			element.attr('value', 'false');
+			element.after($('<input type="hidden" name="' + name + '" value="false" />'));
 		}
 	}
 
-	function doGroupItem(async, name, element) {
+	function doCheck(map) {
+		var element = $(getId(map.id));
 		if (element && element.length > 0) {
 			var postParam = [];
-			var options = getBasicAjaxOptions(async);
+			var options = getNewAjaxOptions(map);
 			var closestForm = $(element).closest('form');
 			var elementParam = getElementParam(element, false);
 	
@@ -1605,76 +1541,6 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function resetMenu(id) {
-		if ($(getId(id)).is('ul[menu="menu"]')) {
-			doMenu(id);
-		} else {
-			$(getId(id)).find('ul[menu="menu"]').each(function(index) {
-				doMenu($(this).attr("id"));
-			});
-		}
-	}
-	
-	function applyMenu(menu, level) {
-		menu.find('>li').each(function() {
-			$(this).find('>ul').each(function() {
-				$(this).attr('level', level);
-				$(this).hide();
-				applyMenu($(this), level + 1);
-			})
-		});
-	}
-
-	function doMenu(id) {
-		if (id && id.length > 0) {
-			var menu = $(getId(id));
-			var type = menu.attr('type');
-	
-			menu.attr('level', 'root');
-			applyMenu(menu, 1);
-	
-			menu.find('li').mouseenter(function () {
-				var subMenu = $(this).find('>ul');
-				if (subMenu && subMenu.length > 0) {
-
-					subMenu.css({'position':'absolute'});
-
-					if (type == 'top') {
-						if (parseInt(subMenu.attr('level')) != 1) {
-							subMenu.css({'left': $(this).position().left + $(this).outerWidth(true), 'top': $(this).position().top});
-						} else {
-							subMenu.css({'left': $(this).position().left, 'top': $(this).position().top + $(this).outerHeight(true)});
-						}
-	
-					} else if (type == 'left') {
-						subMenu.css({'left': $(this).position().left + $(this).outerWidth(true), 'top': $(this).position().top});
-	
-					} else if (type == 'right') {
-						subMenu.css({'left': $(this).position().left - subMenu.outerWidth(true), 'top': $(this).position().top});
-	
-					} else if (type == 'bottom') {
-						if (parseInt(subMenu.attr('level')) != 1) {
-							subMenu.css({'left': $(this).position().left + $(this).outerWidth(true), 
-										 'top': $(this).position().top - subMenu.outerHeight(true) + $(this).outerHeight(true)});
-						} else {
-							subMenu.css({'left': $(this).position().left, 'top': $(this).position().top - subMenu.outerHeight(true)});
-						}
-					}
-	
-					subMenu.show();
-				}
-			})
-			.mouseleave(function () {
-				var subMenu = $(this).find('>ul');
-				if (subMenu && subMenu.length > 0) {
-					if (subMenu.children(":focus").length == 0) {
-						subMenu.hide();
-				    }
-				}
-			});
-		}
-	}
-
 	function resetTree(id) {
 		if ($(getId(id)).is('ul[tree="tree"]')) {
 			doTree(id);
@@ -1821,7 +1687,6 @@ var Jsmart5 = (function() {
 
 	function openDialog(id) {
 		$(getId(id)).dialog('open');
-		resetMasks(id);
 		resetPlaceHolders(id);
 		resetTable(id);
 		resetSelects(id);
@@ -2307,7 +2172,6 @@ var Jsmart5 = (function() {
 				var id = updates[i];
 	
 				if (!contains(dialogs, id)) {
-					resetMasks(id);
 					resetDatePicker(id);
 					resetPlaceHolders(id);
 					resetTable(id);
@@ -2316,15 +2180,12 @@ var Jsmart5 = (function() {
 					resetCarousel(id);
 					resetPanel(id);
 					resetKeypad(id);
-					resetTab(id);
 					resetCaptcha(id);
 					resetSwitch(id);
 					resetProgress(id);
 					resetRange(id);
-					resetMenu(id);
 					resetTree(id);
 					resetAutocomplete(id);
-					resetSearch(id);
 				}
 			}
 		}
@@ -2566,18 +2427,6 @@ var Jsmart5 = (function() {
 		}
 	}
 	
-	function resetTab(id) {
-		if (id && id.length > 0) {
-			var tabElement = $(getId(id));
-			if (tabElement.is('div[tab="tab"]')) {
-				this.doTab(id);
-			} else {
-				tabElement.find('div[tab="tab"]').each(function(index) {
-					doTab($(this).attr('id'));
-				});
-			}
-		}
-	}
 	
 	function applyTab(tabItem, ajax, id, collapsible, position) {
 		var input = $(getId(id + TAB_INDEX));
@@ -2610,7 +2459,7 @@ var Jsmart5 = (function() {
 			}
 		}
 	}
-	
+	// TODO
 	function doTabAction(async, id, name, value) {
 		var options = getBasicAjaxOptions(async);
 		var closestForm = $(getId(id)).closest('form');
@@ -2631,21 +2480,6 @@ var Jsmart5 = (function() {
 			$(closestForm).ajaxSubmit(options);
 		} else {
 			$.ajax(options);
-		}
-	}
-	
-	function resetMasks(id) {
-		if (id && id.length > 0) {
-			var maskElement = $(getId(id));
-			if (maskElement.is('input') && maskElement.attr('mask')) {
-				maskElement.unmask();
-				maskElement.mask(maskElement.attr('mask'));
-			} else {
-				maskElement.find('*[mask]').each(function(index) {
-					$(this).unmask();
-					$(this).mask($(this).attr('mask'));
-				});
-			}
 		}
 	}
 	
@@ -3802,120 +3636,6 @@ var Jsmart5 = (function() {
 		}
 	}
 	
-	function resetSearch(id) {
-		if ($(getId(id)).is('input[search="search"]')) {
-			doResetSearch(id);
-		} else {
-			$(getId(id)).find('input[search="search"]').each(function(index) {
-				doResetSearch($(this).attr("id"));
-			});
-		}
-	}
-	
-	function doResetSearch(id) {
-		var element = $(getId(id));
-		var divGroup = element.closest('div[class^="jsmart5_search_group"]');
-		element.attr('defaultWidth', element.width());
-		divGroup.height(element.outerHeight());
-
-		doResetLabel(element, divGroup);
-		
-		divGroup.focusin(function() {
-			$(this).addClass('jsmart5_search_group_focus');
-		}).focusout(function() {
-			$(this).removeClass('jsmart5_search_group_focus');
-		});
-	}
-	
-	function doSearch(async, id, event) {
-		var element = $(getId(id));
-
-		if (element && element.attr('ajax') && event && (event.keyCode == 0 || event.keyCode == 13)) {
-
-			var search = element.val();
-			if ($.trim(search).length <= 0) {
-				return false;
-			}
-			
-			var minWidth = 40;
-			if (element.css('minWidth')) {
-				var minW = parseInt(element.css('minWidth').replace('px', ''));
-				if (minW > 0) {
-					minWidth = minW;
-				}
-			}
-
-			var ajax = $.parseJSON($(element).attr('ajax'));
-
-			// Find previous searches to avoid repeated ones
-			if (ajax.track) {
-
-				var repeated = false;
-				var divGroup = element.closest('div[class^="jsmart5_search_group"]');
-	
-				divGroup.find('div.jsmart5_search_close').each(function() {
-					var text = $(this).find('>span').text();
-					if ($.trim(text) == $.trim(search)) {
-						repeated = true;
-					}
-				});
-				
-				if (repeated) {
-					element.val('');
-					return false;
-				}
-			}
-
-			ajax.method = 'post';
-			var options = getAjaxOptions(async, ajax);
-			var postParam = getAjaxParams(element);
-
-			var closestForm = element.closest('form');
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
-					return false;
-				}
-			} else {
-				postParam = $.param(postParam);
-			}
-			options.data = postParam;
-
-			options.complete = function (xhr, status) {
-				jQuery.event.trigger('ajaxStop');
-				
-				if (ajax.track) {
-					var prevSearch = $('<div class="jsmart5_search_close"><span>' + element.val() + '</span><a onClick="Jsmart5.removeSearch(\'' + id + '\',$(this));"></a></div>');
-					element.parent().before(prevSearch);
-					element.attr('value', '');
-	
-					if (element.width() - prevSearch.outerWidth() > minWidth) {
-						element.width(element.width() - prevSearch.outerWidth());
-					} else {
-						element.width(minWidth);
-					}
-				}
-			};
-
-			if (closestForm && closestForm.length > 0) {
-				doFormPlaceHolders(closestForm);
-				$(closestForm).ajaxSubmit(options);
-			} else {
-				$.ajax(options);
-			}
-			return false;
-		}
-	}
-
-	function doRemoveSearch(id, close) {
-		var input = $(getId(id));
-		if (input.width() + close.parent().outerWidth() < input.attr('defaultWidth')) {
-			input.width(input.width() + close.parent().outerWidth());
-		} else {
-			input.width(input.attr('defaultWidth'));
-		}
-		close.parent().remove();
-	}
-
 	function getId(id) {
 		if (id) {
 			id = '#' + id;

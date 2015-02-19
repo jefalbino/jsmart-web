@@ -19,29 +19,40 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
-public final class TabItemTagHandler extends SmartTagHandler {
+public final class TabPaneTagHandler extends SmartTagHandler {
 
-	private String label;
+	private String title;
 
 	private String value;
+
+	private boolean disabled;
 
 	private String tabStyle;
 
 	private String tabClass;
+
+	private List<DropTagHandler> drops;
+
+	public TabPaneTagHandler() {
+		drops = new ArrayList<DropTagHandler>();
+	}
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof TabTagHandler) {
 
-			((TabTagHandler) parent).addTabItem(this);
+			((TabTagHandler) parent).addTabPane(this);
 			return false;
 		}
 		return true;
@@ -61,24 +72,16 @@ public final class TabItemTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	protected void appendEvent(StringBuilder builder) {
-		super.appendEvent(builder);
+	protected void appendEvent(Tag tag) {
+		super.appendEvent(tag);
 	}
 
-	String getStyle() {
-		return style;
+	String getTitle() {
+		return title;
 	}
 
-	String getStyleClass() {
-		return styleClass;
-	}
-
-	String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	String getValue() {
@@ -103,6 +106,22 @@ public final class TabItemTagHandler extends SmartTagHandler {
 
 	public void setTabClass(String tabClass) {
 		this.tabClass = tabClass;
+	}
+
+	boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
+	void addDrop(DropTagHandler drop) {
+		this.drops.add(drop);
+	}
+
+	List<DropTagHandler> getDrops() {
+		return drops;
 	}
 
 }

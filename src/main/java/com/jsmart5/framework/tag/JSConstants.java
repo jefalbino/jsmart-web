@@ -24,6 +24,15 @@ enum JsConstants {
 
 	JSMART_AJAX_NEW("Jsmart5.ajaxNew", "(%s);"),
 	JSMART_BUTTON_NEW("Jsmart5.buttonNew", "(%s);"),
+	
+	JSMART_CHECK("Jsmart5.check", "(%s);"),
+	JSMART_CHECKBOX("Jsmart5.checkbox", "(%s);"),
+	JSMART_SELECT("Jsmart5.select", "(%s);"),
+	
+	JSMART_TAB("Jsmart5.tab", "(%s);"),
+	JSMART_TABPANE("Jsmart5.tabpane", "(%s);"),
+
+	
 
 	JSMART_AJAX("Jsmart5.ajax", "(%s,%s,%s);"),
 	JSMART_BUTTON("Jsmart5.button", "(%s,%s);"),
@@ -48,29 +57,19 @@ enum JsConstants {
 	JSMART_PROGRESS("Jsmart5.progress", "('%s');"),
 	JSMART_RANGE("Jsmart5.range", "('%s');"),
 
-	JSMART_GROUPITEM("Jsmart5.groupItem", "(%s,'%s',%s);"),
-	JSMART_CHECKBOX("Jsmart5.checkbox", "(%s);"),
-
-	JSMART_PANEL("Jsmart5.panel", "('%s');"),
-	JSMART_TAB("Jsmart5.tab", "('%s');"),
-
 	JSMART_DATE("Jsmart5.date", "(%s);"),
 	JSMART_BACKUP_DATE("Jsmart5.backupDate", "(%s);"),
 
 	JSMART_MESSAGE("Jsmart5.message", "(%s,%s);"),
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
 	JSMART_UPLOAD("Jsmart5.upload", "('%s');"),
-	JSMART_MENU("Jsmart5.menu", "('%s');"),
 	JSMART_TREE("Jsmart5.tree", "('%s');"),
-	JSMART_SELECT("Jsmart5.select", "(%s,'%s');"),
+	
 
 	JSMART_BUTTON_RESTARRAY("Jsmart5.buttonRestArray", "('%s','%s');"),
 
 	JSMART_AUTOCOMPLETE_RESET("Jsmart5.resetAutocomplete", "('%s');"),
-	JSMART_AUTOCOMPLETE("Jsmart5.autocomplete", "(%s,'%s',event);"),
-
-	JSMART_SEARCH_RESET("Jsmart5.resetSearch", "('%s');"),
-	JSMART_SEARCH("Jsmart5.search", "(%s,'%s',event);");
+	JSMART_AUTOCOMPLETE("Jsmart5.autocomplete", "(%s,'%s',event);");
 
 	private String name;
 

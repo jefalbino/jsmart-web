@@ -23,149 +23,146 @@ import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
-
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.A;
+import com.jsmart5.framework.tag.html.Div;
 
 public final class PanelTagHandler extends SmartTagHandler {
 
-	private static final String PANEL_COLLAPSE = "_panel_collpase";
-
-	private static final String PANEL_CONTENT = "_panel_content";
-
-	private static final String FIELDSET_TYPE = "fieldset";
-
-	private static final String SECTION_TYPE = "section";
-
-	private String align;
-
-	private String type;
-
-	private String label;
-
-	private boolean closed;
-
-	private boolean collapsible;
+	private String header;
+	
+	private String footer;
+	
+	private String look;
 
 	public void validateTag() throws JspException {
-		if (type != null && !FIELDSET_TYPE.equals(type) && !SECTION_TYPE.equals(type)) {
-			throw new JspException("Invalid type value for panel tag. Valid values are "
-					+ FIELDSET_TYPE + " and " + SECTION_TYPE);
-		}
-		if (closed && !collapsible) {
-			throw new JspException("Invalid attributes for panel tag. The attribute closed can only be used if collapsible attribute is true");
+		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) && !look.equalsIgnoreCase(SUCCESS)
+				&& !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(DANGER)) {
+			throw new JspException("Invalid look value for panel tag. Valid values are " + DEFAULT + ", " + PRIMARY 
+					+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER);
 		}
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
+		String parentId = null;
+		String contentId = null;
+
+		JspTag parent = getParent();
+		if (parent instanceof AccordionTagHandler) {
+			parentId = ((AccordionTagHandler) parent).getId();
+			contentId = getRandonId();
+		}
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(sw);
 		}
-
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
-
-		builder.append("id=\"" + id + "\" type=\"panel\" ");
-
-		if (align != null) {
-			builder.append("align=\"" + align + "\" ");
-		} else {
-			builder.append("align=\"left\" ");
-		}
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_PANEL);
-		}
-
-		if (ajaxCommand != null) {
-			builder.append(ajaxCommand);
-		}
-
-		appendEvent(builder);
 		
-		builder.append(">");
-		
-		if (collapsible || SECTION_TYPE.equals(type) || label != null) {
-			builder.append(OPEN_DIV_TAG + "id=\"" + id + PANEL_COLLAPSE + "\" ");
-			appendClass(builder, CSS_PANEL_HEADER);
-			builder.append(">");
+		if (id == null) {
+			id = getRandonId();
+		}
 
-			// Triangle to represent if panel is opened or closed
-			if (collapsible) {
-				builder.append(OPEN_DIV_TAG + (closed ? "closed=\"true\"" : ""));
-				builder.append(">" + CLOSE_DIV_TAG);
+		Div panel = new Div();
+		panel.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("class", Bootstrap.PANEL);
+
+		String lookVal = Bootstrap.PANEL_DEFAULT;
+		
+		if (PRIMARY.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.PANEL_PRIMARY;
+		} else if (SUCCESS.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.PANEL_SUCCESS;
+		} else if (INFO.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.PANEL_INFO;
+		} else if (WARNING.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.PANEL_WARNING;
+		} else if (DANGER.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.PANEL_DANGER;
+		}
+
+		panel.addAttribute("class", lookVal);
+		
+		// Add the style class at last
+		panel.addAttribute("class", styleClass);
+
+		appendEvent(panel);
+
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
+			}
+		}
+		
+		if (header != null || parentId != null) {
+			Div head = new Div();
+			head.addAttribute("class", Bootstrap.PANEL_HEADING);
+
+			if (iconTag != null && IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+				head.addText(getIconTag());
 			}
 
-			if (label != null) {
-				builder.append(getTagValue(label));
+			if (parentId != null) {
+				A a = new A();
+				a.addAttribute("data-toggle", "collapse")
+					.addAttribute("data-parent", "#" + parentId)
+					.addAttribute("href", "#" + contentId)
+					.addAttribute("aria-expanded", "false")
+					.addAttribute("aria-controls", contentId);
+				
+				a.addText((String) getTagValue(header));
+				head.addTag(a);
+
+			} else {
+				head.addText((String) getTagValue(header));
 			}
-			builder.append(CLOSE_DIV_TAG);
+			
+			if (iconTag != null && IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+				head.addText(getIconTag());
+			}
+
+			panel.addTag(head);
 		}
 
-		if (FIELDSET_TYPE.equals(type)) {
-			builder.append(OPEN_FIELDSET_TAG);
-		} else if (SECTION_TYPE.equals(type)) {
-			builder.append(OPEN_SECTION_TAG);
+		if (contentId != null) {
+			Div content = new Div();
+			content.addAttribute("id", contentId)
+				.addAttribute("class", Bootstrap.PANEL_COLLPASE)
+				.addAttribute("class", Bootstrap.COLLAPSE)
+				.addAttribute("role", "tabpanel");
+			
+			content.addText(sw.toString());
+			panel.addTag(content);
 		} else {
-			builder.append(OPEN_DIV_TAG);
+			panel.addText(sw.toString());
 		}
 
-		builder.append("id=\"" + id + PANEL_CONTENT + "\" ");
-
-		if (closed) {
-			builder.append("closed=\"true\" ");
-		}
-
-		appendClass(builder, CSS_PANEL_CONTENT);
-		builder.append(">");
-
-	    builder.append(sw.toString());
-
-	    if (FIELDSET_TYPE.equals(type)) {
-			builder.append(CLOSE_FIELDSET_TAG);
-		} else if (SECTION_TYPE.equals(type)) {
-			builder.append(CLOSE_SECTION_TAG);
-		} else {
-			builder.append(CLOSE_DIV_TAG);
-		}
-
-	    builder.append(CLOSE_DIV_TAG);
-
-	    if (collapsible) {
-	    	appendScriptDeprecated(new StringBuilder(JSMART_PANEL.format(id)));
+	    if (footer != null) {
+	    	Div foot = new Div();
+	    	foot.addAttribute("class", Bootstrap.PANEL_FOOTER)
+				.addText((String) getTagValue(footer));
+			
+			panel.addTag(foot);
 	    }
 
-		printOutput(builder);
+		printOutput(panel.getHtml());
 	}
 
-	public void setAlign(String align) {
-		this.align = align;
+	public void setHeader(String header) {
+		this.header = header;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public void setFooter(String footer) {
+		this.footer = footer;
 	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public void setClosed(boolean closed) {
-		this.closed = closed;
-	}
-
-	public void setCollapsible(boolean collapsible) {
-		this.collapsible = collapsible;
+	
+	public void setLook(String look) {
+		this.look = look;
 	}
 
 }

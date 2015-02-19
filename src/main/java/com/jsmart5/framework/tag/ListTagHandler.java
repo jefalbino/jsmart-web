@@ -31,6 +31,7 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.json.JsonParams;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
 
 import static com.jsmart5.framework.tag.JsConstants.*;
 import static com.jsmart5.framework.tag.CssConstants.*;
@@ -39,19 +40,13 @@ import static com.jsmart5.framework.tag.HtmlConstants.*;
 
 public final class ListTagHandler extends SmartTagHandler {
 
-	static final String ORDERED = "ordered";
-
-	static final String UNORDERED = "unordered";
-
-	static final String DEFINITION = "definition";
-
 	private String var;
 
 	private String value;
 
 	private String select;
-
-	private String type;
+	
+	private String look;
 
 	private String emptyMessage;
 
@@ -76,9 +71,10 @@ public final class ListTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (type != null && !type.equals(ORDERED) && !type.equals(UNORDERED) && !type.equals(DEFINITION)) {
-			throw new JspException("Invalid type value for list tag. Valid values are "
-					+ ORDERED + ", " + UNORDERED + ", " + DEFINITION);
+		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) && !look.equalsIgnoreCase(SUCCESS)
+				&& !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(DANGER)) {
+			throw new JspException("Invalid look value for list tag. Valid values are " + DEFAULT + ", " + PRIMARY 
+					+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER);
 		}
 	}
 
@@ -218,16 +214,16 @@ public final class ListTagHandler extends SmartTagHandler {
 		this.var = var;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public void setEmptyMessage(String emptyMessage) {
 		this.emptyMessage = emptyMessage;
 	}
 
 	public void setAsync(boolean async) {
 		this.async = async;
+	}
+
+	public void setLook(String look) {
+		this.look = look;
 	}
 
 }

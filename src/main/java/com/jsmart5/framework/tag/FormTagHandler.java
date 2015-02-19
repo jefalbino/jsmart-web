@@ -25,18 +25,44 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.FieldSet;
+import com.jsmart5.framework.tag.html.Form;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
 import static com.jsmart5.framework.tag.JsConstants.*;
 
 public final class FormTagHandler extends SmartTagHandler {
+	
+	static final String SMALL = "small";
+	
+	static final String LARGE = "large";
+
+	private static final String VERTICAL = "vertical";
+	
+	private static final String HORIZONTAL = "horizontal";
+	
+	private static final String INLINE = "inline";
 
 	private String method;
+	
+	private boolean disabled;
+	
+	private String position;
+	
+	private String size;
 
 	@Override
 	public void validateTag() throws JspException {
 		if (method != null && !method.equalsIgnoreCase("GET") && !method.equalsIgnoreCase("POST")) {
-			throw new JspException("Invalid method for form tag. Valid value are get or post");
+			throw new JspException("Invalid method for form tag. Valid values are get or post");
+		}
+		if (position != null && !position.equalsIgnoreCase(VERTICAL) && !position.equalsIgnoreCase(HORIZONTAL) 
+				&& !position.equalsIgnoreCase(INLINE)) {
+			throw new JspException("Invalid position for form tag. Valid values are " + VERTICAL + ", "
+				+ HORIZONTAL + ", " + INLINE);
+		}
+		if (size != null && !size.equalsIgnoreCase(SMALL) && !size.equalsIgnoreCase(LARGE)) {
+			throw new JspException("Invalid size for form tag. Valid values are " + SMALL + ", " + LARGE);
 		}
 	}
 
@@ -48,26 +74,70 @@ public final class FormTagHandler extends SmartTagHandler {
 		if (body != null) {
 			body.invoke(sw);
 		}
-
-		StringBuilder builder = new StringBuilder(OPEN_FORM_TAG);
-
-		builder.append("id=\"" + id + "\" ");
-
-		if (method != null) {
-			builder.append("method=\"" + method + "\" ");
-		} else {
-			builder.append("method=\"GET\" ");
+		
+		if (id == null) {
+			id = getRandonId();
 		}
 
-		builder.append(ON_SUBMIT + "return " + JSMART_VALIDATE.format(id) + "\" >");
-		builder.append(sw.toString());
-		builder.append(CLOSE_FORM_TAG);
+		Form form = new Form();
+		form.addAttribute("id", id)
+			.addAttribute("method", method)
+			.addAttribute("style", style);
 
-		printOutput(builder);
+		if (HORIZONTAL.equalsIgnoreCase(position)) {
+			form.addAttribute("class", Bootstrap.FORM_HORIZONTAL);
+		} else if (INLINE.equalsIgnoreCase(position)) {
+			form.addAttribute("class", Bootstrap.FORM_INLINE);
+		}
+		
+		// Add the style class at last
+		form.addAttribute("class", styleClass);
+
+		FieldSet fieldSet = null;
+		if (disabled) {
+			fieldSet = new FieldSet();
+			fieldSet.addAttribute("disabled", "disabled");
+			form.addTag(fieldSet);
+		}
+
+		if (fieldSet != null) {
+			fieldSet.addText(sw.toString());
+		} else {
+			form.addText(sw.toString());
+		}
+
+		appendScript(getFunction());
+		printOutput(form.getHtml());
+	}
+	
+	private StringBuilder getFunction() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(id).append("').bind('").append(EVENT_SUBMIT).append("', function(){");
+
+		builder.append("return " + JSMART_VALIDATE.format(id));
+
+		builder.append("});");
+		return builder;
 	}
 
 	public void setMethod(String method) {
 		this.method = method;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
+	String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 
 }

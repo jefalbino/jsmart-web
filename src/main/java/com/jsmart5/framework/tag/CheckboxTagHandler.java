@@ -25,9 +25,11 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Input;
+import com.jsmart5.framework.tag.html.Label;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
 import static com.jsmart5.framework.tag.JsConstants.*;
 
 
@@ -65,72 +67,60 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 		if (body != null) {
 			body.invoke(null);
 		}
-
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_CHECKBOX);
+		
+		if (id == null) {
+			id = getRandonId();
 		}
 
-		builder.append(CLOSE_TAG + CHECKBOX_TAG);
+		Input input = new Input();
+		input.addAttribute("id", id)
+			.addAttribute("type", "checkbox")
+			.addAttribute("name", getTagName(J_TAG, value))
+			.addAttribute("tabindex", tabIndex)
+			.addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null);
 
-		builder.append("id=\"" + id + "\" ");
+		Label lb = new Label();
+		lb.addTag(input)
+			.addAttribute("style", style)
+			.addAttribute("class", styleClass)
+			.addText((String) getTagValue(label));
 
-		String name = getTagName(J_TAG, value);
-		if (name != null) {
-			builder.append("name=\"" + name + "\" ");
-		}
+		Div div = new Div();
+		div.addAttribute("class", Bootstrap.CHECKBOX)
+			.addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null)
+			.addTag(lb);
 
-		appendFormValidator(builder);
-
-		appendRest(builder);
-
-		if (tabIndex != null) {
-			builder.append("tabindex=\"" + tabIndex + "\" ");
-		}
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
+		appendFormValidator(input);
+		appendRest(input);
+		appendEvent(input);
 
 		Boolean object = (Boolean) getTagValue(value);
 		if (object != null) {
-			builder.append("value=\"" + object + "\"" + (object ? " checked=\"true\"" : "") + " ");
+			input.addAttribute("value", object)
+				.addAttribute("checked", object ? "true" : "");
 		} else {
-			builder.append("value=\"false\" ");
+			input.addAttribute("value", "false");
 		}
 
-		if (ajaxCommand != null) {
-			if (ajaxCommand.startsWith(ON_CLICK)) {
-				builder.append(ajaxCommand.replace(ON_CLICK, ON_CLICK + JSMART_CHECKBOX.format("$(this)")));
-			} else {
-				builder.append(ajaxCommand + ON_CLICK + JSMART_CHECKBOX.format("$(this)") + "\" ");
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
 			}
-		} else {
-			builder.append(ON_CLICK + JSMART_CHECKBOX.format("$(this)") + "\" ");
 		}
 
-		appendEvent(builder);
+		appendScript(getFunction());
 
-		builder.append(CLOSE_INLINE_TAG + OPEN_LABEL_TAG);
+		printOutput(div.getHtml()); 
+	}
+	
+	private StringBuilder getFunction() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(id).append("').bind('").append(EVENT_CLICK).append("', function(){");
 
-		builder.append("for=\"" + id + "\" ");
+		builder.append(JSMART_CHECKBOX.format(id));
 
-		builder.append(CLOSE_TAG + CLOSE_LABEL_TAG);
-
-		builder.append(CLOSE_DIV_TAG);
-
-		builder.append(OPEN_SPAN_TAG + CLOSE_TAG);
-
-		builder.append(label != null ? "&nbsp; " + getTagValue(label) : "");
-
-		builder.append(CLOSE_SPAN_TAG);
-
-		printOutput(builder); 
+		builder.append("});");
+		return builder;
 	}
 
 	public void setValue(String value) {

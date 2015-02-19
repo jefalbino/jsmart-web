@@ -22,10 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
 
 public abstract class SmartTableTagHandler extends SmartTagHandler {
@@ -47,64 +45,64 @@ public abstract class SmartTableTagHandler extends SmartTagHandler {
 		return !multiIndexes.isEmpty() ? multiIndexes + "," + index : String.valueOf(index);
 	}
 
-	protected static boolean getActionExpand(JSONObject jsonAction) throws JSONException {
+	protected static boolean getActionExpand(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("expand")) {
-			return new Boolean(jsonAction.getString("expand"));
+			return jsonAction.get("expand").getAsBoolean();
 		}
 		return false;
 	}
 
-	protected static ACTION getAction(JSONObject jsonAction) throws JSONException {
+	protected static ACTION getAction(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("action")) {
-			return ACTION.valueOf(jsonAction.getString("action"));
+			return ACTION.valueOf(jsonAction.get("action").getAsString());
 		}
 		return null;
 	}
 
-	protected static String getActionSelect(JSONObject jsonAction) throws JSONException {
+	protected static String getActionSelect(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("select")) {
-			return jsonAction.getString("select");
+			return jsonAction.get("select").getAsString();
 		}
 		return null;
 	}
 
-	protected static String getActionEdit(JSONObject jsonAction) throws JSONException {
+	protected static String getActionEdit(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("edit")) {
-			return jsonAction.getString("edit");
+			return jsonAction.get("edit").getAsString();
 		}
 		return null;
 	}
 
-	protected static String getActionVar(JSONObject jsonAction) throws JSONException {
+	protected static String getActionVar(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("varname")) {
-			return jsonAction.getString("varname");
+			return jsonAction.get("varname").getAsString();
 		}
 		return null;
 	}
 
-	protected static SELECT_TYPE getActionType(JSONObject jsonAction) throws JSONException {
+	protected static SELECT_TYPE getActionType(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("type")) {
-			return SELECT_TYPE.valueOf(jsonAction.getString("type"));
+			return SELECT_TYPE.valueOf(jsonAction.get("type").getAsString());
 		}
 		return null;
 	}
 
-	protected static Integer getActionIndex(JSONObject jsonAction) throws JSONException {
+	protected static Integer getActionIndex(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("index")) {
-			return jsonAction.getInt("index");
+			return jsonAction.get("index").getAsInt();
 		}
 		return null;
 	}
 
-	protected static Integer[] getActionIndexes(JSONObject jsonAction) throws JSONException {
-		if (jsonAction != null && jsonAction.has("indexes") && !jsonAction.isNull("indexes")) {
-			JSONArray jsonArray = jsonAction.getJSONArray("indexes");
+	protected static Integer[] getActionIndexes(JsonObject jsonAction) {
+		if (jsonAction != null && jsonAction.has("indexes") && !jsonAction.get("indexes").isJsonNull()) {
+			JsonArray jsonArray = jsonAction.get("indexes").getAsJsonArray();
 
 			if (jsonArray != null) {
-				Integer[] indexes = new Integer[jsonArray.length()];
+				Integer[] indexes = new Integer[jsonArray.size()];
 
 				for (int i = 0; i < indexes.length; i++) {
-					indexes[i] = jsonArray.getInt(i);
+					indexes[i] = jsonArray.get(i).getAsInt();
 				}
 				return indexes;
 			}
@@ -112,52 +110,52 @@ public abstract class SmartTableTagHandler extends SmartTagHandler {
 		return null;
 	}
 
-	protected static long getActionFirst(JSONObject jsonAction) throws JSONException {
+	protected static long getActionFirst(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("first")) {
-			return jsonAction.getLong("first");
+			return jsonAction.get("first").getAsLong();
 		}
 		return 0;
 	}
 
-	protected static long getActionSize(JSONObject jsonAction) throws JSONException {
+	protected static long getActionSize(JsonObject jsonAction) {
 		if (jsonAction != null && jsonAction.has("size")) {
-			return jsonAction.getLong("size");
+			return jsonAction.get("size").getAsLong();
 		}
 		return 0;
 	}
 
-	protected static String getActionSort(JSONObject jsonAction) throws JSONException {
-		if (jsonAction != null && jsonAction.has("sort") && !jsonAction.isNull("sort")) {
-			JSONObject sortObject = (JSONObject) jsonAction.get("sort");
-			return sortObject.getString("name") + "," + sortObject.getString("order"); 
+	protected static String getActionSort(JsonObject jsonAction) {
+		if (jsonAction != null && jsonAction.has("sort") && !jsonAction.get("sort").isJsonNull()) {
+			JsonObject sortObject = jsonAction.get("sort").getAsJsonObject();
+			return sortObject.get("name").getAsString() + "," + sortObject.get("order").getAsString(); 
 		}
 		return null;
 	}
 
-	protected static String getActionSortBy(JSONObject jsonAction) throws JSONException {
-		if (jsonAction != null && jsonAction.has("sort") && !jsonAction.isNull("sort")) {
-			JSONObject sortObject = (JSONObject) jsonAction.get("sort");
-			return sortObject.getString("name");
+	protected static String getActionSortBy(JsonObject jsonAction) {
+		if (jsonAction != null && jsonAction.has("sort") && !jsonAction.get("sort").isJsonNull()) {
+			JsonObject sortObject = jsonAction.get("sort").getAsJsonObject();
+			return sortObject.get("name").getAsString();
 		}
 		return null;
 	}
 
-	protected static SortOrder getActionSortOrder(JSONObject jsonAction) throws JSONException {
-		if (jsonAction != null && jsonAction.has("sort") && !jsonAction.isNull("sort")) {
-			JSONObject sortObject = (JSONObject) jsonAction.get("sort");
-			return SortOrder.valueBy(sortObject.getString("order"));
+	protected static SortOrder getActionSortOrder(JsonObject jsonAction) {
+		if (jsonAction != null && jsonAction.has("sort") && !jsonAction.get("sort").isJsonNull()) {
+			JsonObject sortObject = jsonAction.get("sort").getAsJsonObject();
+			return SortOrder.valueBy(sortObject.get("order").getAsString());
 		}
 		return SortOrder.ASC;
 	}
 
-	protected static String getActionFilter(JSONObject jsonAction) throws JSONException {
+	protected static String getActionFilter(JsonObject jsonAction) {
 		String actionFilter = "";
-		if (jsonAction != null && jsonAction.has("filters") && !jsonAction.isNull("filters")) {
-			JSONArray filtersArray = (JSONArray) jsonAction.get("filters");
+		if (jsonAction != null && jsonAction.has("filters") && !jsonAction.get("filters").isJsonNull()) {
+			JsonArray filtersArray = jsonAction.get("filters").getAsJsonArray();
 
-			for (int i = 0; i < filtersArray.length(); i++) {
-				JSONObject filter = (JSONObject) filtersArray.get(i);
-				actionFilter += filter.getString("name") + "," + filter.getString("field") + ",";
+			for (int i = 0; i < filtersArray.size(); i++) {
+				JsonObject filter = filtersArray.get(i).getAsJsonObject();
+				actionFilter += filter.get("name").getAsString() + "," + filter.get("field").getAsString() + ",";
 			}
 
 			actionFilter = actionFilter.substring(0, actionFilter.length() -1);
@@ -165,20 +163,20 @@ public abstract class SmartTableTagHandler extends SmartTagHandler {
 		return actionFilter;
 	}
 
-	protected static String getActionFilterValue(JSONObject jsonAction, String name) throws JSONException {
+	protected static String getActionFilterValue(JsonObject jsonAction, String name) {
 		Map<String, String> values = getActionFilters(jsonAction);
 		return values.get(name);
 	}
 
-	protected static Map<String, String> getActionFilters(JSONObject jsonAction) throws JSONException {
-		if (jsonAction != null && jsonAction.has("filters") && !jsonAction.isNull("filters")) {
-			JSONArray filtersArray = jsonAction.getJSONArray("filters");
+	protected static Map<String, String> getActionFilters(JsonObject jsonAction) {
+		if (jsonAction != null && jsonAction.has("filters") && !jsonAction.get("filters").isJsonNull()) {
+			JsonArray filtersArray = jsonAction.get("filters").getAsJsonArray();
 			Map<String, String> filters = new HashMap<String, String>();
 
-			for (int i = 0; i < filtersArray.length(); i++) {
-				JSONObject filter = (JSONObject) filtersArray.get(i);
-				if (!filter.isNull("value")) {
-					filters.put(filter.getString("name"), filter.getString("value"));
+			for (int i = 0; i < filtersArray.size(); i++) {
+				JsonObject filter = filtersArray.get(i).getAsJsonObject();
+				if (!filter.get("value").isJsonNull()) {
+					filters.put(filter.get("name").getAsString(), filter.get("value").getAsString());
 				}
 			}
 			return filters;
@@ -186,15 +184,15 @@ public abstract class SmartTableTagHandler extends SmartTagHandler {
 		return Collections.emptyMap();
 	}
 
-	protected static Map<String, String> getActionEditValues(JSONObject jsonAction) throws JSONException {
-		if (jsonAction != null && jsonAction.has("values") && !jsonAction.isNull("values")) {
-			JSONArray valuesArray = jsonAction.getJSONArray("values");
+	protected static Map<String, String> getActionEditValues(JsonObject jsonAction) {
+		if (jsonAction != null && jsonAction.has("values") && !jsonAction.get("values").isJsonNull()) {
+			JsonArray valuesArray = jsonAction.get("values").getAsJsonArray();
 			Map<String, String> values = new HashMap<String, String>();
 
-			for (int i = 0; i < valuesArray.length(); i++) {
-				JSONObject value = (JSONObject) valuesArray.get(i);
-				if (!value.isNull("value")) {
-					values.put(value.getString("name"), value.getString("value"));
+			for (int i = 0; i < valuesArray.size(); i++) {
+				JsonObject value = (JsonObject) valuesArray.get(i);
+				if (!value.get("value").isJsonNull()) {
+					values.put(value.get("name").getAsString(), value.get("value").getAsString());
 				}
 			}
 			return values;

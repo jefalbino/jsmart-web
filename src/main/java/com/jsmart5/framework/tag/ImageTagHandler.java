@@ -25,12 +25,21 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.FigCaption;
+import com.jsmart5.framework.tag.html.Figure;
+import com.jsmart5.framework.tag.html.Image;
 import com.jsmart5.framework.util.SmartImage;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-
 public final class ImageTagHandler extends SmartTagHandler {
+
+	private static final String RESPONSIVE = "responsive";
+
+	private static final String ROUND = "round";
+
+	private static final String CIRCLE = "circle";
+
+	private static final String THUMBNAIL = "thumbnail";
 
 	private String lib;
 
@@ -46,6 +55,8 @@ public final class ImageTagHandler extends SmartTagHandler {
 
 	private boolean figure;
 
+	private String type;
+
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
@@ -59,7 +70,11 @@ public final class ImageTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (type != null && !type.equalsIgnoreCase(RESPONSIVE) && !type.equalsIgnoreCase(ROUND) && !type.equalsIgnoreCase(CIRCLE)
+				&& !type.equalsIgnoreCase(THUMBNAIL)) {
+			throw new JspException("Invalid type value for image tag. Valid values are " + RESPONSIVE + ", " + ROUND 
+					+ ", " + CIRCLE + ", " + THUMBNAIL);
+		}
 	}
 
 	@Override
@@ -69,65 +84,67 @@ public final class ImageTagHandler extends SmartTagHandler {
 		if (body != null) {
 			body.invoke(null);
 		}
+		
+		if (id == null) {
+			id = getRandonId();
+		}
 
 		String libValue = (String) getTagValue(lib);
 		String nameValue = (String) getTagValue(name);
 
-		StringBuilder builder = new StringBuilder();
-
-		if (figure) {
-			builder.append(OPEN_FIGURE_TAG);
-		}
-		
-		builder.append(IMG_TAG);
+		Image image = new Image();
+		image.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("width", width)
+			.addAttribute("height", height);
 
 		if (libValue != null) {
-			builder.append("src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" ");
+			image.addAttribute("src",  SmartImage.IMAGES.getImage(libValue, nameValue));
 		} else {
-			builder.append("src=\"" + nameValue + "\" ");
+			image.addAttribute("src", nameValue);
 		}
 
 		if (alt != null) {
-			builder.append("alt=\"" + getTagValue(alt) + "\" ");
+			image.addAttribute("alt", getTagValue(alt));
 		} else {
-			builder.append("alt=\"" + nameValue + "\" ");
+			image.addAttribute("alt", nameValue);
 		}
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
+		
+		if (RESPONSIVE.equalsIgnoreCase(type)) {
+			image.addAttribute("class", Bootstrap.IMAGE_RESPONSIVE);
+		} else if (ROUND.equalsIgnoreCase(type)) {
+			image.addAttribute("class", Bootstrap.IMAGE_ROUNDED);
+		} else if (CIRCLE.equalsIgnoreCase(type)) {
+			image.addAttribute("class", Bootstrap.IMAGE_CIRCLE);
+		} else if (THUMBNAIL.equalsIgnoreCase(type)) {
+			image.addAttribute("class", Bootstrap.IMAGE_THUMBNAIL);
 		}
+		
+		// Add the style class at last
+		image.addAttribute("class", styleClass);
 
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_IMAGE);
-		}
+		appendEvent(image);
 
-		if (width != null) {
-			builder.append("width=\"" + width + "\" ");
-		}
-
-		if (height != null) {
-			builder.append("height=\"" + height + "\" ");
-		}
-
-		if (ajaxCommand != null) {
-			builder.append(ajaxCommand);
-		}
-
-		appendEvent(builder);
-
-		builder.append("/>");
-
-		if (figure && caption != null) {
-			builder.append(OPEN_FIGCAPTION_TAG + getTagValue(caption) + CLOSE_FIGCAPTION_TAG);
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
+			}
 		}
 
 		if (figure) {
-			builder.append(CLOSE_FIGURE_TAG);
-		}
+			Figure fig = new Figure();
+			fig.addTag(image);
+			
+			if (caption != null) {
+				FigCaption figCaption = new FigCaption();
+				figCaption.addText((String) getTagValue(caption));
+				fig.addTag(figCaption);
+			}
+			printOutput(fig.getHtml());
 
-		printOutput(builder);
+		} else {
+			printOutput(image.getHtml());
+		}
 	}
 
 	public void setLib(String lib) {
@@ -156,6 +173,10 @@ public final class ImageTagHandler extends SmartTagHandler {
 
 	public void setFigure(boolean figure) {
 		this.figure = figure;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }
