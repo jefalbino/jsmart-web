@@ -37,9 +37,7 @@ import com.jsmart5.framework.json.JsonSelect;
 import com.jsmart5.framework.json.JsonTable;
 import com.jsmart5.framework.manager.SmartTableTagHandler;
 
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 /*
  * Table uses a json structure to pass data over post request

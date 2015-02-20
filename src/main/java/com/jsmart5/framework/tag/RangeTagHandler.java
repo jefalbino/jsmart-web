@@ -26,9 +26,7 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.json.JsonRange;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class RangeTagHandler extends SmartTagHandler {
 
@@ -59,17 +57,6 @@ public final class RangeTagHandler extends SmartTagHandler {
     private boolean showValue = true;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		if (maxValue != null && minValue != null && minValue >= maxValue) {
 			throw new JspException("Attribute minValue must be less than maxValue attribute for range tag");
@@ -84,111 +71,111 @@ public final class RangeTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-
-		// Container to hold range
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
-
-		builder.append("id=\"" + id + "\" ");
-
-		builder.append("range=\"range\" ");
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_RANGE_CONTAINER);
-		}
-
-		appendEvent(builder);
-
-		builder.append(">");
-
-		builder.append(OPEN_DIV_TAG);
-
-		builder.append("id=\"" + id + RANGE_FRAME + "\" ");
-
-		appendClass(builder, CSS_RANGE_FRAME);
-
-		JsonRange jsonRange = new JsonRange();
-
-		jsonRange.setAjax(String.valueOf(ajax));
-		jsonRange.setMax(String.valueOf(maxValue));
-		jsonRange.setMin(String.valueOf(minValue));
-		if (stepValue != null) {
-			jsonRange.setStep(String.valueOf(stepValue));
-		}
-		if (onValueChange != null) {
-			jsonRange.setCallback(onValueChange.trim());
-		}
-
-		builder.append("ajax=\"" + getJsonValue(jsonRange) + "\" ");
-
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
-
-		builder.append(">");
-
-		// Trail for the range
-		builder.append(OPEN_SPAN_TAG);
-		appendClass(builder, CSS_RANGE_TRAIL);
-		builder.append(">");
-		builder.append(CLOSE_SPAN_TAG);
-
-		// Hidden input to send value to server
-		builder.append(INPUT_TAG);
-
-		builder.append("id=\"" + id + RANGE_INPUT + "\" ");
-
-		String name = getTagName(J_TAG, value);
-		if (name != null) {
-			builder.append("name=\"" + name + "\" ");
-		}
-
-		Number number = (Number) getTagValue(value);
-		if (number != null) {
-			builder.append("value=\"" + number + "\" ");
-		}
-
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
-
-		builder.append("type=\"hidden\" ");
-		
-		appendRest(builder);
-
-		builder.append(" />");
-
-		// Bar to handle range
-		builder.append(OPEN_DIV_TAG);
-
-		if (disabled) {
-			appendClass(builder, CSS_RANGE_BAR_DISABLED);
-		} else {
-			appendClass(builder, CSS_RANGE_BAR);
-		}
-
-		builder.append(">" + CLOSE_DIV_TAG);
-
-		builder.append(CLOSE_DIV_TAG);
-
-		if (showValue) {
-			builder.append(OPEN_SPAN_TAG);
-			builder.append("id=\"" + id + RANGE_VALUE + "\" ");
-			appendClass(builder, CSS_RANGE_VALUE);
-			builder.append(">");
-			builder.append(number != null ? number : 0);
-			builder.append(CLOSE_SPAN_TAG);
-		}
-
-		builder.append(CLOSE_DIV_TAG);
-
-		printOutput(builder);
-
-		appendScriptDeprecated(new StringBuilder(JSMART_RANGE.format(id)));
+//
+//		// Container to hold range
+//		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
+//
+//		builder.append("id=\"" + id + "\" ");
+//
+//		builder.append("range=\"range\" ");
+//
+//		if (style != null) {
+//			builder.append("style=\"" + style + "\" ");
+//		}
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		} else {
+//			appendClass(builder, CSS_RANGE_CONTAINER);
+//		}
+//
+//		appendEvent(builder);
+//
+//		builder.append(">");
+//
+//		builder.append(OPEN_DIV_TAG);
+//
+//		builder.append("id=\"" + id + RANGE_FRAME + "\" ");
+//
+//		appendClass(builder, CSS_RANGE_FRAME);
+//
+//		JsonRange jsonRange = new JsonRange();
+//
+//		jsonRange.setAjax(String.valueOf(ajax));
+//		jsonRange.setMax(String.valueOf(maxValue));
+//		jsonRange.setMin(String.valueOf(minValue));
+//		if (stepValue != null) {
+//			jsonRange.setStep(String.valueOf(stepValue));
+//		}
+//		if (onValueChange != null) {
+//			jsonRange.setCallback(onValueChange.trim());
+//		}
+//
+//		builder.append("ajax=\"" + getJsonValue(jsonRange) + "\" ");
+//
+//		if (disabled || isEditRowTagEnabled()) {
+//			builder.append("disabled=\"disabled\" ");
+//		}
+//
+//		builder.append(">");
+//
+//		// Trail for the range
+//		builder.append(OPEN_SPAN_TAG);
+//		appendClass(builder, CSS_RANGE_TRAIL);
+//		builder.append(">");
+//		builder.append(CLOSE_SPAN_TAG);
+//
+//		// Hidden input to send value to server
+//		builder.append(INPUT_TAG);
+//
+//		builder.append("id=\"" + id + RANGE_INPUT + "\" ");
+//
+//		String name = getTagName(J_TAG, value);
+//		if (name != null) {
+//			builder.append("name=\"" + name + "\" ");
+//		}
+//
+//		Number number = (Number) getTagValue(value);
+//		if (number != null) {
+//			builder.append("value=\"" + number + "\" ");
+//		}
+//
+//		if (disabled || isEditRowTagEnabled()) {
+//			builder.append("disabled=\"disabled\" ");
+//		}
+//
+//		builder.append("type=\"hidden\" ");
+//		
+//		appendRest(builder);
+//
+//		builder.append(" />");
+//
+//		// Bar to handle range
+//		builder.append(OPEN_DIV_TAG);
+//
+//		if (disabled) {
+//			appendClass(builder, CSS_RANGE_BAR_DISABLED);
+//		} else {
+//			appendClass(builder, CSS_RANGE_BAR);
+//		}
+//
+//		builder.append(">" + CLOSE_DIV_TAG);
+//
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		if (showValue) {
+//			builder.append(OPEN_SPAN_TAG);
+//			builder.append("id=\"" + id + RANGE_VALUE + "\" ");
+//			appendClass(builder, CSS_RANGE_VALUE);
+//			builder.append(">");
+//			builder.append(number != null ? number : 0);
+//			builder.append(CLOSE_SPAN_TAG);
+//		}
+//
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		printOutput(builder);
+//
+//		appendScriptDeprecated(new StringBuilder(JSMART_RANGE.format(id)));
 	}
 
 	public void setAjax(boolean ajax) {

@@ -32,7 +32,7 @@ import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
 
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class CheckTagHandler extends SmartTagHandler {
 
@@ -138,7 +138,7 @@ public final class CheckTagHandler extends SmartTagHandler {
 		jsonAjax.setAsync(async);
 		jsonAjax.setMethod("post");
 
-		builder.append(JSMART_CHECK.format(getNewJsonValue(jsonAjax)));
+		builder.append(JSMART_CHECK.format(getJsonValue(jsonAjax)));
 
 		builder.append("});");
 		return builder;

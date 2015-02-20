@@ -21,22 +21,17 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JsonParam;
-import com.jsmart5.framework.json.JsonParams;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
-
-import static com.jsmart5.framework.tag.JsConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-
+import com.jsmart5.framework.tag.html.Ul;
 
 public final class ListTagHandler extends SmartTagHandler {
 
@@ -45,10 +40,6 @@ public final class ListTagHandler extends SmartTagHandler {
 	private String value;
 
 	private String select;
-	
-	private String look;
-
-	private String emptyMessage;
 
 	private boolean async = true;
 
@@ -59,23 +50,8 @@ public final class ListTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) && !look.equalsIgnoreCase(SUCCESS)
-				&& !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(DANGER)) {
-			throw new JspException("Invalid look value for list tag. Valid values are " + DEFAULT + ", " + PRIMARY 
-					+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER);
-		}
+		// DO NOTHING
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,114 +64,80 @@ public final class ListTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
+		if (id == null) {
+			id = getRandonId();
+		}
+
 		HttpServletRequest request = getRequest();
 
-		StringBuilder builder = new StringBuilder();
+		Ul ul = new Ul();
+		ul.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("class", Bootstrap.LIST_GROUP)
+			.addAttribute("class", styleClass);
 
-		if (type != null && type.equals(DEFINITION)) {
-			builder.append(OPEN_DEFINITION_LIST_TAG);
-
-		} else if (type != null && type.equals(ORDERED)) {
-			builder.append(OPEN_ORDERED_LIST_TAG);
-
-		} else { // UNORDERED
-			builder.append(OPEN_UNORDERED_LIST_TAG);
-		}
-
-		if (id != null) {
-			builder.append("id=\"" + id + "\" ");
-		}
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_LIST);
-		}
-
-		appendEvent(builder);
-		builder.append(CLOSE_TAG);
+		appendEvent(ul);
 
 		Object object = getTagValue(value);
-		if (object instanceof List<?>) {
+		if (object instanceof Collection<?>) {
 
-			List<Object> list = (List<Object>) object;
+			Collection<Object> collection = (Collection<Object>) object;
 
-			if (list != null && !list.isEmpty()) {
+			if (!collection.isEmpty()) {
 
-				String command = ajaxCommand;
+//				String command = ajaxCommand;
+//
+// 				if (select != null) {
+// 					JsonParams jsonParams = new JsonParams();
+// 					jsonParams.addParam(new JsonParam(getTagName(J_SEL, select), getTagName(J_SEL, value)));
+// 					jsonParams.addParam(new JsonParam(getTagName(J_SEL_VAL, select), "%s"));
+//
+// 					String parameters = "ajaxoutside=\"" + getJsonValue(jsonParams) + "\" ";
+//
+// 					if (command != null) {
+// 						if (command.startsWith(ON_CLICK)) {
+// 							if (command.contains(JSMART_AJAX.toString())) {
+// 								command += parameters;
+// 							} else {
+// 								command = command.replace(ON_CLICK, ON_CLICK + JSMART_LIST.format(async, "$(this)")) + parameters;
+// 							}
+// 						} else {
+// 							command += ON_CLICK + JSMART_LIST.format(async, "$(this)") + "\" " + parameters;
+// 						}
+// 					} else {
+// 						command = ON_CLICK + JSMART_LIST.format(async, "$(this)") + "\" " + parameters;
+// 					}
+// 				}
 
- 				if (select != null) {
- 					JsonParams jsonParams = new JsonParams();
- 					jsonParams.addParam(new JsonParam(getTagName(J_SEL, select), getTagName(J_SEL, value)));
- 					jsonParams.addParam(new JsonParam(getTagName(J_SEL_VAL, select), "%s"));
-
- 					String parameters = "ajaxoutside=\"" + getJsonValue(jsonParams) + "\" ";
-
- 					if (command != null) {
- 						if (command.startsWith(ON_CLICK)) {
- 							if (command.contains(JSMART_AJAX.toString())) {
- 								command += parameters;
- 							} else {
- 								command = command.replace(ON_CLICK, ON_CLICK + JSMART_LIST.format(async, "$(this)")) + parameters;
- 							}
- 						} else {
- 							command += ON_CLICK + JSMART_LIST.format(async, "$(this)") + "\" " + parameters;
- 						}
- 					} else {
- 						command = ON_CLICK + JSMART_LIST.format(async, "$(this)") + "\" " + parameters;
- 					}
- 				}
-
-				for (int i = 0; i < list.size(); i++) {
-					request.setAttribute(var, list.get(i));
+				Iterator<Object> iterator = collection.iterator();
+				
+				while (iterator.hasNext()) {
+					request.setAttribute(var, iterator.next());
 
 					for (RowTagHandler row : rows) {
 	 					StringWriter sw = new StringWriter();
 	 					row.setOutputWriter(sw);
-	 					row.setType(type);
+	 					row.setSelect(select);
 	 					setEvents(row);
 
-	 					if (command != null) {
-	 						if (select != null) {
-	 							row.setAjaxCommand(String.format(command, i));
-	 						} else {
-	 							row.setAjaxCommand(command);
-	 						}
-	 					}
+//	 					if (command != null) {
+//	 						if (select != null) {
+//	 							row.setAjaxCommand(String.format(command, i));
+//	 						} else {
+//	 							row.setAjaxCommand(command);
+//	 						}
+//	 					}
 
 	 					row.executeTag();
-	 					builder.append(sw.toString());
+	 					ul.addText(sw.toString());
 	 				}
 
 					request.removeAttribute(var);
 				}
-
-			} else {
-
-				String empty = (String) (emptyMessage != null ? getTagValue(emptyMessage) : "");
-				if (type.equals(DEFINITION)) {
-					builder.append(OPEN_DEFINITION_TITLE_TAG + empty + CLOSE_DEFINITION_TITLE_TAG);
-				} else {
-					builder.append(OPEN_LIST_ITEM_TAG);
-					appendClass(builder, CSS_LIST_ROW);
-					builder.append(CLOSE_TAG);
-					builder.append(empty);
-					builder.append(CLOSE_LIST_ITEM_TAG);
-				}
 			}
 		}
 		
-		if (type != null && type.equals(DEFINITION)) {
-			builder.append(CLOSE_DEFINITION_LIST_TAG);
-		} else if (type != null && type.equals(ORDERED)) {
-			builder.append(CLOSE_ORDERED_LIST_TAG);
-		} else { // UNORDERED
-			builder.append(CLOSE_UNORDERED_LIST_TAG);
-		}
-		
-		printOutput(builder);
+		printOutput(ul.getHtml());
 	}
 
 	void addRow(RowTagHandler row) {
@@ -214,16 +156,8 @@ public final class ListTagHandler extends SmartTagHandler {
 		this.var = var;
 	}
 
-	public void setEmptyMessage(String emptyMessage) {
-		this.emptyMessage = emptyMessage;
-	}
-
 	public void setAsync(boolean async) {
 		this.async = async;
-	}
-
-	public void setLook(String look) {
-		this.look = look;
 	}
 
 }

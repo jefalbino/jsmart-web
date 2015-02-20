@@ -18,9 +18,7 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -44,17 +42,6 @@ public final class RestArrayTagHandler extends SmartTagHandler {
 	private Integer maxItems;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		if (dynamic && id == null) {
 			throw new JspException("Attribute id must be specified case dynamic attribute is true for restarray tag");
@@ -66,60 +53,60 @@ public final class RestArrayTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
-
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
-
-		builder.append("type=\"restarray\" ");
-
-		if (id != null) {
-			builder.append("id=\"" + id + "\" ");
-		}
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		}
-
-		if (align != null) {
-			builder.append("align=\"" + align + "\" ");
-		} else {
-			builder.append("align=\"left\" ");
-		}
-		if (maxItems != null) {
-			builder.append("maxItems=\"" + maxItems + "\" ");
-		}
-
-		appendRest(builder);
-		builder.append(">");
-		builder.append(sw);
-		builder.append(CLOSE_DIV_TAG);
-
-		if (dynamic) {
-			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CSS_REST_ARRAY_GROUP);
-			builder.append(">");
-			appendButton(builder, "+", ADD_ARRAY_ITEM);
-			appendButton(builder, "-", REMOVE_ARRAY_ITEM);
-			builder.append(CLOSE_DIV_TAG);
-		}
-
-		printOutput(builder);
+//
+//		StringWriter sw = new StringWriter();
+//		JspFragment body = getJspBody();
+//		if (body != null) {
+//			body.invoke(sw);
+//		}
+//
+//		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
+//
+//		builder.append("type=\"restarray\" ");
+//
+//		if (id != null) {
+//			builder.append("id=\"" + id + "\" ");
+//		}
+//		if (style != null) {
+//			builder.append("style=\"" + style + "\" ");
+//		}
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		}
+//
+//		if (align != null) {
+//			builder.append("align=\"" + align + "\" ");
+//		} else {
+//			builder.append("align=\"left\" ");
+//		}
+//		if (maxItems != null) {
+//			builder.append("maxItems=\"" + maxItems + "\" ");
+//		}
+//
+//		appendRest(builder);
+//		builder.append(">");
+//		builder.append(sw);
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		if (dynamic) {
+//			builder.append(OPEN_DIV_TAG);
+//			appendClass(builder, CSS_REST_ARRAY_GROUP);
+//			builder.append(">");
+//			appendButton(builder, "+", ADD_ARRAY_ITEM);
+//			appendButton(builder, "-", REMOVE_ARRAY_ITEM);
+//			builder.append(CLOSE_DIV_TAG);
+//		}
+//
+//		printOutput(builder);
 	}
 
 	private void appendButton(StringBuilder builder, String text, String operation) throws JspException, IOException  {
-		builder.append(OPEN_BUTTON_TAG);
-		builder.append("type=\"button\" ");
-		appendClass(builder, CSS_REST_ARRAY_BUTTON);
-		builder.append(ON_CLICK + JSMART_BUTTON_RESTARRAY.format(id, operation) + "return false;\" >");
-		builder.append(text);
-		builder.append(CLOSE_BUTTON_TAG);
+//		builder.append(OPEN_BUTTON_TAG);
+//		builder.append("type=\"button\" ");
+//		appendClass(builder, CSS_REST_ARRAY_BUTTON);
+//		builder.append(ON_CLICK + JSMART_BUTTON_RESTARRAY.format(id, operation) + "return false;\" >");
+//		builder.append(text);
+//		builder.append(CLOSE_BUTTON_TAG);
 	}
 
 	public void setAlign(String align) {

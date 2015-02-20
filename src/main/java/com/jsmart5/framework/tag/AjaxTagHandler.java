@@ -26,7 +26,8 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
-import static com.jsmart5.framework.tag.JsConstants.*;
+
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class AjaxTagHandler extends SmartTagHandler {
 
@@ -113,7 +114,7 @@ public final class AjaxTagHandler extends SmartTagHandler {
 			jsonAjax.setExec(afterAjax.trim());
 		}
 
-		builder.append(JSMART_AJAX_NEW.format(getNewJsonValue(jsonAjax)));
+		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 
 		builder.append("});");
 		return builder;

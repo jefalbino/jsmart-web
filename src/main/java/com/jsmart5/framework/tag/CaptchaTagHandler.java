@@ -26,13 +26,7 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-
 public final class CaptchaTagHandler extends SmartTagHandler {
-
-	private static final String OPEN_CAPTCHA_SCRIPT = "$('#%s').realperson(";
-
-	private static final String CLOSE_CAPTCHA_SCRIPT = ");";
 
 	private static final String DEFAULT_LENGTH = "6";
 
@@ -51,93 +45,82 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 	private String placeHolder;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-
-		StringBuilder builder = new StringBuilder(INPUT_TAG);
-
-		builder.append("id=\"" + id + "\" type=\"text\" ");
-
-		String name = getTagName(J_CAPTCHA, value);
-		if (name != null) {
-			builder.append("name=\"" + name + "\" ");
-		}
-
-		appendFormValidator(builder);
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CssConstants.CSS_CAPTCHA);
-		}
-		if (tabIndex != null) {
-			builder.append("tabindex=\"" + tabIndex + "\" ");
-		}
-		if (placeHolder != null) {
-			builder.append("placeholder=\"" + getResourceString(placeHolder) + "\" datatype=\"text\" ");
-		}
-
-		StringBuilder captchaScript = new StringBuilder(String.format(OPEN_CAPTCHA_SCRIPT, id) + CLOSE_CAPTCHA_SCRIPT);
-		
-		captchaScript.append(String.format(OPEN_CAPTCHA_SCRIPT, id) + "'option', {");
-
-		if (name != null) {
-			captchaScript.append("hashName: '" + name.replaceFirst(J_CAPTCHA, J_CAPTCHA_HASH) + "',");
-		}
-		if (length != null) {
-			builder.append("maxlength=\"" + length + "\" ");
-			captchaScript.append("length: " + length + ",");
-		}
-		if (numbers) {
-			captchaScript.append("includeNumbers: " + numbers + ",");
-		}
-		if (message != null) {
-			captchaScript.append("regenerate: '" + getTagValue(message) + "',");
-		}
-
-		captchaScript.deleteCharAt(captchaScript.length() -1).append("}" + CLOSE_CAPTCHA_SCRIPT);
-
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-			captchaScript.append(String.format(OPEN_CAPTCHA_SCRIPT, id) + "'disable'" + CLOSE_CAPTCHA_SCRIPT);
-		}
-
-		setTagValue(value, false);
-
-		captchaScript.append("$('#" + id + "').keyup(function(){this.value=this.value.toUpperCase();});");
-
-		// TODO
-		// appendScript(captchaScript);
-
-		appendEvent(builder);
-
-		builder.append("captcha=\"" + captchaScript + "\" ");
-
-		printOutput(builder.append(CLOSE_INLINE_TAG));
+//
+//		// Just to call nested tags
+//		JspFragment body = getJspBody();
+//		if (body != null) {
+//			body.invoke(null);
+//		}
+//
+//		StringBuilder builder = new StringBuilder(INPUT_TAG);
+//
+//		builder.append("id=\"" + id + "\" type=\"text\" ");
+//
+//		String name = getTagName(J_CAPTCHA, value);
+//		if (name != null) {
+//			builder.append("name=\"" + name + "\" ");
+//		}
+//
+//		appendFormValidator(builder);
+//
+//		if (style != null) {
+//			builder.append("style=\"" + style + "\" ");
+//		}
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		} else {
+//			appendClass(builder, CssConstants.CSS_CAPTCHA);
+//		}
+//		if (tabIndex != null) {
+//			builder.append("tabindex=\"" + tabIndex + "\" ");
+//		}
+//		if (placeHolder != null) {
+//			builder.append("placeholder=\"" + getResourceString(placeHolder) + "\" datatype=\"text\" ");
+//		}
+//
+//		StringBuilder captchaScript = new StringBuilder(String.format(OPEN_CAPTCHA_SCRIPT, id) + CLOSE_CAPTCHA_SCRIPT);
+//		
+//		captchaScript.append(String.format(OPEN_CAPTCHA_SCRIPT, id) + "'option', {");
+//
+//		if (name != null) {
+//			captchaScript.append("hashName: '" + name.replaceFirst(J_CAPTCHA, J_CAPTCHA_HASH) + "',");
+//		}
+//		if (length != null) {
+//			builder.append("maxlength=\"" + length + "\" ");
+//			captchaScript.append("length: " + length + ",");
+//		}
+//		if (numbers) {
+//			captchaScript.append("includeNumbers: " + numbers + ",");
+//		}
+//		if (message != null) {
+//			captchaScript.append("regenerate: '" + getTagValue(message) + "',");
+//		}
+//
+//		captchaScript.deleteCharAt(captchaScript.length() -1).append("}" + CLOSE_CAPTCHA_SCRIPT);
+//
+//		if (disabled || isEditRowTagEnabled()) {
+//			builder.append("disabled=\"disabled\" ");
+//			captchaScript.append(String.format(OPEN_CAPTCHA_SCRIPT, id) + "'disable'" + CLOSE_CAPTCHA_SCRIPT);
+//		}
+//
+//		setTagValue(value, false);
+//
+//		captchaScript.append("$('#" + id + "').keyup(function(){this.value=this.value.toUpperCase();});");
+//
+//		// TODO
+//		// appendScript(captchaScript);
+//
+//		appendEvent(builder);
+//
+//		builder.append("captcha=\"" + captchaScript + "\" ");
+//
+//		printOutput(builder.append(CLOSE_INLINE_TAG));
 	}
 
 	public void setLength(String length) {

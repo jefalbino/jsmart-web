@@ -508,10 +508,6 @@
             <name>styleClass</name>
             <required>false</required>
         </attribute>
-        <attribute>
-            <name>theme</name>
-            <required>false</required>
-        </attribute>
 		<attribute>
             <name>timeout</name>
             <required>false</required>
@@ -1501,10 +1497,6 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>theme</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>style</name>
             <required>false</required>
         </attribute>
@@ -1649,10 +1641,6 @@
         </attribute>
         <attribute>
             <name>header</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>colspan</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2195,7 +2183,6 @@
         <attribute>
             <name>value</name>
             <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
         </attribute>
 		<attribute>
             <name>async</name>
@@ -2203,14 +2190,6 @@
         </attribute>
         <attribute>
             <name>select</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>look</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>emptyMessage</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2288,24 +2267,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>header</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>footer</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>value</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
             <name>look</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>badge</name>
             <required>false</required>
         </attribute>
 		<attribute>
@@ -2577,10 +2539,6 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2913,10 +2871,6 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>theme</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>layout</name>
             <required>false</required>
         </attribute>
@@ -3151,10 +3105,6 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>theme</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>position</name>
             <required>false</required>
         </attribute>
@@ -3183,10 +3133,6 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3295,10 +3241,6 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3422,10 +3364,6 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>theme</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>rest</name>
             <required>false</required>
         </attribute>
@@ -3535,10 +3473,6 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3662,105 +3596,6 @@
             <required>false</required>
         </attribute>
     </tag>
-   
-	<tag>
-        <name>grid</name>
-        <tag-class>com.jsmart5.framework.tag.GridTagHandler</tag-class>
-        <body-content>scriptless</body-content>
-        <attribute>
-            <name>id</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>style</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>columnStyle</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>theme</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>align</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>columns</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>division</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>noLines</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onClick</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onDblClick</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onMouseDown</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onMouseMove</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onMouseOver</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onMouseOut</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onMouseUp</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onKeyDown</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onKeyPress</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onKeyUp</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onBlur</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onChange</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onFocus</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>onSelect</name>
-            <required>false</required>
-        </attribute>
-    </tag>
 
 	<tag>
         <name>tree</name>
@@ -3777,10 +3612,6 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>theme</name>
             <required>false</required>
         </attribute>
         <attribute>

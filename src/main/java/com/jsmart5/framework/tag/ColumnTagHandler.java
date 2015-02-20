@@ -28,9 +28,6 @@ import com.jsmart5.framework.manager.SmartTagHandler;
 
 public final class ColumnTagHandler extends SmartTagHandler {
 
-	// User for columns inside row tag for grid
-	private Integer colspan;
-
 	private Integer rowspan;
 
 	private String header;
@@ -44,13 +41,9 @@ public final class ColumnTagHandler extends SmartTagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-
 		if (parent instanceof TableTagHandler) {
-			((TableTagHandler) parent).addColumn(this);
-			return false;
 
-		} else if (parent instanceof RowTagHandler) {
-			((RowTagHandler) parent).addColumn(this);
+			((TableTagHandler) parent).addColumn(this);
 			return false;
 		}
 		return true;
@@ -58,25 +51,7 @@ public final class ColumnTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		JspTag parent = getParent();
-		if (parent instanceof RowTagHandler) {
-
-			if (header != null) {
-				throw new JspException("Attribute header cannot be used on column tag inside grid tag");
-			}
-			if (sortBy != null) {
-				throw new JspException("Attribute sortBy cannot be used on column tag inside grid tag");
-			}
-			if (filterBy != null) {
-				throw new JspException("Attribute filterBy cannot be used on column tag inside grid tag");
-			}
-			if (colspan != null && colspan < 0) {
-				throw new JspException("Attribute colspan must be greater than zero for column tag inside grid tag");
-			}
-			if (rowspan != null && rowspan < 0) {
-				throw new JspException("Attribute rowspan must be greater than zero for column tag inside grid tag");
-			}
-		}
+		// DO NOTHING
 	}
 
 	@Override
@@ -85,14 +60,6 @@ public final class ColumnTagHandler extends SmartTagHandler {
 		if (body != null) {
 			body.invoke(outputWriter);
 		}
-	}
-
-	Integer getColspan() {
-		return colspan;
-	}
-
-	public void setColspan(Integer colspan) {
-		this.colspan = colspan;
 	}
 
 	Integer getRowspan() {

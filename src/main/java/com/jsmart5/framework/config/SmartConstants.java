@@ -23,22 +23,19 @@ public final class SmartConstants {
 	public static final String WEB_INF = "/WEB-INF";
 
 	public static final String SEPARATOR = "/"; /* DO NOT CHANGE - SOME STATEMENTS NEED "/" CHARACTER */
+	
+	public static final String REQUEST_USER_ACCESS = "jsmart5_user_access_request";
+	
+	public static final String SESSION_CREATED_FLAG = "jsmart5_session_created";
 
+	// TODO: Pass via requesst not via session :(
 	public static final String AJAX_ATTR = "jsmart_ajax_attr";
 
 	public static final String AJAX_RESET_ATTR = "jsmart_reset_ajax_attr";
 
-	public static final String NEW_SCRIPT_BUILDER_ATTR = "new_jsmart_script_builder_attr";
-
-	@Deprecated
 	public static final String SCRIPT_BUILDER_ATTR = "jsmart_script_builder_attr";
 
-	public static final String USER_ACCESS = "jsmart_user_access";
-
-	public static final String LIB_FILE_PATH = WEB_INF + SEPARATOR + "lib";
-
-	public static final String LIB_JAR_FILE_PATTERN = ".*jsmart5.*\\.jar";
-
+	
 	@Deprecated
 	public static final String START_HEAD_TAG = "\t<head>";
 
@@ -56,6 +53,7 @@ public final class SmartConstants {
 
 	@Deprecated
 	public static final String END_AJAX_TAG = "\" />";
+
 
 	public static final String URL_PARAM_TAG = ":urlparam";
 
@@ -88,6 +86,11 @@ public final class SmartConstants {
 	public static final String URL_PARAM_PATTERN = "<.*" + URL_PARAM_TAG + "?.*";
 
 	public static final String INCLUDE_JSPF_PATTERN = START_JSP_TAG + ".*" + INCLUDE_TAG + ".*" + INCLUDE_FILE_ATTR + "?.*";
+	
+	
+	public static final String LIB_FILE_PATH = WEB_INF + SEPARATOR + "lib";
+
+	public static final String LIB_JAR_FILE_PATTERN = ".*jsmart5.*\\.jar";
 
 	public static final String JSMART5_XML_PATH = WEB_INF + SEPARATOR + "jsmart5.xml";
 
@@ -95,9 +98,6 @@ public final class SmartConstants {
 
 	public static final String FILTER_HEADERS = "jsmart_headers.json";
 
-	public static final String FILTER_STYLES = "jsmart_styles.json";
-
-	public static final String SESSION_CREATED_FLAG = "jsmart_session_created";
 
 	private SmartConstants() {
 		// DO NOTHING

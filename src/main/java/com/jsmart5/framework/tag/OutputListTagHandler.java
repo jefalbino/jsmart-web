@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
@@ -37,24 +36,14 @@ public final class OutputListTagHandler extends SmartTagHandler {
 
 	private boolean inline;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !look.equalsIgnoreCase(Bootstrap.DEFAULT) && !look.equalsIgnoreCase(Bootstrap.PRIMARY) 
-				&& !look.equalsIgnoreCase(Bootstrap.SUCCESS) && !look.equalsIgnoreCase(Bootstrap.INFO) && !look.equalsIgnoreCase(Bootstrap.WARNING)
-				&& !look.equalsIgnoreCase(Bootstrap.DANGER) && !look.equalsIgnoreCase(Bootstrap.MUTED)) {
-			throw new JspException("Invalid look value for output tag. Valid values are " + Bootstrap.DEFAULT + ", " + Bootstrap.PRIMARY + ", "
-					+ Bootstrap.SUCCESS + ", " + Bootstrap.INFO + ", " + Bootstrap.WARNING + ", " + Bootstrap.DANGER + ", " + Bootstrap.MUTED);
+		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) 
+				&& !look.equalsIgnoreCase(SUCCESS) && !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING)
+				&& !look.equalsIgnoreCase(DANGER) && !look.equalsIgnoreCase(MUTED)) {
+			throw new JspException("Invalid look value for output tag. Valid values are " + DEFAULT + ", " + PRIMARY + ", "
+					+ SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER + ", " + MUTED);
 		}
 	}
 
@@ -68,17 +57,17 @@ public final class OutputListTagHandler extends SmartTagHandler {
 		
 		String lookVal = null;
 
-		if (Bootstrap.PRIMARY.equalsIgnoreCase(look)) {
+		if (PRIMARY.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_PRIMARY;
-		} else if (Bootstrap.SUCCESS.equalsIgnoreCase(look)) {
+		} else if (SUCCESS.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_SUCCESS;
-		} else if (Bootstrap.INFO.equalsIgnoreCase(look)) {
+		} else if (INFO.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_INFO;
-		} else if (Bootstrap.WARNING.equalsIgnoreCase(look)) {
+		} else if (WARNING.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_WARNING;
-		} else if (Bootstrap.DANGER.equalsIgnoreCase(look)) {
+		} else if (DANGER.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_DANGER;
-		} else if (Bootstrap.MUTED.equalsIgnoreCase(look)) {
+		} else if (MUTED.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_MUTED;
 		}
 

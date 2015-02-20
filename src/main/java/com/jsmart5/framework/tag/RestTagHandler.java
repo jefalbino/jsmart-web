@@ -29,9 +29,7 @@ import com.jsmart5.framework.json.JsonRest;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.util.SmartUtils;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 /*
  * Rest uses a json structure
@@ -105,17 +103,6 @@ public final class RestTagHandler extends SmartTagHandler {
 	private boolean async = true;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		if (!method.equalsIgnoreCase(POST) && !method.equalsIgnoreCase(GET) && !method.equalsIgnoreCase(DELETE) && !method.equalsIgnoreCase(PUT)
 				&& !method.equalsIgnoreCase(HEAD) && !method.equalsIgnoreCase(OPTIONS)) {
@@ -135,89 +122,89 @@ public final class RestTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		StringBuilder builder = new StringBuilder();
-
-		// Look for parameters
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-
-		if (image != null) {
-			builder.append(INPUT_TAG);
-		} else {
-			builder.append(OPEN_BUTTON_TAG);
-		}
-
-		if (id != null) {
-			builder.append("id=\"" + id + "\" ");
-		}
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			if (image != null) {
-				appendClass(builder, CSS_BUTTON_IMAGE);
-			} else {
-				appendClass(builder, CSS_BUTTON);
-			}
-		}
-
-		if (tabIndex != null) {
-			builder.append("tabindex=\"" + tabIndex + "\" ");
-		}
-
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
-
-		if (image != null) {
-			builder.append("type=\"image\" src=\"" + image + "\" ");
-		} else {
-			builder.append("type=\"button\" ");
-		}
-
-		builder.append(ON_CLICK + JSMART_REST.format(async, "$(this)", timeout != null ? timeout : 0) + "return false;\" ");
-
-		JsonRest jsonRest = new JsonRest();
-		jsonRest.setMethod(getTagValue(method));
-		jsonRest.setEndpoint(SmartUtils.decodePath((String) getTagValue(endpoint)));
-		jsonRest.setContent(contentType != null ? contentType.toLowerCase() : CONTENT_TYPE_JSON);
-
-		if (!params.isEmpty()) {
-			for (String name : params.keySet()) {						
-				jsonRest.getParams().add(new JsonParam(name, params.get(name)));
-			}
-		}
-		jsonRest.setBodyRoot(rootContent != null ? rootContent.trim() : null);
-		jsonRest.setCrossdomain(crossDomain);
-		jsonRest.setJsonp(jsonp != null ? jsonp.trim() : null);
-		jsonRest.setJsonpcallback(jsonpCallback != null ? jsonpCallback.trim() : null);
-		jsonRest.setBefore(beforeAjax);
-		jsonRest.setSuccess(onSuccess);
-		jsonRest.setError(onError);
-
-		builder.append("ajax=\"" + getJsonValue(jsonRest) + "\" ");
-
-		String val = (String) getTagValue(label);
-
-		if (val != null && length != null && length > 0 && val.length() >= length) {
-			if (ellipsize && length > 4) {
-				val = val.substring(0, length - 4) + " ...";
-			} else {
-				val = val.substring(0, length);
-			}
-		}
-
-		if (image != null) {
-			builder.append((val != null ? "value=\"" + val + "\"" : "") + " />");
-		} else {
-			builder.append(">" + (val != null ? val : "") + CLOSE_BUTTON_TAG);
-		}
-
-		printOutput(builder);
+//		StringBuilder builder = new StringBuilder();
+//
+//		// Look for parameters
+//		JspFragment body = getJspBody();
+//		if (body != null) {
+//			body.invoke(null);
+//		}
+//
+//		if (image != null) {
+//			builder.append(INPUT_TAG);
+//		} else {
+//			builder.append(OPEN_BUTTON_TAG);
+//		}
+//
+//		if (id != null) {
+//			builder.append("id=\"" + id + "\" ");
+//		}
+//		if (style != null) {
+//			builder.append("style=\"" + style + "\" ");
+//		}
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		} else {
+//			if (image != null) {
+//				appendClass(builder, CSS_BUTTON_IMAGE);
+//			} else {
+//				appendClass(builder, CSS_BUTTON);
+//			}
+//		}
+//
+//		if (tabIndex != null) {
+//			builder.append("tabindex=\"" + tabIndex + "\" ");
+//		}
+//
+//		if (disabled || isEditRowTagEnabled()) {
+//			builder.append("disabled=\"disabled\" ");
+//		}
+//
+//		if (image != null) {
+//			builder.append("type=\"image\" src=\"" + image + "\" ");
+//		} else {
+//			builder.append("type=\"button\" ");
+//		}
+//
+//		builder.append(ON_CLICK + JSMART_REST.format(async, "$(this)", timeout != null ? timeout : 0) + "return false;\" ");
+//
+//		JsonRest jsonRest = new JsonRest();
+//		jsonRest.setMethod(getTagValue(method));
+//		jsonRest.setEndpoint(SmartUtils.decodePath((String) getTagValue(endpoint)));
+//		jsonRest.setContent(contentType != null ? contentType.toLowerCase() : CONTENT_TYPE_JSON);
+//
+//		if (!params.isEmpty()) {
+//			for (String name : params.keySet()) {						
+//				jsonRest.getParams().add(new JsonParam(name, params.get(name)));
+//			}
+//		}
+//		jsonRest.setBodyRoot(rootContent != null ? rootContent.trim() : null);
+//		jsonRest.setCrossdomain(crossDomain);
+//		jsonRest.setJsonp(jsonp != null ? jsonp.trim() : null);
+//		jsonRest.setJsonpcallback(jsonpCallback != null ? jsonpCallback.trim() : null);
+//		jsonRest.setBefore(beforeAjax);
+//		jsonRest.setSuccess(onSuccess);
+//		jsonRest.setError(onError);
+//
+//		builder.append("ajax=\"" + getJsonValue(jsonRest) + "\" ");
+//
+//		String val = (String) getTagValue(label);
+//
+//		if (val != null && length != null && length > 0 && val.length() >= length) {
+//			if (ellipsize && length > 4) {
+//				val = val.substring(0, length - 4) + " ...";
+//			} else {
+//				val = val.substring(0, length);
+//			}
+//		}
+//
+//		if (image != null) {
+//			builder.append((val != null ? "value=\"" + val + "\"" : "") + " />");
+//		} else {
+//			builder.append(">" + (val != null ? val : "") + CLOSE_BUTTON_TAG);
+//		}
+//
+//		printOutput(builder);
 	}
 
 	public void setLabel(String label) {

@@ -49,17 +49,6 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}

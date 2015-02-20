@@ -213,6 +213,14 @@ public interface Bootstrap {
 	public static final String LIST_GROUP_ITEM_HEADING = "list-group-item-heading";
 	
 	public static final String LIST_GROUP_ITEM_TEXT = "list-group-item-text";
+	
+	public static final String LIST_GROUP_ITEM_SUCCESS = "list-group-item-success";
+	
+	public static final String LIST_GROUP_ITEM_INFO = "list-group-item-info";
+	
+	public static final String LIST_GROUP_ITEM_WARNING = "list-group-item-warning";
+	
+	public static final String LIST_GROUP_ITEM_DANGER = "list-group-item-danger";
 
 	
 	public static final String NAV = "nav";

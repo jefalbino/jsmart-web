@@ -23,53 +23,46 @@ import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
 
-public final class EditTagHandler extends SmartTagHandler {
-
-	private static final String INPUT = "input";
-
-	private static final String OUTPUT = "output";
-
-	private String type;
+public final class HeaderTagHandler extends SmartTagHandler {
+	
+	// TODO: Header -> list item, panel, modal
+	
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+//		JspTag parent = getParent();
+//		if (parent instanceof ModalTagHandler) {
+//
+//			((ModalTagHandler) parent).setFooter(this);
+//			return false;
+//		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
-		if (!type.equalsIgnoreCase(OUTPUT) && !type.equalsIgnoreCase(INPUT)) {
-			throw new JspException("Invalid type for edititem tag. Valid values are input or output");
-		}
+		// DO NOTHING
 	}
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-//		JspFragment body = getJspBody();
-//		if (body != null) {
-//			setEditRowTagEnable(true);
-//
-//			StringWriter sw = new StringWriter();
-//			body.invoke(sw);
-//
-//			StringBuilder builder = new StringBuilder();
-//
-//			if (type.equalsIgnoreCase(OUTPUT)) {
-//				builder.append(OPEN_DIV_TAG + "outputwrapper=\"\" >");
-//				builder.append(sw);
-//				builder.append(CLOSE_DIV_TAG);
-//
-//			} else if (type.equalsIgnoreCase(INPUT)) {
-//				builder.append(OPEN_DIV_TAG + "inputwrapper=\"\" style=\"display: none;\" >");
-//				builder.append(sw);
-//				builder.append(CLOSE_DIV_TAG);
-//			}
-//
-//			setEditRowTagEnable(false);
-//			printOutput(builder);
-//		}
-	}
 
-	public void setType(String type) {
-		this.type = type;
+		StringWriter sw = new StringWriter();
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(sw);
+		}
+
+		Div footer = new Div();
+		footer.addAttribute("class", Bootstrap.MODAL_FOOTER)
+			.addText(sw.toString());
+
+		printOutput(footer.getHtml());
 	}
 
 }

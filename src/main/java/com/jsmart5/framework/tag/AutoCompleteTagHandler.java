@@ -18,9 +18,7 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +30,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.adapter.SmartSearchAdapter;
 import com.jsmart5.framework.json.JsonAutoComplete;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
@@ -73,17 +70,6 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 	private boolean autoFocus;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		if (minLength != null && minLength <= 0) {
 			throw new JspException("Attribute minLength must be greater than zero for autocomplete tag");
@@ -96,146 +82,146 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 	@Override
 	public void executeTag() throws JspException, IOException {
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-
-		StringBuilder builder = new StringBuilder();
-
-		if (label != null) {
-			builder.append(OPEN_DIV_TAG);
-			appendClass(builder, CSS_INPUT_GROUP);
-			builder.append(CLOSE_TAG);
-
-			builder.append(OPEN_SPAN_TAG);
-			appendClass(builder, CSS_INPUT_LABEL);
-			builder.append(CLOSE_TAG);
-
-			String labelVal = (String) getTagValue(label);
-			if (labelVal != null) {
-				builder.append(labelVal);
-			}
-			builder.append(CLOSE_SPAN_TAG);
-		}
-
-		builder.append(OPEN_DIV_TAG);
-		appendClass(builder, CSS_AUTO_COMPLETE_GROUP);
-		builder.append(CLOSE_TAG);
-
-		builder.append(OPEN_DIV_TAG);
-		appendClass(builder, CSS_AUTO_COMPLETE_CONTENT);
-		builder.append(CLOSE_TAG);
-		
-		builder.append(OPEN_DIV_TAG);
-		appendClass(builder, CSS_AUTO_COMPLETE_INPUT);
-		builder.append(CLOSE_TAG);
-
-		builder.append(INPUT_TAG);
-
-		builder.append("id=\"" + id + "\" type=\"text\" autocomplete=\"autocomplete\" ");
-
-		String name = getTagName(J_TAG, value);
-		if (name != null) {
-			builder.append("name=\"" + name + "\" ");
-		}
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_AUTO_COMPLETE);
-		}
-
-		appendFormValidator(builder);
-
-		appendRest(builder);
-
-		if (tabIndex != null) {
-			builder.append("tabindex=\"" + tabIndex + "\" ");
-		}
-		if (placeHolder != null) {
-			builder.append("placeholder=\"" + getResourceString(placeHolder) + "\" datatype=\"text\" ");
-		}
-		if (autoFocus) {
-			builder.append("autofocus=\"autofocus\" ");
-		}
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
-
-		JsonAutoComplete jsonAutoComplete = new JsonAutoComplete();
-		jsonAutoComplete.setName(getTagName(J_COMPLETE, "@{" + id + "}"));
-
-		if (beforeAjax != null) {
-			jsonAutoComplete.setBefore(beforeAjax.trim());
-		}
-		if (afterAjax != null) {
-			jsonAutoComplete.setExec(afterAjax.trim());
-		}
-		if (maxResults != null) {
-			jsonAutoComplete.setMaxResults(String.valueOf(maxResults));
-		}
-		if (minLength != null) {
-			jsonAutoComplete.setMinLength(String.valueOf(minLength));
-		}
-		if (onValueSelect != null) {
-			jsonAutoComplete.setCallback(onValueSelect.trim());
-		}
-		jsonAutoComplete.setMultiple(String.valueOf(multiple));
-
-		builder.append("ajax=\"" + getJsonValue(jsonAutoComplete) + "\" ");
-
-		if (ajaxCommand != null) {
-			if (ajaxCommand.startsWith(ON_KEY_UP)) {
-				builder.append(ajaxCommand.replace(ON_KEY_UP, ON_KEY_UP + JSMART_AUTOCOMPLETE.format(async, id)));
-			} else {
-				builder.append(ON_KEY_UP + JSMART_AUTOCOMPLETE.format(async, id) + "\" ");
-				builder.append(ajaxCommand);
-			}
-		} else {
-			builder.append(ON_KEY_UP + JSMART_AUTOCOMPLETE.format(async, id) + "\" ");
-		}
-
-		appendEvent(builder);
-
-		builder.append(CLOSE_INLINE_TAG);
-		builder.append(CLOSE_DIV_TAG);
-		builder.append(CLOSE_DIV_TAG);
-
-		builder.append(OPEN_DIV_TAG);
-		appendClass(builder, CSS_AUTO_COMPLETE_IMAGE);
-		builder.append(CLOSE_TAG);
-		builder.append(CLOSE_DIV_TAG);
-
-		builder.append(CLOSE_DIV_TAG);
-
-		if (label != null) {
-			builder.append(CLOSE_DIV_TAG);
-		}
-
-		List<String> completeValues = getCompleteValues();
-		if (completeValues != null) {
-			builder.append(OPEN_DIV_TAG + "id=\"" + id + COMPLETE_VALUES + "\" ");
-			appendClass(builder, CSS_AUTO_COMPLETE_LIST);
-			builder.append(CLOSE_TAG);
-			builder.append(OPEN_UNORDERED_LIST_TAG + CLOSE_TAG);
-
-			for (int i = 0; i < completeValues.size(); i++) {
-				if (i > maxResults) {
-					break;
-				}
-				builder.append(OPEN_LIST_ITEM_TAG + CLOSE_TAG + completeValues.get(i) + CLOSE_LIST_ITEM_TAG);
-			}
-			builder.append(CLOSE_UNORDERED_LIST_TAG);
-			builder.append(CLOSE_DIV_TAG);
-		}
-
-		appendScriptDeprecated(new StringBuilder(JSMART_AUTOCOMPLETE_RESET.format(id)));
-
-		printOutput(builder);
+//		// Just to call nested tags
+//		JspFragment body = getJspBody();
+//		if (body != null) {
+//			body.invoke(null);
+//		}
+//
+//		StringBuilder builder = new StringBuilder();
+//
+//		if (label != null) {
+//			builder.append(OPEN_DIV_TAG);
+//			appendClass(builder, CSS_INPUT_GROUP);
+//			builder.append(CLOSE_TAG);
+//
+//			builder.append(OPEN_SPAN_TAG);
+//			appendClass(builder, CSS_INPUT_LABEL);
+//			builder.append(CLOSE_TAG);
+//
+//			String labelVal = (String) getTagValue(label);
+//			if (labelVal != null) {
+//				builder.append(labelVal);
+//			}
+//			builder.append(CLOSE_SPAN_TAG);
+//		}
+//
+//		builder.append(OPEN_DIV_TAG);
+//		appendClass(builder, CSS_AUTO_COMPLETE_GROUP);
+//		builder.append(CLOSE_TAG);
+//
+//		builder.append(OPEN_DIV_TAG);
+//		appendClass(builder, CSS_AUTO_COMPLETE_CONTENT);
+//		builder.append(CLOSE_TAG);
+//		
+//		builder.append(OPEN_DIV_TAG);
+//		appendClass(builder, CSS_AUTO_COMPLETE_INPUT);
+//		builder.append(CLOSE_TAG);
+//
+//		builder.append(INPUT_TAG);
+//
+//		builder.append("id=\"" + id + "\" type=\"text\" autocomplete=\"autocomplete\" ");
+//
+//		String name = getTagName(J_TAG, value);
+//		if (name != null) {
+//			builder.append("name=\"" + name + "\" ");
+//		}
+//		if (style != null) {
+//			builder.append("style=\"" + style + "\" ");
+//		}
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		} else {
+//			appendClass(builder, CSS_AUTO_COMPLETE);
+//		}
+//
+//		appendFormValidator(builder);
+//
+//		appendRest(builder);
+//
+//		if (tabIndex != null) {
+//			builder.append("tabindex=\"" + tabIndex + "\" ");
+//		}
+//		if (placeHolder != null) {
+//			builder.append("placeholder=\"" + getResourceString(placeHolder) + "\" datatype=\"text\" ");
+//		}
+//		if (autoFocus) {
+//			builder.append("autofocus=\"autofocus\" ");
+//		}
+//		if (disabled || isEditRowTagEnabled()) {
+//			builder.append("disabled=\"disabled\" ");
+//		}
+//
+//		JsonAutoComplete jsonAutoComplete = new JsonAutoComplete();
+//		jsonAutoComplete.setName(getTagName(J_COMPLETE, "@{" + id + "}"));
+//
+//		if (beforeAjax != null) {
+//			jsonAutoComplete.setBefore(beforeAjax.trim());
+//		}
+//		if (afterAjax != null) {
+//			jsonAutoComplete.setExec(afterAjax.trim());
+//		}
+//		if (maxResults != null) {
+//			jsonAutoComplete.setMaxResults(String.valueOf(maxResults));
+//		}
+//		if (minLength != null) {
+//			jsonAutoComplete.setMinLength(String.valueOf(minLength));
+//		}
+//		if (onValueSelect != null) {
+//			jsonAutoComplete.setCallback(onValueSelect.trim());
+//		}
+//		jsonAutoComplete.setMultiple(String.valueOf(multiple));
+//
+//		builder.append("ajax=\"" + getJsonValue(jsonAutoComplete) + "\" ");
+//
+//		if (ajaxCommand != null) {
+//			if (ajaxCommand.startsWith(ON_KEY_UP)) {
+//				builder.append(ajaxCommand.replace(ON_KEY_UP, ON_KEY_UP + JSMART_AUTOCOMPLETE.format(async, id)));
+//			} else {
+//				builder.append(ON_KEY_UP + JSMART_AUTOCOMPLETE.format(async, id) + "\" ");
+//				builder.append(ajaxCommand);
+//			}
+//		} else {
+//			builder.append(ON_KEY_UP + JSMART_AUTOCOMPLETE.format(async, id) + "\" ");
+//		}
+//
+//		appendEvent(builder);
+//
+//		builder.append(CLOSE_INLINE_TAG);
+//		builder.append(CLOSE_DIV_TAG);
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		builder.append(OPEN_DIV_TAG);
+//		appendClass(builder, CSS_AUTO_COMPLETE_IMAGE);
+//		builder.append(CLOSE_TAG);
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		if (label != null) {
+//			builder.append(CLOSE_DIV_TAG);
+//		}
+//
+//		List<String> completeValues = getCompleteValues();
+//		if (completeValues != null) {
+//			builder.append(OPEN_DIV_TAG + "id=\"" + id + COMPLETE_VALUES + "\" ");
+//			appendClass(builder, CSS_AUTO_COMPLETE_LIST);
+//			builder.append(CLOSE_TAG);
+//			builder.append(OPEN_UNORDERED_LIST_TAG + CLOSE_TAG);
+//
+//			for (int i = 0; i < completeValues.size(); i++) {
+//				if (i > maxResults) {
+//					break;
+//				}
+//				builder.append(OPEN_LIST_ITEM_TAG + CLOSE_TAG + completeValues.get(i) + CLOSE_LIST_ITEM_TAG);
+//			}
+//			builder.append(CLOSE_UNORDERED_LIST_TAG);
+//			builder.append(CLOSE_DIV_TAG);
+//		}
+//
+//		appendScriptDeprecated(new StringBuilder(JSMART_AUTOCOMPLETE_RESET.format(id)));
+//
+//		printOutput(builder);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -252,10 +238,7 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 			
 			Collection<Object> values = null;
 
-			if (tagValue instanceof SmartSearchAdapter) {
-				values = ((SmartSearchAdapter) tagValue).search(completeValue, maxResults);
-
-			} else if (tagValue instanceof Collection) {
+			if (tagValue instanceof Collection) {
 				values = (Collection<Object>) tagValue;
 
 			} else if (tagValue != null) {

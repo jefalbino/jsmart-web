@@ -27,9 +27,7 @@ import javax.servlet.jsp.JspException;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class LoadTagHandler extends SmartTagHandler {
 
@@ -56,62 +54,62 @@ public final class LoadTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG + "id=\"" + id + "\" ");
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		}
-
-		builder.append(">");
-
-		if (size != null) {
-			builder.append(OPEN_SPAN_TAG);
-
-			if (size.equals(LARGE)) {
-				appendClass(builder, CSS_LOAD_LARGE);
-
-			} else if (size.equals(MEDIUM)) {
-				appendClass(builder, CSS_LOAD_MEDIUM);
-
-			} else {
-				appendClass(builder, CSS_LOAD_SMALL);
-			}
-			builder.append(">" + CLOSE_SPAN_TAG);
-		}
-
-		if (image != null) {
-			builder.append(IMG_TAG + "src=\"" + getTagValue(image) + "\" />");
-
-		} else if (html != null) {
-			try {
-				InputStream is = getResourceStream(html);
-				if (is != null) {
-					BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-					String line;
-			    	while ((line = br.readLine()) != null) {
-			    		builder.append(line);
-			    	}
-			    	br.close();
-				}
-			} catch (IOException ex) {
-				throw new JspException(ex);
-			}
-		}
-
-		if (label != null) {
-			builder.append(OPEN_LABEL_TAG + ">" + getTagValue(label) + CLOSE_LABEL_TAG); 
-		}
-
-		builder.append(CLOSE_DIV_TAG);		
-
-		appendScriptDeprecated(new StringBuilder(JSMART_LOAD.format(id)));
-
-		printOutput(builder);
+//
+//		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG + "id=\"" + id + "\" ");
+//
+//		if (style != null) {
+//			builder.append("style=\"" + style + "\" ");
+//		}
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		}
+//
+//		builder.append(">");
+//
+//		if (size != null) {
+//			builder.append(OPEN_SPAN_TAG);
+//
+//			if (size.equals(LARGE)) {
+//				appendClass(builder, CSS_LOAD_LARGE);
+//
+//			} else if (size.equals(MEDIUM)) {
+//				appendClass(builder, CSS_LOAD_MEDIUM);
+//
+//			} else {
+//				appendClass(builder, CSS_LOAD_SMALL);
+//			}
+//			builder.append(">" + CLOSE_SPAN_TAG);
+//		}
+//
+//		if (image != null) {
+//			builder.append(IMG_TAG + "src=\"" + getTagValue(image) + "\" />");
+//
+//		} else if (html != null) {
+//			try {
+//				InputStream is = getResourceStream(html);
+//				if (is != null) {
+//					BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//
+//					String line;
+//			    	while ((line = br.readLine()) != null) {
+//			    		builder.append(line);
+//			    	}
+//			    	br.close();
+//				}
+//			} catch (IOException ex) {
+//				throw new JspException(ex);
+//			}
+//		}
+//
+//		if (label != null) {
+//			builder.append(OPEN_LABEL_TAG + ">" + getTagValue(label) + CLOSE_LABEL_TAG); 
+//		}
+//
+//		builder.append(CLOSE_DIV_TAG);		
+//
+//		appendScriptDeprecated(new StringBuilder(JSMART_LOAD.format(id)));
+//
+//		printOutput(builder);
 	}
 
 	public void setLabel(String label) {

@@ -760,7 +760,7 @@ public enum SmartHandler {
 	Collection<String> getUserAuthorizationAccess() {
 		HttpServletRequest request = SmartContext.getRequest();
 
-		if (request.getAttribute(USER_ACCESS) == null) {
+		if (request.getAttribute(REQUEST_USER_ACCESS) == null) {
 
 			Collection<String> userAccess = new HashSet<String>();
 
@@ -792,9 +792,9 @@ public enum SmartHandler {
 					break;
 				}
 			}
-			request.setAttribute(USER_ACCESS, userAccess);
+			request.setAttribute(REQUEST_USER_ACCESS, userAccess);
 		}
-		return (Collection<String>) request.getAttribute(USER_ACCESS);
+		return (Collection<String>) request.getAttribute(REQUEST_USER_ACCESS);
 	}
 
 	boolean checkExecuteAuthorization(Object bean, String expression) {

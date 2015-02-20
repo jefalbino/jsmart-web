@@ -64,27 +64,12 @@ var Jsmart5 = (function() {
 	// begin public interface
 	return {
 		
-		ajaxNew: function(map) {
-			doAjaxNew(map);
+		ajax: function(map) {
+			doAjax(map);
 		},
 		
-		buttonNew: function(map) {
-			doButtonNew(map);
-		},
-
-		// Ajax ajax={'method': '', 'action': '','params': [{'name': '', 'value': ''}],'update': '','before': '','exec': ''}
-		ajax: function (async, element, timeout) {
-			doAjax(async, element, timeout);
-		},
-
-		//Link ajax={'method': '', 'action': '','url': '','update': '','before': '','exec': ''}
-		link: function (async, element) {
-			doButton(async, element);
-		},
-
-		// Button ajax={'method': '', 'action': '','update': '','before': '','exec': ''}
-		button: function (async, element) {
-			doButton(async, element);
+		button: function(map) {
+			doButton(map);
 		},
 
 		// Rest ajax={'method': '','content': '','bodyRoot': '','crossdomain': '', 'jsonp': '', 'jsoncallback': '','endpoint': '','params':[{'name': '', 'value': ''}],'before': '','success': '','error': ''}
@@ -226,7 +211,7 @@ var Jsmart5 = (function() {
 	};
 	// end public interface
 	
-	function doAjaxNew(map) {
+	function doAjax(map) {
 		if (map.timeout && map.timeout > 0) {
 			var timeout = map.timeout;
 			map.timeout = null;
@@ -283,66 +268,8 @@ var Jsmart5 = (function() {
 			}
 		}
 	}
-
-	function doAjax(async, element, timeout) {
-		if ($(element) && $(element).attr('ajax')) {
-			if (timeout && timeout > 0) {
-				setTimeout(function() {doAjax(async, element, null);}, timeout);
-			} else {
-				var ajax = $.parseJSON($(element).attr('ajax'));
 	
-				if (ajax.method) {
-					var options = getAjaxOptions(async, ajax);
-					var closestForm = $(element).closest('form');
-	
-					if (ajax.method == 'post') {
-						var postParam = getAjaxParams(element);
-	
-						var outsideParams = getAjaxOutsideParams(element);
-						for (var i = 0; i < outsideParams.length; i++) {
-							postParam.push(outsideParams[i]);
-						}
-	
-						// This is only works for ajax tag inside table tag
-						var evalParams = getAjaxEvalParams(element);
-						for (var i = 0; i < evalParams.length; i++) {
-							postParam.push(evalParams[i]);
-						}
-	
-						if (closestForm && closestForm.length > 0) {
-							if (!doValidate($(closestForm).attr('id'))) {
-								return;
-							}
-						} else {
-							var elementParam = getElementParam(element, false);
-							for (var i = 0; i < elementParam.length; i++) {
-								postParam.push({name: elementParam[i].name, value: elementParam[i].value});
-							}
-							postParam = $.param(postParam);
-						}
-	
-						options.data = postParam;
-					}
-	
-					if (ajax.method == 'post' && closestForm && closestForm.length > 0) {
-						doFormPlaceHolders(closestForm);
-						$(closestForm).ajaxSubmit(options);
-					} else {
-						$.ajax(options);
-					}
-				} else {
-					if (ajax.before) {
-						doExecute(null, ajax.before);
-					}
-					if (ajax.exec) {
-						doExecute(null, ajax.exec);
-					}
-				}
-			}
-		}
-	}
-	
-	function doButtonNew(map) {
+	function doButton(map) {
 		if (map.method) {
 			var element = $('#' + map.id);
 			var options = getNewAjaxOptions(map);
@@ -374,45 +301,6 @@ var Jsmart5 = (function() {
 			}
 			if (map.exec) {
 				doExecute(null, map.exec);
-			}
-		}
-	}
-
-	function doButton(async, element) {
-		if ($(element) && $(element).attr('ajax')) {
-			var ajax = $.parseJSON($(element).attr('ajax'));
-	
-			if (ajax.method) {
-				var options = getAjaxOptions(async, ajax);
-				var closestForm = $(element).closest('form');
-				
-				if (ajax.method == 'post') {
-					var postParam = null;
-	
-					if (closestForm && closestForm.length > 0) {
-						if (!doValidate($(closestForm).attr('id'))) {
-							return;
-						}
-						postParam = getAjaxParams(element);
-					} else {
-						postParam = $.param(getAjaxParams(element));
-					}
-					options.data = postParam;
-				}
-	
-				if (ajax.method == 'post' && closestForm && closestForm.length > 0) {
-					doFormPlaceHolders(closestForm);
-					$(closestForm).ajaxSubmit(options);
-				} else {
-					$.ajax(options);
-				}
-			} else {
-				if (ajax.before) {
-					doExecute(null, ajax.before);
-				}
-				if (ajax.exec) {
-					doExecute(null, ajax.exec);
-				}
 			}
 		}
 	}

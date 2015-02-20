@@ -44,7 +44,6 @@ import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartMessage;
 import com.jsmart5.framework.util.SmartUtils;
 
-import static com.jsmart5.framework.config.SmartConfig.*;
 import static com.jsmart5.framework.manager.SmartExpression.*;
 import static com.jsmart5.framework.manager.SmartHandler.*;
 import static com.jsmart5.framework.util.SmartText.*;
@@ -92,6 +91,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected static final String J_COMPLETE = J_TAG_INIT + "015_";
 
 	protected static final String EL_PARAM_READ_ONLY = SmartConstants.EL_PARAM_READ_ONLY;
+
 	
 	protected static final String EVENT_SELECT = "select";
 
@@ -140,37 +140,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	
 	public static final String LINK = "link";
 
-	
-	protected static final String ON_SELECT = "onselect=\"";
-
-	protected static final String ON_CLICK = "onclick=\"";
-
-	protected static final String ON_DBL_CLICK = "ondblclick=\"";
-
-	protected static final String ON_CHANGE = "onchange=\"";
-
-	protected static final String ON_BLUR = "onblur=\"";
-
-	protected static final String ON_MOUSE_DOWN = "onmousedown=\"";
-
-	protected static final String ON_MOUSE_MOVE = "onmousemove=\"";
-
-	protected static final String ON_MOUSE_OVER = "onmouseover=\"";
-
-	protected static final String ON_MOUSE_OUT = "onmouseout=\"";
-
-	protected static final String ON_MOUSE_UP = "onmouseup=\"";
-
-	protected static final String ON_KEY_DOWN = "onkeydown=\"";
-
-	protected static final String ON_KEY_PRESS = "onkeypress=\"";
-
-	protected static final String ON_KEY_UP = "onkeyup=\"";
-
-	protected static final String ON_FOCUS = "onfocus=\"";
-
-	protected static final String ON_SUBMIT = "onSubmit=\"";
-
 
 	protected final Map<String, Object> params;
 
@@ -179,9 +148,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected List<AjaxTagHandler> ajaxTags;
 	
 	protected IconTagHandler iconTag;
-
-	@Deprecated
-	protected String ajaxCommand;
 
 	protected String dateFormatRegex;
 
@@ -192,9 +158,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	public String id;
 
 	public String rest;
-
-	@Deprecated
-	public String theme;
 
 	public String style;
 
@@ -281,11 +244,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		this.outputWriter = outputWriter;
 	}
 
-	@Deprecated
-	public void setAjaxCommand(String ajaxCommand) {
-		this.ajaxCommand = ajaxCommand;
-	}
-
 	public void setIconTag(IconTagHandler iconTag) {
 		this.iconTag = iconTag;
 	}
@@ -323,14 +281,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	public void setRest(String rest) {
 		this.rest = rest;
-	}
-
-	public void setTheme(String theme) {
-		this.theme = theme;
-	}
-
-	public String getTheme() {
-		return theme;
 	}
 	
 	public String getStyle() {
@@ -450,41 +400,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		this.onSelect = onSelect;
 	}
 
-	@Deprecated
-	protected void appendScriptDeprecated(StringBuilder script) {
-		appendScriptDeprecated(script, false);
-	}
-
-	@Deprecated
-	protected void appendScriptDeprecated(StringBuilder script, boolean appendToEnd) {
-		HttpSession session = SmartContext.getSession();
-		synchronized (session) {
-			StringBuilder[] scriptBuilders = (StringBuilder[]) session.getAttribute(SmartConstants.SCRIPT_BUILDER_ATTR);
-			if (scriptBuilders == null) {
-				scriptBuilders = new StringBuilder[] {new StringBuilder(), new StringBuilder()};
-				session.setAttribute(SmartConstants.SCRIPT_BUILDER_ATTR, scriptBuilders);
-			}
-			if (appendToEnd) { 
-				scriptBuilders[1].append(script.toString());
-			} else {
-				scriptBuilders[0].append(script.toString());
-			}
-		}
-	}
-
-	protected void appendScript(StringBuilder builder) {
-		HttpSession session = SmartContext.getSession();
-		synchronized (session) {
-			Script script = (Script) session.getAttribute(SmartConstants.NEW_SCRIPT_BUILDER_ATTR);
-
-			if (script == null) {
-				script = new Script();
-				session.setAttribute(SmartConstants.NEW_SCRIPT_BUILDER_ATTR, script);
-			}
-			script.addText(builder.toString());
-		}
-	}
-
 	protected void printOutput(StringBuilder builder) throws IOException {
 		if (outputWriter != null) {
 			outputWriter.write(builder.toString());
@@ -530,10 +445,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		EXPRESSIONS.setExpressionValue(name, param, true);
 	}
 
-	protected String getResourceString(String resource) {
-		return (String) EXPRESSIONS.getResourceValue(resource);
-	}
-
 	protected String getResourceString(String resource, String key) {
 		return TEXTS.getString(resource, key);
 	}
@@ -558,13 +469,21 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		return SmartContext.getMessages(id);
 	}
 
-	protected String getNewJsonValue(Object object) {
+	protected String getJsonValue(Object object) {
 		return GSON.toJson(object).replace("\u0027", "'");
 	}
+	
+	protected void appendScript(StringBuilder builder) {
+		HttpSession session = SmartContext.getSession();
+		synchronized (session) {
+			Script script = (Script) session.getAttribute(SmartConstants.NEW_SCRIPT_BUILDER_ATTR);
 
-	@Deprecated
-	protected String getJsonValue(Object object) {
-		return GSON.toJson(object).replace("\"", "&quot;");
+			if (script == null) {
+				script = new Script();
+				session.setAttribute(SmartConstants.NEW_SCRIPT_BUILDER_ATTR, script);
+			}
+			script.addText(builder.toString());
+		}
 	}
 
 	protected void appendFormValidator(Tag tag) throws JspException, IOException {
@@ -576,51 +495,8 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		}
 	}
 
-	@Deprecated
-	protected void appendFormValidator(StringBuilder builder) throws JspException, IOException {
-		if (validator != null) {
-			builder.append("validatedrequired=\"true\" ");
-			if (validator.getMinLength() != null) {
-				builder.append("validateminlength=\"" + validator.getMinLength() + "\" ");
-			}
-			if (validator.getMaxLength() != null) {
-				builder.append("validatemaxlength=\"" + validator.getMaxLength() + "\" ");
-			}
-			if (validator.getMessage() != null) {
-				builder.append("validatemessage=\"" + getTagValue(validator.getMessage()) + "\" ");
-			}
-		}
-	}
-
 	protected void appendRest(Tag tag) throws JspException, IOException {
 		tag.addAttribute("rest", rest);
-	}
-
-	@Deprecated
-	protected void appendRest(StringBuilder builder) throws JspException, IOException {
-		if (rest != null) {
-			builder.append("rest=\"" + rest + "\" ");
-		}
-	}
-
-	@Deprecated
-	protected void appendThemeOption(StringBuilder builder) throws JspException, IOException {
-		if (theme == null) {
-			theme = CONFIG.getContent().getTheme();
-		}
-		builder.append("theme:'" + getTagValue(theme) + "',");
-	}
-
-	@Deprecated
-	protected void appendClass(StringBuilder builder, String styleClass) throws JspException, IOException {
-		if (theme == null) {
-			theme = CONFIG.getContent().getTheme();
-		}
-		if (styleClass.contains("%s")) {
-			builder.append("class=\"" + styleClass.replace("%s", (String) getTagValue(theme)) + "\" ");			
-		} else {
-			builder.append("class=\"" + styleClass + "\" ");
-		}
 	}
 	
 	protected void appendEvent(Tag tag) {
@@ -638,62 +514,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 			.addAttribute("onchange", onChange)
 			.addAttribute("onfocus", onFocus)
 			.addAttribute("onselect", onSelect);
-	}
-
-	@Deprecated
-	protected void appendEvent(StringBuilder builder) {
-		if (onClick != null) {
-			appendEvent(builder, ON_CLICK, onClick);
-		}
-		if (onDblClick != null) {
-			appendEvent(builder, ON_DBL_CLICK, onDblClick);
-		}
-		if (onMouseDown != null) {
-			appendEvent(builder, ON_MOUSE_DOWN, onMouseDown);
-		}
-		if (onMouseMove != null) {
-			appendEvent(builder, ON_MOUSE_MOVE, onMouseMove);
-		}
-		if (onMouseOver != null) {
-			appendEvent(builder, ON_MOUSE_OVER, onMouseOver);
-		}
-		if (onMouseOut != null) {
-			appendEvent(builder, ON_MOUSE_OUT, onMouseOut);
-		}
-		if (onMouseUp != null) {
-			appendEvent(builder, ON_MOUSE_UP, onMouseUp);
-		}
-		if (onKeyDown != null) {
-			appendEvent(builder, ON_KEY_DOWN, onKeyDown);
-		}
-		if (onKeyPress != null) {
-			appendEvent(builder, ON_KEY_PRESS, onKeyPress);
-		}
-		if (onKeyUp != null) {
-			appendEvent(builder, ON_KEY_UP, onKeyUp);
-		}
-		if (onBlur != null) {
-			appendEvent(builder, ON_BLUR, onBlur);
-		}
-		if (onChange != null) {
-			appendEvent(builder, ON_CHANGE, onChange);
-		}
-		if (onFocus != null) {
-			appendEvent(builder, ON_FOCUS, onFocus);
-		}
-		if (onSelect != null) {
-			appendEvent(builder, ON_SELECT, onSelect);
-		}
-	}
-
-	@Deprecated
-	private void appendEvent(StringBuilder builder, String attr, String exec) {
-		int index = builder.lastIndexOf(attr);
-		if (index >= 0) {
-			builder.replace(index, index + attr.length(), attr + exec + ";");
-		} else {
-			builder.append(attr + exec + "\" ");	
-		}
 	}
 
 }

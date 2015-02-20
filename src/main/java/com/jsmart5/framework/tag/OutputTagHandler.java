@@ -26,7 +26,6 @@ import java.util.Date;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -105,17 +104,6 @@ public final class OutputTagHandler extends SmartTagHandler {
 	private String type;
 
 	private String target;
-
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	public void validateTag() throws JspException {

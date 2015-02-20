@@ -35,7 +35,7 @@ import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Ul;
 
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class TabTagHandler extends SmartTagHandler {
 

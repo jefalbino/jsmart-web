@@ -24,9 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
-
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
+import com.jsmart5.framework.tag.js.JsConstants;
 
 public final class BalloonTagHandler extends SmartTagHandler {
 
@@ -53,17 +51,6 @@ public final class BalloonTagHandler extends SmartTagHandler {
 	private Integer length;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		if (position != null && !position.equals(POSITION_TOP) && !position.equals(POSITION_LEFT) 
 				&& !position.equals(POSITION_RIGHT) && !position.equals(POSITION_BOTTOM)) {
@@ -73,36 +60,36 @@ public final class BalloonTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		Object messageVal = getTagValue(message);
-		if (length == null) {
-			length = DEFAULT_LENGTH;
-		}
-
-		String balloonScript = JsConstants.JSMART_BALLOON.format(target, position != null ? position : "top",
-				opened, length, messageVal != null ? messageVal.toString().replace("'", "\\'") : "");
-
-		appendScriptDeprecated(new StringBuilder(balloonScript), true);
-
-		StringBuilder builder = new StringBuilder(OPEN_SPAN_TAG);
-		builder.append("id=\"" + target + BALLOON_HOLDER + "\" ");
-		builder.append("style=\"display: none;\" ");
-		builder.append("type=\"balloon\" ");
-
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_BALLOON);
-		}
-
-		builder.append("target=\"" + target + "\" ");
-		builder.append("position=\"" + (position != null ? position : "top") + "\" ");
-		builder.append("opened=\"" + opened + "\" ");
-		builder.append("length=\"" + length + "\" ");
-		builder.append("message=\"" + (messageVal != null ? messageVal.toString() : "") + "\" ");
-		builder.append(CLOSE_TAG);
-		builder.append(CLOSE_SPAN_TAG);
-
-		printOutput(builder);		
+//		Object messageVal = getTagValue(message);
+//		if (length == null) {
+//			length = DEFAULT_LENGTH;
+//		}
+//
+//		String balloonScript = JsConstants.JSMART_BALLOON.format(target, position != null ? position : "top",
+//				opened, length, messageVal != null ? messageVal.toString().replace("'", "\\'") : "");
+//
+//		appendScriptDeprecated(new StringBuilder(balloonScript), true);
+//
+//		StringBuilder builder = new StringBuilder(OPEN_SPAN_TAG);
+//		builder.append("id=\"" + target + BALLOON_HOLDER + "\" ");
+//		builder.append("style=\"display: none;\" ");
+//		builder.append("type=\"balloon\" ");
+//
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		} else {
+//			appendClass(builder, CSS_BALLOON);
+//		}
+//
+//		builder.append("target=\"" + target + "\" ");
+//		builder.append("position=\"" + (position != null ? position : "top") + "\" ");
+//		builder.append("opened=\"" + opened + "\" ");
+//		builder.append("length=\"" + length + "\" ");
+//		builder.append("message=\"" + (messageVal != null ? messageVal.toString() : "") + "\" ");
+//		builder.append(CLOSE_TAG);
+//		builder.append(CLOSE_SPAN_TAG);
+//
+//		printOutput(builder);		
 	}
 
 	public void setTarget(String target) {

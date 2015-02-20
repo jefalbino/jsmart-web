@@ -27,8 +27,7 @@ import com.jsmart5.framework.manager.SmartContext;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.util.SmartMessage;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 import static com.jsmart5.framework.util.SmartMessage.*;
 
 public final class MessageTagHandler extends SmartTagHandler {
@@ -85,85 +84,85 @@ public final class MessageTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		Map<String, SmartMessage> messages = null;
-
-		if (FIXED.equals(position)) {
-			messages = getMessages(id);
-			printOutput(new StringBuilder(OPEN_DIV_TAG + "id=\"" + id + "\" fixed=\"fixed\" >" + CLOSE_DIV_TAG));
-		} else {
-			messages = getMessages();
-		}
-
-		if (messages != null && !messages.isEmpty()) {
-
-			StringBuilder infoBuilder = new StringBuilder("info:[");
-			StringBuilder warningBuilder = new StringBuilder("warning:[");
-			StringBuilder errorBuilder = new StringBuilder("error:[");
-			StringBuilder successBuilder = new StringBuilder("success:[");
-
-			for (String key : messages.keySet()) {
-				if (messages.get(key) == INFO) {
-					infoBuilder.append("'" + clearMessage(key) + "',");				
-				} else if (messages.get(key) == WARNING) {
-					warningBuilder.append("'" + clearMessage(key) + "',");
-				} else if (messages.get(key) == ERROR) {
-					errorBuilder.append("'" + clearMessage(key) + "',");
-				} else if (messages.get(key) == SUCCESS) {
-					successBuilder.append("'" + clearMessage(key) + "',");
-				}
-			}
-
-			infoBuilder.append("]");
-			warningBuilder.append("]");
-			errorBuilder.append("]");
-			successBuilder.append("]");
-
-			StringBuilder messagesBuilder = new StringBuilder();
-			messagesBuilder.append("{" + infoBuilder + "," + warningBuilder + "," + errorBuilder + "," + successBuilder + "}");
-
-			StringBuilder optionsBuilder = new StringBuilder("{");
-
-			if (id != null) {
-				optionsBuilder.append("id:'" + id + "',");
-			}
-			if (autoHide != null) {
-				optionsBuilder.append("autoHide:" + autoHide + ",");
-			}
-			if (width != null && width > 0) {
-				optionsBuilder.append("width:" + width + ",");
-			}
-			if (duration != null) {
-				optionsBuilder.append("duration:" + duration + ",");
-				if (autoHide == null) {
-					optionsBuilder.append("autoHide:" + true + ",");
-				}
-			}
-			if (position != null) {
-				optionsBuilder.append("position:'" + position + "',");
-			}
-			if (modal != null) {
-				optionsBuilder.append("modal:" + modal + ",");
-			}
-			if (onShow != null) {
-				optionsBuilder.append("onShow:'" + onShow + "',");
-			}
-			if (onClose != null) {
-				optionsBuilder.append("onClose:'" + onClose + "',");
-			}
-
-			optionsBuilder.append("}");
-
-			StringBuilder scriptBuilder = new StringBuilder(JSMART_MESSAGE.format(messagesBuilder, optionsBuilder));
-
-			if (SmartContext.isAjaxRequest()) {
-				StringBuilder inputBuilder = new StringBuilder(INPUT_TAG);
-				inputBuilder.append("id=\"jsmart_messages" + (id != null ? id : "") + "\" type=\"hidden\" ");
-				inputBuilder.append("value=\"" + scriptBuilder + "\" />");
-				printOutput(inputBuilder);
-			} else {
-				appendScriptDeprecated(scriptBuilder);
-			}
-		}
+//		Map<String, SmartMessage> messages = null;
+//
+//		if (FIXED.equals(position)) {
+//			messages = getMessages(id);
+//			printOutput(new StringBuilder(OPEN_DIV_TAG + "id=\"" + id + "\" fixed=\"fixed\" >" + CLOSE_DIV_TAG));
+//		} else {
+//			messages = getMessages();
+//		}
+//
+//		if (messages != null && !messages.isEmpty()) {
+//
+//			StringBuilder infoBuilder = new StringBuilder("info:[");
+//			StringBuilder warningBuilder = new StringBuilder("warning:[");
+//			StringBuilder errorBuilder = new StringBuilder("error:[");
+//			StringBuilder successBuilder = new StringBuilder("success:[");
+//
+//			for (String key : messages.keySet()) {
+//				if (messages.get(key) == INFO) {
+//					infoBuilder.append("'" + clearMessage(key) + "',");				
+//				} else if (messages.get(key) == WARNING) {
+//					warningBuilder.append("'" + clearMessage(key) + "',");
+//				} else if (messages.get(key) == ERROR) {
+//					errorBuilder.append("'" + clearMessage(key) + "',");
+//				} else if (messages.get(key) == SUCCESS) {
+//					successBuilder.append("'" + clearMessage(key) + "',");
+//				}
+//			}
+//
+//			infoBuilder.append("]");
+//			warningBuilder.append("]");
+//			errorBuilder.append("]");
+//			successBuilder.append("]");
+//
+//			StringBuilder messagesBuilder = new StringBuilder();
+//			messagesBuilder.append("{" + infoBuilder + "," + warningBuilder + "," + errorBuilder + "," + successBuilder + "}");
+//
+//			StringBuilder optionsBuilder = new StringBuilder("{");
+//
+//			if (id != null) {
+//				optionsBuilder.append("id:'" + id + "',");
+//			}
+//			if (autoHide != null) {
+//				optionsBuilder.append("autoHide:" + autoHide + ",");
+//			}
+//			if (width != null && width > 0) {
+//				optionsBuilder.append("width:" + width + ",");
+//			}
+//			if (duration != null) {
+//				optionsBuilder.append("duration:" + duration + ",");
+//				if (autoHide == null) {
+//					optionsBuilder.append("autoHide:" + true + ",");
+//				}
+//			}
+//			if (position != null) {
+//				optionsBuilder.append("position:'" + position + "',");
+//			}
+//			if (modal != null) {
+//				optionsBuilder.append("modal:" + modal + ",");
+//			}
+//			if (onShow != null) {
+//				optionsBuilder.append("onShow:'" + onShow + "',");
+//			}
+//			if (onClose != null) {
+//				optionsBuilder.append("onClose:'" + onClose + "',");
+//			}
+//
+//			optionsBuilder.append("}");
+//
+//			StringBuilder scriptBuilder = new StringBuilder(JSMART_MESSAGE.format(messagesBuilder, optionsBuilder));
+//
+//			if (SmartContext.isAjaxRequest()) {
+//				StringBuilder inputBuilder = new StringBuilder(INPUT_TAG);
+//				inputBuilder.append("id=\"jsmart_messages" + (id != null ? id : "") + "\" type=\"hidden\" ");
+//				inputBuilder.append("value=\"" + scriptBuilder + "\" />");
+//				printOutput(inputBuilder);
+//			} else {
+//				appendScriptDeprecated(scriptBuilder);
+//			}
+//		}
 	}
 
 	private String clearMessage(String message) {

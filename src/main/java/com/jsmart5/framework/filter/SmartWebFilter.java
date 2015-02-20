@@ -230,7 +230,7 @@ public final class SmartWebFilter implements Filter {
 		    	html = html.replaceFirst(htmlMatch, htmlMatch + START_HEAD_TAG + headerStyles + headerScripts + END_HEAD_TAG);
 		    }
 
-	        // Case redirect via ajax, place tag with path to be handled b javascript
+	        // Case redirect via ajax, place tag with path to be handled by javascript
 		    HttpSession session = httpRequest.getSession();
 		    synchronized (session) {
 
@@ -256,7 +256,7 @@ public final class SmartWebFilter implements Filter {
 					}
 		        }
 				
-				Script script = (Script) session.getAttribute(NEW_SCRIPT_BUILDER_ATTR);
+				Script script = (Script) session.getAttribute(SCRIPT_BUILDER_ATTR);
 				if (script != null) {
 					Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
 					
@@ -265,17 +265,6 @@ public final class SmartWebFilter implements Filter {
 						html = html.replace(closeBodyMatch, script.getHtml() + closeBodyMatch);
 					} else {
 						throw new RuntimeException("HTML tag 'body' could not be found. Please insert the body tag in your JSP");
-					}
-				}
-
-				StringBuilder[] scriptBuilders = (StringBuilder[]) session.getAttribute(SCRIPT_BUILDER_ATTR);
-				if (scriptBuilders != null) {
-					Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
-
-					if (closeBodyMatcher.find()) {
-						String closeBodyMatch = closeBodyMatcher.group();
-						String compressedScript = String.format(SCRIPT_READY_AJAX_TAG, scriptBuilders[0].append(scriptBuilders[1]));
-						html = html.replace(closeBodyMatch, compressedScript + closeBodyMatch);
 					}
 				}
 			}
@@ -340,7 +329,9 @@ public final class SmartWebFilter implements Filter {
 				JsonArray resources = jsonResources.getAsJsonArray("resources");
 				for (int i = 0; i < resources.size(); i++) {
 
-					if (resources.get(i).getAsString().equals(file.getRelativePath())) {
+					String resourcePath = resources.get(i).getAsString().replace("*", "");
+
+					if (file.getRelativePath().startsWith(resourcePath)) {
 						initDirResources(context.getRealPath(SEPARATOR), file.getRelativePath());
 
 						int count = 0;

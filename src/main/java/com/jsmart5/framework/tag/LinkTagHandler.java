@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
@@ -39,7 +38,7 @@ import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.util.SmartUtils;
 
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class LinkTagHandler extends SmartTagHandler {
 	
@@ -79,17 +78,6 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 	public LinkTagHandler() {
 		drops = new ArrayList<DropTagHandler>();
-	}
-
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -292,7 +280,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 		}
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_BUTTON_NEW.format(getNewJsonValue(jsonAjax)) + "return false;");
+		builder.append(JSMART_BUTTON.format(getJsonValue(jsonAjax)) + "return false;");
 		return getFunction(id, EVENT_CLICK, builder);
 	}
 

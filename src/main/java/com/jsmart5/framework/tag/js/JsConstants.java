@@ -16,14 +16,15 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag;
+package com.jsmart5.framework.tag.js;
 
-enum JsConstants {
+public enum JsConstants {
 
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
 
-	JSMART_AJAX_NEW("Jsmart5.ajaxNew", "(%s);"),
-	JSMART_BUTTON_NEW("Jsmart5.buttonNew", "(%s);"),
+	JSMART_AJAX("Jsmart5.ajax", "(%s);"),
+	JSMART_BUTTON("Jsmart5.button", "(%s);"),
+	JSMART_EXEC("Jsmart5.execute", "('%s');"),
 	
 	JSMART_CHECK("Jsmart5.check", "(%s);"),
 	JSMART_CHECKBOX("Jsmart5.checkbox", "(%s);"),
@@ -33,11 +34,6 @@ enum JsConstants {
 	JSMART_TABPANE("Jsmart5.tabpane", "(%s);"),
 
 	
-
-	JSMART_AJAX("Jsmart5.ajax", "(%s,%s,%s);"),
-	JSMART_BUTTON("Jsmart5.button", "(%s,%s);"),
-	JSMART_LINK("Jsmart5.link", "(%s,%s);"),
-	JSMART_EXEC("Jsmart5.execute", "('%s');"),
 	JSMART_REST("Jsmart5.rest", "(%s,%s,%s);"),
 
 	JSMART_LIST("Jsmart5.list", "(%s,%s);"),

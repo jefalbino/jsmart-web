@@ -23,7 +23,6 @@ import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
@@ -34,17 +33,6 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 	private boolean inline = true;
 
 	private String size;
-
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	public void validateTag() throws JspException {

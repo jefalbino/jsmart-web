@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 
@@ -31,17 +30,6 @@ public final class TextTagHandler extends SmartTagHandler {
 	private String res;
 
 	private String key;
-
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	public void validateTag() throws JspException {

@@ -26,9 +26,7 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.json.JsonProgress;
 import com.jsmart5.framework.manager.SmartTagHandler;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class ProgressTagHandler extends SmartTagHandler {
 
@@ -63,17 +61,6 @@ public final class ProgressTagHandler extends SmartTagHandler {
     private String onComplete;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		if (maxValue != null && maxValue <= 0) {
 			throw new JspException("Attribute maxValue must be greater than zero for progress tag");
@@ -94,118 +81,118 @@ public final class ProgressTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-
-		// Container to hold progress
-		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
-
-		builder.append("id=\"" + id + "\" ");
-
-		builder.append("progress=\"progress\" ");
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_PROGRESS_CONTAINER);
-		}
-
-		appendEvent(builder);
-
-		builder.append(">");
-
-		builder.append(OPEN_DIV_TAG);
-
-		builder.append("id=\"" + id + PROGRESS_FRAME + "\" ");
-
-		appendClass(builder, CSS_PROGRESS_FRAME);
-
-		JsonProgress jsonProgress = new JsonProgress();
-
-		jsonProgress.setAjax(String.valueOf(ajax));
-		jsonProgress.setMax(String.valueOf(maxValue));
-		jsonProgress.setMin(String.valueOf(minValue));
-
-		if (interval != null) {
-			jsonProgress.setInterval(String.valueOf(interval));
-		}
-		if (onInterval != null) {
-			jsonProgress.setCallback(onInterval);
-		}
-		if (onComplete != null) {
-			jsonProgress.setComplete(onComplete);
-		}
-
-		builder.append("ajax=\"" + getJsonValue(jsonProgress) + "\" ");
-
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
-
-		builder.append(">");
-
-
-		// Hidden input to send value to server
-		builder.append(INPUT_TAG);
-
-		builder.append("id=\"" + id + PROGRESS_INPUT + "\" ");
-
-		String name = getTagName(J_TAG, value);
-		if (name != null) {
-			builder.append("name=\"" + name + "\" ");
-		}
-
-		Number number = (Number) getTagValue(value);
-		if (number != null) {
-			builder.append("value=\"" + number + "\" ");
-		}
-
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
-
-		builder.append("type=\"hidden\" ");
-		
-		appendRest(builder);
-
-		builder.append(" />");
-
-
-		builder.append(OPEN_DIV_TAG);
-
-		if (disabled) {
-			appendClass(builder, CSS_PROGRESS_BAR_DISABLED);
-		} else {
-			appendClass(builder, CSS_PROGRESS_BAR);
-		}
-
-		builder.append(">" + CLOSE_DIV_TAG);
-
-		Object labelVal = getTagValue(label);
-		if (labelVal != null) {
-			builder.append(OPEN_SPAN_TAG);
-			appendClass(builder, CSS_PROGRESS_LABEL);
-			builder.append(">");
-			builder.append(labelVal);
-			builder.append(CLOSE_SPAN_TAG);
-		}
-
-		builder.append(CLOSE_DIV_TAG);
-
-		if (showPercentage) {
-			builder.append(OPEN_SPAN_TAG);
-			builder.append("id=\"" + id + PROGRESS_PERCENT + "\" ");
-			appendClass(builder, CSS_PROGRESS_PERCENT);
-			builder.append(">");
-			builder.append(CLOSE_SPAN_TAG);
-		}
-
-		builder.append(CLOSE_DIV_TAG);
-
-		printOutput(builder);
-
-		appendScriptDeprecated(new StringBuilder(JSMART_PROGRESS.format(id)));
+//
+//		// Container to hold progress
+//		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
+//
+//		builder.append("id=\"" + id + "\" ");
+//
+//		builder.append("progress=\"progress\" ");
+//
+//		if (style != null) {
+//			builder.append("style=\"" + style + "\" ");
+//		}
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		} else {
+//			appendClass(builder, CSS_PROGRESS_CONTAINER);
+//		}
+//
+//		appendEvent(builder);
+//
+//		builder.append(">");
+//
+//		builder.append(OPEN_DIV_TAG);
+//
+//		builder.append("id=\"" + id + PROGRESS_FRAME + "\" ");
+//
+//		appendClass(builder, CSS_PROGRESS_FRAME);
+//
+//		JsonProgress jsonProgress = new JsonProgress();
+//
+//		jsonProgress.setAjax(String.valueOf(ajax));
+//		jsonProgress.setMax(String.valueOf(maxValue));
+//		jsonProgress.setMin(String.valueOf(minValue));
+//
+//		if (interval != null) {
+//			jsonProgress.setInterval(String.valueOf(interval));
+//		}
+//		if (onInterval != null) {
+//			jsonProgress.setCallback(onInterval);
+//		}
+//		if (onComplete != null) {
+//			jsonProgress.setComplete(onComplete);
+//		}
+//
+//		builder.append("ajax=\"" + getJsonValue(jsonProgress) + "\" ");
+//
+//		if (disabled || isEditRowTagEnabled()) {
+//			builder.append("disabled=\"disabled\" ");
+//		}
+//
+//		builder.append(">");
+//
+//
+//		// Hidden input to send value to server
+//		builder.append(INPUT_TAG);
+//
+//		builder.append("id=\"" + id + PROGRESS_INPUT + "\" ");
+//
+//		String name = getTagName(J_TAG, value);
+//		if (name != null) {
+//			builder.append("name=\"" + name + "\" ");
+//		}
+//
+//		Number number = (Number) getTagValue(value);
+//		if (number != null) {
+//			builder.append("value=\"" + number + "\" ");
+//		}
+//
+//		if (disabled || isEditRowTagEnabled()) {
+//			builder.append("disabled=\"disabled\" ");
+//		}
+//
+//		builder.append("type=\"hidden\" ");
+//		
+//		appendRest(builder);
+//
+//		builder.append(" />");
+//
+//
+//		builder.append(OPEN_DIV_TAG);
+//
+//		if (disabled) {
+//			appendClass(builder, CSS_PROGRESS_BAR_DISABLED);
+//		} else {
+//			appendClass(builder, CSS_PROGRESS_BAR);
+//		}
+//
+//		builder.append(">" + CLOSE_DIV_TAG);
+//
+//		Object labelVal = getTagValue(label);
+//		if (labelVal != null) {
+//			builder.append(OPEN_SPAN_TAG);
+//			appendClass(builder, CSS_PROGRESS_LABEL);
+//			builder.append(">");
+//			builder.append(labelVal);
+//			builder.append(CLOSE_SPAN_TAG);
+//		}
+//
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		if (showPercentage) {
+//			builder.append(OPEN_SPAN_TAG);
+//			builder.append("id=\"" + id + PROGRESS_PERCENT + "\" ");
+//			appendClass(builder, CSS_PROGRESS_PERCENT);
+//			builder.append(">");
+//			builder.append(CLOSE_SPAN_TAG);
+//		}
+//
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		printOutput(builder);
+//
+//		appendScriptDeprecated(new StringBuilder(JSMART_PROGRESS.format(id)));
 	}
 
 	public void setAjax(boolean ajax) {

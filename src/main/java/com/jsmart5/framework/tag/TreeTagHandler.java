@@ -18,9 +18,7 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.CssConstants.*;
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -39,35 +37,35 @@ public class TreeTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
-
-		StringBuilder builder = new StringBuilder(OPEN_UNORDERED_LIST_TAG + "id=\"" + id + "\" ");
-
-		builder.append("tree=\"tree\" ");
-
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_TREE);
-		}
-
-		appendEvent(builder);
-
-		builder.append(CLOSE_TAG);
-		builder.append(sw);
-		builder.append(CLOSE_UNORDERED_LIST_TAG);
-
-		appendScriptDeprecated(new StringBuilder(JSMART_TREE.format(id)));
-
-		printOutput(builder);
+//
+//		StringWriter sw = new StringWriter();
+//		JspFragment body = getJspBody();
+//		if (body != null) {
+//			body.invoke(sw);
+//		}
+//
+//		StringBuilder builder = new StringBuilder(OPEN_UNORDERED_LIST_TAG + "id=\"" + id + "\" ");
+//
+//		builder.append("tree=\"tree\" ");
+//
+//		if (style != null) {
+//			builder.append("style=\"" + style + "\" ");
+//		}
+//		if (styleClass != null) {
+//			builder.append("class=\"" + styleClass + "\" ");
+//		} else {
+//			appendClass(builder, CSS_TREE);
+//		}
+//
+//		appendEvent(builder);
+//
+//		builder.append(CLOSE_TAG);
+//		builder.append(sw);
+//		builder.append(CLOSE_UNORDERED_LIST_TAG);
+//
+//		appendScriptDeprecated(new StringBuilder(JSMART_TREE.format(id)));
+//
+//		printOutput(builder);
 	}
 
 }

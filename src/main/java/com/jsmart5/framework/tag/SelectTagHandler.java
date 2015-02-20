@@ -34,7 +34,7 @@ import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Select;
 
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class SelectTagHandler extends SmartTagHandler {
 	
@@ -68,17 +68,6 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 	public SelectTagHandler() {
 		options = new ArrayList<OptionTagHandler>();
-	}
-
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof GridTagHandler) {
-
-			((GridTagHandler) parent).addTag(this);
-			return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -235,7 +224,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 		jsonAjax.setAsync(async);
 		jsonAjax.setMethod("post");
 
-		builder.append(JSMART_SELECT.format(getNewJsonValue(jsonAjax)));
+		builder.append(JSMART_SELECT.format(getJsonValue(jsonAjax)));
 
 		builder.append("});");
 		return builder;

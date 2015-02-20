@@ -40,7 +40,7 @@ import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Ul;
 
-public final class ButtonTagHandler extends SmartTagHandler {
+public final class DropDownTagHandler extends SmartTagHandler {
 
 	static final String JUSTIFIED = "justified";
 	
@@ -84,7 +84,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	private List<DropTagHandler> drops;
 
-	public ButtonTagHandler() {
+	public DropDownTagHandler() {
 		drops = new ArrayList<DropTagHandler>();
 	}
 

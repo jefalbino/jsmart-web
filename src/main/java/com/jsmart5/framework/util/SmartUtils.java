@@ -47,11 +47,7 @@ public class SmartUtils {
 	public static String randomId() {
 		final byte[] bytes = new byte[DEFAULT_RANDOM_BYTES];
 		random.nextBytes(bytes);
-
-		String base32String;
-		synchronized (base32) {
-			base32String = base32.encodeAsString(bytes);
-		}
+		String base32String = base32.encodeAsString(bytes);
 		return base32String.toLowerCase().replace("=", "");
 	}
 

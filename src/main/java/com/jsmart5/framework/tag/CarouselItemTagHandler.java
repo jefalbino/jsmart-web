@@ -27,10 +27,6 @@ import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.util.SmartImage;
 import com.jsmart5.framework.util.SmartUtils;
 
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
-
-
 public final class CarouselItemTagHandler extends SmartTagHandler {
 
 	private String lib;
@@ -59,38 +55,38 @@ public final class CarouselItemTagHandler extends SmartTagHandler {
 
 	@Override
 	public void executeTag() throws JspException, IOException {
-		String libValue = (String) getTagValue(lib);
-		String nameValue = (String) getTagValue(name);
-
-		StringBuilder builder = new StringBuilder();
-		builder.append(OPEN_DIV_TAG + "id=\"" + id + "\" ");
-		appendClass(builder, CSS_CAROUSEL_ITEM);
-		builder.append(CLOSE_TAG);
-
-		if (link != null) {
-			builder.append(OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");
-			builder.append(IMG_TAG + "src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" alt=\"" + name + "\" />");
-			builder.append(CLOSE_LINK_TAG);
-		} else {
-			builder.append(IMG_TAG + "src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" alt=\"" + name + "\" />");
-		}
-
-		if (caption != null) {
-			builder.append(OPEN_LABEL_TAG);
-			builder.append(CLOSE_TAG);
-			if (link != null) {
-				builder.append(OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");
-				builder.append(getTagValue(caption));
-				builder.append(CLOSE_LINK_TAG);
-			} else {
-				builder.append(getTagValue(caption));
-			}
-			builder.append(CLOSE_LABEL_TAG);
-		}
-
-		builder.append(CLOSE_DIV_TAG);
-
-		printOutput(builder);
+//		String libValue = (String) getTagValue(lib);
+//		String nameValue = (String) getTagValue(name);
+//
+//		StringBuilder builder = new StringBuilder();
+//		builder.append(OPEN_DIV_TAG + "id=\"" + id + "\" ");
+//		appendClass(builder, CSS_CAROUSEL_ITEM);
+//		builder.append(CLOSE_TAG);
+//
+//		if (link != null) {
+//			builder.append(OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");
+//			builder.append(IMG_TAG + "src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" alt=\"" + name + "\" />");
+//			builder.append(CLOSE_LINK_TAG);
+//		} else {
+//			builder.append(IMG_TAG + "src=\"" + SmartImage.IMAGES.getImage(libValue, nameValue) + "\" alt=\"" + name + "\" />");
+//		}
+//
+//		if (caption != null) {
+//			builder.append(OPEN_LABEL_TAG);
+//			builder.append(CLOSE_TAG);
+//			if (link != null) {
+//				builder.append(OPEN_LINK_TAG + "href=\"" + SmartUtils.decodePath((String) getTagValue(link)) + "\" >");
+//				builder.append(getTagValue(caption));
+//				builder.append(CLOSE_LINK_TAG);
+//			} else {
+//				builder.append(getTagValue(caption));
+//			}
+//			builder.append(CLOSE_LABEL_TAG);
+//		}
+//
+//		builder.append(CLOSE_DIV_TAG);
+//
+//		printOutput(builder);
 	}
 
 	public void setLib(String lib) {

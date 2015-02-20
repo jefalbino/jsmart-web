@@ -29,7 +29,7 @@ import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.FieldSet;
 import com.jsmart5.framework.tag.html.Form;
 
-import static com.jsmart5.framework.tag.JsConstants.*;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class FormTagHandler extends SmartTagHandler {
 	
