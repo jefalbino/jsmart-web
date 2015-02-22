@@ -25,8 +25,6 @@ public final class JsonAjax {
 
 	private String id;
 
-	private boolean async;
-
 	private Integer timeout;
 
 	private String method;
@@ -41,7 +39,11 @@ public final class JsonAjax {
 
 	private String before;
 
-	private String exec;
+	private String success;
+	
+	private String error;
+	
+	private String complete;
 
 	public String getId() {
 		return id;
@@ -49,14 +51,6 @@ public final class JsonAjax {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public boolean isAsync() {
-		return async;
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 	public Integer getTimeout() {
@@ -115,12 +109,28 @@ public final class JsonAjax {
 		this.before = before;
 	}
 
-	public String getExec() {
-		return exec;
+	public String getSuccess() {
+		return success;
 	}
 
-	public void setExec(String exec) {
-		this.exec = exec;
+	public void setSuccess(String success) {
+		this.success = success;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	public String getComplete() {
+		return complete;
+	}
+
+	public void setComplete(String complete) {
+		this.complete = complete;
 	}
 
 }

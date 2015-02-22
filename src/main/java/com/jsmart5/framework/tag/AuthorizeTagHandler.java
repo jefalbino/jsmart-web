@@ -27,6 +27,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 
 public final class AuthorizeTagHandler extends SmartTagHandler {
@@ -45,7 +46,7 @@ public final class AuthorizeTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		// Execute body to get whens and otherwise
 		JspFragment body = getJspBody();
@@ -63,8 +64,7 @@ public final class AuthorizeTagHandler extends SmartTagHandler {
 				if (whenAccess != null && !whenAccess.isEmpty()) {
 					for (String access : whenAccess) {
 						if (userAccess.contains(access)) {
-							when.executeTag();
-							return;
+							return when.executeTag();
 						}
 					}
 				}
@@ -72,8 +72,9 @@ public final class AuthorizeTagHandler extends SmartTagHandler {
 		}
 
 		if (otherwise != null)  {
-			otherwise.executeTag();
+			return otherwise.executeTag();
 		}
+		return null;
 	}
 
 	void addWhen(WhenTagHandler when) {

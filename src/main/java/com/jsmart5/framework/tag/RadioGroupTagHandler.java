@@ -19,16 +19,15 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class RadioGroupTagHandler extends SmartTagHandler {
 
@@ -36,13 +35,11 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 
 	private String align;
 
-	private String value;
+	private String selectValue;
 
 	private boolean inline;
 
 	private boolean ajax;
-
-	private boolean async = false;
 
 	public RadioGroupTagHandler() {
 		checks = new ArrayList<CheckTagHandler>();
@@ -54,7 +51,7 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 		
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -68,11 +65,11 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 
 		Div div = new Div();
 		div.addAttribute("id", id)
-			.addAttribute("align", align);
+			.addAttribute("align", align)
+			.addAttribute("radiogroup", "");
 
  		int index = 0;
 		for (CheckTagHandler check : checks) {
-			StringWriter sw = new StringWriter();
 
 			check.setId(id + "_" + index++);
 			check.setStyle(style);
@@ -80,27 +77,24 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 			check.setInline(inline);
 			check.setRest(rest);
 			check.setValidator(validator);
-			check.setName(value);
+			check.setName(selectValue);
 			check.setAjax(ajax);
-			check.setAsync(async);
 			check.addAllAjaxTag(ajaxTags);
 			check.setType(CheckTagHandler.RADIO);
 			setEvents(check);
-			check.setOutputWriter(sw);
-			check.executeTag();
 
-			div.addText(sw.toString());
+			div.addTag(check.executeTag());
 		}
 
-		printOutput(div.getHtml());
+		return div;
 	}
 
 	void addCheck(CheckTagHandler check) {
 		this.checks.add(check);
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setSelectValue(String selectValue) {
+		this.selectValue = selectValue;
 	}
 
 	public void setAlign(String align) {
@@ -113,10 +107,6 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 
 	public void setAjax(boolean ajax) {
 		this.ajax = ajax;
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 }

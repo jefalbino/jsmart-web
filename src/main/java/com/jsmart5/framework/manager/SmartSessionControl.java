@@ -35,7 +35,7 @@ public final class SmartSessionControl implements HttpSessionListener {
 		HttpSession session = event.getSession();
 		synchronized (session) {
 
-			session.setAttribute(SmartConstants.AJAX_RESET_ATTR, SmartConstants.SESSION_CREATED_FLAG);
+			session.setAttribute(SmartConstants.SESSION_RESET_ATTR, "#");
 			HANDLER.instantiateAuthBean(session);
 
 			if (CONFIG.getContent().getSessionTimeout() > 0) {

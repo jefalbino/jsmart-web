@@ -26,22 +26,23 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 
 public final class CheckListTagHandler extends SmartTagHandler {
 
-	private String value;
+	private String values;
 
 	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
-
+	
 	@Override
 	@SuppressWarnings("unchecked")
-	public void executeTag() throws JspException, IOException {
+	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		Object object = getTagValue(value);
+		Object object = getTagValue(values);
 
 		if (object instanceof Map) {
 			Map<Object, Object> map = (Map<Object, Object>) object;
@@ -60,10 +61,17 @@ public final class CheckListTagHandler extends SmartTagHandler {
 				}
 			}
 		}
+		return true;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	@Override
+	public Tag executeTag() throws JspException, IOException {
+		// DO NOTHING
+		return null;
+	}
+
+	public void setValues(String values) {
+		this.values = values;
 	}
 
 }

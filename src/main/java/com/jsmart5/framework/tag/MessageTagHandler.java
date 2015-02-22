@@ -25,6 +25,7 @@ import javax.servlet.jsp.JspException;
 
 import com.jsmart5.framework.manager.SmartContext;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartMessage;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
@@ -83,7 +84,7 @@ public final class MessageTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //		Map<String, SmartMessage> messages = null;
 //
 //		if (FIXED.equals(position)) {
@@ -163,6 +164,7 @@ public final class MessageTagHandler extends SmartTagHandler {
 //				appendScriptDeprecated(scriptBuilder);
 //			}
 //		}
+		return null;
 	}
 
 	private String clearMessage(String message) {

@@ -36,6 +36,7 @@ import com.jsmart5.framework.json.JsonScroll;
 import com.jsmart5.framework.json.JsonSelect;
 import com.jsmart5.framework.json.JsonTable;
 import com.jsmart5.framework.manager.SmartTableTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -146,8 +147,6 @@ public final class TableTagHandler extends SmartTableTagHandler {
 
 	private int pageSize = DEFAULT_PAGE_SIZE;
 
-	private boolean async = true;
-
 	private ExpandTagHandler itemExpand;
 
 	private final List<ColumnTagHandler> columns;
@@ -182,7 +181,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //		try {
 //			JspFragment body = getJspBody();
 //			if (body != null) {
@@ -504,6 +503,7 @@ public final class TableTagHandler extends SmartTableTagHandler {
 //		} catch (JSONException ex) {
 //			throw new JspException(ex);
 //		}
+		return null;
 	}
 
 	private void appendCellEditContent(StringBuilder builder, int index) throws JspException, IOException {
@@ -957,10 +957,6 @@ public final class TableTagHandler extends SmartTableTagHandler {
 	void addColumn(ColumnTagHandler column) {
 		column.setId(String.valueOf(columns.size() + 1));
 		this.columns.add(column);
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 }

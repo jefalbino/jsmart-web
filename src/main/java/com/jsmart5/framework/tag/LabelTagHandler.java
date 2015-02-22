@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Span;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class LabelTagHandler extends SmartTagHandler {
 
@@ -45,7 +46,7 @@ public final class LabelTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		JspFragment body = getJspBody();
 		if (body != null) {
@@ -59,9 +60,9 @@ public final class LabelTagHandler extends SmartTagHandler {
 		Span span = new Span();
 		span.addAttribute("id", id)
 			.addAttribute("style", style)
-			.addAttribute("for", (String) getTagValue(target))
+			.addAttribute("for", getTagValue(target))
 			.addAttribute("class", Bootstrap.LABEL)
-			.addText((String) getTagValue(value));
+			.addText(getTagValue(value));
 
 		String lookVal = Bootstrap.LABEL_DEFAULT;
 
@@ -90,7 +91,7 @@ public final class LabelTagHandler extends SmartTagHandler {
 			}
 		}
 
-		printOutput(span.getHtml());
+		return span;
 	}
 
 	public void setTarget(String target) {

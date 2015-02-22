@@ -27,6 +27,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public class TreeTagHandler extends SmartTagHandler {
 
@@ -36,7 +37,7 @@ public class TreeTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //
 //		StringWriter sw = new StringWriter();
 //		JspFragment body = getJspBody();
@@ -66,6 +67,7 @@ public class TreeTagHandler extends SmartTagHandler {
 //		appendScriptDeprecated(new StringBuilder(JSMART_TREE.format(id)));
 //
 //		printOutput(builder);
+		return null;
 	}
 
 }

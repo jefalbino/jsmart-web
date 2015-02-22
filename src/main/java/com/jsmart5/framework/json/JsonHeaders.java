@@ -16,37 +16,30 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag;
+package com.jsmart5.framework.json;
 
-import java.io.IOException;
+import java.util.List;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspTag;
+public class JsonHeaders {
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+	private List<String> styles;
+	
+	private List<String> scripts;
 
-
-public final class NumberFormatTagHandler extends SmartTagHandler {
-
-	private String regex;
-
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
+	public List<String> getStyles() {
+		return styles;
 	}
 
-	@Override
-	public void executeTag() throws JspException, IOException {
-		if (!regex.trim().isEmpty()) {
-			JspTag parent = getParent();
-			if (parent instanceof SmartTagHandler) {
-				setNumberFormatRegex((SmartTagHandler) parent, regex);
-			}
-		}
+	public void setStyles(List<String> styles) {
+		this.styles = styles;
 	}
 
-	public void setRegex(String regex) {
-		this.regex = regex;
+	public List<String> getScripts() {
+		return scripts;
+	}
+
+	public void setScripts(List<String> scripts) {
+		this.scripts = scripts;
 	}
 
 }

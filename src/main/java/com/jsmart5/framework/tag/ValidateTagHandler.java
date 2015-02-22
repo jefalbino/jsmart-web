@@ -25,20 +25,32 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartValidateTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class ValidateTagHandler extends SmartValidateTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (look != null && !look.equalsIgnoreCase(ERROR) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(SUCCESS)) {
+			throw new JspException("Invalid look value for validate tag. Valid values are " + ERROR + ", " + WARNING 
+					+ ", " + SUCCESS);
+		}
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof SmartTagHandler) {
+
 			setValidator((SmartTagHandler) parent, this);
 		}
+		return true;
+	}
+
+	@Override
+	public Tag executeTag() throws JspException, IOException {
+		// DO NOTHING
+		return null;
 	}
 
 }

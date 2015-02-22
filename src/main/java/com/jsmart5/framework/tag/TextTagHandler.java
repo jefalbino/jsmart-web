@@ -19,13 +19,18 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.regex.Pattern;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class TextTagHandler extends SmartTagHandler {
+	
+	private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
 
 	private String res;
 
@@ -35,10 +40,9 @@ public final class TextTagHandler extends SmartTagHandler {
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
-
+	
 	@Override
-	public void executeTag() throws JspException, IOException {
-
+	public boolean beforeTag() throws JspException, IOException {
 		// Look for parameters
 		JspFragment body = getJspBody();
 		if (body != null) {
@@ -47,11 +51,22 @@ public final class TextTagHandler extends SmartTagHandler {
 
 		String message = getResourceString(res, key);
 
-		if (!params.isEmpty() && message.contains("%s")) {
-			message = String.format(message, params.values().toArray());
-		}
+		if (!params.isEmpty()) {
+			if (BRACKETS.matcher(message).find()) {
+				message = MessageFormat.format(message, params.values().toArray());
 
-		printOutput(new StringBuilder(message));
+			} else if (message.contains("%s")) {
+				message = String.format(message, params.values().toArray());
+			}
+		}
+		printOutput(message);
+		return true;
+	}
+
+	@Override
+	public Tag executeTag() throws JspException, IOException {
+		// DO NOTHING
+		return null;
 	}
 
 	public void setRes(String res) {

@@ -36,9 +36,11 @@ public final class RowTagHandler extends SmartTagHandler {
 	
 	private String look;
 
-	private String disabled;
+	private boolean disabled;
 	
-	private String select;
+	private String selectValue;
+	
+	private HeaderTagHandler header;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
@@ -61,7 +63,7 @@ public final class RowTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -74,7 +76,7 @@ public final class RowTagHandler extends SmartTagHandler {
 		}
 
 		Tag tag = null;
-		if (select != null) {
+		if (selectValue != null) {
 			tag = new A();
 			tag.addAttribute("href", "#");
 		} else {
@@ -84,18 +86,18 @@ public final class RowTagHandler extends SmartTagHandler {
 		tag.addAttribute("id", id)
 			.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
-			.addAttribute("class", (Boolean) getTagValue(disabled) ? Bootstrap.DISABLED : null)
+			.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
 			.addAttribute("class", styleClass);
 		
-		look = (String) getTagValue(look);
+		String lookVal = (String) getTagValue(look);
 
-		if (SUCCESS.equalsIgnoreCase(look)) {
+		if (SUCCESS.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_SUCCESS);
-		} else if (INFO.equalsIgnoreCase(look)) {
+		} else if (INFO.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_INFO);
-		} else if (WARNING.equalsIgnoreCase(look)) {
+		} else if (WARNING.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_WARNING);
-		} else if (DANGER.equalsIgnoreCase(look)) {
+		} else if (DANGER.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_DANGER);
 		}
 
@@ -103,21 +105,34 @@ public final class RowTagHandler extends SmartTagHandler {
 		tag.addAttribute("class", styleClass);
 
 		appendEvent(tag);
+		
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
+			}
+		}
 
+		if (header != null) {
+			tag.addTag(header.executeTag());
+		}
 		tag.addText(sw.toString());
 
-		printOutput(tag.getHtml());
+		return tag;
 	}
 	
-	void setSelect(String select) {
-		this.select = select;
+	void setHeader(HeaderTagHandler header) {
+		this.header = header;
+	}
+	
+	void setSelectValue(String selectValue) {
+		this.selectValue = selectValue;
 	}
 
 	public void setLook(String look) {
 		this.look = look;
 	}
 
-	public void setDisabled(String disabled) {
+	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
 	}
 

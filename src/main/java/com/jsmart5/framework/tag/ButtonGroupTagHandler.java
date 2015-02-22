@@ -27,6 +27,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Tag;
 
 public class ButtonGroupTagHandler extends SmartTagHandler {
 
@@ -44,7 +45,7 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -79,7 +80,7 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 
 		buttonGroup.addText(sw.toString());
 
-		printOutput(buttonGroup.getHtml());
+		return buttonGroup;
 	}
 
 	public void setInline(boolean inline) {

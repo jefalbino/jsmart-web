@@ -25,6 +25,7 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.json.JsonRange;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -70,7 +71,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //
 //		// Container to hold range
 //		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
@@ -176,6 +177,7 @@ public final class RangeTagHandler extends SmartTagHandler {
 //		printOutput(builder);
 //
 //		appendScriptDeprecated(new StringBuilder(JSMART_RANGE.format(id)));
+		return null;
 	}
 
 	public void setAjax(boolean ajax) {

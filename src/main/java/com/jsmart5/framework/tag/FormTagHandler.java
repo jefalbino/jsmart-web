@@ -28,10 +28,15 @@ import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.FieldSet;
 import com.jsmart5.framework.tag.html.Form;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class FormTagHandler extends SmartTagHandler {
+	
+	private static final String POST = "post";
+	
+	private static final String GET = "get";
 	
 	static final String SMALL = "small";
 	
@@ -45,6 +50,8 @@ public final class FormTagHandler extends SmartTagHandler {
 
 	private String method;
 	
+	private String enctype;
+	
 	private boolean disabled;
 	
 	private String position;
@@ -53,7 +60,7 @@ public final class FormTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (method != null && !method.equalsIgnoreCase("GET") && !method.equalsIgnoreCase("POST")) {
+		if (method != null && !method.equalsIgnoreCase(GET) && !method.equalsIgnoreCase(POST)) {
 			throw new JspException("Invalid method for form tag. Valid values are get or post");
 		}
 		if (position != null && !position.equalsIgnoreCase(VERTICAL) && !position.equalsIgnoreCase(HORIZONTAL) 
@@ -67,7 +74,7 @@ public final class FormTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -81,7 +88,8 @@ public final class FormTagHandler extends SmartTagHandler {
 
 		Form form = new Form();
 		form.addAttribute("id", id)
-			.addAttribute("method", method)
+			.addAttribute("method", method != null ? method : POST)
+			.addAttribute("enctype", enctype)
 			.addAttribute("style", style);
 
 		if (HORIZONTAL.equalsIgnoreCase(position)) {
@@ -107,7 +115,8 @@ public final class FormTagHandler extends SmartTagHandler {
 		}
 
 		appendScript(getFunction());
-		printOutput(form.getHtml());
+
+		return form;
 	}
 	
 	private StringBuilder getFunction() {
@@ -122,6 +131,10 @@ public final class FormTagHandler extends SmartTagHandler {
 
 	public void setMethod(String method) {
 		this.method = method;
+	}
+
+	public void setEnctype(String enctype) {
+		this.enctype = enctype;
 	}
 
 	public void setDisabled(boolean disabled) {

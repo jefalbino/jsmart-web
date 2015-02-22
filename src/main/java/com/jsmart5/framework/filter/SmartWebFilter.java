@@ -52,12 +52,13 @@ import org.reflections.vfs.Vfs;
 import org.reflections.vfs.Vfs.Dir;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import com.jsmart5.framework.config.SmartHtmlCompress;
+import com.jsmart5.framework.json.JsonHeaders;
+import com.jsmart5.framework.json.JsonResources;
 import com.jsmart5.framework.manager.SmartContext;
+import com.jsmart5.framework.tag.html.Head;
+import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Script;
 
 import static com.jsmart5.framework.config.SmartConfig.*;
@@ -116,12 +117,6 @@ public final class SmartWebFilter implements Filter {
 		// Initiate bean context based on current thread instance
 		SmartContext.initCurrentInstance(httpRequest, httpResponse);
 
-		// Remove script builder
-		HttpSession session = httpRequest.getSession();
-		synchronized (session) {
-			session.removeAttribute(SCRIPT_BUILDER_ATTR);
-		}
-
 		// Anonymous subclass to wrap HTTP response to print output
 		SmartWebServletResponseWrapper responseWrapper = new SmartWebServletResponseWrapper(httpResponse);
 
@@ -145,11 +140,10 @@ public final class SmartWebFilter implements Filter {
         	html = getCompleteHtml(httpRequest, responseWrapper);
 
         } finally {
-        	// Remove script and ajax builder attributes
+        	// Remove session reset attribute
+        	HttpSession session = httpRequest.getSession();
         	synchronized (session) {
-        		session.removeAttribute(AJAX_ATTR);
-            	session.removeAttribute(AJAX_RESET_ATTR);
-            	session.removeAttribute(SCRIPT_BUILDER_ATTR);
+            	session.removeAttribute(SESSION_RESET_ATTR);
         	}
         }
 
@@ -227,45 +221,57 @@ public final class SmartWebFilter implements Filter {
 
 		    } else {
 		    	String htmlMatch = htmlMatcher.group();
-		    	html = html.replaceFirst(htmlMatch, htmlMatch + START_HEAD_TAG + headerStyles + headerScripts + END_HEAD_TAG);
+		    	Head head = new Head();
+		    	head.addText(headerStyles).addText(headerScripts);
+		    	html = html.replaceFirst(htmlMatch, htmlMatch + head.getHtml());
 		    }
 
-	        // Case redirect via ajax, place tag with path to be handled by javascript
+	    	String ajaxPath = (String) httpRequest.getAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR);
+			if (ajaxPath != null) {
+
+				Matcher formMatcher = FORM_PATTERN.matcher(html);
+				if (formMatcher.find()) {
+					String formMatch = formMatcher.group();
+
+					Input input = new Input();
+					input.addAttribute("id", REQUEST_REDIRECT_PATH)
+						.addAttribute("type", "hidden")
+						.addAttribute("value", ajaxPath);
+
+					html = html.replace(formMatch, formMatch + input.getHtml());
+				}
+			}
+
+			// Case redirect via ajax, place tag with path to be handled by javascript
 		    HttpSession session = httpRequest.getSession();
 		    synchronized (session) {
-
-		    	String ajaxPath = (String) session.getAttribute(AJAX_ATTR);
-				if (ajaxPath != null) {
-
-					Matcher formMatcher = FORM_PATTERN.matcher(html);
-					if (formMatcher.find()) {
-						String formMatch = formMatcher.group();
-						html = html.replace(formMatch, formMatch + REDIRECT_AJAX_TAG + ajaxPath + END_AJAX_TAG);
-					}
-				}
-
-				// Case reset via ajax, place tag to force javascript reset the page
-				if (session.getAttribute(AJAX_RESET_ATTR) != null) {
+				// Case session reset, place tag to force javascript reset the page
+				if (session.getAttribute(SESSION_RESET_ATTR) != null) {
 					if (ajaxPath == null && SmartContext.isAjaxRequest()) {
 
 						Matcher formMatcher = FORM_PATTERN.matcher(html);
 						if (formMatcher.find()) {
 							String formMatch = formMatcher.group();
-							html = html.replaceFirst(formMatch, formMatch + RESET_AJAX_TAG);
+
+							Input input = new Input();
+							input.addAttribute("id", SESSION_RESET_ATTR)
+								.addAttribute("type", "hidden");
+							
+							html = html.replaceFirst(formMatch, formMatch + input.getHtml());
 						}
 					}
 		        }
+		    }
+
+			Script script = (Script) httpRequest.getAttribute(REQUEST_SCRIPT_BUILDER_ATTR);
+			if (script != null) {
+				Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
 				
-				Script script = (Script) session.getAttribute(SCRIPT_BUILDER_ATTR);
-				if (script != null) {
-					Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
-					
-					if (closeBodyMatcher.find()) {
-						String closeBodyMatch = closeBodyMatcher.group();
-						html = html.replace(closeBodyMatch, script.getHtml() + closeBodyMatch);
-					} else {
-						throw new RuntimeException("HTML tag 'body' could not be found. Please insert the body tag in your JSP");
-					}
+				if (closeBodyMatcher.find()) {
+					String closeBodyMatch = closeBodyMatcher.group();
+					html = html.replace(closeBodyMatch, script.getHtml() + closeBodyMatch);
+				} else {
+					throw new RuntimeException("HTML tag 'body' could not be found. Please insert the body tag in your JSP");
 				}
 			}
         }
@@ -273,16 +279,14 @@ public final class SmartWebFilter implements Filter {
 	}
 
 	private void initHeaders() {
-		JsonObject jsonHeaders = GSON.toJsonTree(convertResourceToString(FILTER_HEADERS)).getAsJsonObject();
+		JsonHeaders jsonHeaders = GSON.fromJson(convertResourceToString(FILTER_HEADERS), JsonHeaders.class);
 
-		JsonArray styles = jsonHeaders.getAsJsonArray("styles");
-		for (int i = 0; i < styles.size(); i++) {
-			headerStyles.append(styles.get(i).getAsString());
+		for (String style : jsonHeaders.getStyles()) {
+			headerStyles.append(style);
 		}
 
-		JsonArray scripts = jsonHeaders.getAsJsonArray("scripts");
-		for (int i = 0; i < scripts.size(); i++) {
-			headerScripts.append(scripts.get(i).getAsString());
+		for (String script : jsonHeaders.getScripts()) {
+			headerScripts.append(script);
 		}
 	}
 
@@ -317,7 +321,7 @@ public final class SmartWebFilter implements Filter {
 				return;
 			}
 
-			JsonObject jsonResources = GSON.toJsonTree(convertResourceToString(FILTER_RESOURCES)).getAsJsonObject();
+			JsonResources jsonResources = GSON.fromJson(convertResourceToString(FILTER_RESOURCES), JsonResources.class);
 
 			File libFile = new File(context.getRealPath(libFilePath));
 			Dir content = Vfs.fromURL(libFile.toURI().toURL());
@@ -326,10 +330,9 @@ public final class SmartWebFilter implements Filter {
 			while (files.hasNext()) {
 				Vfs.File file = files.next();
 
-				JsonArray resources = jsonResources.getAsJsonArray("resources");
-				for (int i = 0; i < resources.size(); i++) {
+				for (String resource : jsonResources.getResources()) {
 
-					String resourcePath = resources.get(i).getAsString().replace("*", "");
+					String resourcePath = resource.replace("*", "");
 
 					if (file.getRelativePath().startsWith(resourcePath)) {
 						initDirResources(context.getRealPath(SEPARATOR), file.getRelativePath());

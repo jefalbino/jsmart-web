@@ -77,8 +77,6 @@ public final class SmartContext implements Serializable {
 
 	private String selectIndexes = new String();
 
-	private boolean editItemTagEnabled; 
-
 	private SmartContext(final HttpServletRequest request, final HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
@@ -116,7 +114,6 @@ public final class SmartContext implements Serializable {
 		parameters.clear();
 		parameters = null;
 		selectIndexes = null;
-		editItemTagEnabled = false;
 		JSP_FACTORY.releasePageContext(pageContext);
 		pageContext = null;
 	}
@@ -319,18 +316,6 @@ public final class SmartContext implements Serializable {
 			for (int i = 0; i < selectIndexes.length; i++) {
 				context.selectIndexes += selectIndexes[i] + (i < selectIndexes.length -1 ? "," : "");
 			}
-		}
-	}
-
-	static boolean isEditItemTagEnabled() {
-		SmartContext context = getCurrentInstance();
-		return context != null ? context.editItemTagEnabled : false;
-	}
-
-	static void setEditItemTagEnabled(final boolean editItemTagEnabled) {
-		SmartContext context = getCurrentInstance();
-		if (context != null) {
-			context.editItemTagEnabled = editItemTagEnabled;
 		}
 	}
 

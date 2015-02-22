@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class KeypadTagHandler extends SmartTagHandler {
 
@@ -45,7 +46,7 @@ public final class KeypadTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 //		StringBuilder scriptBuilder = new StringBuilder();
 //
@@ -95,6 +96,8 @@ public final class KeypadTagHandler extends SmartTagHandler {
 //			divBuilder.append(CLOSE_DIV_TAG);
 //			printOutput(divBuilder);
 //		}
+		
+		return null;
 	}
 
 	public void setTarget(String target) {

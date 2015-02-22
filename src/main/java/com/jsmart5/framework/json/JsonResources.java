@@ -16,41 +16,20 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.config;
+package com.jsmart5.framework.json;
 
-public enum SmartTheme {
+import java.util.List;
 
-	WATER,
-	DARK_WATER,
-	BLUE, 
-	DARK_BLUE, 
-	GREEN, 
-	DARK_GREEN, 
-	PURPLE, 
-	DARK_PURPLE, 
-	PINK, 
-	ORANGE, 
-	DARK_ORANGE,
-	RED, 
-	DARK_RED,
-	BROWN, 
-	BLACK, 
-	YELLOW, 
-	GRAY, 
-	WHITE;
+public class JsonResources {
 
-	public static boolean contains(String theme) {
-		for (SmartTheme smartTheme : values()) {
-			if (smartTheme.toString().equalsIgnoreCase(theme)) {
-				return true;
-			}
-		}
-		return false;
+	private List<String> resources;
+
+	public List<String> getResources() {
+		return resources;
 	}
 
-	@Override
-	public String toString() {
-		return super.toString().toLowerCase();
+	public void setResources(List<String> resources) {
+		this.resources = resources;
 	}
 
 }

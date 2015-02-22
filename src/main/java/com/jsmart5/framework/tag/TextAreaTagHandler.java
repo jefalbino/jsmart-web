@@ -25,15 +25,19 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
-
-import static com.jsmart5.framework.tag.HtmlConstants.*;
-import static com.jsmart5.framework.tag.CssConstants.*;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Label;
+import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.html.TextArea;
 
 public final class TextAreaTagHandler extends SmartTagHandler {
 
 	private Integer rows;
 
 	private Integer cols;
+	
+	private String label;
 
 	private Integer length;
 
@@ -53,69 +57,66 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(null);
 		}
-
-		StringBuilder builder = new StringBuilder(OPEN_TEXT_AREA_TAG);
-
-		if (id != null) {
-			builder.append("id=\"" + id + "\" ");
-		}
-		String name = getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : "");
-		if (name != null) {
-			builder.append("name=\"" + name + "\" ");
-		}
-
-		appendFormValidator(builder);
 		
-		appendRest(builder);
-
-		if (rows != null) {
-			builder.append("rows=\"" + rows + "\" ");
-		}
-		if (cols != null) {
-			builder.append("cols=\"" + cols + "\" ");
-		}
-		if (length != null) {
-			builder.append("maxlength=\"" + length + "\" ");
-		}
-		if (style != null) {
-			builder.append("style=\"" + style + "\" ");
-		}
-		if (styleClass != null) {
-			builder.append("class=\"" + styleClass + "\" ");
-		} else {
-			appendClass(builder, CSS_TEXTAREA);
-		}
-		if (tabIndex != null) {
-			builder.append("tabindex=\"" + tabIndex + "\" ");
-		}
-		if (readOnly) {
-			builder.append("readonly=\"true\" ");
-		}
-		if (disabled || isEditRowTagEnabled()) {
-			builder.append("disabled=\"disabled\" ");
-		}
-		if (placeHolder != null) {
-			builder.append("placeholder=\"" + getResourceString(placeHolder) + "\" "); 
+		if (id == null) {
+			id = getRandonId();
 		}
 
-		appendEvent(builder);
+		Div formGroup = null;
 
-		builder.append(">");
-
-		Object object = getTagValue(value);
-
-		if (object != null) {
-			builder.append(object.toString());
+		JspTag parent = getParent();
+		if (label != null || parent instanceof FormTagHandler) {
+			formGroup = new Div();
+			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 		}
 
-		printOutput(builder.append(CLOSE_TEXT_AREA_TAG));
+		if (label != null) {
+			Label labelTag = new Label();
+			labelTag.addAttribute("for", id)
+					.addAttribute("class", Bootstrap.LABEL_CONTROL)
+					.addText(getTagValue(label));
+			formGroup.addTag(labelTag);
+		}
+
+		TextArea textArea = new TextArea();
+		textArea.addAttribute("id", id)
+			 .addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+			 .addAttribute("style", style)
+			 .addAttribute("class", Bootstrap.FORM_CONTROL)
+			 .addAttribute("rows", rows)
+			 .addAttribute("cols", cols)
+			 .addAttribute("tabindex", tabIndex)
+			 .addAttribute("maxlength", length)
+			 .addAttribute("readonly", readOnly ? readOnly : null)
+			 .addAttribute("disabled", disabled ? "disabled" : null)
+			 .addAttribute("placeholder", getTagValue(placeHolder))
+			 .addText(getTagValue(value));
+		
+		// Add the style class at last
+		textArea.addAttribute("class", styleClass);
+
+		appendValidator(textArea);
+		appendRest(textArea);
+		appendEvent(textArea);
+
+		if (formGroup != null) {
+			formGroup.addTag(textArea);
+		}
+		
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
+			}
+		}
+
+		return formGroup != null ? formGroup : textArea;
 	}
 
 	public void setRows(Integer rows) {
@@ -124,6 +125,10 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 
 	public void setCols(Integer cols) {
 		this.cols = cols;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public void setLength(Integer length) {
@@ -138,12 +143,12 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 		this.readOnly = readOnly;
 	}
 
-	public void setPlaceHolder(String placeHolder) {
-		this.placeHolder = placeHolder;
-	}
-
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	public void setPlaceHolder(String placeHolder) {
+		this.placeHolder = placeHolder;
 	}
 
 	public void setTabIndex(Integer tabIndex) {

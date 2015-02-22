@@ -29,11 +29,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
+import javax.el.PropertyNotWritableException;
 import javax.el.ValueExpression;
 import javax.servlet.ServletException;
 
@@ -59,6 +62,8 @@ public enum SmartExpression {
 
 	EXPRESSIONS();
 	
+	private static final Logger LOGGER = Logger.getLogger(SmartExpression.class.getPackage().getName());
+
 	private static final Gson GSON = new Gson();
 
 	Map<String, String> getRequestExpressions() {
@@ -84,38 +89,43 @@ public enum SmartExpression {
 	}
 
 	String handleRequestExpression(String param, String expr) throws ServletException, IOException {
-		String submitExpression = null;
-		String jTag = param.substring(0, SmartTagHandler.J_TAG_LENGTH);
+		try {
+			String submitExpression = null;
+			String jTag = param.substring(0, SmartTagHandler.J_TAG_LENGTH);
+	
+			if (jTag.equals(SmartTagHandler.J_TAG)) {
+				setExpressionValue(expr, param, false);
+	
+			} else if (jTag.equals(SmartTagHandler.J_ARRAY)) {
+				setExpressionValues(expr, param);
+	
+			} else if (jTag.equals(SmartTagHandler.J_SEL)) {
+				setSelectionValue(expr, param);
+	
+			} else if (jTag.equals(SmartTagHandler.J_TBL_SEL)) {
+				setTableSelectionValue(expr, param);
+	
+			} else if (jTag.equals(SmartTagHandler.J_TBL_EDT)) {
+				setTableEditionValue(expr, param);
+	
+			} else if (jTag.equals(SmartTagHandler.J_FILE)) {
+				setExpressionFilePart(expr, param);
+	
+			} else if (jTag.equals(SmartTagHandler.J_DATE)) {
+				setExpressionDate(expr, param);
+	
+			} else if (jTag.equals(SmartTagHandler.J_CAPTCHA)) {
+				setExpressionCaptcha(expr, param);
+	
+			} else if (jTag.equals(SmartTagHandler.J_SBMT)) {
+				submitExpression = expr;
+			}
+			return submitExpression;
 
-		if (jTag.equals(SmartTagHandler.J_TAG)) {
-			setExpressionValue(expr, param, false);
-
-		} else if (jTag.equals(SmartTagHandler.J_ARRAY)) {
-			setExpressionValues(expr, param);
-
-		} else if (jTag.equals(SmartTagHandler.J_SEL)) {
-			setSelectionValue(expr, param);
-
-		} else if (jTag.equals(SmartTagHandler.J_TBL_SEL)) {
-			setTableSelectionValue(expr, param);
-
-		} else if (jTag.equals(SmartTagHandler.J_TBL_EDT)) {
-			setTableEditionValue(expr, param);
-
-		} else if (jTag.equals(SmartTagHandler.J_FILE)) {
-			setExpressionFilePart(expr, param);
-
-		} else if (jTag.equals(SmartTagHandler.J_DATE)) {
-			setExpressionDate(expr, param);
-
-		} else if (jTag.equals(SmartTagHandler.J_CAPTCHA)) {
-			setExpressionCaptcha(expr, param);
-
-		} else if (jTag.equals(SmartTagHandler.J_SBMT)) {
-			submitExpression = expr;
+		} catch (PropertyNotWritableException e) {
+			LOGGER.log(Level.SEVERE, "Property " + expr + " is not writable");
+			throw e;
 		}
-
-		return submitExpression;
 	}
 
 	String submitExpression(String expr) {

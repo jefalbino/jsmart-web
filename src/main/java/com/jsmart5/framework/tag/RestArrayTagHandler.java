@@ -28,6 +28,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class RestArrayTagHandler extends SmartTagHandler {
 
@@ -52,7 +53,7 @@ public final class RestArrayTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //
 //		StringWriter sw = new StringWriter();
 //		JspFragment body = getJspBody();
@@ -98,6 +99,7 @@ public final class RestArrayTagHandler extends SmartTagHandler {
 //		}
 //
 //		printOutput(builder);
+		return null;
 	}
 
 	private void appendButton(StringBuilder builder, String text, String operation) throws JspException, IOException  {

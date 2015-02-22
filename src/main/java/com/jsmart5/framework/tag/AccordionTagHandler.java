@@ -27,6 +27,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class AccordionTagHandler extends SmartTagHandler {
 
@@ -35,7 +36,7 @@ public final class AccordionTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		if (id == null) {
 			id = getRandonId();
@@ -59,7 +60,7 @@ public final class AccordionTagHandler extends SmartTagHandler {
 		
 		appendEvent(div);
 
-		printOutput(div.getHtml());
+		return div;
 	}
 
 }

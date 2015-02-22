@@ -25,6 +25,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class CaptchaTagHandler extends SmartTagHandler {
 
@@ -50,7 +51,7 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //
 //		// Just to call nested tags
 //		JspFragment body = getJspBody();
@@ -121,6 +122,8 @@ public final class CaptchaTagHandler extends SmartTagHandler {
 //		builder.append("captcha=\"" + captchaScript + "\" ");
 //
 //		printOutput(builder.append(CLOSE_INLINE_TAG));
+		
+		return null;
 	}
 
 	public void setLength(String length) {

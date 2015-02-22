@@ -30,8 +30,10 @@ import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
 public final class TabPaneTagHandler extends SmartTagHandler {
+	
+	private String header;
 
-	private String title;
+	private String label;
 
 	private String value;
 
@@ -41,18 +43,23 @@ public final class TabPaneTagHandler extends SmartTagHandler {
 
 	private String tabClass;
 
-	private List<DropTagHandler> drops;
+	private boolean divider;
+
+	private List<TabPaneTagHandler> dropPanes;
 
 	public TabPaneTagHandler() {
-		drops = new ArrayList<DropTagHandler>();
+		dropPanes = new ArrayList<TabPaneTagHandler>();
 	}
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof TabTagHandler) {
-
 			((TabTagHandler) parent).addTabPane(this);
+			return false;
+
+		} else if (parent instanceof TabPaneTagHandler) {
+			((TabPaneTagHandler) parent).addDropPane(this);
 			return false;
 		}
 		return true;
@@ -64,11 +71,12 @@ public final class TabPaneTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(outputWriter);
 		}
+		return null;
 	}
 
 	@Override
@@ -76,12 +84,20 @@ public final class TabPaneTagHandler extends SmartTagHandler {
 		super.appendEvent(tag);
 	}
 
-	String getTitle() {
-		return title;
+	String getHeader() {
+		return header;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setHeader(String header) {
+		this.header = header;
+	}
+
+	String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	String getValue() {
@@ -116,12 +132,20 @@ public final class TabPaneTagHandler extends SmartTagHandler {
 		this.disabled = disabled;
 	}
 
-	void addDrop(DropTagHandler drop) {
-		this.drops.add(drop);
+	boolean hasDivider() {
+		return divider;
 	}
 
-	List<DropTagHandler> getDrops() {
-		return drops;
+	public void setDivider(boolean divider) {
+		this.divider = divider;
+	}
+
+	private void addDropPane(TabPaneTagHandler dropPane) {
+		this.dropPanes.add(dropPane);
+	}
+
+	List<TabPaneTagHandler> getDropPanes() {
+		return dropPanes;
 	}
 
 }

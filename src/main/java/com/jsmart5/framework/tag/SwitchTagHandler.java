@@ -25,6 +25,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -42,15 +43,13 @@ public final class SwitchTagHandler extends SmartTagHandler {
 
 	private boolean disabled;
 
-	private boolean async = true;
-
 	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //
 //		// Just to call nested tags
 //		JspFragment body = getJspBody();
@@ -180,6 +179,7 @@ public final class SwitchTagHandler extends SmartTagHandler {
 //		printOutput(builder);
 //
 //		appendScriptDeprecated(new StringBuilder(JSMART_SWITCH_RESET.format(id)));
+		return null;
 	}
 
 	public void setValue(String value) {
@@ -204,10 +204,6 @@ public final class SwitchTagHandler extends SmartTagHandler {
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 }

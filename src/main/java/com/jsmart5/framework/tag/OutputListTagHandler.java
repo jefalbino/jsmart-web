@@ -26,16 +26,16 @@ import javax.servlet.jsp.JspException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Li;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
 
 public final class OutputListTagHandler extends SmartTagHandler {
 
-	private Object value;
+	private Object values;
 	
 	private String look;
 
 	private boolean inline;
-
 
 	@Override
 	public void validateTag() throws JspException {
@@ -49,7 +49,7 @@ public final class OutputListTagHandler extends SmartTagHandler {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		Ul ul = new Ul();
 		ul.addAttribute("id", id)
@@ -77,7 +77,7 @@ public final class OutputListTagHandler extends SmartTagHandler {
 		// Add the style class at last
 		ul.addAttribute("class", styleClass);
 
-		Object obj = getTagValue(value);
+		Object obj = getTagValue(values);
 		if (obj != null) {
 			if (obj instanceof Collection) {
 				for (Object o : (Collection<Object>) obj) {
@@ -98,11 +98,11 @@ public final class OutputListTagHandler extends SmartTagHandler {
 			}
 		}
 
-		printOutput(ul.getHtml());
+		return ul;
 	}
 
-	public void setValue(Object value) {
-		this.value = value;
+	public void setValues(Object values) {
+		this.values = values;
 	}
 
 	public void setInline(boolean inline) {

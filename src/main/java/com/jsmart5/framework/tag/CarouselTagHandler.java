@@ -28,6 +28,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.js.JsConstants;
 
 public final class CarouselTagHandler extends SmartTagHandler {
@@ -72,7 +73,7 @@ public final class CarouselTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 //		// Just to call nested tags
 //		JspFragment body = getJspBody();
@@ -153,6 +154,7 @@ public final class CarouselTagHandler extends SmartTagHandler {
 //		appendScriptDeprecated(scriptBuilder);
 //
 //		printOutput(builder);
+		return null;
 	}
 
 	void addItem(CarouselItemTagHandler item) {

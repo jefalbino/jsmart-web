@@ -23,11 +23,13 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -38,6 +40,8 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 	private String label;
 
 	private boolean disabled;
+	
+	private boolean ajax;
 
 	private Integer tabIndex;
 
@@ -47,7 +51,7 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -64,27 +68,27 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 			.addAttribute("type", "checkbox")
 			.addAttribute("name", getTagName(J_TAG, value))
 			.addAttribute("tabindex", tabIndex)
-			.addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null);
+			.addAttribute("disabled", disabled ? "disabled" : null);
 
 		Label lb = new Label();
 		lb.addTag(input)
 			.addAttribute("style", style)
 			.addAttribute("class", styleClass)
-			.addText((String) getTagValue(label));
+			.addText(getTagValue(label));
 
 		Div div = new Div();
 		div.addAttribute("class", Bootstrap.CHECKBOX)
-			.addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null)
+			.addAttribute("disabled", disabled ? "disabled" : null)
 			.addTag(lb);
 
-		appendFormValidator(input);
+		appendValidator(input);
 		appendRest(input);
 		appendEvent(input);
 
 		Boolean object = (Boolean) getTagValue(value);
 		if (object != null) {
 			input.addAttribute("value", object)
-				.addAttribute("checked", object ? "true" : "");
+				.addAttribute("checked", object ? "true" : null);
 		} else {
 			input.addAttribute("value", "false");
 		}
@@ -97,14 +101,32 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 
 		appendScript(getFunction());
 
-		printOutput(div.getHtml()); 
+		if (ajax) {
+			appendScript(getAjaxFunction());
+		}
+
+		return div; 
 	}
-	
+
 	private StringBuilder getFunction() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("$('#").append(id).append("').bind('").append(EVENT_CLICK).append("', function(){");
 
 		builder.append(JSMART_CHECKBOX.format(id));
+
+		builder.append("});");
+		return builder;
+	}
+
+	private StringBuilder getAjaxFunction() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(id).append("').bind('").append(EVENT_CLICK).append("', function(){");
+
+		JsonAjax jsonAjax = new JsonAjax();
+		jsonAjax.setId(id);
+		jsonAjax.setMethod("post");
+
+		builder.append(JSMART_CHECK.format(getJsonValue(jsonAjax)));
 
 		builder.append("});");
 		return builder;
@@ -124,6 +146,10 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 
 	public void setTabIndex(Integer tabIndex) {
 		this.tabIndex = tabIndex;
+	}
+
+	public void setAjax(boolean ajax) {
+		this.ajax = ajax;
 	}
 
 }

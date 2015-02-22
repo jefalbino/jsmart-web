@@ -26,8 +26,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JsonLink;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartUtils;
 
 /*
@@ -60,15 +60,13 @@ public class TreeItemTagHandler extends SmartTagHandler {
 
 	private boolean ellipsize;
 
-	private boolean async = true;
-
 	@Override
 	public void validateTag() throws JspException {
 		
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //	
 //		JspTag parent = getParent();
 //		if (parent instanceof TreeTagHandler) {
@@ -186,6 +184,7 @@ public class TreeItemTagHandler extends SmartTagHandler {
 //		builder.append(CLOSE_LIST_ITEM_TAG);
 //
 //		printOutput(builder);
+		return null;
 	}
 
 	public void setAction(String action) {
@@ -218,10 +217,6 @@ public class TreeItemTagHandler extends SmartTagHandler {
 
 	public void setEllipsize(boolean ellipsize) {
 		this.ellipsize = ellipsize;
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 }

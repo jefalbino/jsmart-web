@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -39,11 +40,13 @@ public final class AjaxTagHandler extends SmartTagHandler {
 
 	private String update;
 
-	private String beforeAjax;
+	private String beforeSend;
+	
+	private String onError;
+	
+	private String onSuccess;
 
-	private String afterAjax;
-
-	private boolean async = true;
+	private String onComplete;
 
 	@Override
 	public void validateTag() throws JspException {
@@ -75,23 +78,26 @@ public final class AjaxTagHandler extends SmartTagHandler {
 			throw new JspException("Invalid timeout value for ajax tag. The valid value must be greater or equal to 0"); 
 		}
 	}
-
+	
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof SmartTagHandler) {
 
 			((SmartTagHandler) parent).addAjaxTag(this);
 		}
+		return true;
+	}
+
+	@Override
+	public Tag executeTag() throws JspException, IOException {
+		// DO NOTHING
+		return null;
 	}
 
 	StringBuilder getFunction(String id) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').bind('").append(event).append("', function(){");
-		
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
-		jsonAjax.setAsync(async);
 		jsonAjax.setTimeout(timeout);
 
 		if (action != null) {
@@ -107,17 +113,23 @@ public final class AjaxTagHandler extends SmartTagHandler {
 		if (update != null) {
 			jsonAjax.setUpdate(update.trim());
 		}
-		if (beforeAjax != null) {
-			jsonAjax.setBefore(beforeAjax.trim());
+		if (beforeSend != null) {
+			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
 		}
-		if (afterAjax != null) {
-			jsonAjax.setExec(afterAjax.trim());
+		if (onError != null) {
+			jsonAjax.setError((String) getTagValue(onError.trim()));
+		}
+		if (onSuccess != null) {
+			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+		}
+		if (onComplete != null) {
+			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
 		}
 
+		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 
-		builder.append("});");
-		return builder;
+		return getBindFunction(id, event, builder);
 	}
 
 	public void setEvent(String event) {
@@ -136,16 +148,20 @@ public final class AjaxTagHandler extends SmartTagHandler {
 		this.update = update;
 	}
 
-	public void setBeforeAjax(String beforeAjax) {
-		this.beforeAjax = beforeAjax;
+	public void setBeforeSend(String beforeSend) {
+		this.beforeSend = beforeSend;
 	}
 
-	public void setAfterAjax(String afterAjax) {
-		this.afterAjax = afterAjax;
+	public void setOnError(String onError) {
+		this.onError = onError;
 	}
 
-	public void setAsync(boolean async) {
-		this.async = async;
+	public void setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+	}
+
+	public void setOnComplete(String onComplete) {
+		this.onComplete = onComplete;
 	}
 
 }

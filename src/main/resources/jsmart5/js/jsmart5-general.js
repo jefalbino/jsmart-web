@@ -21,8 +21,9 @@ var Jsmart5 = (function() {
 	var TAG_INIT = "j0";
 	var DIALOG_OPEN = 'open()';
 	var DIALOG_CLOSE = 'close()';
-	var RESET_PATH = '#jsmart_reset_ajax_path';
-	var REDIRECT_PATH = '#jsmart_redirect_ajax_path';
+	var SESSION_RESET = '#jsmart5_session_reset_attr';
+	var REDIRECT_PATH = '#jsmart5_redirect_ajax_path';
+
 	var MESSAGES_EXEC = 'jsmart_messages';
 	var MULTI_SELECT_ALL = "_multi_select_all";
 	var MULTI_SELECT_ITEM_ID = "_multi_select_item_";
@@ -57,11 +58,22 @@ var Jsmart5 = (function() {
 	var TABLE_FILTER_TIMERS = [];
 
 	$(function () {
-		initCheckbox();
-		initPlaceHolders();
+		initCheckboxes();
 	});
+	
+	function initCheckboxes() {
+		$('input:checkbox').each(function(index) {
+			var value = $(this).val();
+			var name = $(this).attr("name");
+			if (!value || value == 'false') {
+				$(this).after($('<input type="hidden" name="' + name + '" value="false" />'));
+			}
+		});
+	}
 
-	// begin public interface
+	/******************************************************
+	 * PUBLIC INTERFACE
+	 ******************************************************/
 	return {
 		
 		ajax: function(map) {
@@ -72,44 +84,67 @@ var Jsmart5 = (function() {
 			doButton(map);
 		},
 
-		// Rest ajax={'method': '','content': '','bodyRoot': '','crossdomain': '', 'jsonp': '', 'jsoncallback': '','endpoint': '','params':[{'name': '', 'value': ''}],'before': '','success': '','error': ''}
-		rest: function (async, element, timeout) {
-			doRest(async, element, timeout);
+		rest: function (element, timeout) {
+			doRest(element, timeout);
 		},
 		
 		buttonRestArray: function (id, operation) {
-			doButtonRestArray(id, operation);
-		},
-			
-		load: function (id) {
-			doLoad(id);
-		},
-		
-		upload: function (id) {
-			doUpload(id);
+			doRestArray(id, operation);
 		},
 			
 		validate: function (id) {
 			return doValidate(id);
 		},
 		
-		execute: function(a, exec) {
-			doExecute(a, exec);
+		execute: function(exec) {
+			doExecute(exec);
 		},
 		
-		//List ajaxOutside={'params':[{'name': '', 'value': ''}]}
-		list: function (async, element) {
-			doList(async, element);
+		dialog: function(id) {
+			openDialog(id);
+		},
+
+		list: function (element) {
+			doList(element);
+		},
+		
+		tab: function (id) {
+			doTab(id);
+		},
+		
+		tabpane: function (id) {
+			doTabPane(id);
+		},
+		
+		select: function (map) {
+			doSelect(map);
+		},
+		
+		checkbox: function (id) {
+			doCheckbox(id);
+		},
+		
+		check: function (map) {
+			doCheck(map);
+		},
+
+		
+		
+		
+		// STILL NEED FIXES
+		
+		load: function (id) {
+			doLoad(id);
 		},
 		
 		// Table ajax={'name':'', 'action': '', 'first': '', 'sort': '', 'filter': '', 'update': ''}
-		table: function (async, id, element) {
-			doTable(async, id, element);
+		table: function (id, element) {
+			doTable(id, element);
 		},
 		
 		// Table ajaxEval={'name': '', 'action': '', 'multi': '', 'indexes': '', 'first': '', 'size': '', 'sort': '', 'filter': '', 'update': ''}
-		tableSelect: function (async, id, element) {
-			doTableSelect(async, id, element);
+		tableSelect: function (id, element) {
+			doTableSelect(id, element);
 		},
 		
 		// Table ajaxScroll{'name':'', 'action':'', 'first':'', 'end':'', 'filter':'', 'sort':''}
@@ -123,8 +158,8 @@ var Jsmart5 = (function() {
 		},
 		
 		// Table ajax={'varname': '', 'name': '', 'action': '', 'index': '', 'first': '', 'size': '', 'sort': '', 'filter': '', 'update': ''}
-		tableEdit: function (async, id, element) {
-			doTableEdit(async, id, element);
+		tableEdit: function (id, element) {
+			doTableEdit(id, element);
 		},
 		
 		tableEditStart: function (id, item, index, first) {
@@ -135,18 +170,6 @@ var Jsmart5 = (function() {
 			doTableEditCancel(id, item, index, first);
 		},
 
-		tab: function (id) {
-			doTab(id);
-		},
-		
-		tabpane: function (id) {
-			doTabPane(id);
-		},
-		
-		select: function (map) {
-			doSelect(map);
-		},
-
 		backupDate: function (input) {
 			input.attr('dbackup', input.val());
 		},
@@ -155,16 +178,8 @@ var Jsmart5 = (function() {
 			doDate(input);
 		},
 		
-		checkbox: function (id) {
-			doCheckbox(id);
-		},
-		
-		check: function (map) {
-			doCheck(map);
-		},
-		
-		xswitch: function (id, async, ajax) {
-			doSwitch(id, async, ajax);
+		xswitch: function (id, ajax) {
+			doSwitch(id, ajax);
 		},
 		
 		resetSwitch: function (id) {
@@ -193,8 +208,8 @@ var Jsmart5 = (function() {
 			doRange(id);
 		},
 		
-		autocomplete: function (async, id, event) {
-			doAutoComplete(async, id, event);
+		autocomplete: function (id, event) {
+			doAutoComplete(id, event);
 		},
 
 		resetAutocomplete: function (id) {
@@ -209,7 +224,10 @@ var Jsmart5 = (function() {
 			doTree(id);
 		}
 	};
-	// end public interface
+
+	/******************************************************
+	 * PRIVATE FUNCTIONS
+	 ******************************************************/
 	
 	function doAjax(map) {
 		if (map.timeout && map.timeout > 0) {
@@ -220,21 +238,15 @@ var Jsmart5 = (function() {
 		} else {
 			if (map.method) {
 				var element = $('#' + map.id);
-				var options = getNewAjaxOptions(map);
+				var options = getAjaxOptions(map);
 				var closestForm = element.closest('form');
 
 				if (map.method == 'post') {
-					var postParam = getNewAjaxParams(map);
+					var postParam = getAjaxParams(map);
 
 					var outsideParams = getAjaxOutsideParams(element);
 					for (var i = 0; i < outsideParams.length; i++) {
 						postParam.push(outsideParams[i]);
-					}
-
-					// This is only works for ajax tag inside table tag
-					var evalParams = getAjaxEvalParams(element);
-					for (var i = 0; i < evalParams.length; i++) {
-						postParam.push(evalParams[i]);
 					}
 
 					if (closestForm && closestForm.length > 0) {
@@ -253,17 +265,13 @@ var Jsmart5 = (function() {
 				}
 
 				if (map.method == 'post' && closestForm && closestForm.length > 0) {
-					doFormPlaceHolders(closestForm);
 					$(closestForm).ajaxSubmit(options);
 				} else {
 					$.ajax(options);
 				}
 			} else {
 				if (map.before) {
-					doExecute(null, map.before);
-				}
-				if (map.exec) {
-					doExecute(null, map.exec);
+					doExecute(map.before);
 				}
 			}
 		}
@@ -272,7 +280,7 @@ var Jsmart5 = (function() {
 	function doButton(map) {
 		if (map.method) {
 			var element = $('#' + map.id);
-			var options = getNewAjaxOptions(map);
+			var options = getAjaxOptions(map);
 			var closestForm = $(element).closest('form');
 			
 			if (map.method == 'post') {
@@ -282,33 +290,29 @@ var Jsmart5 = (function() {
 					if (!doValidate($(closestForm).attr('id'))) {
 						return;
 					}
-					postParam = getNewAjaxParams(map);
+					postParam = getAjaxParams(map);
 				} else {
-					postParam = $.param(getNewAjaxParams(map));
+					postParam = $.param(getAjaxParams(map));
 				}
 				options.data = postParam;
 			}
 
 			if (map.method == 'post' && closestForm && closestForm.length > 0) {
-				doFormPlaceHolders(closestForm);
 				$(closestForm).ajaxSubmit(options);
 			} else {
 				$.ajax(options);
 			}
 		} else {
 			if (map.before) {
-				doExecute(null, map.before);
-			}
-			if (map.exec) {
-				doExecute(null, map.exec);
+				doExecute(map.before);
 			}
 		}
 	}
 
-	function doRest(async, element, timeout) {
+	function doRest(element, timeout) {
 		if ($(element) && $(element).attr('ajax')) {
 			if (timeout && timeout > 0) {
-				setTimeout(function() {doRest(async, element, null);}, timeout);
+				setTimeout(function() {doRest(element, null);}, timeout);
 			} else {
 
 				var ajax = $.parseJSON($(element).attr('ajax'));
@@ -320,7 +324,7 @@ var Jsmart5 = (function() {
 				    complete: function (xhr, status) {
 						jQuery.event.trigger('ajaxStop');
 					},
-					async: async
+					async: true
 				};
 	
 				// callback settings
@@ -366,7 +370,7 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doButtonRestArray(id, operation) {
+	function doRestArray(id, operation) {
 		if (id && id.length > 0) {
 			var arrayElement = $(getId(id));
 			var arrayLength = arrayElement.parent().find('[id^="' + id + '"]').length;
@@ -399,217 +403,10 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doLoad(id) {
-		if (id && id.length > 0) {
-			var loadElement = $(getId(id)); 
-			loadElement.hide();
-			loadElement.ajaxStart(function(){
-				$(this).show();
-			}).ajaxStop(function(){
-				$(this).hide();}
-			);
-		}
-	}
-
-	function doUpload(id) {
-		if (id && id.length > 0) {
-			var uploadElement = $(getId(id));
-
-			uploadElement.parent().find('span[validateref]').each(function(index) {
-				$(this).remove();
-			});
-
-			var maxFileSize = uploadElement.attr('maxFileSize');
-			var maxSizeMsg = uploadElement.attr('maxSizeMsg');
-
-			if (uploadElement[0].files.length > 0) {
-				var file = uploadElement[0].files[0];
-				var fileSize = file.size || file.fileSize;
-
-				if (parseInt(fileSize) > parseInt(maxFileSize)) {
-					uploadElement.val('');
-					if (maxSizeMsg && maxSizeMsg.length > 0) {
-						uploadElement.after($('<span validateref=""></span>').addClass("jsmart5_validate").text(maxSizeMsg));
-					}
-				}
-			}
-		}
-	}
-
-	function doValidate(id) {
-		var validated = true;
-		if (id && id.length > 0) {
-			var validateElement = $(getId(id));
-			var checkgroups = new Array();
-	
-			validateElement.find('span[validateref]').each(function(index) {
-				$(this).remove();
-			});
-	
-			validateElement.find('*[validatedrequired]').each(function(index) {
-				var name = $(this).attr("name");
-
-				if (name.indexOf(TAG_INIT) >= 0) {
-					var message = $(this).attr('validatemessage');
-					var value = getElementParam($(this), true);
-	
-					if ($(this).is('input') && $(this).attr('checkgroup')) {
-						if (!contains(checkgroups, name)) {
-							checkgroups[checkgroups.length] = name;
-
-							$(this).closest('table').find('div label').each(function(index) {
-								$(this).removeClass('jsmart5_validate_target');
-							});
-	
-							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
-								warnValidate($(this), message, 'checkgroup');
-								validated = false;
-							}
-						}
-					} else if ($(this).is('input') && $(this).attr('radiogroup')) {
-						if (!contains(checkgroups, name)) {
-							checkgroups[checkgroups.length] = name;
-
-							$(this).closest('table').find('div label').each(function(index) {
-								$(this).removeClass('jsmart5_validate_target');
-							});
-
-							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
-								warnValidate($(this), message, 'radiogroup');
-								validated = false;
-							}
-						}
-	
-					} else if ($(this).is('input:checkbox')) {
-
-						$(this).closest('div').find('>label').removeClass('jsmart5_validate_target');
-
-						if (value.length == 0 || !value[0].value || value[0].value == 'false') {
-							warnValidate($(this), message, 'checkbox');
-							validated = false;
-						}
-					} else {
-						var type = $(this).is('input') && $(this).attr('switch') ? 'switch' : 
-								   $(this).is('input') && ($(this).attr('autocomplete') || $(this).attr('search')) ? 'inputgroup' : 'general';
-
-						if (type == 'switch') {
-							$(this).closest('div').removeClass('jsmart5_validate_target');
-
-						} else if (type == 'inputgroup') {
-							$(this).parents('div:eq(2)').removeClass('jsmart5_validate_target');
-
-						} else {
-							$(this).removeClass('jsmart5_validate_target');
-						}
-
-						if (value.length > 0 && value[0].value && value[0].value.length > 0) {
-
-							if (isString(value[0].value) && $.trim(value[0].value).length == 0) {
-								warnValidate($(this), message, type);
-								validated = false;
-	
-							} else {
-								var validateMinLength = $(this).attr('validateminlength');
-								if (validateMinLength && value[0].value.length < validateMinLength) {
-									warnValidate($(this), message, type);
-									validated = false;
-								}
-	
-								var validateMaxLength = $(this).attr('validatemaxlength');
-								if (validateMaxLength && value[0].value.length > validateMaxLength) {
-									warnValidate($(this), message, type);
-									validated = false;
-								}
-							}
-						} else {
-							warnValidate($(this), message, type);
-							validated = false;
-						}
-					}
-				}
-			});
-		}
-		return validated;
-	}
-	
-	function warnValidate(element, message, type) {
-		if (type == 'radiogroup' || type == 'checkgroup') {
-			element.closest('table').find('div label').each(function(index) {
-				$(this).addClass('jsmart5_validate_target');
-			});
-			element.parents('div:eq(1)').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
-
-		} else if (type == 'checkbox') {
-			element.closest('div').find('>label').addClass('jsmart5_validate_target');
-			element.closest('div').next('span').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
-
-		} else if (type == 'switch') {
-			element.closest('div').addClass('jsmart5_validate_target');
-			element.closest('div').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
-
-		} else if (type == 'inputgroup') {
-			element.parents('div:eq(2)').addClass('jsmart5_validate_target');
-			element.parents('div:eq(3)').after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
-
-		} else {
-			element.addClass('jsmart5_validate_target');
-			element.after($('<span validateref=""></span>').addClass("jsmart5_validate").text(message));
-		}
-	}
-
-	function doExecute(a, exec) {
-		var dialogs = [];
-		var funcs = [];
-		var execute = '';
-
-		if (exec && exec.length > 0) {
-			var execs = exec.split(';');
-	
-			for (var i = 0; i < execs.length; i++) {
-				if (execs[i].indexOf(DIALOG_OPEN) >= 0) {
-					dialogs.push(execs[i].substring(0, execs[i].indexOf('.')));
-	
-				} else if (execs[i].indexOf(DIALOG_CLOSE) >= 0) {
-					execute += "$('" + getId(execs[i].substring(0, execs[i].indexOf('.'))) + "').dialog('close');";
-	
-				} else {
-					var execFunc = window[execs[i]];
-
-					if (typeof execFunc === 'function') {
-						funcs.push(execFunc);
-					} else {
-						execute += execs[i] + ";";
-					}
-				}
-			}
-		}
-
-		for (var i = 0; i < funcs.length; i++) {
-			try {
-				funcs[i](a);
-			} catch(err) {
-				showOnConsole(err.message); 
-			}
-		}
-
-		if (execute.length > 0) {
-			try {
-				eval(execute);
-			} catch(err) {
-				showOnConsole(err.message); 
-			}
-		}
-	
-		for (var i = 0; i < dialogs.length; i++) {
-			openDialog(dialogs[i]);
-		}
-		return dialogs;
-	}
-
-	function doList(async, element) {
+	function doList(element) {
 		if ($(element) && $(element).attr('ajaxoutside')) {
 	
-			var options = getBasicAjaxOptions(async);
+			var options = getBasicAjaxOptions();
 			var closestForm = $(element).closest('form');
 			var postParam = getAjaxOutsideParams(element);
 	
@@ -624,270 +421,11 @@ var Jsmart5 = (function() {
 			options.data = postParam;
 	
 			if (closestForm && closestForm.length > 0) {
-				doFormPlaceHolders(closestForm);
 				$(closestForm).ajaxSubmit(options);
 			} else {
 				$.ajax(options);
 			}
 		}
-	}
-
-	function clearTableFilterTimer(id) {
-		for (var i = 0; i < TABLE_FILTER_TIMERS.length; i++) {
-			if (TABLE_FILTER_TIMERS[i].id == id) {
-				clearTimeout(TABLE_FILTER_TIMERS[i].value);
-				break;
-			}
-		}
-	}
-
-	function doTable(async, id, element) {
-		if ($(element) && $(element).attr('ajax')) {
-	
-			var ajax = $.parseJSON($(element).attr('ajax'));
-			ajax.method = 'post';
-	
-			var timeout = 0;
-			if (ajax.action == 'FILTER') {
-				timeout = 1000;
-				clearTableFilterTimer(id);
-			}
-
-			var timerId = setTimeout(function() {
-				var json = getTableAction(ajax);
-	
-				var options = getAjaxOptions(async, ajax);
-				var postParam = [{name: ajax.name, value: json}];
-	
-				var closestForm = $(getId(id)).closest('form');
-				if (closestForm && closestForm.length > 0) {
-					if (!doValidate($(closestForm).attr('id'))) {
-						return;
-					}
-				} else {
-					postParam = $.param(postParam);
-				}
-	
-				options.data = postParam;
-	
-				if (closestForm && closestForm.length > 0) {
-					doFormPlaceHolders(closestForm);
-					$(closestForm).ajaxSubmit(options);
-				} else {
-					$.ajax(options);
-				}
-	
-			}, timeout);
-
-			TABLE_FILTER_TIMERS.push({id: id, value: timerId});
-		}
-	}
-
-	function doTableSelect(async, id, element) {
-		if ($(element) && $(element).attr('ajaxeval')) {
-	
-			var ajax = $.parseJSON($(element).attr('ajaxeval'));
-			ajax.method = 'post';
-	
-			// Do not send selection when edition is active
-			var editRow = $(element).find('div[inputwrapper]');
-			if (editRow.length && editRow.is(":visible")) {
-				return;
-			}
-	
-			var json = doTableSelectAction(id, ajax);
-	
-			var options = getAjaxOptions(async, ajax);
-			var postParam = [{name: ajax.name, value: json}];
-	
-			var closestForm = $(getId(id)).closest('form');
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
-					return;
-				}
-			} else {
-				postParam = $.param(postParam);
-			}
-	
-			options.data = postParam;
-	
-			if (closestForm && closestForm.length > 0) {
-				doFormPlaceHolders(closestForm);
-				$(closestForm).ajaxSubmit(options);
-			} else {
-				$.ajax(options);
-			}
-		}
-	}
-
-	function doTableScroll(id) {
-		var table = $(getId(id));
-		var tbody = $(getId(id) + '>tbody');
-	
-		tbody.find('tr:first').find('td').each(function (index) {
-			$(this).css({'width': $(this).width() + 'px'});
-		});
-	
-		table.css({'display': 'block', 'width': table.width() + 'px'});
-		tbody.css({'display': 'block', 'overflow': 'auto', 'width': tbody.width() + 'px', 'height': (tbody.height() - 30) + 'px'});
-	
-		tbody.scroll(function() {
-			if (($(this).scrollTop() + $(this).outerHeight()) >= $(this)[0].scrollHeight) {
-	
-				var ajax = $.parseJSON($(this).parent().attr('ajaxscroll'));
-				ajax.method = 'post';
-	
-				if (ajax.end && ajax.end == 'false') {
-					
-					var json = getTableAction(ajax);
-					var closestForm = $(getId(id)).closest('form');
-					var postParam = [{name: ajax.name, value: json}];
-	
-					if (!closestForm || closestForm.length == 0) {
-						postParam = $.param(postParam);
-					}
-					
-					var options = getAjaxOptions(false, ajax);
-					options.data = postParam;
-	
-					options.success = function(data) {
-						var reset = $(data).find(RESET_PATH);
-						if (reset && reset.length > 0) {
-							$(location).attr('href', $(location).attr('href'));
-						} else {
-							var currTable = $(getId(id));
-							var ajaxTable = $(data).find(getId(id));
-							var currTBody = $(getId(id) + '>tbody');
-							var ajaxTBody = $(data).find(getId(id) + '>tbody');
-	
-							currTable.attr('ajaxscroll', ajaxTable.attr('ajaxscroll'));
-							currTBody.append(ajaxTBody.find('tr'));
-	
-							resetMessage(data);
-							var redirect = $(data).find(REDIRECT_PATH); 
-							if (redirect && redirect.length > 0) {
-								$(location).attr('href', redirect.val());
-							}
-						}
-					};
-	
-					if (closestForm.length > 0) {
-						doFormPlaceHolders(closestForm);
-						$(closestForm).ajaxSubmit(options);
-					} else {
-						$.ajax(options);
-					}
-				}
-			}
-		});
-	}
-
-	function doTableRowExpand(id) {
-		var tableElement = $(getId(id));
-		tableElement.find("tr:odd").addClass("odd");
-		tableElement.find("tr:not(.odd)").hide();
-		tableElement.find("tr:first-child").show();
-	
-		tableElement.find("tr.odd").find("td").click(function(e) {
-			var editRow = $(this).find('div[inputwrapper]');
-			if (!$(this).hasClass("jsmart5_table_cell_edit_column") && (!editRow.length || !editRow.is(":visible"))) {
-				$(this).parent().next("tr").toggle();
-			}
-	    });
-	}
-
-	function doTableEdit(async, id, element) {
-		if ($(element) && $(element).attr('ajax')) {
-			var ajax = $.parseJSON($(element).attr('ajax'));
-			ajax.method = 'post';
-	
-			var json = {};
-			json.edit = ajax.action;
-			json.index = ajax.index;
-			json.first = ajax.first;
-			json.size = ajax.size;
-			json.varname = ajax.varname;
-	
-			var found = false;
-			json.values = [];
-	
-			$(getId(ajax.update)).find('*[name]').each(function(index) {
-				if ($(this).attr("name").indexOf(TAG_INIT) >= 0) {
-					$(this).removeAttr('enabled');
-					$(this).attr('disabled', 'disabled');
-					json.values.push({name: $(this).attr("name"), value: $(this).val()});
-				}
-			});
-	
-			if (json.values.length == 0) {
-				json.values = null;
-			}
-	
-			getTableSortFilter(ajax, json);
-	
-			var options = getAjaxOptions(async, ajax);
-			var postParam = [{name: ajax.name, value: JSON.stringify(json)}];
-	
-			var closestForm = $(getId(id)).closest('form');
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
-					return;
-				}
-			} else {
-				postParam = $.param(postParam);
-			}
-	
-			options.data = postParam;
-	
-			if (closestForm && closestForm.length > 0) {
-				doFormPlaceHolders(closestForm);
-				$(closestForm).ajaxSubmit(options);
-			} else {
-				$.ajax(options);
-			}
-		}
-	}
-
-	function doTableEditStart(id, item, index, first) {
-		item.hide();
-		$(getId(id + EDIT_CELL_CONFIRM_ITEM_ID + index + "_" + first)).css("display", "inline-block");
-		$(getId(id + EDIT_CELL_CANCEL_ITEM_ID + index + "_" + first)).css("display", "inline-block");
-	
-		item.closest('tr').find("div[outputwrapper]").each(function(index) {
-			$(this).hide();
-		});
-		item.closest('tr').find("div[inputwrapper]").each(function(index) {
-			$(this).find("*[disabled]").each(function(index) {
-	
-				if ($(this).attr("name").indexOf(TAG_INIT) >= 0) {
-					$(this).removeAttr('disabled');
-					$(this).attr('enabled', 'enabled');
-					$(this).css({'width': $(this).closest('td').width() - 30});
-				}
-			});
-			$(this).show();
-		});
-	}
-
-	function doTableEditCancel(id, item, index, first) {
-		item.hide();
-		$(getId(id + EDIT_CELL_CONFIRM_ITEM_ID + index + "_" + first)).hide();
-		$(getId(id + EDIT_CELL_START_ITEM_ID + index + "_" + first)).show();
-	
-		item.closest('tr').find("div[outputwrapper]").each(function(index) {
-			$(this).show();
-		});
-		item.closest('tr').find("div[inputwrapper]").each(function(index) {
-			$(this).hide();
-	
-			$(this).find("*[enabled]").each(function(index) {
-	
-				if ($(this).attr("name").indexOf(TAG_INIT) >= 0) {
-					$(this).removeAttr('enabled');
-					$(this).attr('disabled', 'disabled');
-				}
-			});
-		});
 	}
 
 	function doTab(id) {
@@ -944,12 +482,35 @@ var Jsmart5 = (function() {
 	function doTabPane(id) {
 		// TODO
 	}
+	
+	// TODO
+	function doTabAction(id, name, value) {
+		var options = getBasicAjaxOptions();
+		var closestForm = $(getId(id)).closest('form');
+		var postParam = [{name: name, value: value}];
+	
+		if (closestForm && closestForm.length > 0) {
+			if (!doValidate($(closestForm).attr('id'))) {
+				return;
+			}
+		} else {
+			postParam = $.param(postParam);			
+		}
+	
+		options.data = postParam;
+	
+		if (closestForm && closestForm.length > 0) {
+			$(closestForm).ajaxSubmit(options);
+		} else {
+			$.ajax(options);
+		}
+	}
 
 	function doSelect(map) {
 
 		var postParam = [];
 		var element = $(getId(map.id));
-		var options = getNewAjaxOptions(map);
+		var options = getAjaxOptions(map);
 		var closestForm = element.closest('form');
 		var elementParam = getElementParam(element, false);
 		
@@ -970,11 +531,944 @@ var Jsmart5 = (function() {
 		options.data = postParam;
 
 		if (closestForm && closestForm.length > 0) {
-			doFormPlaceHolders(closestForm);
 			$(closestForm).ajaxSubmit(options);
 		} else {
 			$.ajax(options);
 		}
+	}
+
+	function doCheckbox(id) {
+		var element = $(getId(id));
+		var value = element.val();
+		var name = element.attr("name");
+	
+		if (!value || value == 'false') {
+			element.attr('value', 'true');
+			$("input:hidden[name='" + name + "']").each(function(index) {
+				$(this).remove();
+			});
+		} else {
+			element.attr('value', 'false');
+			element.after($('<input type="hidden" name="' + name + '" value="false" />'));
+		}
+	}
+
+	function doCheck(map) {
+		var element = $(getId(map.id));
+		if (element && element.length > 0) {
+			var postParam = [];
+			var options = getAjaxOptions(map);
+			var closestForm = $(element).closest('form');
+			var elementParam = getElementParam(element, false);
+	
+			if (closestForm && closestForm.length > 0) {
+				if (!doValidate($(closestForm).attr('id'))) {
+					return;
+				}
+				if (elementParam.length > 0 && elementParam[0].value == null) {
+					postParam.push({name: elementParam[0].name, value: elementParam[0].value});
+				}
+			} else {
+				for (var i = 0; i < elementParam.length; i++) {
+					postParam.push({name: elementParam[i].name, value: elementParam[i].value});
+				}
+				postParam = $.param(postParam);			
+			}
+	
+			options.data = postParam;
+	
+			if (closestForm && closestForm.length > 0) {
+				$(closestForm).ajaxSubmit(options);
+			} else {
+				$.ajax(options);
+			}
+		}
+	}
+
+	/******************************************************
+	 * REST FUNCTIONS
+	 ******************************************************/
+	
+	function getRestJsonBody(element, bodyRoot) {
+		var json = '';
+		var closestForm = $(element).closest('form');
+
+		if (closestForm && closestForm.length > 0) {
+			if (!doValidate($(closestForm).attr('id'))) {
+				return;
+			}
+
+			var restGroups = $(closestForm).find('div[type="restarray"]');
+
+			if (restGroups && restGroups.length > 0) {
+				var restMap = {};
+				var initGroup = false;
+
+				restGroups.each(function(index) {
+
+					var groupName = $(this).attr('rest');
+					if (!groupName || groupName.length == 0) {
+						groupName = 'none';
+					} else {
+						initGroup = true;
+					}
+
+					if (!restMap[groupName]) {
+						restMap[groupName] = '';
+					}
+					restMap[groupName] += getRestJsonItem($(this)) + ',';
+				});
+
+				if (bodyRoot && bodyRoot.length > 0) {
+					if (initGroup) {
+						json = '{\"' + bodyRoot + '\":{';
+					} else {
+						json = '{\"' + bodyRoot + '\":[';
+					}
+				} else {
+					if (initGroup) {
+						json = '{';
+					} else {
+						json = '[';
+					}
+				}
+
+				for (var groupName in restMap) {
+					var item = restMap[groupName];
+					if (groupName != 'none') {
+						json += '\"' + groupName + '\":[' + item.substring(0, item.length - 1) + '],';
+					} else {
+						json += item.substring(0, item.length - 1) + ',';
+					}
+				}
+				
+				if (json.length > 1) {
+					json = json.substring(0, json.length - 1);
+				}
+
+				if (bodyRoot && bodyRoot.length > 0) {
+					if (initGroup) {
+						json += '}}';
+					} else {
+						json += ']}';
+					}
+				} else {
+					if (initGroup) {
+						json += '}';
+					} else {
+						json += ']';
+					}
+				}
+			} else {
+				if (bodyRoot && bodyRoot.length > 0) {
+					json += '{\"' + bodyRoot + '\":';
+				}
+
+				json = getRestJsonItem(closestForm);
+				
+				if (bodyRoot && bodyRoot.length > 0) {
+					json += '}';
+				}
+			}
+		}
+		return json;
+	}
+
+	function getRestJsonItem(parent) {
+		var json = '{';
+		var checkgroups = new Array();
+
+		$(parent).find('*[rest]').each(function(index) {
+
+			var elementParam = getElementParam($(this), true);
+			if (elementParam.length > 0) {
+
+				var name = $(this).attr('name');
+				if (contains(checkgroups, name)) {
+					return;
+				}
+				checkgroups[checkgroups.length] = name;
+
+				var rest = $(this).attr('rest');
+
+				if (elementParam[0].array == true) {
+					json += '\"' + rest + '\":[';
+					if (elementParam[0].value && elementParam[0].value.length > 0) {
+						var values = elementParam[0].value.split(',');
+						for (var i = 0; i < values.length; i++) {
+							json += '\"' + values[i] + '\",';
+						}
+						json = json.substring(0, json.length - 1);
+					}
+					json += '],';
+				} else {
+					if (elementParam[0].value || elementParam[0].value == false) {
+						json += '\"' + rest + '\":\"' + elementParam[0].value + '\",';
+					} else {
+						json += '\"' + rest + '\":null,';
+					}
+				}
+			}
+		});
+
+		if (json.length > 1) {
+			json = json.substring(0, json.length - 1);
+		}
+
+		return json + '}';
+	}
+
+	function getRestXmlBody(element, bodyRoot) {
+		var xml = '<?xml version="1.0" encoding="UTF-8" ?>';
+		
+		if (bodyRoot && bodyRoot.length > 0) {
+			xml += '<' + bodyRoot + '>';
+		} else {
+			xml += '<root>';
+		}
+
+		var closestForm = $(element).closest('form');
+
+		if (closestForm && closestForm.length > 0) {
+			if (!doValidate($(closestForm).attr('id'))) {
+				return;
+			}
+
+			var restGroups = $(closestForm).find('div[type="restarray"]');
+
+			if (restGroups && restGroups.length > 0) {
+				restGroups.each(function(index) {
+					var groupName = $(this).attr('rest');
+					if (!groupName || groupName.length == 0) {
+						groupName = 'none';
+					}
+					xml += '<' + groupName + '>' + getRestXmlItem($(this)) + '</' + groupName + '>';
+				});
+			} else {
+				xml += getRestXmlItem(closestForm);
+			}
+		}
+
+		if (bodyRoot && bodyRoot.length > 0) {
+			xml += '</' + bodyRoot + '>';
+		} else {
+			xml += '</root>';
+		}
+		return xml;
+	}
+
+	function getRestXmlItem(parent) {
+		var xml = '';
+		var checkgroups = new Array();
+
+		$(parent).find('*[rest]').each(function(index) {
+
+			var elementParam = getElementParam($(this), true);
+			if (elementParam.length > 0) {
+				
+				var name = $(this).attr('name');
+				if (contains(checkgroups, name)) {
+					return;
+				}
+				checkgroups[checkgroups.length] = name;
+
+				var rest = $(this).attr('rest');
+
+				if (elementParam[0].array == true) {
+					if (elementParam[0].value && elementParam[0].value.length > 0) {
+						var values = elementParam[0].value.split(',');
+						for (var i = 0; i < values.length; i++) {
+							xml += '<' + rest + '>' + values[i] + '</' + rest + '>';
+						}
+					}
+				} else {
+					if (elementParam[0].value || elementParam[0].value == false) {
+						xml += '<' + rest + '>' + elementParam[0].value + '</' + rest + '>';
+					} else {
+						xml += '<' + rest + ' />';
+					}
+				}
+			}
+		});
+
+		return xml;
+	}
+
+	function getRestQueryParams(element) {
+		var queryParams = '';
+		var ajax = $.parseJSON($(element).attr('ajax'));
+		if (ajax.params) {
+			for (var i = 0; i < ajax.params.length; i++) {
+				queryParams += ajax.params[i].name + '=' + ajax.params[i].value + '&';
+			}
+		}
+		return queryParams.length > 0 ? queryParams.substring(0, queryParams.length - 1) : queryParams;
+	}
+	
+	/******************************************************
+	 * AJAX FUNCTIONS
+	 ******************************************************/
+	
+	function getBasicAjaxOptions() {
+		return {
+			type: 'post', 
+			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
+			success: function (data) {
+				var reset = $(data).find(SESSION_RESET); 
+				if (reset && reset.length > 0) {
+					$(location).attr('href', $(location).attr('href'));
+				} else {
+					resetMessage(data);
+					var redirect = $(data).find(REDIRECT_PATH); 
+					if (redirect && redirect.length > 0) {
+						$(location).attr('href', redirect.val());
+					}
+				}
+			},
+			error: function (xhr, status, error) {
+				showOnConsole(xhr.responseText);
+			},
+			complete: function (xhr, status) {
+				jQuery.event.trigger('ajaxStop');
+			},
+			async: true
+		};
+	}
+	
+	function getAjaxOptions(map) {
+		return {
+			type: map.method, 
+			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
+			beforeSend: function (data) {
+				doExecute(map.before, data);
+			},
+			success: function (data) {
+				var reset = $(data).find(SESSION_RESET); 
+				if (reset && reset.length > 0) {
+					$(location).attr('href', $(location).attr('href'));
+				} else {
+					if (map.url && map.url.length > 0) {
+						$(location).attr('href', map.url);
+					} else {
+						doUpdate(map.update, data);
+						var dialogs = doExecute(map.success, data);
+	
+						resetMessage(data);
+						var redirect = $(data).find(REDIRECT_PATH); 
+						if (redirect && redirect.length > 0) {
+							$(location).attr('href', redirect.val());
+						}
+					}
+				}
+			},
+			error: function (xhr, status, error) {
+				doExecute(map.error, xhr, status, error);
+				showOnConsole(xhr.responseText);
+			},
+			complete: function (xhr, status) {
+				doExecute(map.complete, xhr, status);
+				jQuery.event.trigger('ajaxStop');
+			},
+			async: true
+		};
+	}
+	
+	function getAjaxParams(map) {
+		var params = [];
+		if (map.action) {
+			params.push({name: map.action, value: 0});
+		}
+
+		if (map.params) {
+			for (var i = 0; i < map.params.length; i++) {
+				params.push({name: map.params[i].name, value: map.params[i].value});
+			}
+		}
+		return params;
+	}
+	
+	function getElementParam(element, rest) {
+		var elementParam = [];
+		var name = $(element).attr('name');
+		var checkgroups = new Array();
+	
+		if ($(element).is('select') && $(element).attr('multiple')) {
+			var values = $(element).val();
+			if (values && values.length > 0) {
+				if (rest) {
+					var value = "";
+					for (var i = 0; i < values.length; i++) {
+						value += values[i] + ",";
+					}
+					if (value.length > 0) {
+						elementParam.push({name: name, value: value.substring(0, value.length - 1), array: true});
+					}
+				} else {
+					for (var i = 0; i < values.length; i++) {
+						elementParam.push({name: name, value: values[i], array: true});
+					}
+				}
+			}
+	
+			if (elementParam.length == 0) {
+				elementParam.push({name: name, value: null, array: true});
+			}
+		} else if ($(element).is('input') && $(element).attr('checkgroup')) {
+			if (!contains(checkgroups, name)) {
+				checkgroups[checkgroups.length] = name;
+	
+				var values = [];
+				$(element).parents('div[checkgroup]').find("input:checked[name='" + name + "']").each(function(index) {
+					values.push($(this).val());
+				});
+	
+				if (rest) {
+					var value = "";
+					for (var i = 0; i < values.length; i++) {
+						value += values[i] + ",";
+					}
+					if (value.length > 0) {
+						elementParam.push({name: name, value: value.substring(0, value.length - 1), array: true});
+					}
+				} else {
+					for (var i = 0; i < values.length; i++) {
+						elementParam.push({name: name, value: values[i], array: true});
+					}
+				}
+	
+				if (elementParam.length == 0) {
+					elementParam.push({name: name, value: null, array: true});
+				}
+			}
+		} else if ($(element).is('input') && $(element).attr('radiogroup')) {
+			if (!contains(checkgroups, name)) {
+				checkgroups[checkgroups.length] = name;
+	
+				var val = $(element).parents('div[radiogroup]').find("input:checked[name='" + name + "']").val();
+				elementParam.push({name: name, value: val, array: false});
+			}
+		} else if ($(element).is('input:checkbox')) {
+			var value = $(element).val();
+	
+			if (!value || value == 'false') {
+				elementParam.push({name: name, value: false, array: false});
+			} else {
+				elementParam.push({name: name, value: true, array: false});
+			}
+		} else {
+			elementParam.push({name: name, value: $(element).val(), array: false});
+		}
+	
+		return elementParam;
+	}
+	
+	function doUpdate(update, a) {
+		if (update && update.length > 0) {
+			var updateEval = "";
+			var updates = update.split(',');
+			for (var i = 0; i < updates.length; i++) {
+				if (!doTableScrollUpdate(a, updates[i])) {
+					var updateId = getId(updates[i]);
+					updateEval += "$('" + updateId + "').replaceWith($(a).find('" + updateId + "'));";
+				}
+			}
+			if (updateEval.length > 0) {
+				try {
+					eval(updateEval);
+				} catch(err) {
+					showOnConsole(err.message); 
+				}
+			}
+		}
+	}
+	
+	function doExecute(func, a, b, c) {
+		var showDialogs = [];
+		var hideDialogs = [];
+		var callbacks = [];
+		var execute = '';
+
+		if (typeof func === 'function') {
+			callbacks.push(func);
+
+		} else if (func && func.length > 0) {
+			var funcs = func.split(';');
+	
+			for (var i = 0; i < funcs.length; i++) {
+				if (funcs[i].indexOf(DIALOG_OPEN) >= 0) {
+					showDialogs.push(funcs[i].substring(0, funcs[i].indexOf('.')));
+	
+				} else if (funcs[i].indexOf(DIALOG_CLOSE) >= 0) {
+					hideDialogs.push(funcs[i].substring(0, funcs[i].indexOf('.')));
+
+				} else {
+					var callback = window[funcs[i]];
+
+					if (typeof callback === 'function') {
+						callbacks.push(callback);
+					} else {
+						execute += funcs[i] + ";";
+					}
+				}
+			}
+		}
+
+		for (var i = 0; i < callbacks.length; i++) {
+			try {
+				callbacks[i](a, b, c);
+			} catch(err) {
+				showOnConsole(err.message); 
+			}
+		}
+
+		if (execute.length > 0) {
+			try {
+				eval(execute);
+			} catch(err) {
+				showOnConsole(err.message); 
+			}
+		}
+		
+		for (var i = 0; i < hideDialogs.length; i++) {
+			closeDialog(hideDialogs[i]);
+		}
+		for (var i = 0; i < showDialogs.length; i++) {
+			openDialog(showDialogs[i]);
+		}
+		return showDialogs;
+	}
+	
+	/******************************************************
+	 * VALIDATE FUNCTIONS
+	 ******************************************************/
+
+	function doValidate(id) {
+		var validated = true;
+		if (id && id.length > 0) {
+			var validateElement = $(getId(id));
+			var checkgroups = new Array();
+	
+			validateElement.find('em[vldt-ref]').remove();
+	
+			validateElement.find('*[vldt-req]').each(function(index) {
+				var name = $(this).attr("name");
+
+				if (name.indexOf(TAG_INIT) >= 0) {
+					var text = $(this).attr('vldt-text');
+					var look = 'has-' + $(this).attr('vldt-look');
+					var value = getElementParam($(this), true);
+
+					var textLook = 'text-' + $(this).attr('vldt-look');
+					if (textLook.indexOf('error') >= 0) {
+						textLook = 'text-danger';
+					}
+	
+					if ($(this).is('input') && $(this).attr('checkgroup')) {
+						if (!contains(checkgroups, name)) {
+							checkgroups[checkgroups.length] = name;
+
+							$(this).closest('div[checkgroup]').removeClass(look);
+	
+							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
+								addValidate($(this), text, 'checkgroup', look, textLook);
+								validated = false;
+							}
+						}
+					} else if ($(this).is('input') && $(this).attr('radiogroup')) {
+						if (!contains(checkgroups, name)) {
+							checkgroups[checkgroups.length] = name;
+
+							$(this).closest('div[radiogroup]').removeClass(look);
+
+							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
+								addValidate($(this), text, 'radiogroup', look, textLook);
+								validated = false;
+							}
+						}
+	
+					} else if ($(this).is('input:checkbox')) {
+
+						$(this).closest('div.checkbox').removeClass(look);
+
+						if (value.length == 0 || !value[0].value || value[0].value == 'false') {
+							addValidate($(this), text, 'checkbox', look, textLook);
+							validated = false;
+						}
+					} else {
+						var type = $(this).closest('div.form-group').length > 0 ? 'form-group' :
+								   $(this).closest('div.input-group').length > 0 ? 'input-group' : 'default';
+
+						if (type == 'form-group') {
+							$(this).closest('div.form-group').removeClass(look);
+
+						} else if (type == 'input-group') {
+							 $(this).closest('div.input-group').removeClass(look);
+
+						} else {
+							$(this).removeClass(look);
+						}
+
+						if ($(this).is('input:file')) {
+							if ($(this)[0].files.length > 0) {
+
+								var file = $(this)[0].files[0];
+								var fileSize = file.size || file.fileSize;
+								fileSize = parseInt(fileSize);
+
+								var minLength = $(this).attr('vldt-min-l');
+								if (minLength && fileSize < minLength) {
+									addValidate($(this), text, type, look, textLook);
+									validated = false;
+								}
+								
+								var maxLength = $(this).attr('vldt-max-l');
+								if (maxLength && fileSize > maxLength) {
+									addValidate($(this), text, type, look, textLook);
+									validated = false;
+								}
+
+							} else {
+								addValidate($(this), text, type, look, textLook);
+								validated = false;
+							}
+
+						} else if (value.length > 0 && value[0].value && value[0].value.length > 0) {
+
+							if (isString(value[0].value) && $.trim(value[0].value).length == 0) {
+								addValidate($(this), text, type, look, textLook);
+								validated = false;
+	
+							} else {
+								var minLength = $(this).attr('vldt-min-l');
+								if (minLength && value[0].value.length < minLength) {
+									addValidate($(this), text, type, look, textLook);
+									validated = false;
+								}
+	
+								var maxLength = $(this).attr('vldt-max-l');
+								if (maxLength && value[0].value.length > maxLength) {
+									addValidate($(this), text, type, look, textLook);
+									validated = false;
+								}
+							}
+						} else {
+							addValidate($(this), text, type, look, textLook);
+							validated = false;
+						}
+					}
+				}
+			});
+		}
+		return validated;
+	}
+	
+	function addValidate(element, text, type, look, textLook) {
+		if (type == 'radiogroup' || type == 'checkgroup') {
+			element.closest('div[' + type + ']').addClass(look);
+			if (text && text.length > 0) {
+				element.closest('div[' + type + ']').after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
+			}
+
+		} else if (type == 'checkbox') {
+			element.closest('div.checkbox').addClass(look);
+			if (text && text.length > 0) {
+				element.closest('div.checkbox').after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
+			}
+
+		} else if (type == 'form-group' || type == 'input-group') {
+			element.closest('div.' + type).addClass(look);
+			if (text && text.length > 0) {
+				element.closest('div.' + type).after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
+			}
+
+		} else {
+			element.addClass(look);
+			if (text && text.length > 0) {
+				element.after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
+			}
+		}
+	}
+
+	/******************************************************
+	 * MODAL FUNCTIONS
+	 ******************************************************/
+	
+	function openDialog(id) {
+		$(getId(id)).modal('show');
+	}
+		
+	function closeDialog(id) {
+		$(getId(id)).modal('hide');
+	}
+
+	/******************************************************
+	 * NOT PORTED FUNCTIONS
+	 ******************************************************/
+	
+	function doLoad(id) {
+		if (id && id.length > 0) {
+			var loadElement = $(getId(id)); 
+			loadElement.hide();
+			loadElement.ajaxStart(function(){
+				$(this).show();
+			}).ajaxStop(function(){
+				$(this).hide();}
+			);
+		}
+	}
+	
+	function clearTableFilterTimer(id) {
+		for (var i = 0; i < TABLE_FILTER_TIMERS.length; i++) {
+			if (TABLE_FILTER_TIMERS[i].id == id) {
+				clearTimeout(TABLE_FILTER_TIMERS[i].value);
+				break;
+			}
+		}
+	}
+
+	function doTable(id, element) {
+		if ($(element) && $(element).attr('ajax')) {
+	
+			var ajax = $.parseJSON($(element).attr('ajax'));
+			ajax.method = 'post';
+	
+			var timeout = 0;
+			if (ajax.action == 'FILTER') {
+				timeout = 1000;
+				clearTableFilterTimer(id);
+			}
+
+			var timerId = setTimeout(function() {
+				var json = getTableAction(ajax);
+	
+				var options = getAjaxOptions(ajax);
+				var postParam = [{name: ajax.name, value: json}];
+	
+				var closestForm = $(getId(id)).closest('form');
+				if (closestForm && closestForm.length > 0) {
+					if (!doValidate($(closestForm).attr('id'))) {
+						return;
+					}
+				} else {
+					postParam = $.param(postParam);
+				}
+	
+				options.data = postParam;
+	
+				if (closestForm && closestForm.length > 0) {
+					$(closestForm).ajaxSubmit(options);
+				} else {
+					$.ajax(options);
+				}
+	
+			}, timeout);
+
+			TABLE_FILTER_TIMERS.push({id: id, value: timerId});
+		}
+	}
+
+	function doTableSelect(id, element) {
+		if ($(element) && $(element).attr('ajaxeval')) {
+	
+			var ajax = $.parseJSON($(element).attr('ajaxeval'));
+			ajax.method = 'post';
+	
+			// Do not send selection when edition is active
+			var editRow = $(element).find('div[inputwrapper]');
+			if (editRow.length && editRow.is(":visible")) {
+				return;
+			}
+	
+			var json = doTableSelectAction(id, ajax);
+	
+			var options = getAjaxOptions(ajax);
+			var postParam = [{name: ajax.name, value: json}];
+	
+			var closestForm = $(getId(id)).closest('form');
+			if (closestForm && closestForm.length > 0) {
+				if (!doValidate($(closestForm).attr('id'))) {
+					return;
+				}
+			} else {
+				postParam = $.param(postParam);
+			}
+	
+			options.data = postParam;
+	
+			if (closestForm && closestForm.length > 0) {
+				$(closestForm).ajaxSubmit(options);
+			} else {
+				$.ajax(options);
+			}
+		}
+	}
+
+	function doTableScroll(id) {
+		var table = $(getId(id));
+		var tbody = $(getId(id) + '>tbody');
+	
+		tbody.find('tr:first').find('td').each(function (index) {
+			$(this).css({'width': $(this).width() + 'px'});
+		});
+	
+		table.css({'display': 'block', 'width': table.width() + 'px'});
+		tbody.css({'display': 'block', 'overflow': 'auto', 'width': tbody.width() + 'px', 'height': (tbody.height() - 30) + 'px'});
+	
+		tbody.scroll(function() {
+			if (($(this).scrollTop() + $(this).outerHeight()) >= $(this)[0].scrollHeight) {
+	
+				var ajax = $.parseJSON($(this).parent().attr('ajaxscroll'));
+				ajax.method = 'post';
+	
+				if (ajax.end && ajax.end == 'false') {
+					
+					var json = getTableAction(ajax);
+					var closestForm = $(getId(id)).closest('form');
+					var postParam = [{name: ajax.name, value: json}];
+	
+					if (!closestForm || closestForm.length == 0) {
+						postParam = $.param(postParam);
+					}
+					
+					var options = getAjaxOptions(false, ajax);
+					options.data = postParam;
+	
+					options.success = function(data) {
+						var reset = $(data).find(SESSION_RESET);
+						if (reset && reset.length > 0) {
+							$(location).attr('href', $(location).attr('href'));
+						} else {
+							var currTable = $(getId(id));
+							var ajaxTable = $(data).find(getId(id));
+							var currTBody = $(getId(id) + '>tbody');
+							var ajaxTBody = $(data).find(getId(id) + '>tbody');
+	
+							currTable.attr('ajaxscroll', ajaxTable.attr('ajaxscroll'));
+							currTBody.append(ajaxTBody.find('tr'));
+	
+							resetMessage(data);
+							var redirect = $(data).find(REDIRECT_PATH); 
+							if (redirect && redirect.length > 0) {
+								$(location).attr('href', redirect.val());
+							}
+						}
+					};
+	
+					if (closestForm.length > 0) {
+						$(closestForm).ajaxSubmit(options);
+					} else {
+						$.ajax(options);
+					}
+				}
+			}
+		});
+	}
+
+	function doTableRowExpand(id) {
+		var tableElement = $(getId(id));
+		tableElement.find("tr:odd").addClass("odd");
+		tableElement.find("tr:not(.odd)").hide();
+		tableElement.find("tr:first-child").show();
+	
+		tableElement.find("tr.odd").find("td").click(function(e) {
+			var editRow = $(this).find('div[inputwrapper]');
+			if (!$(this).hasClass("jsmart5_table_cell_edit_column") && (!editRow.length || !editRow.is(":visible"))) {
+				$(this).parent().next("tr").toggle();
+			}
+	    });
+	}
+
+	function doTableEdit(id, element) {
+		if ($(element) && $(element).attr('ajax')) {
+			var ajax = $.parseJSON($(element).attr('ajax'));
+			ajax.method = 'post';
+	
+			var json = {};
+			json.edit = ajax.action;
+			json.index = ajax.index;
+			json.first = ajax.first;
+			json.size = ajax.size;
+			json.varname = ajax.varname;
+	
+			var found = false;
+			json.values = [];
+	
+			$(getId(ajax.update)).find('*[name]').each(function(index) {
+				if ($(this).attr("name").indexOf(TAG_INIT) >= 0) {
+					$(this).removeAttr('enabled');
+					$(this).attr('disabled', 'disabled');
+					json.values.push({name: $(this).attr("name"), value: $(this).val()});
+				}
+			});
+	
+			if (json.values.length == 0) {
+				json.values = null;
+			}
+	
+			getTableSortFilter(ajax, json);
+	
+			var options = getAjaxOptions(ajax);
+			var postParam = [{name: ajax.name, value: JSON.stringify(json)}];
+	
+			var closestForm = $(getId(id)).closest('form');
+			if (closestForm && closestForm.length > 0) {
+				if (!doValidate($(closestForm).attr('id'))) {
+					return;
+				}
+			} else {
+				postParam = $.param(postParam);
+			}
+	
+			options.data = postParam;
+	
+			if (closestForm && closestForm.length > 0) {
+				$(closestForm).ajaxSubmit(options);
+			} else {
+				$.ajax(options);
+			}
+		}
+	}
+
+	function doTableEditStart(id, item, index, first) {
+		item.hide();
+		$(getId(id + EDIT_CELL_CONFIRM_ITEM_ID + index + "_" + first)).css("display", "inline-block");
+		$(getId(id + EDIT_CELL_CANCEL_ITEM_ID + index + "_" + first)).css("display", "inline-block");
+	
+		item.closest('tr').find("div[outputwrapper]").each(function(index) {
+			$(this).hide();
+		});
+		item.closest('tr').find("div[inputwrapper]").each(function(index) {
+			$(this).find("*[disabled]").each(function(index) {
+	
+				if ($(this).attr("name").indexOf(TAG_INIT) >= 0) {
+					$(this).removeAttr('disabled');
+					$(this).attr('enabled', 'enabled');
+					$(this).css({'width': $(this).closest('td').width() - 30});
+				}
+			});
+			$(this).show();
+		});
+	}
+
+	function doTableEditCancel(id, item, index, first) {
+		item.hide();
+		$(getId(id + EDIT_CELL_CONFIRM_ITEM_ID + index + "_" + first)).hide();
+		$(getId(id + EDIT_CELL_START_ITEM_ID + index + "_" + first)).show();
+	
+		item.closest('tr').find("div[outputwrapper]").each(function(index) {
+			$(this).show();
+		});
+		item.closest('tr').find("div[inputwrapper]").each(function(index) {
+			$(this).hide();
+	
+			$(this).find("*[enabled]").each(function(index) {
+	
+				if ($(this).attr("name").indexOf(TAG_INIT) >= 0) {
+					$(this).removeAttr('enabled');
+					$(this).attr('disabled', 'disabled');
+				}
+			});
+		});
 	}
 
 	function doDate(input) {
@@ -1019,56 +1513,7 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doCheckbox(id) {
-		var element = $('#' + id);
-		var value = element.val();
-		var name = element.attr("name");
-	
-		if (!value || value == 'false') {
-			element.attr('value', 'true');
-			$("input:hidden[name='" + name + "']").each(function(index) {
-				$(this).remove();
-			});
-		} else {
-			element.attr('value', 'false');
-			element.after($('<input type="hidden" name="' + name + '" value="false" />'));
-		}
-	}
-
-	function doCheck(map) {
-		var element = $(getId(map.id));
-		if (element && element.length > 0) {
-			var postParam = [];
-			var options = getNewAjaxOptions(map);
-			var closestForm = $(element).closest('form');
-			var elementParam = getElementParam(element, false);
-	
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
-					return;
-				}
-				if (elementParam.length > 0 && elementParam[0].value == null) {
-					postParam.push({name: elementParam[0].name, value: elementParam[0].value});
-				}
-			} else {
-				for (var i = 0; i < elementParam.length; i++) {
-					postParam.push({name: elementParam[i].name, value: elementParam[i].value});
-				}
-				postParam = $.param(postParam);			
-			}
-	
-			options.data = postParam;
-	
-			if (closestForm && closestForm.length > 0) {
-				doFormPlaceHolders(closestForm);
-				$(closestForm).ajaxSubmit(options);
-			} else {
-				$.ajax(options);
-			}
-		}
-	}
-
-	function doSwitch(id, async, ajax) {
+	function doSwitch(id, ajax) {
 		var switchInput = $(getId(id + SWITCH_INPUT));
 		var switchButton = $(getId(id + SWITCH_BUTTON));
 		var state = switchInput.val();
@@ -1081,7 +1526,7 @@ var Jsmart5 = (function() {
 	
 			switchButton.animate({left: "0%"}, "fast", function() {
 				if (ajax) {
-					doSwitchAction(async, id, state);
+					doSwitchAction(id, state);
 				}
 			});
 		} else {
@@ -1092,7 +1537,7 @@ var Jsmart5 = (function() {
 			
 			switchButton.animate({left: $(getId(id)).width() - switchButton.outerWidth(true)}, "fast", function() {
 				if (ajax) {
-					doSwitchAction(async, id, state);
+					doSwitchAction(id, state);
 				}
 			});
 		}
@@ -1299,7 +1744,7 @@ var Jsmart5 = (function() {
 									child.remove();
 									if ($('div[fixedmessage="fixed"]').length == 0) {
 										if (exec) {
-											doExecute(null, exec);
+											doExecute(exec);
 										}
 									}
 						        };
@@ -1309,7 +1754,7 @@ var Jsmart5 = (function() {
 								$(this).remove();
 								if ($('div[fixedmessage="fixed"]').length == 0) {
 									if (onClose) { 
-										doExecute(null, onClose);
+										doExecute(onClose);
 									}
 								}
 							});
@@ -1317,7 +1762,7 @@ var Jsmart5 = (function() {
 					});
 					div.show();
 					if (onShow) {
-						doExecute(null, onShow);
+						doExecute(onShow);
 					}
 				}
 			}
@@ -1573,368 +2018,11 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function openDialog(id) {
-		$(getId(id)).dialog('open');
-		resetPlaceHolders(id);
-		resetTable(id);
-		resetSelects(id);
-		doListenEnterKey(id);
-		resetBalloon(id);
-		resetKeypad(id);
-	}
-		
-	function closeDialog(id) {
-		$(getId(id)).dialog('close');
-	}
-
-	function getRestJsonBody(element, bodyRoot) {
-		var json = '';
-		var closestForm = $(element).closest('form');
-
-		if (closestForm && closestForm.length > 0) {
-			if (!doValidate($(closestForm).attr('id'))) {
-				return;
-			}
-
-			var restGroups = $(closestForm).find('div[type="restarray"]');
-
-			if (restGroups && restGroups.length > 0) {
-				var restMap = {};
-				var initGroup = false;
-
-				restGroups.each(function(index) {
-
-					var groupName = $(this).attr('rest');
-					if (!groupName || groupName.length == 0) {
-						groupName = 'none';
-					} else {
-						initGroup = true;
-					}
-
-					if (!restMap[groupName]) {
-						restMap[groupName] = '';
-					}
-					restMap[groupName] += getRestJsonItem($(this)) + ',';
-				});
-
-				if (bodyRoot && bodyRoot.length > 0) {
-					if (initGroup) {
-						json = '{\"' + bodyRoot + '\":{';
-					} else {
-						json = '{\"' + bodyRoot + '\":[';
-					}
-				} else {
-					if (initGroup) {
-						json = '{';
-					} else {
-						json = '[';
-					}
-				}
-
-				for (var groupName in restMap) {
-					var item = restMap[groupName];
-					if (groupName != 'none') {
-						json += '\"' + groupName + '\":[' + item.substring(0, item.length - 1) + '],';
-					} else {
-						json += item.substring(0, item.length - 1) + ',';
-					}
-				}
-				
-				if (json.length > 1) {
-					json = json.substring(0, json.length - 1);
-				}
-
-				if (bodyRoot && bodyRoot.length > 0) {
-					if (initGroup) {
-						json += '}}';
-					} else {
-						json += ']}';
-					}
-				} else {
-					if (initGroup) {
-						json += '}';
-					} else {
-						json += ']';
-					}
-				}
-			} else {
-				if (bodyRoot && bodyRoot.length > 0) {
-					json += '{\"' + bodyRoot + '\":';
-				}
-
-				json = getRestJsonItem(closestForm);
-				
-				if (bodyRoot && bodyRoot.length > 0) {
-					json += '}';
-				}
-			}
-		}
-		return json;
-	}
-
-	function getRestJsonItem(parent) {
-		var json = '{';
-		var checkgroups = new Array();
-
-		$(parent).find('*[rest]').each(function(index) {
-
-			var elementParam = getElementParam($(this), true);
-			if (elementParam.length > 0) {
-
-				var name = $(this).attr('name');
-				if (contains(checkgroups, name)) {
-					return;
-				}
-				checkgroups[checkgroups.length] = name;
-
-				var rest = $(this).attr('rest');
-
-				if (elementParam[0].array == true) {
-					json += '\"' + rest + '\":[';
-					if (elementParam[0].value && elementParam[0].value.length > 0) {
-						var values = elementParam[0].value.split(',');
-						for (var i = 0; i < values.length; i++) {
-							json += '\"' + values[i] + '\",';
-						}
-						json = json.substring(0, json.length - 1);
-					}
-					json += '],';
-				} else {
-					if (elementParam[0].value || elementParam[0].value == false) {
-						json += '\"' + rest + '\":\"' + elementParam[0].value + '\",';
-					} else {
-						json += '\"' + rest + '\":null,';
-					}
-				}
-			}
-		});
-
-		if (json.length > 1) {
-			json = json.substring(0, json.length - 1);
-		}
-
-		return json + '}';
-	}
-
-	function getRestXmlBody(element, bodyRoot) {
-		var xml = '<?xml version="1.0" encoding="UTF-8" ?>';
-		
-		if (bodyRoot && bodyRoot.length > 0) {
-			xml += '<' + bodyRoot + '>';
-		} else {
-			xml += '<root>';
-		}
-
-		var closestForm = $(element).closest('form');
-
-		if (closestForm && closestForm.length > 0) {
-			if (!doValidate($(closestForm).attr('id'))) {
-				return;
-			}
-
-			var restGroups = $(closestForm).find('div[type="restarray"]');
-
-			if (restGroups && restGroups.length > 0) {
-				restGroups.each(function(index) {
-					var groupName = $(this).attr('rest');
-					if (!groupName || groupName.length == 0) {
-						groupName = 'none';
-					}
-					xml += '<' + groupName + '>' + getRestXmlItem($(this)) + '</' + groupName + '>';
-				});
-			} else {
-				xml += getRestXmlItem(closestForm);
-			}
-		}
-
-		if (bodyRoot && bodyRoot.length > 0) {
-			xml += '</' + bodyRoot + '>';
-		} else {
-			xml += '</root>';
-		}
-		return xml;
-	}
-
-	function getRestXmlItem(parent) {
-		var xml = '';
-		var checkgroups = new Array();
-
-		$(parent).find('*[rest]').each(function(index) {
-
-			var elementParam = getElementParam($(this), true);
-			if (elementParam.length > 0) {
-				
-				var name = $(this).attr('name');
-				if (contains(checkgroups, name)) {
-					return;
-				}
-				checkgroups[checkgroups.length] = name;
-
-				var rest = $(this).attr('rest');
-
-				if (elementParam[0].array == true) {
-					if (elementParam[0].value && elementParam[0].value.length > 0) {
-						var values = elementParam[0].value.split(',');
-						for (var i = 0; i < values.length; i++) {
-							xml += '<' + rest + '>' + values[i] + '</' + rest + '>';
-						}
-					}
-				} else {
-					if (elementParam[0].value || elementParam[0].value == false) {
-						xml += '<' + rest + '>' + elementParam[0].value + '</' + rest + '>';
-					} else {
-						xml += '<' + rest + ' />';
-					}
-				}
-			}
-		});
-
-		return xml;
-	}
-
-	function getRestQueryParams(element) {
-		var queryParams = '';
-		var ajax = $.parseJSON($(element).attr('ajax'));
-		if (ajax.params) {
-			for (var i = 0; i < ajax.params.length; i++) {
-				queryParams += ajax.params[i].name + '=' + ajax.params[i].value + '&';
-			}
-		}
-		return queryParams.length > 0 ? queryParams.substring(0, queryParams.length - 1) : queryParams;
-	}
 	
-	function getBasicAjaxOptions(async) {
-		return {
-			type: 'post', 
-			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
-			success: function (data) {
-				var reset = $(data).find(RESET_PATH); 
-				if (reset && reset.length > 0) {
-					$(location).attr('href', $(location).attr('href'));
-				} else {
-					resetMessage(data);
-					var redirect = $(data).find(REDIRECT_PATH); 
-					if (redirect && redirect.length > 0) {
-						$(location).attr('href', redirect.val());
-					}
-				}
-			},
-			error: function (xhr, status, error) {
-				showOnConsole(xhr.responseText);
-			},
-			complete: function (xhr, status) {
-				jQuery.event.trigger('ajaxStop');
-			},
-			async: async
-		};
-	}
 	
-	function getNewAjaxOptions(map) {
-		return {
-			type: map.method, 
-			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
-			beforeSend: function (data) {
-				doExecute(data, map.before);
-			},
-			success: function (data) {
-				var reset = $(data).find(RESET_PATH); 
-				if (reset && reset.length > 0) {
-					$(location).attr('href', $(location).attr('href'));
-				} else {
-					if (map.url && map.url.length > 0) {
-						$(location).attr('href', map.url);
-					} else {
-						doUpdate(data, map.update);
-						var dialogs = doExecute(data, map.exec);
-						doReset(map.update, dialogs);
 	
-						resetMessage(data);
-						var redirect = $(data).find(REDIRECT_PATH); 
-						if (redirect && redirect.length > 0) {
-							$(location).attr('href', redirect.val());
-						}
-					}
-				}
-			},
-			error: function (xhr, status, error) {
-				showOnConsole(xhr.responseText);
-			},
-			complete: function (xhr, status) {
-				jQuery.event.trigger('ajaxStop');
-			},
-			async: map.async
-		};
-	}
 	
-	function getAjaxOptions(async, ajax) {
-		return {
-			type: ajax.method, 
-			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
-			beforeSend: function (data) {
-				doExecute(data, ajax.before);
-			},
-			success: function (data) {
-				var reset = $(data).find(RESET_PATH); 
-				if (reset && reset.length > 0) {
-					$(location).attr('href', $(location).attr('href'));
-				} else {
-					if (ajax.url && ajax.url.length > 0) {
-						$(location).attr('href', ajax.url);
-					} else {
-						doUpdate(data, ajax.update);
-						var dialogs = doExecute(data, ajax.exec);
-						doReset(ajax.update, dialogs);
-	
-						resetMessage(data);
-						var redirect = $(data).find(REDIRECT_PATH); 
-						if (redirect && redirect.length > 0) {
-							$(location).attr('href', redirect.val());
-						}
-					}
-				}
-			},
-			error: function (xhr, status, error) {
-				showOnConsole(xhr.responseText);
-			},
-			complete: function (xhr, status) {
-				jQuery.event.trigger('ajaxStop');
-			},
-			async: async
-		};
-	}
-	
-	function getNewAjaxParams(map) {
-		var params = [];
-		if (map.action) {
-			params.push({name: map.action, value: 0});
-		}
 
-		if (map.params) {
-			for (var i = 0; i < map.params.length; i++) {
-				params.push({name: map.params[i].name, value: map.params[i].value});
-			}
-		}
-		return params;
-	}
-	
-	function getAjaxParams(element) {
-		var params = [];
-		if ($(element) && $(element).attr('ajax')) {
-			var paramAjax = $.parseJSON($(element).attr('ajax'));
-			
-			if (paramAjax.action) {
-				params.push({name: paramAjax.action, value: 0});
-			}
-	
-			if (paramAjax.params) {
-				for (var i = 0; i < paramAjax.params.length; i++) {
-					params.push({name: paramAjax.params[i].name, value: paramAjax.params[i].value});
-				}
-			}
-		}
-		return params;
-	}
-	
 	function getAjaxOutsideParams(element) {
 		var params = [];
 		if ($(element) && $(element).attr('ajaxoutside')) {
@@ -1957,127 +2045,6 @@ var Jsmart5 = (function() {
 		return params;
 	}
 	
-	function getElementParam(element, rest) {
-		var elementParam = [];
-		var name = $(element).attr('name');
-		var checkgroups = new Array();
-	
-		if ($(element).is('select') && $(element).attr('multiple')) {
-			var values = $(element).val();
-			if (values && values.length > 0) {
-				if (rest) {
-					var value = "";
-					for (var i = 0; i < values.length; i++) {
-						value += values[i] + ",";
-					}
-					if (value.length > 0) {
-						elementParam.push({name: name, value: value.substring(0, value.length - 1), array: true});
-					}
-				} else {
-					for (var i = 0; i < values.length; i++) {
-						elementParam.push({name: name, value: values[i], array: true});
-					}
-				}
-			}
-	
-			if (elementParam.length == 0) {
-				elementParam.push({name: name, value: null, array: true});
-			}
-		} else if ($(element).is('input') && $(element).attr('checkgroup')) {
-			if (!contains(checkgroups, name)) {
-				checkgroups[checkgroups.length] = name;
-	
-				var values = [];
-				$(element).parents('div:eq(1)').find("input:checked[name='" + name + "']").each(function(index) {
-					values.push($(this).val());
-				});
-	
-				if (rest) {
-					var value = "";
-					for (var i = 0; i < values.length; i++) {
-						value += values[i] + ",";
-					}
-					if (value.length > 0) {
-						elementParam.push({name: name, value: value.substring(0, value.length - 1), array: true});
-					}
-				} else {
-					for (var i = 0; i < values.length; i++) {
-						elementParam.push({name: name, value: values[i], array: true});
-					}
-				}
-	
-				if (elementParam.length == 0) {
-					elementParam.push({name: name, value: null, array: true});
-				}
-			}
-		} else if ($(element).is('input') && $(element).attr('radiogroup')) {
-			if (!contains(checkgroups, name)) {
-				checkgroups[checkgroups.length] = name;
-	
-				var val = $(element).parents('div:eq(1)').find("input:checked[name='" + name + "']").val();
-				elementParam.push({name: name, value: val, array: false});
-			}
-		} else if ($(element).is('input:checkbox')) {
-			var value = $(element).val();
-	
-			if (!value || value == 'false') {
-				elementParam.push({name: name, value: false, array: false});
-			} else {
-				elementParam.push({name: name, value: true, array: false});
-			}
-		} else {
-			elementParam.push({name: name, value: $(element).val(), array: false});
-		}
-	
-		return elementParam;
-	}
-	
-	function doUpdate(a, update) {
-		if (update && update.length > 0) {
-			var updateEval = "";
-			var updates = update.split(',');
-			for (var i = 0; i < updates.length; i++) {
-				if (!doTableScrollUpdate(a, updates[i])) {
-					var updateId = getId(updates[i]);
-					updateEval += "$('" + updateId + "').replaceWith($(a).find('" + updateId + "'));";
-				}
-			}
-			if (updateEval.length > 0) {
-				try {
-					eval(updateEval);
-				} catch(err) {
-					showOnConsole(err.message); 
-				}
-			}
-		}
-	}
-	
-	function doReset(update, dialogs) {
-		if (update && update.length > 0) {
-			var updates = update.split(',');
-	
-			for (var i = 0; i < updates.length; i++) {
-				var id = updates[i];
-	
-				if (!contains(dialogs, id)) {
-					resetDatePicker(id);
-					resetPlaceHolders(id);
-					resetTable(id);
-					resetSelects(id);
-					resetBalloon(id);
-					resetCarousel(id);
-					resetPanel(id);
-					resetKeypad(id);
-					resetCaptcha(id);
-					resetSwitch(id);
-					resetProgress(id);
-					resetRange(id);
-					resetTree(id);
-					resetAutocomplete(id);
-				}
-			}
-		}
-	}
 	
 	function getTableAction(ajax) {
 		var json = {};
@@ -2315,62 +2282,6 @@ var Jsmart5 = (function() {
 		}
 	}
 	
-	
-	function applyTab(tabItem, ajax, id, collapsible, position) {
-		var input = $(getId(id + TAB_INDEX));
-	
-		if (tabItem.attr('active') && collapsible == 'true') {
-			tabItem.removeAttr('active');
-			$(getId(tabItem.attr('tab'))).hide();
-	
-			if (input && input.length > 0) {
-				input.val(null);
-				if (ajax == 'true') {
-					doTabAction(true, id, input.attr('name'), input.val());
-				}
-			}
-		} else {
-			var closeItem = $(getId(id)).find('>ul li[active="true"]');
-			if (closeItem) {
-				closeItem.removeAttr('active');
-				$(getId(closeItem.attr('tab'))).hide();
-			}
-	
-			tabItem.attr('active', 'true');
-			$(getId(tabItem.attr('tab'))).show();
-	
-			if (input && input.length > 0) {
-				input.val(tabItem.attr('val'));
-				if (ajax == 'true') {
-					doTabAction(true, id, input.attr('name'), input.val());
-				}
-			}
-		}
-	}
-	// TODO
-	function doTabAction(async, id, name, value) {
-		var options = getBasicAjaxOptions(async);
-		var closestForm = $(getId(id)).closest('form');
-		var postParam = [{name: name, value: value}];
-	
-		if (closestForm && closestForm.length > 0) {
-			if (!doValidate($(closestForm).attr('id'))) {
-				return;
-			}
-		} else {
-			postParam = $.param(postParam);			
-		}
-	
-		options.data = postParam;
-	
-		if (closestForm && closestForm.length > 0) {
-			doFormPlaceHolders(closestForm);
-			$(closestForm).ajaxSubmit(options);
-		} else {
-			$.ajax(options);
-		}
-	}
-	
 	function resetDatePicker(id) {
 		if (id && id.length > 0) {
 			var datepicker = $(getId(id));
@@ -2393,19 +2304,6 @@ var Jsmart5 = (function() {
 					} catch(err) {
 						showOnConsole(err.message);
 					}
-				});
-			}
-		}
-	}
-	
-	function resetSelects(id) {
-		if (id && id.length > 0) {
-			var selectElement = $(getId(id));
-			if (selectElement.is('select')) {
-				selectElement.trigger('update');
-			} else {
-				selectElement.find('select').each(function(index) {
-					$(this).trigger('update');
 				});
 			}
 		}
@@ -2467,111 +2365,9 @@ var Jsmart5 = (function() {
 			}
 		}
 	}
-	
-	function initPlaceHolders() {
-		$('*[placeholder]').each(function(index) {
-			var input = $(this);
-		});
-	
-		$('*[placeholder]').focus(function() {
-			var input = $(this);
-			if (input.val() == input.attr('placeholder')) {
-				input.val('');
-			    input.removeClass('placeholder');
-			}
-			return false;
-	
-		}).blur(function() {
-			var input = $(this);
-			if (input.val() == '' || input.val() == input.attr('placeholder')) {
-			    input.addClass('placeholder');
-			    input.val(input.attr('placeholder'));
-			}
-		}).blur();
-	
-		$('*[placeholder]').closest('form').submit(function() {
-			doFormPlaceHolders(this);
-		});
-	}
-	
-	function resetPlaceHolders(id) {
-		if (id && id.length > 0) {
-			var placeHolder = $(getId(id));
-			placeHolder.find('*[placeholder]').each(function(index) {
-				var input = $(this);
-			});
-	
-			placeHolder.find('*[placeholder]').focus(function() {
-				var input = $(this);
-				if (input.val() == input.attr('placeholder')) {
-					input.val('');
-				    input.removeClass('placeholder');
-				}
-				return false;
-	
-			}).blur(function() {
-				var input = $(this);
-				if (input.val() == '' || input.val() == input.attr('placeholder')) {
-				    input.addClass('placeholder');
-				    input.val(input.attr('placeholder'));
-				}
-			}).blur();
-	
-			placeHolder.find('*[placeholder]').closest('form').submit(function() {
-				doFormPlaceHolders(this);
-			});
-		}
-	}
-	
-	function doFormPlaceHolders(form) {
-		if (form && form.length > 0) {
-			$(form).find('*[placeholder]').each(function() {
-				var input = $(this);
-			    if (input.val() == input.attr('placeholder')) {
-			    	input.val('');
-			    }
-			});
-		}
-	}
-	
-	function doListenEnterKey(id) {
-		if (id && id.length > 0) {
-			var listenEnter = $(getId(id));
-			listenEnter.unbind('keypress');
-			listenEnter.bind('keypress', function(e) {
-				if (e.keyCode == 13) {
-					var button = listenEnter.dialog('option', 'listenEnter');
-					if (button && button.length > 0) {
-						$(getId(button)).click();
-						return false;
-					}
-				}
-		    });
-		}
-	}
-	
-	function resetPanel(id) {
-		if ($(getId(id)).is('div[type="panel"]')) {
-			doPanel(id);
-		} else {
-			$(getId(id)).find('div[type="panel"]').each(function(index) {
-				doPanel($(this).attr("id"));
-			});
-		}
-	}
-	
-	function initCheckbox() {
-		$('input:checkbox').each(function(index) {
-			var value = $(this).val();
-			var name = $(this).attr("name");
-			if (!value || value == 'false') {
-				$(this).after($('<input type="hidden" name="' + name + '" value="false" />'));
-			}
-		});
-	}
 
-	function doSwitchAction(async, id, state) {
-		var options = getBasicAjaxOptions(async);
+	function doSwitchAction(id, state) {
+		var options = getBasicAjaxOptions();
 		var switchInput = $(getId(id + SWITCH_INPUT));
 		var postParam = [{name: switchInput.attr("name"), value: state}];
 		var closestForm = switchInput.closest('form');
@@ -2587,7 +2383,6 @@ var Jsmart5 = (function() {
 		options.data = postParam;
 	
 		if (closestForm && closestForm.length > 0) {
-			doFormPlaceHolders(closestForm);
 			$(closestForm).ajaxSubmit(options);
 		} else {
 			$.ajax(options);
@@ -2970,7 +2765,7 @@ var Jsmart5 = (function() {
 		$(div).animate({'opacity': 1}, effectTime, function() {
 			if (onShow) {
 				if ($('div[automessage="auto"]').length == 1) {
-					doExecute(null, onShow);
+					doExecute(onShow);
 				}
 			}
 		});
@@ -2994,7 +2789,7 @@ var Jsmart5 = (function() {
 						$(".jsmart5_overlay_message").remove();
 					}
 					if (onClose) { 
-						doExecute(null, onClose);
+						doExecute(onClose);
 					}
 				}
 			});
@@ -3121,7 +2916,7 @@ var Jsmart5 = (function() {
 	
 		if (update == true) {
 			options.success = function (data) {
-				var reset = $(data).find(RESET_PATH); 
+				var reset = $(data).find(SESSION_RESET); 
 				if (reset && reset.length > 0) {
 					$(location).attr('href', $(location).attr('href'));
 				} else {
@@ -3152,7 +2947,6 @@ var Jsmart5 = (function() {
 		options.data = postParam;
 	
 		if (closestForm && closestForm.length > 0) {
-			doFormPlaceHolders(closestForm);
 			$(closestForm).ajaxSubmit(options);
 		} else {
 			$.ajax(options);
@@ -3247,7 +3041,7 @@ var Jsmart5 = (function() {
 	
 		if (update == true) {
 			options.success = function (data) {
-				var reset = $(data).find(RESET_PATH); 
+				var reset = $(data).find(SESSION_RESET); 
 				if (reset && reset.length > 0) {
 					$(location).attr('href', $(location).attr('href'));
 				} else {
@@ -3278,7 +3072,6 @@ var Jsmart5 = (function() {
 		options.data = postParam;
 	
 		if (closestForm && closestForm.length > 0) {
-			doFormPlaceHolders(closestForm);
 			$(closestForm).ajaxSubmit(options);
 		} else {
 			$.ajax(options);
@@ -3349,7 +3142,7 @@ var Jsmart5 = (function() {
 		});
 	}
 
-	function doAutoComplete(async, id, event) {
+	function doAutoComplete(id, event) {
 		var element = $(getId(id));
 		if (element && element.attr('ajax')) {
 
@@ -3382,7 +3175,7 @@ var Jsmart5 = (function() {
 				element.addClass('jsmart5_auto_complete_load');
 
 				ajax.method = 'post';
-				var options = getAjaxOptions(async, ajax);
+				var options = getAjaxOptions(ajax);
 
 				search = element.val().replace(getAutoCompleteChar(id), '');
 				var postParam = [{name: ajax.name, value: search}, {name: element.attr('name'), value: element.val()}];
@@ -3399,7 +3192,7 @@ var Jsmart5 = (function() {
 				options.data = postParam;
 
 				options.success = function(data) {
-					var reset = $(data).find(RESET_PATH);
+					var reset = $(data).find(SESSION_RESET);
 					if (reset && reset.length > 0) {
 						$(location).attr('href', $(location).attr('href'));
 					} else {
@@ -3462,7 +3255,6 @@ var Jsmart5 = (function() {
 				};
 
 				if (closestForm && closestForm.length > 0) {
-					doFormPlaceHolders(closestForm);
 					$(closestForm).ajaxSubmit(options);
 				} else {
 					$.ajax(options);
@@ -3554,8 +3346,6 @@ var Jsmart5 = (function() {
 	    }
 	    return string;
 	}
-
-	$.ui.dialog.prototype.options.listenEnter = "";
 	
 	function contains(array, element) {
 		for (var i = 0; i < array.length; i++) {

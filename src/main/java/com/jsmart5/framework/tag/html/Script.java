@@ -18,8 +18,8 @@ public class Script extends Tag {
 
 		builder.append("$(document).ready(function() {");
 
-		if (text != null) {
-			builder.append(text);
+		for (Object obj : objects) {
+			builder.append(obj);
 		}
 
 		builder.append("});");

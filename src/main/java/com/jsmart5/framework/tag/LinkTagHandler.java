@@ -20,9 +20,6 @@ package com.jsmart5.framework.tag;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -33,9 +30,8 @@ import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
-import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Span;
-import com.jsmart5.framework.tag.html.Ul;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
@@ -62,23 +58,21 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 	private String update;
 
-	private String beforeAjax;
+	private String beforeSend;
+	
+	private String onError;
+	
+	private String onSuccess;
 
-	private String afterAjax;
+	private String onComplete;
 
 	private Integer tabIndex;
 	
 	private String size;
-
-	private boolean async = true;
 	
-	private boolean dropUp;
+	private boolean disabled;
 
-	private List<DropTagHandler> drops;
-
-	public LinkTagHandler() {
-		drops = new ArrayList<DropTagHandler>();
-	}
+	private DropMenuTagHandler dropMenu;
 
 	@Override
 	public void validateTag() throws JspException {
@@ -89,7 +83,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		StringWriter sw = new StringWriter();
 
@@ -105,7 +99,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 		Div linkGroup = null;
 
-		if (!drops.isEmpty()) {
+		if (dropMenu != null) {
 			linkGroup = new Div();
 			linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP)
 				.addAttribute("role", "group");
@@ -120,7 +114,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
 			}
 			
-			if (dropUp) {
+			if (dropMenu.isDropUp()) {
 				linkGroup.addAttribute("class", Bootstrap.DROPUP);
 			}
 		}
@@ -130,7 +124,8 @@ public final class LinkTagHandler extends SmartTagHandler {
 			.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.BUTTON)
 			.addAttribute("tabindex", tabIndex)
-			.addAttribute("class", Bootstrap.BUTTON_LINK);
+			.addAttribute("class", Bootstrap.BUTTON_LINK)
+			.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
 
 		StringBuilder urlParams = new StringBuilder("?");
 		for (String key : params.keySet()) {
@@ -148,8 +143,11 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 		link.addAttribute("href", href);
 		
-		if (iconTag != null && IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-			link.addText(getIconTag());
+		for (IconTagHandler iconTag : iconTags) {
+			if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+				link.addTag(iconTag.executeTag());
+				link.addText(" ");
+			}
 		}
 
 		Object val = getTagValue(label);
@@ -169,10 +167,13 @@ public final class LinkTagHandler extends SmartTagHandler {
 			link.addText(href);
 		}
 		
-		if (iconTag != null && IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-			link.addText(getIconTag());
+		for (IconTagHandler iconTag : iconTags) {
+			if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+				link.addText(" ");
+				link.addTag(iconTag.executeTag());
+			}
 		}
-		
+
 		if (XSMALL.equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_XSMALL);
 		} else if (SMALL.equalsIgnoreCase(size)) {
@@ -188,11 +189,14 @@ public final class LinkTagHandler extends SmartTagHandler {
 		if (linkGroup != null) {
 			link.addAttribute("data-toggle", "dropdown")
 				.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+				.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
 				.addAttribute("role", "button")
 				.addAttribute("aria-expanded", false);
 			
 			Span caret = new Span();
 			caret.addAttribute("class", Bootstrap.CARET);
+
+			link.addText(" ");
 			link.addTag(caret);
 
 			linkGroup.addTag(link);
@@ -201,59 +205,32 @@ public final class LinkTagHandler extends SmartTagHandler {
 		// Add the style class at last
 		link.addAttribute("class", styleClass);
 		
-		if (action != null || update != null || beforeAjax != null || afterAjax != null) {
-			appendScript(getFunction(id, action, url, params));
-		}
-
-		if (linkGroup != null) {
-
-			Ul ul = new Ul();
-			ul.addAttribute("role", "menu")
-				.addAttribute("class", Bootstrap.DROPDOWN_MENU);
-			linkGroup.addTag(ul);
-
-			for (DropTagHandler drop : drops) {
-				
-				if (drop.getId() == null) {
-					drop.setId(getRandonId());
-				}
-				
-				if (drop.getHeader() != null) {
-					Li headerLi = new Li();
-					headerLi.addAttribute("role", "presentation")
-						.addAttribute("class", Bootstrap.DROPDOWN_HEADER)
-						.addText((String) getTagValue(drop.getHeader()));
-					ul.addTag(headerLi);
-				}
-
-				Li li = new Li();
-				li.addAttribute("id", drop.getId())
-					.addAttribute("role", "presentation")
-					.addAttribute("class", drop.isDisabled() ? Bootstrap.DISABLED : null);
-				ul.addTag(li);
-
-				A a = new A();
-				a.addAttribute("href", "#")
-					.addText((String) getTagValue(drop.getLabel()));
-				li.addTag(a);
-
-				if (drop.hasDivider()) {
-					Li dividerLi = new Li();
-					dividerLi.addAttribute("class", Bootstrap.DIVIDER);
-					ul.addTag(li);
-				}
-				
-				appendScript(getFunction(drop.getId(), drop.getAction(), url, drop.getParams()));
+		if (action != null) {		
+			appendScript(getFunction(url));
+		} else {
+			if (beforeSend != null) {
+				appendScript(getExecFunction());
 			}
 		}
 
-		printOutput(linkGroup != null ? linkGroup.getHtml() : link.getHtml());
+		if (dropMenu != null) {
+			Tag ul = dropMenu.executeTag();
+			ul.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
+			linkGroup.addTag(ul);
+		}
+
+		return linkGroup != null ? linkGroup : link;
 	}
 	
-	private StringBuilder getFunction(String id, String action, String url, Map<String, Object> params) {
+	private StringBuilder getExecFunction() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_EXEC.format(beforeSend.trim()));	
+		return getBindFunction(id, EVENT_CLICK, builder);
+	}
+	
+	private StringBuilder getFunction(String url) {
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
-		jsonAjax.setAsync(async);
 
 		if (action != null) {
 			jsonAjax.setMethod("post");
@@ -263,7 +240,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 				jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
 			}
 
-			if (update == null && afterAjax == null) {
+			if (update == null && onError == null && onSuccess == null && onComplete == null) {
 				jsonAjax.setUrl(url);
 			}
 		} else if (update != null) {
@@ -272,20 +249,26 @@ public final class LinkTagHandler extends SmartTagHandler {
 		if (update != null) {
 			jsonAjax.setUpdate(update.trim());
 		}
-		if (beforeAjax != null) {
-			jsonAjax.setBefore(beforeAjax.trim());
+		if (beforeSend != null) {
+			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
 		}
-		if (afterAjax != null) {
-			jsonAjax.setExec(afterAjax.trim());
+		if (onError != null) {
+			jsonAjax.setError((String) getTagValue(onError.trim()));
+		}
+		if (onSuccess != null) {
+			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+		}
+		if (onComplete != null) {
+			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
 		}
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BUTTON.format(getJsonValue(jsonAjax)) + "return false;");
-		return getFunction(id, EVENT_CLICK, builder);
+		return getBindFunction(id, EVENT_CLICK, builder);
 	}
 
-	void addDrop(DropTagHandler drop) {
-		this.drops.add(drop);
+	void setDropMenu(DropMenuTagHandler dropMenu) {
+		this.dropMenu = dropMenu;
 	}
 
 	public void setLabel(String label) {
@@ -312,24 +295,28 @@ public final class LinkTagHandler extends SmartTagHandler {
 		this.update = update;
 	}
 
-	public void setBeforeAjax(String beforeAjax) {
-		this.beforeAjax = beforeAjax;
+	public void setBeforeSend(String beforeSend) {
+		this.beforeSend = beforeSend;
 	}
 
-	public void setAfterAjax(String afterAjax) {
-		this.afterAjax = afterAjax;
+	public void setOnError(String onError) {
+		this.onError = onError;
+	}
+
+	public void setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+	}
+
+	public void setOnComplete(String onComplete) {
+		this.onComplete = onComplete;
 	}
 
 	public void setTabIndex(Integer tabIndex) {
 		this.tabIndex = tabIndex;
 	}
 
-	public void setAsync(boolean async) {
-		this.async = async;
-	}
-
-	public void setDropUp(boolean dropUp) {
-		this.dropUp = dropUp;
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 
 }

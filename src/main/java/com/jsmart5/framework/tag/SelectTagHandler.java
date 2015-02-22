@@ -19,7 +19,6 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,7 @@ import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Select;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -42,7 +42,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 	private static final String LARGE = "large";
 
-	private String value;
+	private String selectValues;
 
 	private boolean ajax;
 
@@ -60,8 +60,6 @@ public final class SelectTagHandler extends SmartTagHandler {
 	
 	private String size;
 
-	private boolean async = false;
-
 	private List<OptionTagHandler> options;
 
 	private SmartTagHandler childAddOn;
@@ -78,7 +76,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -113,7 +111,8 @@ public final class SelectTagHandler extends SmartTagHandler {
 		if (label != null) {
 			Label labelTag = new Label();
 			labelTag.addAttribute("for", id)
-					.addText((String) getTagValue(label));
+					.addAttribute("class", Bootstrap.LABEL_CONTROL)
+					.addText(getTagValue(label));
 			formGroup.addTag(labelTag);
 		}
 
@@ -134,14 +133,11 @@ public final class SelectTagHandler extends SmartTagHandler {
 		
 		if (leftAddOn != null) {
 			if (childAddOn != null && leftAddOn.equalsIgnoreCase(childAddOn.getId())) {
-				StringWriter sw = new StringWriter();
-				childAddOn.setOutputWriter(sw);
-				childAddOn.executeTag();
-				inputGroup.addText(sw.toString());
+				inputGroup.addTag(childAddOn.executeTag());
 			} else {
 				Div div = new Div();
 				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText((String) getTagValue(leftAddOn));
+					.addText(getTagValue(leftAddOn));
 				inputGroup.addTag(div);
 			}
 		}
@@ -150,9 +146,9 @@ public final class SelectTagHandler extends SmartTagHandler {
 		select.addAttribute("id", id)
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
-			 .addAttribute("name", getTagName((multiple ? J_ARRAY : J_TAG), value))
+			 .addAttribute("name", getTagName((multiple ? J_ARRAY : J_TAG), selectValues))
 			 .addAttribute("tabindex", tabIndex)
-			 .addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null)
+			 .addAttribute("disabled", disabled ? "disabled" : null)
 			 .addAttribute("multiple", multiple ? "multiple" : null);
 		
 		if (SMALL.equals(size)) {
@@ -164,7 +160,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 		// Add the style class at last
 		select.addAttribute("class", styleClass);
 
-		appendFormValidator(select);
+		appendValidator(select);
 		appendRest(select);
 		appendEvent(select);
 
@@ -176,14 +172,11 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 		if (rightAddOn != null) {
 			if (childAddOn != null && rightAddOn.equalsIgnoreCase(childAddOn.getId())) {
-				StringWriter sw = new StringWriter();
-				childAddOn.setOutputWriter(sw);
-				childAddOn.executeTag();
-				inputGroup.addText(sw.toString());
+				inputGroup.addTag(childAddOn.executeTag());
 			} else {
 				Div div = new Div();
 				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText((String) getTagValue(rightAddOn));
+					.addText(getTagValue(rightAddOn));
 				inputGroup.addTag(div);
 			}
 		}
@@ -199,20 +192,11 @@ public final class SelectTagHandler extends SmartTagHandler {
 		}
 
 		for (OptionTagHandler option : options) {
-			StringWriter sw = new StringWriter();
-			option.setName(value);
-			option.setOutputWriter(sw);
-			option.executeTag();
-			select.addText(sw.toString());
+			option.setName(selectValues);
+			select.addTag(option.executeTag());
 		}
 
-		if (formGroup != null) {
-			printOutput(formGroup.getHtml());
-		} else if (inputGroup != null) {
-			printOutput(inputGroup.getHtml());
-		} else {
-			printOutput(select.getHtml());
-		}
+		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : select;
 	}
 
 	private StringBuilder getFunction() {
@@ -221,7 +205,6 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
-		jsonAjax.setAsync(async);
 		jsonAjax.setMethod("post");
 
 		builder.append(JSMART_SELECT.format(getJsonValue(jsonAjax)));
@@ -238,8 +221,8 @@ public final class SelectTagHandler extends SmartTagHandler {
 		this.options.add(option);
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setSelectValues(String selectValues) {
+		this.selectValues = selectValues;
 	}
 
 	public void setAjax(boolean ajax) {
@@ -268,10 +251,6 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 	public void setRightAddOn(String rightAddOn) {
 		this.rightAddOn = rightAddOn;
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 	public void setSize(String size) {

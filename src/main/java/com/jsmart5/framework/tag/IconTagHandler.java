@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Span;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class IconTagHandler extends SmartTagHandler {
 
@@ -42,7 +43,7 @@ public final class IconTagHandler extends SmartTagHandler {
 		JspTag parent = getParent();
 		if (parent instanceof SmartTagHandler) {
 
-			((SmartTagHandler) parent).setIconTag(this);
+			((SmartTagHandler) parent).addIconTag(this);
 			return false;
 		}
 		return true;
@@ -56,13 +57,12 @@ public final class IconTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 		Span span = new Span();
 		span.addAttribute("class", Bootstrap.GLYPHICON)
 			.addAttribute("class", getTagValue(name))
 			.addAttribute("aria-hidden", "true");
-
-		printOutput(span.getHtml());
+		return span;
 	}
 
 	public void setName(String name) {

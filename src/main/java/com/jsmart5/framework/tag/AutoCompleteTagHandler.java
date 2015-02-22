@@ -32,6 +32,7 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.json.JsonAutoComplete;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class AutoCompleteTagHandler extends SmartTagHandler {
 
@@ -42,8 +43,6 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 	private static final String COMPLETE_VALUES = "_complete_values";
 
 	private String value;
-
-	private boolean async = true;
 
 	private String complete;
 
@@ -61,9 +60,13 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 	
 	private String label;
 
-	private String afterAjax;
+	private String beforeSend;
 
-	private String beforeAjax;
+	private String onError;
+	
+	private String onSuccess;
+	
+	private String onComplete;
 
 	private Integer tabIndex;
 
@@ -80,7 +83,7 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 //		// Just to call nested tags
 //		JspFragment body = getJspBody();
@@ -222,6 +225,7 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 //		appendScriptDeprecated(new StringBuilder(JSMART_AUTOCOMPLETE_RESET.format(id)));
 //
 //		printOutput(builder);
+		return null;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -265,10 +269,6 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 		this.value = value;
 	}
 
-	public void setAsync(boolean async) {
-		this.async = async;
-	}
-
 	public void setComplete(String complete) {
 		this.complete = complete;
 	}
@@ -297,12 +297,20 @@ public final class AutoCompleteTagHandler extends SmartTagHandler {
 		this.maxResults = maxResults;
 	}
 
-	public void setAfterAjax(String afterAjax) {
-		this.afterAjax = afterAjax;
+	public void setBeforeSend(String beforeSend) {
+		this.beforeSend = beforeSend;
 	}
 
-	public void setBeforeAjax(String beforeAjax) {
-		this.beforeAjax = beforeAjax;
+	public void setOnError(String onError) {
+		this.onError = onError;
+	}
+
+	public void setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+	}
+
+	public void setOnComplete(String onComplete) {
+		this.onComplete = onComplete;
 	}
 
 	public void setTabIndex(Integer tabIndex) {

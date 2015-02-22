@@ -33,6 +33,7 @@ import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Span;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
@@ -42,6 +43,10 @@ public final class TabTagHandler extends SmartTagHandler {
 	private static final String STACKED = "stacked";
 	
 	private static final String REGULAR = "regular";
+	
+	private String tabStyle;
+
+	private String tabClass;
 
 	private boolean ajax;
 
@@ -74,7 +79,7 @@ public final class TabTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		JspFragment body = getJspBody();
 		if (body != null) {
@@ -103,7 +108,8 @@ public final class TabTagHandler extends SmartTagHandler {
 
 		Ul ul = new Ul();
 		ul.addAttribute("role", "tablist")
-			.addAttribute("class", Bootstrap.NAV);
+			.addAttribute("class", Bootstrap.NAV)
+			.addAttribute("style", tabStyle);
 
 		if (pills == null) {
 			ul.addAttribute("class", Bootstrap.NAV_TABS);
@@ -117,6 +123,9 @@ public final class TabTagHandler extends SmartTagHandler {
 		if (justified) {
 			ul.addAttribute("class", Bootstrap.NAV_JUSTIFIED);
 		}
+		
+		// At last the custom style class
+		ul.addAttribute("class", tabClass);
 
 		Div content = new Div();
 		content.addAttribute("class", Bootstrap.TAB_CONTENT);
@@ -133,8 +142,8 @@ public final class TabTagHandler extends SmartTagHandler {
 			}
 
 			// The execute tag must be called first to decide if there are drop down children
-			StringWriter swTab = new StringWriter();
-			tabPane.setOutputWriter(swTab);
+			StringWriter swPane = new StringWriter();
+			tabPane.setOutputWriter(swPane);
 			tabPane.executeTag();
 
 			String liId = getRandonId();
@@ -145,25 +154,38 @@ public final class TabTagHandler extends SmartTagHandler {
 				.addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
 				.addAttribute("style", tabPane.getTabStyle())
 				.addAttribute("class", tabPane.getTabClass());
-			
+
+			if (!tabPane.getAjaxTags().isEmpty()) {
+				for (AjaxTagHandler ajax : tabPane.getAjaxTags()) {
+					appendScript(ajax.getFunction(liId));
+				}
+			}
+
 			A a = new A();
 
-			if (iconTag != null && IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-				a.addText(getIconTag());
+			for (IconTagHandler iconTag : tabPane.getIconTags()) {
+				if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+					a.addTag(iconTag.executeTag());
+					a.addText(" ");
+				}
 			}
 
-			a.addText((String) getTagValue(tabPane.getTitle()));
+			a.addText(getTagValue(tabPane.getLabel()));
 
-			if (iconTag != null && IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-				a.addText(getIconTag());
+			for (IconTagHandler iconTag : tabPane.getIconTags()) {
+				if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+					a.addText(" ");
+					a.addTag(iconTag.executeTag());
+				}
 			}
 
-			// Case drop downs not empty we must include drop down style
-			if (!tabPane.getDrops().isEmpty()) {
+			// Case drop panes not empty we must include drop down style
+			if (!tabPane.getDropPanes().isEmpty()) {
 				li.addAttribute("class", Bootstrap.DROPDOWN);
 				
 				a.addAttribute("role", "button")
 					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+					.addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
 					.addAttribute("data-toggle", "dropdown")
 					.addAttribute("href", "#")
 					.addAttribute("aria-expanded", "false");
@@ -175,6 +197,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			} else {
 				a.addAttribute("href", "#" + tabPane.getId())
 					.addAttribute("aria-controls", tabPane.getId())
+					.addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
 					.addAttribute("role", "tab")
 					.addAttribute("data-toggle", "tab");
 			}
@@ -183,62 +206,88 @@ public final class TabTagHandler extends SmartTagHandler {
 			ul.addTag(li);
 
 			// Case dropDowns not empty we must include on drop down li tags
-			if (!tabPane.getDrops().isEmpty()) {
+			if (!tabPane.getDropPanes().isEmpty()) {
 				
 				Ul dropUl = new Ul();
 				dropUl.addAttribute("role", "menu")
 					.addAttribute("class", Bootstrap.DROPDOWN_MENU);
 				li.addTag(dropUl);
 
-				for (DropTagHandler drop : tabPane.getDrops()) {
+				for (TabPaneTagHandler dropPane : tabPane.getDropPanes()) {
 					
-					if (drop.getId() == null) {
-						drop.setId(getRandonId());
+					if (dropPane.getId() == null) {
+						dropPane.setId(getRandonId());
 					}
+
+					// The execute tag must be called first to decide if there are drop down children
+					StringWriter swDropPane = new StringWriter();
+					dropPane.setOutputWriter(swDropPane);
+					dropPane.executeTag();
 					
-					if (drop.getHeader() != null) {
+					if (dropPane.getHeader() != null) {
 						Li headerLi = new Li();
 						headerLi.addAttribute("role", "presentation")
 							.addAttribute("class", Bootstrap.DROPDOWN_HEADER)
-							.addText((String) getTagValue(drop.getHeader()));
+							.addText(getTagValue(dropPane.getHeader()));
 						dropUl.addTag(headerLi);
 					}
 					
+					String dropLiId = getRandonId();
+					
 					Li dropLi = new Li();
-					dropLi.addAttribute("role", "presentation")
-						.addAttribute("class", drop.isDisabled() ? Bootstrap.DISABLED : null);
+					dropLi.addAttribute("id", dropLiId)
+						.addAttribute("role", "presentation")
+						.addAttribute("class", dropPane.isDisabled() ? Bootstrap.DISABLED : null);
+
+					if (!dropPane.getAjaxTags().isEmpty()) {
+						for (AjaxTagHandler ajax : dropPane.getAjaxTags()) {
+							appendScript(ajax.getFunction(dropLiId));
+						}
+					}
 					
 					A dropA = new A();
-					dropA.addAttribute("href", "#" + drop.getId())
+					dropA.addAttribute("href", "#" + dropPane.getId())
 						.addAttribute("tabIndex", "-1")
 						.addAttribute("role", "tab")
+						.addAttribute("class", dropPane.isDisabled() ? Bootstrap.DISABLED : null)
 						.addAttribute("data-toggle", "tab")
-						.addAttribute("aria-controls", drop.getId())
-						.addAttribute("aria-expanded", "false")
-						.addText((String) getTagValue(drop.getLabel()));
+						.addAttribute("aria-controls", dropPane.getId())
+						.addAttribute("aria-expanded", "false");
 					
+					for (IconTagHandler iconTag : dropPane.getIconTags()) {
+						if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+							dropA.addTag(iconTag.executeTag());
+							dropA.addText(" ");
+						}
+					}
+					
+					dropA.addText(getTagValue(dropPane.getLabel()));
+					
+					for (IconTagHandler iconTag : dropPane.getIconTags()) {
+						if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+							dropA.addText(" ");
+							dropA.addTag(iconTag.executeTag());
+						}
+					}
+
 					dropLi.addTag(dropA);
 					dropUl.addTag(dropLi);
 					
-					if (drop.hasDivider()) {
+					if (dropPane.hasDivider()) {
 						Li dividerLi = new Li();
 						dividerLi.addAttribute("class", Bootstrap.DIVIDER);
-						dropUl.addTag(li);
+						dropUl.addTag(dividerLi);
 					}
 					
 					Div tabContent = new Div();
-					tabContent.addAttribute("id", drop.getId())
-						.addAttribute("style", drop.getStyle())
+					tabContent.addAttribute("id", dropPane.getId())
+						.addAttribute("style", dropPane.getStyle())
 						.addAttribute("role", "tabpanel")
 						.addAttribute("class", Bootstrap.TAB_PANE)
 						.addAttribute("class", fade ? Bootstrap.FADE : null)
-						.addAttribute("class", drop.getStyleClass());
+						.addAttribute("class", dropPane.getStyleClass());
 
-					StringWriter swDrop = new StringWriter();
-					drop.setOutputWriter(swDrop);
-					drop.executeTag();
-
-					tabContent.addText(swDrop.toString());
+					tabContent.addText(swDropPane.toString());
 					content.addTag(tabContent);
 				}
 
@@ -268,7 +317,7 @@ public final class TabTagHandler extends SmartTagHandler {
 					appendScript(getFunction(liId));
 				}
 
-				tabContent.addText(swTab.toString());
+				tabContent.addText(swPane.toString());
 				content.addTag(tabContent);
 			}
 		}
@@ -282,13 +331,13 @@ public final class TabTagHandler extends SmartTagHandler {
 		}
 
 		if (onShow != null) {
-			appendScript(getFunction(id, "shown.bs.tab", new StringBuilder(onShow)));
+			appendScript(getBindFunction(id, "show.bs.tab", new StringBuilder(onShow)));
 		}
 		if (onHide != null) {
-			appendScript(getFunction(id, "hidden.bs.tab", new StringBuilder(onHide)));
+			appendScript(getBindFunction(id, "hide.bs.tab", new StringBuilder(onHide)));
 		}
 
-		printOutput(tab.getHtml());
+		return tab;
 	}
 
 	private StringBuilder getFunction() {
@@ -309,6 +358,14 @@ public final class TabTagHandler extends SmartTagHandler {
 
 	void addTabPane(TabPaneTagHandler tabItem) {
 		tabPanes.add(tabItem);
+	}
+
+	public void setTabStyle(String tabStyle) {
+		this.tabStyle = tabStyle;
+	}
+
+	public void setTabClass(String tabClass) {
+		this.tabClass = tabClass;
 	}
 
 	public void setAjax(boolean ajax) {

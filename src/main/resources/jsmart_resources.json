@@ -1,6 +1,7 @@
 {
 	"resources": [
 		"jsmart5/bootstrap-3.3.2/css/*",
+		"jsmart5/bootstrap-3.3.2/fonts/*",
 		"jsmart5/bootstrap-3.3.2/js/*",
 		"jsmart5/jquery-1.11.2/*",
 		"jsmart5/js/jsmart5.js"

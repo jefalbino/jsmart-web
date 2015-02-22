@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.js.JsConstants;
 
 public final class BalloonTagHandler extends SmartTagHandler {
@@ -59,7 +60,7 @@ public final class BalloonTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //		Object messageVal = getTagValue(message);
 //		if (length == null) {
 //			length = DEFAULT_LENGTH;
@@ -89,7 +90,8 @@ public final class BalloonTagHandler extends SmartTagHandler {
 //		builder.append(CLOSE_TAG);
 //		builder.append(CLOSE_SPAN_TAG);
 //
-//		printOutput(builder);		
+//		printOutput(builder);
+		return null;
 	}
 
 	public void setTarget(String target) {

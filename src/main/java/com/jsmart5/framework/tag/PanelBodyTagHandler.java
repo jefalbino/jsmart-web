@@ -32,6 +32,12 @@ import com.jsmart5.framework.tag.html.Section;
 import com.jsmart5.framework.tag.html.Tag;
 
 public final class PanelBodyTagHandler extends SmartTagHandler {
+	
+	private static final String LEFT = "left";
+	
+	private static final String RIGHT = "right";
+	
+	private static final String CENTER = "center";
 
 	private static final String FIELDSET_TYPE = "fieldset";
 
@@ -42,14 +48,18 @@ public final class PanelBodyTagHandler extends SmartTagHandler {
 	private String type;
 
 	public void validateTag() throws JspException {
-		if (type != null && !FIELDSET_TYPE.equals(type) && !SECTION_TYPE.equals(type)) {
+		if (type != null && !FIELDSET_TYPE.equalsIgnoreCase(type) && !SECTION_TYPE.equalsIgnoreCase(type)) {
 			throw new JspException("Invalid type value for panel tag. Valid values are "
 					+ FIELDSET_TYPE + " and " + SECTION_TYPE);
+		}
+		if (align != null && !LEFT.equalsIgnoreCase(align) && !RIGHT.equalsIgnoreCase(align) && !CENTER.equalsIgnoreCase(align)) {
+			throw new JspException("Invalid align attribute for panel tag. Valid values are "
+					+ LEFT + ", " + RIGHT + ", " + CENTER);
 		}
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -86,7 +96,7 @@ public final class PanelBodyTagHandler extends SmartTagHandler {
 			}
 		}
 
-		printOutput(content.getHtml());
+		return content;
 	}
 
 	public void setAlign(String align) {

@@ -5,7 +5,7 @@
         version="2.0">
 
     <tlib-version>1.0</tlib-version>
-    <uri>http://jsmart5.com/jsp/jstl/smart</uri>
+    <uri>http://jsmartframework.com/v2/jsp/taglib/jsmart5</uri>
 
 	<tag>
 		<name>form</name>
@@ -26,6 +26,10 @@
         </attribute>
 		<attribute>
             <name>method</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>enctype</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -93,28 +97,26 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>dropUp</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>dropSegmented</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>async</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>update</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>afterAjax</name>
+            <name>beforeSend</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>beforeAjax</name>
+            <name>onError</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onSuccess</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onComplete</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -184,9 +186,127 @@
         </attribute>
     </tag>
 
+   	<tag>
+        <name>dropdown</name>
+        <tag-class>com.jsmart5.framework.tag.DropDownTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>label</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>navbar</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>disabled</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onClick</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onDblClick</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseDown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseMove</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseOver</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseOut</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseUp</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyDown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyPress</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyUp</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onBlur</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onChange</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onFocus</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onSelect</name>
+            <required>false</required>
+        </attribute>
+	</tag>
+
     <tag>
-        <name>drop</name>
-        <tag-class>com.jsmart5.framework.tag.DropTagHandler</tag-class>
+        <name>dropmenu</name>
+        <tag-class>com.jsmart5.framework.tag.DropMenuTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>align</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>segmented</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>dropUp</name>
+            <required>false</required>
+        </attribute>
+	</tag>
+
+    <tag>
+        <name>dropaction</name>
+        <tag-class>com.jsmart5.framework.tag.DropActionTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -214,11 +334,91 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>update</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>beforeSend</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onError</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onSuccess</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onComplete</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
             <name>disabled</name>
             <required>false</required>
         </attribute>
         <attribute>
             <name>divider</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onClick</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onDblClick</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseDown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseMove</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseOver</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseOut</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseUp</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyDown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyPress</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyUp</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onBlur</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onChange</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onFocus</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onSelect</name>
             <required>false</required>
         </attribute>
 	</tag>
@@ -287,12 +487,27 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>beforeAjax</name>
+            <name>beforeSend</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>async</name>
+            <name>onError</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onSuccess</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onComplete</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>disabled</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -300,15 +515,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>dropUp</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>update</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>afterAjax</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -396,16 +603,22 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>async</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>beforeAjax</name>
+            <name>beforeSend</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>afterAjax</name>
+            <name>onError</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onSuccess</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onComplete</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -513,11 +726,12 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>async</name>
+            <name>beforeSend</name>
             <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>beforeAjax</name>
+            <name>onError</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -527,7 +741,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>onError</name>
+            <name>onComplete</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -548,6 +762,11 @@
         <attribute>
             <name>name</name>
             <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>side</name>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
@@ -761,7 +980,7 @@
         </attribute>
         <attribute>
             <name>type</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>rest</name>
@@ -810,10 +1029,6 @@
         </attribute>
         <attribute>
             <name>rightAddOn</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>helpBlock</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -921,6 +1136,10 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+         <attribute>
+            <name>label</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -1068,7 +1287,7 @@
 
     <tag>
         <name>outputlist</name>
-        <tag-class>com.jsmart5.framework.tag.OutputsTagHandler</tag-class>
+        <tag-class>com.jsmart5.framework.tag.OutputListTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>id</name>
@@ -1084,7 +1303,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>value</name>
+            <name>values</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -1099,20 +1318,14 @@
     </tag>
 
     <tag>
-        <name>dateformat</name>
-        <tag-class>com.jsmart5.framework.tag.DateFormatTagHandler</tag-class>
+        <name>format</name>
+        <tag-class>com.jsmart5.framework.tag.FormatTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>regex</name>
+            <name>type</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
-    </tag>
-
- 	<tag>
-        <name>numberformat</name>
-        <tag-class>com.jsmart5.framework.tag.NumberFormatTagHandler</tag-class>
-        <body-content>empty</body-content>
         <attribute>
             <name>regex</name>
             <required>true</required>
@@ -1186,10 +1399,6 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>title</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>opened</name>
             <required>false</required>
         </attribute>
@@ -1216,9 +1425,53 @@
     </tag>
     
     <tag>
+        <name>header</name>
+        <tag-class>com.jsmart5.framework.tag.HeaderTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>title</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>type</name>
+            <required>false</required>
+        </attribute>
+	</tag>
+    
+    <tag>
         <name>footer</name>
         <tag-class>com.jsmart5.framework.tag.FooterTagHandler</tag-class>
         <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>title</name>
+            <required>false</required>
+        </attribute>
 	</tag>
     
     <tag>
@@ -1304,14 +1557,6 @@
             <name>id</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>header</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>footer</name>
-            <required>false</required>
         </attribute>
         <attribute>
             <name>style</name>
@@ -1500,10 +1745,6 @@
             <name>style</name>
             <required>false</required>
         </attribute>
-		<attribute>
-            <name>async</name>
-            <required>false</required>
-        </attribute>
         <attribute>
             <name>cellPadding</name>
             <required>false</required>
@@ -1682,7 +1923,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>value</name>
+            <name>selectValue</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -1692,10 +1933,6 @@
         </attribute>
         <attribute>
             <name>ajax</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>async</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -1782,7 +2019,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>value</name>
+            <name>selectValues</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -1792,10 +2029,6 @@
         </attribute>
         <attribute>
             <name>ajax</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>async</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -1886,6 +2119,10 @@
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+            <name>disabled</name>
+            <required>false</required>
+        </attribute>
     </tag>
 
     <tag>
@@ -1893,7 +2130,7 @@
         <tag-class>com.jsmart5.framework.tag.CheckListTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>value</name>
+            <name>values</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -1909,6 +2146,14 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>value</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
@@ -1922,11 +2167,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>style</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>styleClass</name>
+            <name>ajax</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2013,7 +2254,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>value</name>
+            <name>selectValues</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -2035,10 +2276,6 @@
         </attribute>
         <attribute>
             <name>ajax</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>async</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2153,7 +2390,7 @@
         <tag-class>com.jsmart5.framework.tag.OptionsTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>value</name>
+            <name>values</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -2184,12 +2421,8 @@
             <name>value</name>
             <required>true</required>
         </attribute>
-		<attribute>
-            <name>async</name>
-            <required>false</required>
-        </attribute>
         <attribute>
-            <name>select</name>
+            <name>selectValue</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2334,7 +2567,7 @@
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
-            <required>true</required>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
@@ -2355,15 +2588,35 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>maxSize</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>maxSizeMessage</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>tabIndex</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>disabled</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>size</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>leftAddOn</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>rightAddOn</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>placeHolder</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>readOnly</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>autoFocus</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2665,8 +2918,13 @@
         <tag-class>com.jsmart5.framework.tag.ValidateTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>message</name>
-            <required>true</required>
+            <name>text</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>look</name>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
@@ -2894,7 +3152,7 @@
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
-            <required>true</required>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
@@ -2903,6 +3161,14 @@
         </attribute>
         <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>tabStyle</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>tabClass</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3001,7 +3267,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>title</name>
+            <name>label</name>
             <required>true</required>
         </attribute>
         <attribute>
@@ -3022,6 +3288,14 @@
         </attribute>
         <attribute>
             <name>tabClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>header</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>divider</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3162,10 +3436,6 @@
         </attribute>
         <attribute>
             <name>ajax</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>async</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3493,10 +3763,6 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>async</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>complete</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
@@ -3522,12 +3788,22 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>afterAjax</name>
+            <name>beforeSend</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>beforeAjax</name>
+            <name>onError</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onSuccess</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onComplete</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -3713,23 +3989,29 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>beforeAjax</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
             <name>update</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>afterAjax</name>
+            <name>beforeSend</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>async</name>
+            <name>onError</name>
             <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onSuccess</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>onComplete</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>onClick</name>

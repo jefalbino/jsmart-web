@@ -21,22 +21,21 @@ package com.jsmart5.framework.tag.js;
 public enum JsConstants {
 
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
-
 	JSMART_AJAX("Jsmart5.ajax", "(%s);"),
 	JSMART_BUTTON("Jsmart5.button", "(%s);"),
 	JSMART_EXEC("Jsmart5.execute", "('%s');"),
-	
 	JSMART_CHECK("Jsmart5.check", "(%s);"),
-	JSMART_CHECKBOX("Jsmart5.checkbox", "(%s);"),
+	JSMART_CHECKBOX("Jsmart5.checkbox", "('%s');"),
 	JSMART_SELECT("Jsmart5.select", "(%s);"),
-	
+	JSMART_DIALOG("Jsmart5.dialog", "('%s');"),
+
+
 	JSMART_TAB("Jsmart5.tab", "(%s);"),
 	JSMART_TABPANE("Jsmart5.tabpane", "(%s);"),
-
-	
-	JSMART_REST("Jsmart5.rest", "(%s,%s,%s);"),
-
 	JSMART_LIST("Jsmart5.list", "(%s,%s);"),
+	
+
+	JSMART_REST("Jsmart5.rest", "(%s,%s,%s);"),
 
 	JSMART_TABLE("Jsmart5.table", "(%s,'%s',%s);"),
 	JSMART_TABLE_SELECT("Jsmart5.tableSelect", "(%s,'%s',%s);"),
@@ -58,9 +57,7 @@ public enum JsConstants {
 
 	JSMART_MESSAGE("Jsmart5.message", "(%s,%s);"),
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
-	JSMART_UPLOAD("Jsmart5.upload", "('%s');"),
 	JSMART_TREE("Jsmart5.tree", "('%s');"),
-	
 
 	JSMART_BUTTON_RESTARRAY("Jsmart5.buttonRestArray", "('%s','%s');"),
 

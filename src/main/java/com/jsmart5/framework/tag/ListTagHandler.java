@@ -19,7 +19,6 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -31,6 +30,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
 
 public final class ListTagHandler extends SmartTagHandler {
@@ -39,9 +39,7 @@ public final class ListTagHandler extends SmartTagHandler {
 
 	private String value;
 
-	private String select;
-
-	private boolean async = true;
+	private String selectValue;
 
 	private final List<RowTagHandler> rows;
 
@@ -56,7 +54,7 @@ public final class ListTagHandler extends SmartTagHandler {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -115,9 +113,8 @@ public final class ListTagHandler extends SmartTagHandler {
 					request.setAttribute(var, iterator.next());
 
 					for (RowTagHandler row : rows) {
-	 					StringWriter sw = new StringWriter();
-	 					row.setOutputWriter(sw);
-	 					row.setSelect(select);
+	 					row.setSelectValue(selectValue);
+	 					row.addAllAjaxTag(ajaxTags);
 	 					setEvents(row);
 
 //	 					if (command != null) {
@@ -128,8 +125,7 @@ public final class ListTagHandler extends SmartTagHandler {
 //	 						}
 //	 					}
 
-	 					row.executeTag();
-	 					ul.addText(sw.toString());
+	 					ul.addTag(row.executeTag());
 	 				}
 
 					request.removeAttribute(var);
@@ -137,7 +133,7 @@ public final class ListTagHandler extends SmartTagHandler {
 			}
 		}
 		
-		printOutput(ul.getHtml());
+		return ul;
 	}
 
 	void addRow(RowTagHandler row) {
@@ -148,16 +144,12 @@ public final class ListTagHandler extends SmartTagHandler {
 		this.value = value;
 	}
 
-	public void setSelect(String select) {
-		this.select = select;
+	public void setSelectValue(String selectValue) {
+		this.selectValue = selectValue;
 	}
 
 	public void setVar(String var) {
 		this.var = var;
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 }

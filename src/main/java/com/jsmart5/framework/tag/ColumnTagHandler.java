@@ -25,6 +25,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class ColumnTagHandler extends SmartTagHandler {
 
@@ -55,11 +56,12 @@ public final class ColumnTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(outputWriter);
 		}
+		return null;
 	}
 
 	Integer getRowspan() {

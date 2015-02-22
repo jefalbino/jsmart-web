@@ -19,19 +19,31 @@
 package com.jsmart5.framework.manager;
 
 public abstract class SmartValidateTagHandler extends SmartTagHandler {
+	
+	protected static final String ERROR = "error";
 
-	private String message;
+	protected String text;
 
-	private String maxLength;
+	protected String maxLength;
 
-	private Integer minLength;
+	protected Integer minLength;
 
-	String getMessage() {
-		return message;
+	protected String look = ERROR;
+
+	public String getText() {
+		return text;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public String getLook() {
+		return look;
+	}
+
+	public void setLook(String look) {
+		this.look = look;
 	}
 
 	String getMaxLength() {

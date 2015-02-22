@@ -26,39 +26,42 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
-public class DropTagHandler extends SmartTagHandler {
+public class DropActionTagHandler extends SmartTagHandler {
 	
 	private String header;
+
+	private boolean divider;
 
 	private String label;
 	
 	private boolean disabled;
 
 	private String action;
+
+	private String update;
+
+	private String beforeSend;
+
+	private String onError;
 	
-	private boolean divider;
+	private String onSuccess;
+	
+	private String onComplete;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof ButtonTagHandler || parent instanceof LinkTagHandler) {
-			
+		if (parent instanceof DropMenuTagHandler) {
+
 			// Just to call nested tags for parameters
 			JspFragment body = getJspBody();
 			if (body != null) {
 				body.invoke(null);
 			}
 
-			if (parent instanceof ButtonTagHandler) {
-				((ButtonTagHandler) parent).addDrop(this);
-			} else {
-				((LinkTagHandler) parent).addDrop(this);
-			}
-			return false;
-
-		} else if (parent instanceof TabPaneTagHandler) {
-			((TabPaneTagHandler) parent).addDrop(this);
+			((DropMenuTagHandler) parent).addDropAction(this);
 			return false;
 		}
 		return true;
@@ -70,15 +73,9 @@ public class DropTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TabPaneTagHandler) {
-
-			JspFragment body = getJspBody();
-			if (body != null) {
-				body.invoke(outputWriter);
-			}
-		}
+	public Tag executeTag() throws JspException, IOException {
+		// DO NOTHING
+		return null;
 	}
 
 	String getHeader() {
@@ -87,6 +84,14 @@ public class DropTagHandler extends SmartTagHandler {
 
 	public void setHeader(String header) {
 		this.header = header;
+	}
+
+	boolean hasDivider() {
+		return divider;
+	}
+
+	public void setDivider(boolean divider) {
+		this.divider = divider;
 	}
 
 	String getLabel() {
@@ -113,12 +118,44 @@ public class DropTagHandler extends SmartTagHandler {
 		this.action = action;
 	}
 
-	boolean hasDivider() {
-		return divider;
+	String getUpdate() {
+		return update;
 	}
 
-	public void setDivider(boolean divider) {
-		this.divider = divider;
+	public void setUpdate(String update) {
+		this.update = update;
+	}
+
+	String getBeforeSend() {
+		return beforeSend;
+	}
+
+	public void setBeforeSend(String beforeSend) {
+		this.beforeSend = beforeSend;
+	}
+
+	String getOnError() {
+		return onError;
+	}
+
+	public void setOnError(String onError) {
+		this.onError = onError;
+	}
+
+	String getOnSuccess() {
+		return onSuccess;
+	}
+
+	public void setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+	}
+
+	String getOnComplete() {
+		return onComplete;
+	}
+
+	public void setOnComplete(String onComplete) {
+		this.onComplete = onComplete;
 	}
 
 	Map<String, Object> getParams() {

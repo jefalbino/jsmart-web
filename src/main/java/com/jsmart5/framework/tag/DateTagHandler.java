@@ -31,6 +31,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -72,7 +73,7 @@ public final class DateTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 //		if (label != null && opened) {
 //			throw new JspException("Attribute label and opened cannot coexist for date tag");
@@ -206,6 +207,7 @@ public final class DateTagHandler extends SmartTagHandler {
 //			}
 //			printOutput(builder);
 //		}
+		return null;
 	}
 
 	public void setOpened(boolean opened) {

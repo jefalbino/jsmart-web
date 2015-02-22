@@ -26,6 +26,7 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.adapter.SmartCarouselItem;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 
 public final class CarouselItemsTagHandler extends SmartTagHandler {
@@ -37,22 +38,22 @@ public final class CarouselItemsTagHandler extends SmartTagHandler {
 		// DO NOTHING
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void executeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		Object object = getTagValue(value);
-
-		if (object instanceof List && parent instanceof CarouselTagHandler) {
-			for (SmartCarouselItem item : (List<SmartCarouselItem>) object) {
-				CarouselItemTagHandler itemHandler = new CarouselItemTagHandler();
-				itemHandler.setLib(item.getLib());
-				itemHandler.setName(item.getName());
-				itemHandler.setCaption(item.getCaption());
-				itemHandler.setLink(item.getLink());
-				((CarouselTagHandler) parent).addItem(itemHandler);
-			}
-		}
+	public Tag executeTag() throws JspException, IOException {
+//		JspTag parent = getParent();
+//		Object object = getTagValue(value);
+//
+//		if (object instanceof List && parent instanceof CarouselTagHandler) {
+//			for (SmartCarouselItem item : (List<SmartCarouselItem>) object) {
+//				CarouselItemTagHandler itemHandler = new CarouselItemTagHandler();
+//				itemHandler.setLib(item.getLib());
+//				itemHandler.setName(item.getName());
+//				itemHandler.setCaption(item.getCaption());
+//				itemHandler.setLink(item.getLink());
+//				((CarouselTagHandler) parent).addItem(itemHandler);
+//			}
+//		}
+		return null;
 	}
 
 	public void setValue(String value) {

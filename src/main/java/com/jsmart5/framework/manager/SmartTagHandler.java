@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
@@ -147,11 +146,8 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	protected List<AjaxTagHandler> ajaxTags;
 	
-	protected IconTagHandler iconTag;
+	protected List<IconTagHandler> iconTags;
 
-	protected String dateFormatRegex;
-
-	protected String numberFormatRegex;
 
 	protected StringWriter outputWriter;
 
@@ -194,6 +190,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	public SmartTagHandler() {
 		params = new LinkedHashMap<String, Object>();
 		ajaxTags = new ArrayList<AjaxTagHandler>();
+		iconTags = new ArrayList<IconTagHandler>();
 	}
 
 	@Override
@@ -202,7 +199,10 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		try {
 			validateTag();
 			if (beforeTag()) {
-				executeTag();
+				Tag tag = executeTag();
+				if (tag != null) {
+					printOutput(tag.getHtml());
+				}
 			}
 		} catch (Exception ex) {
 			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
@@ -218,13 +218,16 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	public abstract void validateTag() throws JspException;
 
-	public abstract void executeTag() throws JspException, IOException;
+	public abstract Tag executeTag() throws JspException, IOException;
 
 	protected String getRandonId() {
 		return SmartUtils.randomId();
 	}
 
-	protected void putParam(SmartTagHandler parent, String key, Object value) {
+	protected void putParam(SmartTagHandler parent, String key, Object value) throws JspException {
+		if (parent.params.containsKey(key)) {
+			throw new JspException("Duplicated tag parameter " + key);
+		}
 		parent.params.put(key, value);
 	}
 
@@ -232,20 +235,20 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		parent.validator = validator;
 	}
 
-	protected void setDateFormatRegex(SmartTagHandler parent, String dateFormatRegex) {
-		parent.dateFormatRegex = dateFormatRegex;
-	}
-
-	protected void setNumberFormatRegex(SmartTagHandler parent, String numberFormatRegex) {
-		parent.numberFormatRegex = numberFormatRegex;
-	}
-
 	public void setOutputWriter(StringWriter outputWriter) {
 		this.outputWriter = outputWriter;
 	}
 
-	public void setIconTag(IconTagHandler iconTag) {
-		this.iconTag = iconTag;
+	public void addIconTag(IconTagHandler iconTag) {
+		this.iconTags.add(iconTag);
+	}
+	
+	public List<IconTagHandler> getIconTags() {
+		return iconTags;
+	}
+	
+	public List<AjaxTagHandler> getAjaxTags() {
+		return ajaxTags;
 	}
 	
 	public void addAjaxTag(AjaxTagHandler ajax) {
@@ -254,21 +257,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	
 	public void addAllAjaxTag(List<AjaxTagHandler> list) {
 		this.ajaxTags.addAll(list);
-	}
-	
-	protected String getIconTag() throws JspException, IOException {
-		StringWriter swIcon = new StringWriter();
-		iconTag.setOutputWriter(swIcon);
-		iconTag.executeTag();
-		return swIcon.toString();
-	}
-	
-	protected StringBuilder getFunction(String id, String event, StringBuilder script) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').on('").append(event).append("', function(e){");
-		builder.append(script);
-		builder.append("});");
-		return builder;
 	}
 	
 	public String getId() {
@@ -401,10 +389,14 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	}
 
 	protected void printOutput(StringBuilder builder) throws IOException {
+		printOutput(builder.toString());
+	}
+	
+	protected void printOutput(String string) throws IOException {
 		if (outputWriter != null) {
-			outputWriter.write(builder.toString());
+			outputWriter.write(string);
 		} else {
-			getJspContext().getOut().print(builder.toString());
+			getJspContext().getOut().print(string);
 		}
 	}
 
@@ -449,14 +441,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		return TEXTS.getString(resource, key);
 	}
 
-	protected boolean isEditRowTagEnabled() {
-		return SmartContext.isEditItemTagEnabled();
-	}
-
-	protected void setEditRowTagEnable(boolean enabled) {
-		SmartContext.setEditItemTagEnabled(enabled);
-	}
-
 	protected Collection<String> getUserAuthorizationAccess() {
 		return HANDLER.getUserAuthorizationAccess();
 	}
@@ -473,25 +457,32 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		return GSON.toJson(object).replace("\u0027", "'");
 	}
 	
-	protected void appendScript(StringBuilder builder) {
-		HttpSession session = SmartContext.getSession();
-		synchronized (session) {
-			Script script = (Script) session.getAttribute(SmartConstants.NEW_SCRIPT_BUILDER_ATTR);
-
-			if (script == null) {
-				script = new Script();
-				session.setAttribute(SmartConstants.NEW_SCRIPT_BUILDER_ATTR, script);
-			}
-			script.addText(builder.toString());
-		}
+	protected StringBuilder getBindFunction(String id, String event, StringBuilder script) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("$('#").append(id).append("').on('").append(event).append("', function(e){");
+		builder.append(script);
+		builder.append("});");
+		return builder;
 	}
 
-	protected void appendFormValidator(Tag tag) throws JspException, IOException {
+	protected void appendScript(StringBuilder builder) {
+		HttpServletRequest httpRequest = getRequest();
+		Script script = (Script) httpRequest.getAttribute(SmartConstants.REQUEST_SCRIPT_BUILDER_ATTR);
+
+		if (script == null) {
+			script = new Script();
+			httpRequest.setAttribute(SmartConstants.REQUEST_SCRIPT_BUILDER_ATTR, script);
+		}
+		script.addText(builder.toString());
+	}
+
+	protected void appendValidator(Tag tag) throws JspException, IOException {
 		if (validator != null) {
-			tag.addAttribute("validatedrequired", "true")
-				.addAttribute("validateminlength", validator.getMinLength())
-				.addAttribute("validatemaxlength", validator.getMaxLength())
-				.addAttribute("validatemessage", getTagValue(validator.getMessage()));
+			tag.addAttribute("vldt-req", "true")
+				.addAttribute("vldt-min-l", validator.getMinLength())
+				.addAttribute("vldt-max-l", validator.getMaxLength())
+				.addAttribute("vldt-text", getTagValue(validator.getText()))
+				.addAttribute("vldt-look", validator.getLook());
 		}
 	}
 
@@ -500,20 +491,23 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	}
 	
 	protected void appendEvent(Tag tag) {
-		tag.addAttribute("onclick", onClick)
-			.addAttribute("ondblclick", onDblClick)
-			.addAttribute("onmousedown", onMouseDown)
-			.addAttribute("onmousemove", onMouseMove)
-			.addAttribute("onmouseover", onMouseOver)
-			.addAttribute("onmouseout", onMouseOut)
-			.addAttribute("onmouseup", onMouseUp)
-			.addAttribute("onkeydown", onKeyDown)
-			.addAttribute("onkeypress", onKeyPress)
-			.addAttribute("onkeyup", onKeyUp)
-			.addAttribute("onblur", onBlur)
-			.addAttribute("onchange", onChange)
-			.addAttribute("onfocus", onFocus)
-			.addAttribute("onselect", onSelect);
+		appendEvent(tag, this);
 	}
 
+	protected void appendEvent(Tag tag, SmartTagHandler tagHandler) {
+		tag.addAttribute("onclick", tagHandler.onClick)
+			.addAttribute("ondblclick", tagHandler.onDblClick)
+			.addAttribute("onmousedown", tagHandler.onMouseDown)
+			.addAttribute("onmousemove", tagHandler.onMouseMove)
+			.addAttribute("onmouseover", tagHandler.onMouseOver)
+			.addAttribute("onmouseout", tagHandler.onMouseOut)
+			.addAttribute("onmouseup", tagHandler.onMouseUp)
+			.addAttribute("onkeydown", tagHandler.onKeyDown)
+			.addAttribute("onkeypress", tagHandler.onKeyPress)
+			.addAttribute("onkeyup", tagHandler.onKeyUp)
+			.addAttribute("onblur", tagHandler.onBlur)
+			.addAttribute("onchange", tagHandler.onChange)
+			.addAttribute("onfocus", tagHandler.onFocus)
+			.addAttribute("onselect", tagHandler.onSelect);
+	}
 }

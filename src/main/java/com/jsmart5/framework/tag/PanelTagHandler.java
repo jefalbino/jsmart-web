@@ -29,14 +29,15 @@ import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class PanelTagHandler extends SmartTagHandler {
-
-	private String header;
-	
-	private String footer;
 	
 	private String look;
+	
+	private HeaderTagHandler header;
+	
+	private FooterTagHandler footer;
 
 	public void validateTag() throws JspException {
 		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) && !look.equalsIgnoreCase(SUCCESS)
@@ -47,7 +48,7 @@ public final class PanelTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 		String parentId = null;
 		String contentId = null;
 
@@ -103,8 +104,10 @@ public final class PanelTagHandler extends SmartTagHandler {
 			Div head = new Div();
 			head.addAttribute("class", Bootstrap.PANEL_HEADING);
 
-			if (iconTag != null && IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-				head.addText(getIconTag());
+			for (IconTagHandler iconTag : iconTags) {
+				if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+					head.addTag(iconTag.executeTag());
+				}
 			}
 
 			if (parentId != null) {
@@ -115,15 +118,19 @@ public final class PanelTagHandler extends SmartTagHandler {
 					.addAttribute("aria-expanded", "false")
 					.addAttribute("aria-controls", contentId);
 				
-				a.addText((String) getTagValue(header));
+				if (header != null) {
+					a.addTag(header.executeTag());
+				}
 				head.addTag(a);
 
 			} else {
-				head.addText((String) getTagValue(header));
+				head.addTag(header.executeTag());
 			}
 			
-			if (iconTag != null && IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-				head.addText(getIconTag());
+			for (IconTagHandler iconTag : iconTags) {
+				if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+					head.addTag(iconTag.executeTag());
+				}
 			}
 
 			panel.addTag(head);
@@ -143,21 +150,17 @@ public final class PanelTagHandler extends SmartTagHandler {
 		}
 
 	    if (footer != null) {
-	    	Div foot = new Div();
-	    	foot.addAttribute("class", Bootstrap.PANEL_FOOTER)
-				.addText((String) getTagValue(footer));
-			
-			panel.addTag(foot);
+			panel.addTag(footer.executeTag());
 	    }
 
-		printOutput(panel.getHtml());
+		return panel;
 	}
-
-	public void setHeader(String header) {
+	
+	void setHeader(HeaderTagHandler header) {
 		this.header = header;
 	}
-
-	public void setFooter(String footer) {
+	
+	void setFooter(FooterTagHandler footer) {
 		this.footer = footer;
 	}
 	

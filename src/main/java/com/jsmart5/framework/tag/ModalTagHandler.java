@@ -31,25 +31,27 @@ import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 
+import static com.jsmart5.framework.tag.js.JsConstants.*;
+
 public final class ModalTagHandler extends SmartTagHandler {
 	
 	private static final String SMALL = "small";
 
 	private static final String LARGE = "large";
 
-	private String title;
-
 	private boolean opened;
 
 	private String size;
 
-	private boolean backdrop;
+	private boolean backdrop = true;
 
 	private boolean fade = true;
 
 	private String onShow;
 
 	private String onHide;
+	
+	private HeaderTagHandler header;
 		
 	private FooterTagHandler footer;
 
@@ -61,7 +63,7 @@ public final class ModalTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -76,8 +78,7 @@ public final class ModalTagHandler extends SmartTagHandler {
 			.addAttribute("tabindex", "-1")
 			.addAttribute("role", "dialog")
 			.addAttribute("aria-hidden", "true")
-			.addAttribute("data-backdrop", backdrop ? "static" : null)
-			.addAttribute("data-show", opened ? "true" : null);
+			.addAttribute("data-backdrop", !backdrop ? "static" : null);
 		
 		Div modalDialog = new Div();
 		modalDialog.addAttribute("class", Bootstrap.MODAL_DIALOG)
@@ -99,7 +100,7 @@ public final class ModalTagHandler extends SmartTagHandler {
 			.addAttribute("class", styleClass);
 		modalDialog.addTag(modalContent);
 
-		if (title != null) {
+		if (header != null) {
 			Div modalHeader = new Div();
 			modalHeader.addAttribute("class", Bootstrap.MODAL_HEADER);
 			
@@ -113,13 +114,9 @@ public final class ModalTagHandler extends SmartTagHandler {
 			span.addAttribute("aria-hidden", "true")
 				.addText("&times;");
 			button.addTag(span);
-			
-			Tag h4 = new Tag("h4");
-			h4.addAttribute("class", Bootstrap.MODAL_TITLE)
-				.addText((String) getTagValue(title));
-			
 			modalHeader.addTag(button);
-			modalHeader.addTag(h4);
+
+			modalHeader.addTag(header.executeTag());
 			modalContent.addTag(modalHeader);
 		}
 		
@@ -129,30 +126,28 @@ public final class ModalTagHandler extends SmartTagHandler {
 		modalContent.addTag(modalBody);
 		
 		if (footer != null) {
-			
-			StringWriter swFooter = new StringWriter();
-			footer.setOutputWriter(swFooter);
-			footer.executeTag();
-			
-			modalContent.addText(swFooter.toString());
+			modalContent.addTag(footer.executeTag());
 		}
 		
 		if (onShow != null) {
-			appendScript(getFunction(id, "shown.bs.modal", new StringBuilder(onShow)));
+			appendScript(getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
 		}
 		if (onHide != null) {
-			appendScript(getFunction(id, "hidden.bs.modal", new StringBuilder(onHide)));
+			appendScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
 		}
 
-		printOutput(modal.getHtml());
+		if (opened) {
+			appendScript(new StringBuilder(JSMART_DIALOG.format(id)));
+		}
+		return modal;
+	}
+	
+	void setHeader(HeaderTagHandler header) {
+		this.header = header;
 	}
 
 	void setFooter(FooterTagHandler footer) {
 		this.footer = footer;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	public void setOpened(boolean opened) {

@@ -28,17 +28,23 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class FooterTagHandler extends SmartTagHandler {
+	
+	private String title;
 	
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof ModalTagHandler) {
-
 			((ModalTagHandler) parent).setFooter(this);
 			return false;
-		}
+
+		} else if (parent instanceof PanelTagHandler) {
+			((PanelTagHandler) parent).setFooter(this);
+			return false;
+		} 
 		return true;
 	}
 
@@ -48,19 +54,45 @@ public final class FooterTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(sw);
 		}
+		
+		if (id == null) {
+			id = getRandonId();
+		}
 
 		Div footer = new Div();
-		footer.addAttribute("class", Bootstrap.MODAL_FOOTER)
-			.addText(sw.toString());
+		footer.addAttribute("id", id)
+			.addAttribute("style", style);
 
-		printOutput(footer.getHtml());
+		JspTag parent = getParent();
+		if (parent instanceof ModalTagHandler) {
+			footer.addAttribute("class", Bootstrap.MODAL_FOOTER);
+			
+		} else if (parent instanceof PanelTagHandler) {
+			footer.addAttribute("class", Bootstrap.PANEL_FOOTER);
+		}
+
+		footer.addAttribute("class", styleClass)
+			.addText(getTagValue(title))
+			.addText(sw.toString());
+		
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
+			}
+		}
+
+		return footer;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 }

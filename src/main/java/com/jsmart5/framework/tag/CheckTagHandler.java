@@ -29,8 +29,10 @@ import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartValidateTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -43,14 +45,14 @@ public final class CheckTagHandler extends SmartTagHandler {
 	private Object value;
 
 	private String label;
+	
+	private boolean disabled;
 
 	private String type;
 
 	private String name;
 
 	private boolean ajax;
-
-	private boolean async;
 	
 	private boolean inline;
 
@@ -75,24 +77,28 @@ public final class CheckTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
+
+		Div div = null;
 
 		Label lb = new Label();
 		lb.addAttribute("style", style);
 		
 		if (inline) {
-			if (CHECKBOX.equals(type)) {
-				lb.addAttribute("class", Bootstrap.CHECKBOX_INLINE);
-			} else {
-				lb.addAttribute("class", Bootstrap.RADION_INLINE);
-			}
+			lb.addAttribute("class", CHECKBOX.equals(type) ? Bootstrap.CHECKBOX_INLINE : Bootstrap.RADION_INLINE);
+		} else {
+			div = new Div();
+			div.addAttribute("class", CHECKBOX.equals(type) ? Bootstrap.CHECKBOX : Bootstrap.RADIO)
+				.addAttribute("disabled", disabled ? "disabled" : null)
+				.addTag(lb);
 		}
-		
+
 		lb.addAttribute("class", styleClass);
 
 		Input input = new Input();
 		input.addAttribute("id", id)
-			.addAttribute("type", type);
+			.addAttribute("type", type)
+			.addAttribute("disabled", disabled ? "disabled" : null);
 		
 		if (CHECKBOX.equals(type)) {
 			input.addAttribute("checkgroup", "checkgroup");
@@ -106,7 +112,7 @@ public final class CheckTagHandler extends SmartTagHandler {
 			input.addAttribute("name", name);
 		}
 
-		appendFormValidator(input);
+		appendValidator(input);
 		appendRest(input);
 		appendEvent(input);
 
@@ -114,7 +120,7 @@ public final class CheckTagHandler extends SmartTagHandler {
 		input.addAttribute("value", object)
 			.addAttribute("checked", verifyCheck(object) ? "checked" : null);
 		
-		lb.addTag(input).addText((String) getTagValue(label));
+		lb.addTag(input).addText(getTagValue(label));
 
 		if (!ajaxTags.isEmpty()) {
 			for (AjaxTagHandler ajax : ajaxTags) {
@@ -126,7 +132,7 @@ public final class CheckTagHandler extends SmartTagHandler {
 			appendScript(getFunction());
 		}
 
-		printOutput(lb.getHtml());
+		return div != null ? div : lb;
 	}
 
 	private StringBuilder getFunction() {
@@ -135,7 +141,6 @@ public final class CheckTagHandler extends SmartTagHandler {
 
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
-		jsonAjax.setAsync(async);
 		jsonAjax.setMethod("post");
 
 		builder.append(JSMART_CHECK.format(getJsonValue(jsonAjax)));
@@ -183,12 +188,12 @@ public final class CheckTagHandler extends SmartTagHandler {
 		this.value = value;
 	}
 
-	void setAjax(boolean ajax) {
-		this.ajax = ajax;
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 
-	void setAsync(boolean async) {
-		this.async = async;
+	void setAjax(boolean ajax) {
+		this.ajax = ajax;
 	}
 
 	void setValidator(SmartValidateTagHandler validator) {

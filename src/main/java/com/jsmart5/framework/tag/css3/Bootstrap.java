@@ -96,7 +96,9 @@ public interface Bootstrap {
 
 	public static final String DROPDOWN_MENU = "dropdown-menu";
 	
-	public static final String DROPDOWN_HEADER = "";
+	public static final String DROPDOWN_MENU_RIGHT = "dropdown-menu-right";
+	
+	public static final String DROPDOWN_HEADER = "dropdown-header";
 
 	
 	public static final String CARET = "caret";
@@ -196,6 +198,8 @@ public interface Bootstrap {
 	public static final String PANEL_BODY = "panel-body";
 	
 	public static final String PANEL_HEADING = "panel-heading";
+	
+	public static final String PANEL_TITLE = "panel-title";
 	
 	public static final String PANEL_FOOTER = "panel-footer";
 	

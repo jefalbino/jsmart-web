@@ -38,8 +38,6 @@ public final class SmartConfigContent {
 
 	private int sessionTimeout;
 
-	private String theme = SmartTheme.BLUE.toString();
-
 	private String[] messageFiles;
 
 	private String defaultLocale;
@@ -161,19 +159,6 @@ public final class SmartConfigContent {
 	public void setSessionTimeout(int sessionTimeout) {
 		if (sessionTimeout >= 0) {
 			this.sessionTimeout = sessionTimeout;
-		}
-	}
-
-	@XmlElement(name = "theme")
-	public String getTheme() {
-		return theme;
-	}
-
-	public void setTheme(String theme) {
-		if (theme != null && !theme.trim().isEmpty()) {
-			if (SmartTheme.contains(theme)) {
-				this.theme = theme.toLowerCase();
-			}
 		}
 	}
 

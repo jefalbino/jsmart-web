@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import javax.servlet.jsp.JspException;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -53,7 +54,7 @@ public final class LoadTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //
 //		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG + "id=\"" + id + "\" ");
 //
@@ -110,6 +111,7 @@ public final class LoadTagHandler extends SmartTagHandler {
 //		appendScriptDeprecated(new StringBuilder(JSMART_LOAD.format(id)));
 //
 //		printOutput(builder);
+		return null;
 	}
 
 	public void setLabel(String label) {

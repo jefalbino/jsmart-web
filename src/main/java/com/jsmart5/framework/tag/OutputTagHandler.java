@@ -19,16 +19,10 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
@@ -89,6 +83,7 @@ public final class OutputTagHandler extends SmartTagHandler {
 	
 	private static final String H6 = "h6";
 
+
 	private Object value;
 	
 	private String align;
@@ -104,6 +99,8 @@ public final class OutputTagHandler extends SmartTagHandler {
 	private String type;
 
 	private String target;
+	
+	private FormatTagHandler format;
 
 	@Override
 	public void validateTag() throws JspException {
@@ -132,14 +129,16 @@ public final class OutputTagHandler extends SmartTagHandler {
 
 	@Override
 	@SuppressWarnings("all")
-	public void executeTag() throws JspException, IOException {
-
-		StringWriter sw = new StringWriter();
+	public Tag executeTag() throws JspException, IOException {
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
 		if (body != null) {
-			body.invoke(sw);
+			body.invoke(null);
+		}
+		
+		if (!ajaxTags.isEmpty() && id == null) {
+			id = getRandonId();
 		}
 
 		Tag tag = null;
@@ -219,41 +218,58 @@ public final class OutputTagHandler extends SmartTagHandler {
 			tag.addAttribute("class", Bootstrap.TEXT_MUTED);
 		}
 
+		JspTag parent = getParent();
+		if (parent instanceof RowTagHandler) {
+			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_TEXT);
+		}
+
 		// Add the style class at last
 		tag.addAttribute("class", styleClass);
 
 		if (target != null && (LABEL.equals(type) || OUTPUT.equals(type))) {
 			tag.addAttribute("for", target);
 		}
+		
+		for (IconTagHandler iconTag : iconTags) {
+			if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+				tag.addTag(iconTag.executeTag());
+			}
+		}
 
 		Object obj = getTagValue(value);
-		if (obj != null) {
-			if (dateFormatRegex != null) {
-				if (obj instanceof Date) {
-					tag.addText(new SimpleDateFormat(dateFormatRegex, getRequest().getLocale()).format(obj));
+		if (format != null) {
+			tag.addText(format.formatValue(obj));
 
-				} else if (obj instanceof DateTime) {
-					tag.addText(((DateTime) obj).toString(DateTimeFormat.forPattern(dateFormatRegex).withLocale(getRequest().getLocale())));
+		} else if (obj != null) {
+			String text = obj.toString();
+
+			if (length != null && length > 0 && text.length() >= length) {
+				if (ellipsize && length > 4) {
+					text = text.substring(0, length - 4) + " ...";
+				} else {
+					text = text.substring(0, length);
 				}
-			} else if (numberFormatRegex != null) {
-				tag.addText(new DecimalFormat(numberFormatRegex).format(obj));
-			} else {
-				tag.addText(obj.toString());
 			}
+			tag.addText(text);
 		}
-		tag.addText(sw.toString());
 
-		String text = tag.getText();
-		if (length != null && length > 0 && text.length() >= length) {
-			if (ellipsize && length > 4) {
-				text = text.substring(0, length - 4) + " ...";
-			} else {
-				text = text.substring(0, length);
+		for (IconTagHandler iconTag : iconTags) {
+			if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+				tag.addTag(iconTag.executeTag());
 			}
-			tag.setText(text);
 		}
+
+		if (!ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : ajaxTags) {
+				appendScript(ajax.getFunction(id));
+			}
+		}
+		
+		return tag;
+	}
 	
-		printOutput(tag.getHtml());
+	void setFormat(FormatTagHandler format) {
+		this.format = format;
 	}
 
 	public void setValue(Object value) {

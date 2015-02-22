@@ -28,6 +28,7 @@ import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.FigCaption;
 import com.jsmart5.framework.tag.html.Figure;
 import com.jsmart5.framework.tag.html.Image;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartImage;
 
 public final class ImageTagHandler extends SmartTagHandler {
@@ -66,7 +67,7 @@ public final class ImageTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		JspFragment body = getJspBody();
 		if (body != null) {
@@ -128,11 +129,10 @@ public final class ImageTagHandler extends SmartTagHandler {
 				figCaption.addText((String) getTagValue(caption));
 				fig.addTag(figCaption);
 			}
-			printOutput(fig.getHtml());
-
-		} else {
-			printOutput(image.getHtml());
+			return fig;
 		}
+
+		return image;
 	}
 
 	public void setLib(String lib) {

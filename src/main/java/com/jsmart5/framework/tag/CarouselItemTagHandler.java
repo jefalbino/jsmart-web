@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartImage;
 import com.jsmart5.framework.util.SmartUtils;
 
@@ -54,7 +55,7 @@ public final class CarouselItemTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //		String libValue = (String) getTagValue(lib);
 //		String nameValue = (String) getTagValue(name);
 //
@@ -87,6 +88,7 @@ public final class CarouselItemTagHandler extends SmartTagHandler {
 //		builder.append(CLOSE_DIV_TAG);
 //
 //		printOutput(builder);
+		return null;
 	}
 
 	public void setLib(String lib) {

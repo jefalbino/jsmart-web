@@ -19,43 +19,44 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class OptionsTagHandler extends SmartTagHandler {
 
-	private String values;
+public final class FormatTagHandler extends SmartTagHandler {
+
+	private static final String NUMBER = "number";
+	
+	private static final String DATE = "date";
+	
+	private String type;
+
+	private String regex;
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (!type.equalsIgnoreCase(NUMBER) && !type.equalsIgnoreCase(DATE)) {
+			throw new JspException("Invalid type attribute. Valid values are " + NUMBER + ", " + DATE);
+		}
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		Object object = getTagValue(values);
-		
-		if (object instanceof Map) {
-			Map<Object, Object> map = (Map<Object, Object>) object;
+		if (parent instanceof OutputTagHandler) {
 
-			for (Entry<Object, Object> entry : map.entrySet()) {
-
-				OptionTagHandler option = new OptionTagHandler();
-				option.setValue(entry.getKey());
-				option.setLabel(entry.getValue() != null ? entry.getValue().toString() : null);
-
-				if (parent instanceof SelectTagHandler) {
-					((SelectTagHandler) parent).addOption(option);
-				}
-			}
+			((OutputTagHandler) parent).setFormat(this);
+			return false;
 		}
 		return true;
 	}
@@ -66,8 +67,30 @@ public final class OptionsTagHandler extends SmartTagHandler {
 		return null;
 	}
 
-	public void setValues(String values) {
-		this.values = values;
+	String formatValue(final Object value) {
+		if (value != null) {
+			if (type.equalsIgnoreCase(NUMBER)) {
+				return new DecimalFormat(regex).format(value);
+						
+			} else if (type.equalsIgnoreCase(DATE)) {
+				if (value instanceof Date) {
+					return new SimpleDateFormat(regex, getRequest().getLocale()).format(value);
+	
+				} else if (value instanceof DateTime) {
+					return ((DateTime) value).toString(DateTimeFormat.forPattern(regex).withLocale(getRequest().getLocale()));
+				}
+			}
+			return value.toString();
+		}
+		return null;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setRegex(String regex) {
+		this.regex = regex;
 	}
 
 }

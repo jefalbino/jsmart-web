@@ -19,7 +19,6 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -30,7 +29,7 @@ import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
-import com.jsmart5.framework.tag.html.P;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class InputTagHandler extends SmartTagHandler {
 	
@@ -94,8 +93,6 @@ public final class InputTagHandler extends SmartTagHandler {
 	
 	private String rightAddOn;
 
-	private String helpBlock;
-
 	private String pattern;
 
 	private Integer minValue;
@@ -110,6 +107,7 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
+		if (type != null)
 		switch (type) {
 			case TEXT_TYPE:
 			case PASSWORD_TYPE:
@@ -157,7 +155,7 @@ public final class InputTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -173,7 +171,7 @@ public final class InputTagHandler extends SmartTagHandler {
 		Div inputGroup = null;
 		
 		JspTag parent = getParent();
-		if (label != null || helpBlock != null || parent instanceof FormTagHandler) {
+		if (label != null || parent instanceof FormTagHandler) {
 			formGroup = new Div();
 			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 			
@@ -192,7 +190,8 @@ public final class InputTagHandler extends SmartTagHandler {
 		if (label != null) {
 			Label labelTag = new Label();
 			labelTag.addAttribute("for", id)
-					.addText((String) getTagValue(label));
+					.addAttribute("class", Bootstrap.LABEL_CONTROL)
+					.addText(getTagValue(label));
 			formGroup.addTag(labelTag);
 		}
 
@@ -213,14 +212,11 @@ public final class InputTagHandler extends SmartTagHandler {
 		
 		if (leftAddOn != null) {
 			if (childAddOn != null && leftAddOn.equalsIgnoreCase(childAddOn.getId())) {
-				StringWriter sw = new StringWriter();
-				childAddOn.setOutputWriter(sw);
-				childAddOn.executeTag();
-				inputGroup.addText(sw.toString());
+				inputGroup.addTag(childAddOn.executeTag());
 			} else {
 				Div div = new Div();
 				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText((String) getTagValue(leftAddOn));
+					.addText(getTagValue(leftAddOn));
 				inputGroup.addTag(div);
 			}
 		}
@@ -228,15 +224,15 @@ public final class InputTagHandler extends SmartTagHandler {
 		Input input = new Input();
 		input.addAttribute("id", id)
 			 .addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
-			 .addAttribute("type", type)
+			 .addAttribute("type", type != null ? type : TEXT_TYPE)
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("maxlength", length)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
-			 .addAttribute("disabled", disabled || isEditRowTagEnabled() ? "disabled" : null)
-			 .addAttribute("placeholder", getResourceString(placeHolder))
-			 .addAttribute("datatype", type)
+			 .addAttribute("disabled", disabled ? "disabled" : null)
+			 .addAttribute("placeholder", getTagValue(placeHolder))
+			 .addAttribute("datatype", type != null ? type : TEXT_TYPE)
 			 .addAttribute("pattern", pattern)
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
 			 .addAttribute("data-mask", mask);
@@ -262,7 +258,7 @@ public final class InputTagHandler extends SmartTagHandler {
 			setTagValue(value, null);
 		}
 
-		appendFormValidator(input);
+		appendValidator(input);
 		appendRest(input);
 		appendEvent(input);
 
@@ -274,23 +270,13 @@ public final class InputTagHandler extends SmartTagHandler {
 
 		if (rightAddOn != null) {
 			if (childAddOn != null && rightAddOn.equalsIgnoreCase(childAddOn.getId())) {
-				StringWriter sw = new StringWriter();
-				childAddOn.setOutputWriter(sw);
-				childAddOn.executeTag();
-				inputGroup.addText(sw.toString());
+				inputGroup.addTag(childAddOn.executeTag());
 			} else {
 				Div div = new Div();
 				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText((String) getTagValue(rightAddOn));
+					.addText(getTagValue(rightAddOn));
 				inputGroup.addTag(div);
 			}
-		}
-
-		if (helpBlock != null) {
-			P p = new P();
-			p.addAttribute("class", Bootstrap.HELP_BLOCK)
-				.addText((String) getTagValue(helpBlock));
-			formGroup.addTag(p);
 		}
 
 		if (!ajaxTags.isEmpty()) {
@@ -299,13 +285,7 @@ public final class InputTagHandler extends SmartTagHandler {
 			}
 		}
 
-		if (formGroup != null) {
-			printOutput(formGroup.getHtml());
-		} else if (inputGroup != null) {
-			printOutput(inputGroup.getHtml());
-		} else {
-			printOutput(input.getHtml());
-		}
+		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : input;
 	}
 	
 	void setChildAddOn(SmartTagHandler childAddOn) {
@@ -354,10 +334,6 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	public void setRightAddOn(String rightAddOn) {
 		this.rightAddOn = rightAddOn;
-	}
-
-	public void setHelpBlock(String helpBlock) {
-		this.helpBlock = helpBlock;
 	}
 
 	public void setPattern(String pattern) {

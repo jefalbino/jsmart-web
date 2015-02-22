@@ -25,6 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class EditTagHandler extends SmartTagHandler {
 
@@ -42,7 +43,7 @@ public final class EditTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //		JspFragment body = getJspBody();
 //		if (body != null) {
 //			setEditRowTagEnable(true);
@@ -66,6 +67,7 @@ public final class EditTagHandler extends SmartTagHandler {
 //			setEditRowTagEnable(false);
 //			printOutput(builder);
 //		}
+		return null;
 	}
 
 	public void setType(String type) {

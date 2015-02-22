@@ -27,27 +27,11 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.json.JsonRest;
 import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-/*
- * Rest uses a json structure
- * 
- * {
- * 	  'method': '',
- *    'endpoint': '',
- *    'content': '',
- *    'bodyRoot': '',
- *    'crossdomain': '',
- *    'jsonp': '',
- *    'jsonpcallback': '',
- *    'params': [{'name': '', 'value': ''}],
- *    'before': '',
- *    'success': '',
- *    'error': ''
- *  }
- */
 public final class RestTagHandler extends SmartTagHandler {
 
 	private static final String CONTENT_TYPE_JSON = "json";
@@ -100,8 +84,6 @@ public final class RestTagHandler extends SmartTagHandler {
 
 	private boolean disabled;
 
-	private boolean async = true;
-
 	@Override
 	public void validateTag() throws JspException {
 		if (!method.equalsIgnoreCase(POST) && !method.equalsIgnoreCase(GET) && !method.equalsIgnoreCase(DELETE) && !method.equalsIgnoreCase(PUT)
@@ -121,7 +103,7 @@ public final class RestTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 //		StringBuilder builder = new StringBuilder();
 //
 //		// Look for parameters
@@ -205,6 +187,7 @@ public final class RestTagHandler extends SmartTagHandler {
 //		}
 //
 //		printOutput(builder);
+		return null;
 	}
 
 	public void setLabel(String label) {
@@ -273,10 +256,6 @@ public final class RestTagHandler extends SmartTagHandler {
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 }

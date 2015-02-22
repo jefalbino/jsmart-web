@@ -19,7 +19,6 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +27,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Tag;
 
 public final class CheckGroupTagHandler extends SmartTagHandler {
 
@@ -35,13 +35,11 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 
 	private String align;
 
-	private String value;
+	private String selectValues;
 
 	private boolean inline;
 
 	private boolean ajax;
-
-	private boolean async = false;
 
 	public CheckGroupTagHandler() {
 		checks = new ArrayList<CheckTagHandler>();
@@ -53,7 +51,7 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 	}
 
 	@Override
-	public void executeTag() throws JspException, IOException {
+	public Tag executeTag() throws JspException, IOException {
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -67,11 +65,11 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 		
 		Div div = new Div();
 		div.addAttribute("id", id)
-			.addAttribute("align", align);
+			.addAttribute("align", align)
+			.addAttribute("checkgroup", "");
 
  		int index = 0;
 		for (CheckTagHandler check : checks) {
-			StringWriter sw = new StringWriter();
 
 			check.setId(id + "_" + index++);
 			check.setStyle(style);
@@ -79,19 +77,16 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 			check.setInline(inline);
 			check.setValidator(validator);
 			check.setRest(rest);
-			check.setName(value);
+			check.setName(selectValues);
 			check.setAjax(ajax);
-			check.setAsync(async);
 			check.addAllAjaxTag(ajaxTags);
 			check.setType(CheckTagHandler.CHECKBOX);
 			setEvents(check);
-			check.setOutputWriter(sw);
-			check.executeTag();
 
-			div.addText(sw.toString());
+			div.addTag(check.executeTag());
 		}
 
-		printOutput(div.getHtml());
+		return div;
 	}
 
 	void addCheck(CheckTagHandler check) {
@@ -102,8 +97,8 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 		this.align = align;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setSelectValues(String selectValues) {
+		this.selectValues = selectValues;
 	}
 
 	public void setInline(boolean inline) {
@@ -112,10 +107,6 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 
 	public void setAjax(boolean ajax) {
 		this.ajax = ajax;
-	}
-
-	public void setAsync(boolean async) {
-		this.async = async;
 	}
 
 }
