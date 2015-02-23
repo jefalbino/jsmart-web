@@ -22,6 +22,7 @@ public enum JsConstants {
 
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
 	JSMART_AJAX("Jsmart5.ajax", "(%s);"),
+	JSMART_BIND("Jsmart5.bind", "(%s);"),
 	JSMART_BUTTON("Jsmart5.button", "(%s);"),
 	JSMART_EXEC("Jsmart5.execute", "('%s');"),
 	JSMART_CHECK("Jsmart5.check", "(%s);"),

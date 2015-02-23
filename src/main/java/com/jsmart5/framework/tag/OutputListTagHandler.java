@@ -23,11 +23,13 @@ import java.util.Collection;
 
 import javax.servlet.jsp.JspException;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
+import com.jsmart5.framework.tag.type.Look;
 
 public final class OutputListTagHandler extends SmartTagHandler {
 
@@ -39,11 +41,8 @@ public final class OutputListTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) 
-				&& !look.equalsIgnoreCase(SUCCESS) && !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING)
-				&& !look.equalsIgnoreCase(DANGER) && !look.equalsIgnoreCase(MUTED)) {
-			throw new JspException("Invalid look value for output tag. Valid values are " + DEFAULT + ", " + PRIMARY + ", "
-					+ SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER + ", " + MUTED);
+		if (look != null && !Look.validateText(look)) {
+			throw InvalidAttributeException.fromPossibleValues("outputlist", "look", Look.getTextValues());
 		}
 	}
 
@@ -57,17 +56,17 @@ public final class OutputListTagHandler extends SmartTagHandler {
 		
 		String lookVal = null;
 
-		if (PRIMARY.equalsIgnoreCase(look)) {
+		if (Look.PRIMARY.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_PRIMARY;
-		} else if (SUCCESS.equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_SUCCESS;
-		} else if (INFO.equalsIgnoreCase(look)) {
+		} else if (Look.INFO.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_INFO;
-		} else if (WARNING.equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_WARNING;
-		} else if (DANGER.equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_DANGER;
-		} else if (MUTED.equalsIgnoreCase(look)) {
+		} else if (Look.MUTED.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_MUTED;
 		}
 

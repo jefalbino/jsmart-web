@@ -24,29 +24,20 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.FieldSet;
 import com.jsmart5.framework.tag.html.Form;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.type.Method;
+import com.jsmart5.framework.tag.type.Position;
+import com.jsmart5.framework.tag.type.Size;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class FormTagHandler extends SmartTagHandler {
-	
-	private static final String POST = "post";
-	
-	private static final String GET = "get";
-	
-	static final String SMALL = "small";
-	
-	static final String LARGE = "large";
-
-	private static final String VERTICAL = "vertical";
-	
-	private static final String HORIZONTAL = "horizontal";
-	
-	private static final String INLINE = "inline";
 
 	private String method;
 	
@@ -60,16 +51,14 @@ public final class FormTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (method != null && !method.equalsIgnoreCase(GET) && !method.equalsIgnoreCase(POST)) {
-			throw new JspException("Invalid method for form tag. Valid values are get or post");
+		if (method != null && !Method.validatePostGet(method)) {
+			throw InvalidAttributeException.fromPossibleValues("form", "method", Method.getPostGetValues());
 		}
-		if (position != null && !position.equalsIgnoreCase(VERTICAL) && !position.equalsIgnoreCase(HORIZONTAL) 
-				&& !position.equalsIgnoreCase(INLINE)) {
-			throw new JspException("Invalid position for form tag. Valid values are " + VERTICAL + ", "
-				+ HORIZONTAL + ", " + INLINE);
+		if (position != null && !Position.validate(position)) {
+			throw InvalidAttributeException.fromPossibleValues("form", "position", Position.getValues());
 		}
-		if (size != null && !size.equalsIgnoreCase(SMALL) && !size.equalsIgnoreCase(LARGE)) {
-			throw new JspException("Invalid size for form tag. Valid values are " + SMALL + ", " + LARGE);
+		if (size != null && !Size.validateSmallLarge(size)) {
+			throw InvalidAttributeException.fromPossibleValues("form", "size", Size.getSmallLargeValues());
 		}
 	}
 
@@ -88,13 +77,13 @@ public final class FormTagHandler extends SmartTagHandler {
 
 		Form form = new Form();
 		form.addAttribute("id", id)
-			.addAttribute("method", method != null ? method : POST)
+			.addAttribute("method", method != null ? method : Method.POST.name().toLowerCase())
 			.addAttribute("enctype", enctype)
 			.addAttribute("style", style);
 
-		if (HORIZONTAL.equalsIgnoreCase(position)) {
+		if (Position.HORIZONTAL.name().equalsIgnoreCase(position)) {
 			form.addAttribute("class", Bootstrap.FORM_HORIZONTAL);
-		} else if (INLINE.equalsIgnoreCase(position)) {
+		} else if (Position.INLINE.name().equalsIgnoreCase(position)) {
 			form.addAttribute("class", Bootstrap.FORM_INLINE);
 		}
 		
@@ -114,6 +103,7 @@ public final class FormTagHandler extends SmartTagHandler {
 			form.addText(sw.toString());
 		}
 
+		appendBind(id);
 		appendScript(getFunction());
 
 		return form;
@@ -121,12 +111,8 @@ public final class FormTagHandler extends SmartTagHandler {
 	
 	private StringBuilder getFunction() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').bind('").append(EVENT_SUBMIT).append("', function(){");
-
 		builder.append("return " + JSMART_VALIDATE.format(id));
-
-		builder.append("});");
-		return builder;
+		return getBindFunction(id, Event.SUBMIT.name(), builder);
 	}
 
 	public void setMethod(String method) {

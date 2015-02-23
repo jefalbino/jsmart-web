@@ -25,11 +25,13 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Look;
 
 public final class PanelTagHandler extends SmartTagHandler {
 	
@@ -40,10 +42,8 @@ public final class PanelTagHandler extends SmartTagHandler {
 	private FooterTagHandler footer;
 
 	public void validateTag() throws JspException {
-		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) && !look.equalsIgnoreCase(SUCCESS)
-				&& !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(DANGER)) {
-			throw new JspException("Invalid look value for panel tag. Valid values are " + DEFAULT + ", " + PRIMARY 
-					+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER);
+		if (look != null && !Look.validateLook(look)) {
+			throw InvalidAttributeException.fromPossibleValues("panel", "look", Look.getLookValues());
 		}
 	}
 
@@ -75,15 +75,15 @@ public final class PanelTagHandler extends SmartTagHandler {
 
 		String lookVal = Bootstrap.PANEL_DEFAULT;
 		
-		if (PRIMARY.equalsIgnoreCase(look)) {
+		if (Look.PRIMARY.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_PRIMARY;
-		} else if (SUCCESS.equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_SUCCESS;
-		} else if (INFO.equalsIgnoreCase(look)) {
+		} else if (Look.INFO.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_INFO;
-		} else if (WARNING.equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_WARNING;
-		} else if (DANGER.equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_DANGER;
 		}
 
@@ -93,12 +93,8 @@ public final class PanelTagHandler extends SmartTagHandler {
 		panel.addAttribute("class", styleClass);
 
 		appendEvent(panel);
-
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 		
 		if (header != null || parentId != null) {
 			Div head = new Div();

@@ -23,10 +23,12 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Event;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -50,32 +52,11 @@ public final class AjaxTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		switch (event) {
-			case EVENT_SELECT:
-			case EVENT_CLICK:
-			case EVENT_DBL_CLICK:
-			case EVENT_MOUSE_DOWN:
-			case EVENT_MOUSE_MOVE:
-			case EVENT_MOUSE_OVER:
-			case EVENT_MOUSE_OUT:
-			case EVENT_MOUSE_UP:
-			case EVENT_KEY_DOWN:
-			case EVENT_KEY_PRESS:
-			case EVENT_KEY_UP:
-			case EVENT_FOCUS:
-			case EVENT_CHANGE:
-			case EVENT_BLUR:
-				break;
-			default:
-				throw new JspException("Invalid event value for ajax tag. The valid values are " 
-						+ EVENT_SELECT + ", "	+ EVENT_CLICK + ", " + EVENT_DBL_CLICK + ", "
-						+ EVENT_MOUSE_DOWN + ", "	+ EVENT_MOUSE_MOVE + ", "	+ EVENT_MOUSE_OVER + ", "
-						+ EVENT_MOUSE_OUT + ", " + EVENT_MOUSE_UP + ", " + EVENT_KEY_DOWN + ", "
-						+ EVENT_KEY_PRESS + ", " + EVENT_KEY_UP + ", " + EVENT_FOCUS + ", "
-						+ EVENT_CHANGE + " and "	+ EVENT_BLUR);
+		if (event != null && !Event.validate(event)) {
+			throw InvalidAttributeException.fromPossibleValues("ajax", "event", Event.getValues());
 		}
 		if (timeout != null && timeout < 0) {
-			throw new JspException("Invalid timeout value for ajax tag. The valid value must be greater or equal to 0"); 
+			throw InvalidAttributeException.fromConstraint("ajax", "timeout", "greater or equal to 0"); 
 		}
 	}
 	
@@ -95,7 +76,7 @@ public final class AjaxTagHandler extends SmartTagHandler {
 		return null;
 	}
 
-	StringBuilder getFunction(String id) {
+	public StringBuilder getFunction(String id) {
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
 		jsonAjax.setTimeout(timeout);

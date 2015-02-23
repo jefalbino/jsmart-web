@@ -33,6 +33,7 @@ import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Event;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -122,11 +123,8 @@ public final class CheckTagHandler extends SmartTagHandler {
 		
 		lb.addTag(input).addText(getTagValue(label));
 
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		if (ajax) {
 			appendScript(getFunction());
@@ -136,17 +134,13 @@ public final class CheckTagHandler extends SmartTagHandler {
 	}
 
 	private StringBuilder getFunction() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').bind('").append(EVENT_CLICK).append("', function(){");
-
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
 
+		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_CHECK.format(getJsonValue(jsonAjax)));
-
-		builder.append("});");
-		return builder;
+		return getBindFunction(id, Event.CLICK.name(), builder);
 	}
 
 	@SuppressWarnings("rawtypes")

@@ -16,58 +16,44 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.json;
+package com.jsmart5.framework.tag.type;
 
-public final class JsonRange {
+public enum Event {
 
-	private String ajax;
+	SELECT,
+	CHANGE,
+	BLUR,
+	CLICK,
+	DBLCLICK,
+	MOUSEDOWN,
+	MOUSEMOVE,
+	MOUSEOVER,
+	MOUSEOUT,
+	MOUSEUP,
+	KEYDOWN,
+	KEYPRESS,
+	KEYUP,
+	FOCUS,
+	SUBMIT;
 
-	private String max;
-
-	private String min;
-
-	private String step;
-
-	private String callback;
-
-	public String getAjax() {
-		return ajax;
+	public static boolean validate(String event) {
+		try {
+			Event.valueOf(event.toUpperCase());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
+	
+	public static String[] getValues() {
+		int index = 0;
+		Event[] events = values();
+		String[] values = new String[events.length];
 
-	public void setAjax(String ajax) {
-		this.ajax = ajax;
-	}
-
-	public String getMax() {
-		return max;
-	}
-
-	public void setMax(String max) {
-		this.max = max;
-	}
-
-	public String getMin() {
-		return min;
-	}
-
-	public void setMin(String min) {
-		this.min = min;
-	}
-
-	public String getStep() {
-		return step;
-	}
-
-	public void setStep(String step) {
-		this.step = step;
-	}
-
-	public String getCallback() {
-		return callback;
-	}
-
-	public void setCallback(String callback) {
-		this.callback = callback;
+		for (Event event : events) {
+			values[index++] = event.name().toLowerCase();
+		}
+		return values;
 	}
 
 }

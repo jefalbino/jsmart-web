@@ -31,10 +31,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
-import com.jsmart5.framework.json.JsonEdit;
-import com.jsmart5.framework.json.JsonScroll;
-import com.jsmart5.framework.json.JsonSelect;
-import com.jsmart5.framework.json.JsonTable;
 import com.jsmart5.framework.manager.SmartTableTagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 

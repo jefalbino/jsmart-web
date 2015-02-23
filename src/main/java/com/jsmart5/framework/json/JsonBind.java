@@ -18,66 +18,26 @@
 
 package com.jsmart5.framework.json;
 
-public final class JsonTable {
+public final class JsonBind {
 
-	private String name;
+	private Integer timeout;
 
-	private String action;
+	private String execute;
 
-	private String first;
-
-	private String sort;
-
-	private String filter;
-
-	private String update;
-
-	public String getName() {
-		return name;
+	public Integer getTimeout() {
+		return timeout;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTimeout(Integer timeout) {
+		this.timeout = timeout;
 	}
 
-	public String getAction() {
-		return action;
+	public String getExecute() {
+		return execute;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	public String getFirst() {
-		return first;
-	}
-
-	public void setFirst(String first) {
-		this.first = first;
-	}
-
-	public String getSort() {
-		return sort;
-	}
-
-	public void setSort(String sort) {
-		this.sort = sort;
-	}
-
-	public String getFilter() {
-		return filter;
-	}
-
-	public void setFilter(String filter) {
-		this.filter = filter;
-	}
-
-	public String getUpdate() {
-		return update;
-	}
-
-	public void setUpdate(String update) {
-		this.update = update;
+	public void setExecute(String execute) {
+		this.execute = execute;
 	}
 
 }

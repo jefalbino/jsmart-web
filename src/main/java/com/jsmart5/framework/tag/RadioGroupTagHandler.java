@@ -80,6 +80,7 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 			check.setName(selectValue);
 			check.setAjax(ajax);
 			check.addAllAjaxTag(ajaxTags);
+			check.addAllBindTag(bindTags);
 			check.setType(CheckTagHandler.RADIO);
 			setEvents(check);
 

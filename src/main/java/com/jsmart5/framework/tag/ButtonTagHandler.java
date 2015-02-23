@@ -27,6 +27,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
@@ -35,16 +36,11 @@ import com.jsmart5.framework.tag.html.Button;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.type.Look;
+import com.jsmart5.framework.tag.type.Size;
 
 public final class ButtonTagHandler extends SmartTagHandler {
-
-	static final String JUSTIFIED = "justified";
-	
-	static final String LARGE = "large";
-
-	static final String SMALL = "small";
-
-	static final String XSMALL = "xsmall";
 
 	private String look;
 
@@ -98,15 +94,11 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (size != null && !size.equalsIgnoreCase(XSMALL) && !size.equalsIgnoreCase(SMALL) 
-				&& !size.equalsIgnoreCase(LARGE) && !size.equalsIgnoreCase(JUSTIFIED)) {
-			throw new JspException("Invalid size value for button tag. Valid values are " + XSMALL + ", " + SMALL + ", " + LARGE + ", " + JUSTIFIED);
+		if (size != null && !Size.validate(size)) {
+			throw InvalidAttributeException.fromPossibleValues("button", "size", Size.getValues());
 		}
-		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) 
-				&& !look.equalsIgnoreCase(SUCCESS) && !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING)
-				&& !look.equalsIgnoreCase(DANGER) && !look.equalsIgnoreCase(LINK)) {
-			throw new JspException("Invalid look value for button tag. Valid values are " + DEFAULT + ", " + PRIMARY 
-					+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER + ", " + LINK);
+		if (look != null && !Look.validateButton(look)) {
+			throw InvalidAttributeException.fromPossibleValues("button", "look", Look.getButtonValues());
 		}
 	}
 
@@ -137,13 +129,13 @@ public final class ButtonTagHandler extends SmartTagHandler {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP);
 			}
 			
-			if (XSMALL.equalsIgnoreCase(size)) {
+			if (Size.XSMALL.name().equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-			} else if (SMALL.equalsIgnoreCase(size)) {
+			} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-			} else if (LARGE.equalsIgnoreCase(size)) {
+			} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
-			} else if (JUSTIFIED.equalsIgnoreCase(size)) {
+			} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
 			}
 			
@@ -161,29 +153,29 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		
 		String lookVal = Bootstrap.BUTTON_DEFAULT;
 		
-		if (PRIMARY.equalsIgnoreCase(look)) {
+		if (Look.PRIMARY.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_PRIMARY;
-		} else if (SUCCESS.equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_SUCCESS;
-		} else if (INFO.equalsIgnoreCase(look)) {
+		} else if (Look.INFO.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_INFO;
-		} else if (WARNING.equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_WARNING;
-		} else if (DANGER.equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_DANGER;
-		} else if (LINK.equalsIgnoreCase(look)) {
+		} else if (Look.LINK.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_LINK;
 		}
 
 		button.addAttribute("class", lookVal);
 			
-		if (XSMALL.equalsIgnoreCase(size)) {
+		if (Size.XSMALL.name().equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_XSMALL);
-		} else if (SMALL.equalsIgnoreCase(size)) {
+		} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_SMALL);
-		} else if (LARGE.equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_LARGE);
-		} else if (JUSTIFIED.equalsIgnoreCase(size)) {
+		} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_JUSTIFIED);
 		}
 
@@ -275,13 +267,15 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			buttonGroup.addTag(ul);
 		}
 
+		appendBind(id);
+
 		return buttonGroup != null ? buttonGroup : button;
 	}
 	
 	private StringBuilder getExecFunction() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_EXEC.format(beforeSend.trim()));	
-		return getBindFunction(id, EVENT_CLICK, builder);
+		return getBindFunction(id, Event.CLICK.name(), builder);
 	}
 	
 	private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
@@ -316,7 +310,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BUTTON.format(getJsonValue(jsonAjax)) + "return false;");
-		return getBindFunction(id, EVENT_CLICK, builder);
+		return getBindFunction(id, Event.CLICK.name(), builder);
 	}
 
 	void setDropMenu(DropMenuTagHandler dropMenu) {

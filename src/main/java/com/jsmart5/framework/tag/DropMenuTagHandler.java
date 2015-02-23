@@ -28,6 +28,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
@@ -36,13 +37,11 @@ import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
+import com.jsmart5.framework.tag.type.Align;
+import com.jsmart5.framework.tag.type.Event;
 
 public final class DropMenuTagHandler extends SmartTagHandler {
-	
-	private static final String LEFT = "left";
-	
-	private static final String RIGHT = "right";
-	
+
 	private String align;
 	
 	private boolean dropUp;
@@ -75,8 +74,8 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (align != null && !align.equalsIgnoreCase(LEFT) && !align.equalsIgnoreCase(RIGHT)) {
-			throw new JspException("Invalid align attribute for dropmenu tag. Valid values are " + LEFT + ", " + RIGHT);
+		if (align != null && !Align.validateLeftRight(align)) {
+			throw InvalidAttributeException.fromPossibleValues("dropmenu", "align", Align.getLeftRightValues());
 		}
 	}
 
@@ -99,7 +98,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 			.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.DROPDOWN_MENU);
 		
-		if (RIGHT.equalsIgnoreCase(align)) {
+		if (Align.RIGHT.name().equalsIgnoreCase(align)) {
 			ul.addAttribute("class", Bootstrap.DROPDOWN_MENU_RIGHT);
 		}
 		
@@ -192,7 +191,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BUTTON.format(getJsonValue(jsonAjax)) + "return false;");
-		return getBindFunction(dropAction.getId(), EVENT_CLICK, builder);
+		return getBindFunction(dropAction.getId(), Event.CLICK.name(), builder);
 	}
 
 	void addDropAction(DropActionTagHandler dropAction) {

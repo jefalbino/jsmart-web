@@ -24,6 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
@@ -31,14 +32,10 @@ import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Set;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Size;
+import com.jsmart5.framework.tag.type.Type;
 
 public final class UploadTagHandler extends SmartTagHandler {
-	
-	private static final String SMALL = "small";
-
-	private static final String LARGE = "large";
-
-	private static final String FILE_TYPE = "file";
 
 	private String value;
 
@@ -64,8 +61,8 @@ public final class UploadTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (size != null && !size.equals(SMALL) && !size.equals(LARGE)) {
-			throw new JspException("Invalid size value for input tag. Valid values are " + SMALL + ", " + LARGE);
+		if (size != null && !Size.validateSmallLarge(size)) {
+			throw InvalidAttributeException.fromPossibleValues("upload", "size", Size.getSmallLargeValues());
 		}
 	}
 
@@ -93,10 +90,10 @@ public final class UploadTagHandler extends SmartTagHandler {
 			if (parent instanceof FormTagHandler) {
 				String size = ((FormTagHandler) parent).getSize();
 
-				if (FormTagHandler.LARGE.equalsIgnoreCase(size)) {
+				if (Size.LARGE.name().equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
 
-				} else if (FormTagHandler.SMALL.equalsIgnoreCase(size)) {
+				} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
 				}
 			}
@@ -114,9 +111,9 @@ public final class UploadTagHandler extends SmartTagHandler {
 			inputGroup = new Div();
 			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			if (SMALL.equals(size)) {
+			if (Size.SMALL.name().equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
-			} else if (LARGE.equals(size)) {
+			} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
 			}
 
@@ -146,21 +143,21 @@ public final class UploadTagHandler extends SmartTagHandler {
 		Input input = new Input();
 		input.addAttribute("id", id)
 			 .addAttribute("name", name.replace(J_FILE, J_PART))
-			 .addAttribute("type", FILE_TYPE)
+			 .addAttribute("type", Type.FILE.name().toLowerCase())
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
 			 .addAttribute("placeholder", getTagValue(placeHolder))
-			 .addAttribute("datatype", FILE_TYPE)
+			 .addAttribute("datatype", Type.FILE.name().toLowerCase())
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
 		
 		input.addAttribute("value", getTagValue(value));
 		
-		if (SMALL.equals(size)) {
+		if (Size.SMALL.name().equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_SMALL);
-		} else if (LARGE.equals(size)) {
+		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_LARGE);
 		}
 
@@ -190,11 +187,8 @@ public final class UploadTagHandler extends SmartTagHandler {
 			}
 		}
 
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		Set set = new Set();
 		set.addTag(input);

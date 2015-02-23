@@ -82,11 +82,8 @@ public final class FooterTagHandler extends SmartTagHandler {
 			.addText(getTagValue(title))
 			.addText(sw.toString());
 		
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		return footer;
 	}

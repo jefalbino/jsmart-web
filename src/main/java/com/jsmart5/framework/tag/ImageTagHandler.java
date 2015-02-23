@@ -23,23 +23,17 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.FigCaption;
 import com.jsmart5.framework.tag.html.Figure;
 import com.jsmart5.framework.tag.html.Image;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Type;
 import com.jsmart5.framework.util.SmartImage;
 
 public final class ImageTagHandler extends SmartTagHandler {
-
-	private static final String RESPONSIVE = "responsive";
-
-	private static final String ROUND = "round";
-
-	private static final String CIRCLE = "circle";
-
-	private static final String THUMBNAIL = "thumbnail";
 
 	private String lib;
 
@@ -59,10 +53,8 @@ public final class ImageTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (type != null && !type.equalsIgnoreCase(RESPONSIVE) && !type.equalsIgnoreCase(ROUND) && !type.equalsIgnoreCase(CIRCLE)
-				&& !type.equalsIgnoreCase(THUMBNAIL)) {
-			throw new JspException("Invalid type value for image tag. Valid values are " + RESPONSIVE + ", " + ROUND 
-					+ ", " + CIRCLE + ", " + THUMBNAIL);
+		if (type != null && !Type.validateImage(type)) {
+			throw InvalidAttributeException.fromPossibleValues("image", "type", Type.getImageValues());
 		}
 	}
 
@@ -99,13 +91,13 @@ public final class ImageTagHandler extends SmartTagHandler {
 			image.addAttribute("alt", nameValue);
 		}
 		
-		if (RESPONSIVE.equalsIgnoreCase(type)) {
+		if (Type.RESPONSIVE.name().equalsIgnoreCase(type)) {
 			image.addAttribute("class", Bootstrap.IMAGE_RESPONSIVE);
-		} else if (ROUND.equalsIgnoreCase(type)) {
+		} else if (Type.ROUND.name().equalsIgnoreCase(type)) {
 			image.addAttribute("class", Bootstrap.IMAGE_ROUNDED);
-		} else if (CIRCLE.equalsIgnoreCase(type)) {
+		} else if (Type.CIRCLE.name().equalsIgnoreCase(type)) {
 			image.addAttribute("class", Bootstrap.IMAGE_CIRCLE);
-		} else if (THUMBNAIL.equalsIgnoreCase(type)) {
+		} else if (Type.THUMBNAIL.name().equalsIgnoreCase(type)) {
 			image.addAttribute("class", Bootstrap.IMAGE_THUMBNAIL);
 		}
 		
@@ -114,11 +106,8 @@ public final class ImageTagHandler extends SmartTagHandler {
 
 		appendEvent(image);
 
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		if (figure) {
 			Figure fig = new Figure();

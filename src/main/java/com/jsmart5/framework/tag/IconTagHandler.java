@@ -23,10 +23,12 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Align;
 
 public final class IconTagHandler extends SmartTagHandler {
 
@@ -51,8 +53,8 @@ public final class IconTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (side != null && !side.equalsIgnoreCase(LEFT) && !side.equalsIgnoreCase(RIGHT)) {
-			throw new JspException("Invalid side value for icon tag. Valid values are " + LEFT + ", " + RIGHT);
+		if (side != null && !Align.validateLeftRight(side)) {
+			throw InvalidAttributeException.fromPossibleValues("icon", "side", Align.getLeftRightValues());
 		}
 	}
 

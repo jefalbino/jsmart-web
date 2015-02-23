@@ -24,50 +24,17 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Size;
+import com.jsmart5.framework.tag.type.Type;
 
 public final class InputTagHandler extends SmartTagHandler {
-	
-	private static final String SMALL = "small";
-
-	private static final String LARGE = "large";
-
-	private static final String TEXT_TYPE = "text";
-
-	private static final String PASSWORD_TYPE = "password";
-
-	private static final String HIDDEN_TYPE = "hidden";
-
-	private static final String NUMBER_TYPE = "number";
-
-	private static final String SEARCH_TYPE = "search";
-
-	private static final String RANGE_TYPE = "range";
-
-	private static final String EMAIL_TYPE = "email";
-
-	private static final String URL_TYPE = "url";
-	
-	private static final String DATE_TYPE = "date";
-
-	private static final String MONTH_TYPE = "month";
-
-	private static final String WEEK_TYPE = "week";
-
-	private static final String TIME_TYPE = "time";
-
-	private static final String DATETIME_TYPE = "datetime";
-
-	private static final String DATETIME_LOCAL_TYPE = "datetime-local";
-
-	private static final String COLOR_TYPE = "color";
-
-	private static final String PHONE_TYPE = "tel";
 	
 	private String type;
 
@@ -107,50 +74,26 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (type != null)
-		switch (type) {
-			case TEXT_TYPE:
-			case PASSWORD_TYPE:
-			case HIDDEN_TYPE:
-			case NUMBER_TYPE:
-			case SEARCH_TYPE:
-			case RANGE_TYPE:
-			case EMAIL_TYPE:
-			case URL_TYPE:
-			case DATE_TYPE:
-			case MONTH_TYPE:
-			case WEEK_TYPE:
-			case TIME_TYPE:
-			case DATETIME_TYPE:
-			case DATETIME_LOCAL_TYPE:
-			case COLOR_TYPE:
-			case PHONE_TYPE:
-				break;
-			default:
-				throw new JspException("Invalid type value for input tag. Valid values are "
-						+ TEXT_TYPE + ", " + PASSWORD_TYPE + ", " + HIDDEN_TYPE + ", " + NUMBER_TYPE + ", " 
-						+ SEARCH_TYPE + ", " + RANGE_TYPE + ", " + EMAIL_TYPE + ", " + URL_TYPE + ", " 
-						+ DATE_TYPE + ", " + MONTH_TYPE + ", " + WEEK_TYPE + ", " + TIME_TYPE + ", "
-						+ DATETIME_TYPE + ", " + DATETIME_LOCAL_TYPE + ", " + COLOR_TYPE + ", " + PHONE_TYPE);
+		if (type != null && !Type.validateInput(type)) {
+			throw InvalidAttributeException.fromPossibleValues("input", "type", Type.getInputValues());
 		}
-		
 		if (maxValue != null && minValue == null) {
-			throw new JspException("Attribute minValue must be specified case maxValue is specified for input tag");
+			throw InvalidAttributeException.fromConstraint("input", "minValue", "must be specified case maxValue is specified");
 		}
 		if (minValue != null && maxValue == null) {
-			throw new JspException("Attribute maxValue must be specified case minValue is specified for input tag");
+			throw InvalidAttributeException.fromConstraint("input", "maxValue", "specified case minValue is specified");
 		}
 		if (stepValue != null && stepValue <= 0) {
-			throw new JspException("Attribute stepValue must be greater than zero for input tag");
+			throw InvalidAttributeException.fromConstraint("input", "stepValue", "greater than 0");
 		}
 		if (maxValue != null && minValue != null && minValue >= maxValue) {
-			throw new JspException("Attribute minValue must be less than maxValue for input tag");
+			throw InvalidAttributeException.fromConstraint("input", "minValue", "less than maxValue");
 		}
 		if (maxValue != null && minValue != null && stepValue != null && stepValue > (maxValue - minValue)) {
-			throw new JspException("Attribute stepValue must be less than the difference of maxValue and minValue for input tag");
+			throw InvalidAttributeException.fromConstraint("input", "stepValue", "less than the difference of maxValue and minValue");
 		}
-		if (size != null && !size.equals(SMALL) && !size.equals(LARGE)) {
-			throw new JspException("Invalid size value for input tag. Valid values are " + SMALL + ", " + LARGE);
+		if (size != null && !Size.validateSmallLarge(size)) {
+			throw InvalidAttributeException.fromPossibleValues("input", "size", Size.getSmallLargeValues());
 		}
 	}
 
@@ -178,10 +121,10 @@ public final class InputTagHandler extends SmartTagHandler {
 			if (parent instanceof FormTagHandler) {
 				String size = ((FormTagHandler) parent).getSize();
 
-				if (FormTagHandler.LARGE.equalsIgnoreCase(size)) {
+				if (Size.LARGE.name().equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
 
-				} else if (FormTagHandler.SMALL.equalsIgnoreCase(size)) {
+				} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
 				}
 			}
@@ -199,9 +142,9 @@ public final class InputTagHandler extends SmartTagHandler {
 			inputGroup = new Div();
 			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			if (SMALL.equals(size)) {
+			if (Size.SMALL.name().equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
-			} else if (LARGE.equals(size)) {
+			} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
 			}
 
@@ -224,7 +167,7 @@ public final class InputTagHandler extends SmartTagHandler {
 		Input input = new Input();
 		input.addAttribute("id", id)
 			 .addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
-			 .addAttribute("type", type != null ? type : TEXT_TYPE)
+			 .addAttribute("type", type != null ? type : Type.TEXT.name().toLowerCase())
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
@@ -232,18 +175,18 @@ public final class InputTagHandler extends SmartTagHandler {
 			 .addAttribute("readonly", readOnly ? readOnly : null)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
 			 .addAttribute("placeholder", getTagValue(placeHolder))
-			 .addAttribute("datatype", type != null ? type : TEXT_TYPE)
+			 .addAttribute("datatype", type != null ? type : Type.TEXT.name().toLowerCase())
 			 .addAttribute("pattern", pattern)
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
 			 .addAttribute("data-mask", mask);
 		
-		if (SMALL.equals(size)) {
+		if (Size.SMALL.name().equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_SMALL);
-		} else if (LARGE.equals(size)) {
+		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_LARGE);
 		}
 		
-		if (NUMBER_TYPE.equals(type) || RANGE_TYPE.equals(type)) {
+		if (Type.NUMBER.name().equalsIgnoreCase(type) || Type.RANGE.name().equalsIgnoreCase(type)) {
 			input.addAttribute("min", minValue)
 				 .addAttribute("max", maxValue)
 				 .addAttribute("step", stepValue);
@@ -252,7 +195,7 @@ public final class InputTagHandler extends SmartTagHandler {
 		// Add the style class at last
 		input.addAttribute("class", styleClass);
 		
-		if (!PASSWORD_TYPE.equals(type)) {
+		if (!Type.PASSWORD.name().equalsIgnoreCase(type)) {
 			input.addAttribute("value", getTagValue(value));
 		} else {
 			setTagValue(value, null);
@@ -279,11 +222,8 @@ public final class InputTagHandler extends SmartTagHandler {
 			}
 		}
 
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : input;
 	}

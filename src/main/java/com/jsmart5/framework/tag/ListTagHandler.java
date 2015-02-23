@@ -115,6 +115,7 @@ public final class ListTagHandler extends SmartTagHandler {
 					for (RowTagHandler row : rows) {
 	 					row.setSelectValue(selectValue);
 	 					row.addAllAjaxTag(ajaxTags);
+	 					row.addAllBindTag(bindTags);
 	 					setEvents(row);
 
 //	 					if (command != null) {

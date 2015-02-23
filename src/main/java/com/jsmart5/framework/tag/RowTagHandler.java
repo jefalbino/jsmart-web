@@ -26,11 +26,13 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.config.SmartConstants;
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Look;
 
 public final class RowTagHandler extends SmartTagHandler {
 	
@@ -55,10 +57,8 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !look.startsWith(SmartConstants.START_EL) && !look.equalsIgnoreCase(SUCCESS) 
-				&& !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(DANGER)) {
-			throw new JspException("Invalid look value for row tag. Valid value is an expression or the values " + SUCCESS + ", " 
-				+ INFO + ", " + WARNING + ", " + DANGER);
+		if (look != null && !look.startsWith(SmartConstants.START_EL) && !Look.validateBasic(look)) {
+			throw InvalidAttributeException.fromPossibleValues("row", "look", Look.getBasicValues());
 		}
 	}
 
@@ -91,13 +91,13 @@ public final class RowTagHandler extends SmartTagHandler {
 		
 		String lookVal = (String) getTagValue(look);
 
-		if (SUCCESS.equalsIgnoreCase(lookVal)) {
+		if (Look.SUCCESS.name().equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_SUCCESS);
-		} else if (INFO.equalsIgnoreCase(lookVal)) {
+		} else if (Look.INFO.name().equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_INFO);
-		} else if (WARNING.equalsIgnoreCase(lookVal)) {
+		} else if (Look.WARNING.name().equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_WARNING);
-		} else if (DANGER.equalsIgnoreCase(lookVal)) {
+		} else if (Look.DANGER.name().equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_DANGER);
 		}
 

@@ -35,6 +35,7 @@ import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
+import com.jsmart5.framework.tag.type.Event;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -155,11 +156,8 @@ public final class TabTagHandler extends SmartTagHandler {
 				.addAttribute("style", tabPane.getTabStyle())
 				.addAttribute("class", tabPane.getTabClass());
 
-			if (!tabPane.getAjaxTags().isEmpty()) {
-				for (AjaxTagHandler ajax : tabPane.getAjaxTags()) {
-					appendScript(ajax.getFunction(liId));
-				}
-			}
+			appendAjax(tabPane, liId);
+			appendBind(tabPane, liId);
 
 			A a = new A();
 
@@ -239,11 +237,8 @@ public final class TabTagHandler extends SmartTagHandler {
 						.addAttribute("role", "presentation")
 						.addAttribute("class", dropPane.isDisabled() ? Bootstrap.DISABLED : null);
 
-					if (!dropPane.getAjaxTags().isEmpty()) {
-						for (AjaxTagHandler ajax : dropPane.getAjaxTags()) {
-							appendScript(ajax.getFunction(dropLiId));
-						}
-					}
+					appendAjax(dropPane, dropLiId);
+					appendBind(dropPane, dropLiId);
 					
 					A dropA = new A();
 					dropA.addAttribute("href", "#" + dropPane.getId())
@@ -348,12 +343,8 @@ public final class TabTagHandler extends SmartTagHandler {
 
 	private StringBuilder getFunction(String id) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').bind('").append(EVENT_CLICK).append("', function(){");
-
 		builder.append(JSMART_TABPANE.format(id));
-
-		builder.append("});");
-		return builder;
+		return getBindFunction(id, Event.CLICK.name(), builder);
 	}
 
 	void addTabPane(TabPaneTagHandler tabItem) {

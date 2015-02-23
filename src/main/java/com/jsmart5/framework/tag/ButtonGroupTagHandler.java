@@ -24,10 +24,12 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Size;
 
 public class ButtonGroupTagHandler extends SmartTagHandler {
 
@@ -37,10 +39,8 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (size != null && !size.equals(ButtonTagHandler.XSMALL) && !size.equals(ButtonTagHandler.SMALL) 
-				&& !size.equals(ButtonTagHandler.LARGE) && !size.equals(ButtonTagHandler.JUSTIFIED)) {
-			throw new JspException("Invalid size value for buttongroup tag. Valid values are " + ButtonTagHandler.XSMALL + ", " 
-				+ ButtonTagHandler.SMALL + ", " + ButtonTagHandler.LARGE + ", " + ButtonTagHandler.JUSTIFIED);
+		if (size != null && !Size.validate(size)) {
+			throw InvalidAttributeException.fromPossibleValues("buttongroup", "size", Size.getValues());
 		}
 	}
 
@@ -68,13 +68,13 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_VERTICAL);
 		}
 
-		if (ButtonTagHandler.XSMALL.equals(size)) {
+		if (Size.XSMALL.name().equalsIgnoreCase(size)) {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-		} else if (ButtonTagHandler.SMALL.equals(size)) {
+		} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-		} else if (ButtonTagHandler.LARGE.equals(size)) {
+		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
-		} else if (ButtonTagHandler.JUSTIFIED.equals(size)) {
+		} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
 		}
 

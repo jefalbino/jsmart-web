@@ -80,6 +80,7 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 			check.setName(selectValues);
 			check.setAjax(ajax);
 			check.addAllAjaxTag(ajaxTags);
+			check.addAllBindTag(bindTags);
 			check.setType(CheckTagHandler.CHECKBOX);
 			setEvents(check);
 

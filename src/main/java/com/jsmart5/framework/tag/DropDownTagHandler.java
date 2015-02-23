@@ -92,6 +92,9 @@ public final class DropDownTagHandler extends SmartTagHandler {
 			ul.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
 			dropDown.addTag(ul);
 		}
+		
+		appendAjax(id);
+		appendBind(id);
 
 		return dropDown;
 	}

@@ -24,23 +24,13 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Output;
 
 public final class HeaderTagHandler extends SmartTagHandler {
-	
-	private static final String H1 = "h1";
-	
-	private static final String H2 = "h2";
-	
-	private static final String H3 = "h3";
-	
-	private static final String H4 = "h4";
-	
-	private static final String H5 = "h5";
-	
-	private static final String H6 = "h6";
 	
 	private String title;
 	
@@ -66,10 +56,8 @@ public final class HeaderTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (type != null && !H1.equalsIgnoreCase(type) && !H2.equalsIgnoreCase(type) && !H3.equalsIgnoreCase(type)
-				&& !H4.equalsIgnoreCase(type) && !H5.equalsIgnoreCase(type) && !H6.equalsIgnoreCase(type)) {
-			throw new JspException("Invalid type value for output tag. Valid values are "
-					+ H1 + ", " + H2 + ", " + H3 + ", " + H4 + ", " + H5 + ", " + H6);
+		if (type != null && !Output.validateHeader(type)) {
+			throw InvalidAttributeException.fromPossibleValues("header", "type", Output.getHeaderValues());
 		}
 	}
 
@@ -93,24 +81,24 @@ public final class HeaderTagHandler extends SmartTagHandler {
 		JspTag parent = getParent();
 		if (parent instanceof RowTagHandler) {
 			if (header == null) {
-				header = new Tag(H4);
+				header = new Tag(Output.H4.name().toLowerCase());
 			}
 			header.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_HEADING);
 			 
 		} else if (parent instanceof PanelTagHandler) {
 			if (header == null) {
-				header = new Tag(H3);
+				header = new Tag(Output.H3.name().toLowerCase());
 			}
 			header.addAttribute("class", Bootstrap.PANEL_TITLE);
 
 		} else if (parent instanceof ModalTagHandler) {
 			if (header == null) {
-				header = new Tag(H4);
+				header = new Tag(Output.H4.name().toLowerCase());
 			}
 			header.addAttribute("class", Bootstrap.MODAL_TITLE);
 
 		} else if (header == null) {
-			header = new Tag(H3);
+			header = new Tag(Output.H3.name().toLowerCase());
 		}
 		
 		header.addAttribute("id", id)
@@ -133,11 +121,8 @@ public final class HeaderTagHandler extends SmartTagHandler {
 			}
 		}
 		
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		return header;
 	}

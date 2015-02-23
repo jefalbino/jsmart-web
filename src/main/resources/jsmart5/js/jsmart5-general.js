@@ -80,6 +80,10 @@ var Jsmart5 = (function() {
 			doAjax(map);
 		},
 		
+		bind: function(map) {
+			doBind(map);
+		},
+		
 		button: function(map) {
 			doButton(map);
 		},
@@ -274,6 +278,17 @@ var Jsmart5 = (function() {
 					doExecute(map.before);
 				}
 			}
+		}
+	}
+	
+	function doBind(map) {
+		if (map.timeout && map.timeout > 0) {
+			var timeout = map.timeout;
+			map.timeout = null;
+			setTimeout(function() {doBind(map);}, timeout);
+
+		} else {
+			doExecute(map.execute);
 		}
 	}
 	
@@ -839,10 +854,10 @@ var Jsmart5 = (function() {
 		return {
 			type: map.method, 
 			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
-			beforeSend: function (data) {
-				doExecute(map.before, data);
+			beforeSend: function (xhr, settings) {
+				doExecute(map.before, xhr, settings);
 			},
-			success: function (data) {
+			success: function (data, status, xhr) {
 				var reset = $(data).find(SESSION_RESET); 
 				if (reset && reset.length > 0) {
 					$(location).attr('href', $(location).attr('href'));
@@ -851,7 +866,7 @@ var Jsmart5 = (function() {
 						$(location).attr('href', map.url);
 					} else {
 						doUpdate(map.update, data);
-						var dialogs = doExecute(map.success, data);
+						var dialogs = doExecute(map.success, data, xhr, status);
 	
 						resetMessage(data);
 						var redirect = $(data).find(REDIRECT_PATH); 

@@ -23,10 +23,12 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Look;
 
 public final class LabelTagHandler extends SmartTagHandler {
 
@@ -38,10 +40,8 @@ public final class LabelTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !look.equalsIgnoreCase(DEFAULT) && !look.equalsIgnoreCase(PRIMARY) && !look.equalsIgnoreCase(SUCCESS)
-				&& !look.equalsIgnoreCase(INFO) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(DANGER)) {
-			throw new JspException("Invalid look value for label tag. Valid values are " + DEFAULT + ", " + PRIMARY 
-					+ ", " + SUCCESS + ", " + INFO + ", " + WARNING + ", " + DANGER);
+		if (look != null && !Look.validateLook(look)) {
+			throw InvalidAttributeException.fromPossibleValues("label", "look", Look.getLookValues());
 		}
 	}
 
@@ -66,15 +66,15 @@ public final class LabelTagHandler extends SmartTagHandler {
 
 		String lookVal = Bootstrap.LABEL_DEFAULT;
 
-		if (PRIMARY.equalsIgnoreCase(look)) {
+		if (Look.PRIMARY.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.LABEL_PRIMARY;
-		} else if (SUCCESS.equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.LABEL_SUCCESS;
-		} else if (INFO.equalsIgnoreCase(look)) {
+		} else if (Look.INFO.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.LABEL_INFO;
-		} else if (WARNING.equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.LABEL_WARNING;
-		} else if (DANGER.equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.name().equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.LABEL_DANGER;
 		}
 		
@@ -84,12 +84,8 @@ public final class LabelTagHandler extends SmartTagHandler {
 		span.addAttribute("class", styleClass);
 
 		appendEvent(span);
-
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		return span;
 	}

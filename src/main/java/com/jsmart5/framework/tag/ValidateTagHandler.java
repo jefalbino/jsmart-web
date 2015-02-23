@@ -23,17 +23,18 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.manager.SmartValidateTagHandler;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Look;
 
 public final class ValidateTagHandler extends SmartValidateTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !look.equalsIgnoreCase(ERROR) && !look.equalsIgnoreCase(WARNING) && !look.equalsIgnoreCase(SUCCESS)) {
-			throw new JspException("Invalid look value for validate tag. Valid values are " + ERROR + ", " + WARNING 
-					+ ", " + SUCCESS);
+		if (look != null && !Look.validateValidate(look)) {
+			throw InvalidAttributeException.fromPossibleValues("validate", "look", Look.getValidateValues());
 		}
 	}
 

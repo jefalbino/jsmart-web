@@ -16,50 +16,32 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.manager;
+package com.jsmart5.framework.tag.type;
 
-import com.jsmart5.framework.tag.type.Look;
+public enum Case {
 
-public abstract class SmartValidateTagHandler extends SmartTagHandler {
+	LOWERCASE,
+	UPPERCASE,
+	CAPITALIZE;
 
-	protected String text;
-
-	protected String maxLength;
-
-	protected Integer minLength;
-
-	protected String look = Look.ERROR.name().toLowerCase();
-
-	public String getText() {
-		return text;
+	public static boolean validate(String box) {
+		try {
+			Case.valueOf(box.toUpperCase());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
-	public void setText(String text) {
-		this.text = text;
-	}
+	public static String[] getValues() {
+		int index = 0;
+		Case[] boxes = values();
+		String[] values = new String[boxes.length];
 
-	public String getLook() {
-		return look;
-	}
-
-	public void setLook(String look) {
-		this.look = look;
-	}
-
-	String getMaxLength() {
-		return maxLength;
-	}
-
-	public void setMaxLength(String maxLength) {
-		this.maxLength = maxLength;
-	}
-
-	Integer getMinLength() {
-		return minLength;
-	}
-
-	public void setMinLength(Integer minLength) {
-		this.minLength = minLength;
+		for (Case box : boxes) {
+			values[index++] = box.name().toLowerCase();
+		}
+		return values;
 	}
 
 }

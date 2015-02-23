@@ -37,6 +37,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import com.google.gson.Gson;
 import com.jsmart5.framework.config.SmartConstants;
 import com.jsmart5.framework.tag.AjaxTagHandler;
+import com.jsmart5.framework.tag.BindTagHandler;
 import com.jsmart5.framework.tag.IconTagHandler;
 import com.jsmart5.framework.tag.html.Script;
 import com.jsmart5.framework.tag.html.Tag;
@@ -91,54 +92,6 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 
 	protected static final String EL_PARAM_READ_ONLY = SmartConstants.EL_PARAM_READ_ONLY;
 
-	
-	protected static final String EVENT_SELECT = "select";
-
-	protected static final String EVENT_CHANGE = "change";
-
-	protected static final String EVENT_BLUR = "blur";
-
-	protected static final String EVENT_CLICK = "click";
-
-	protected static final String EVENT_DBL_CLICK = "dblclick";
-
-	protected static final String EVENT_MOUSE_DOWN = "mousedown";
-
-	protected static final String EVENT_MOUSE_MOVE = "mousemove";
-
-	protected static final String EVENT_MOUSE_OVER = "mouseover";
-
-	protected static final String EVENT_MOUSE_OUT = "mouseout";
-
-	protected static final String EVENT_MOUSE_UP = "mouseup";
-
-	protected static final String EVENT_KEY_DOWN = "keydown";
-
-	protected static final String EVENT_KEY_PRESS = "keypress";
-
-	protected static final String EVENT_KEY_UP = "keyup";
-
-	protected static final String EVENT_FOCUS = "focus";
-
-	protected static final String EVENT_SUBMIT = "submit";
-	
-
-	public static final String DEFAULT = "default";
-
-	public static final String PRIMARY = "primary";
-
-	public static final String SUCCESS = "success";
-	
-	public static final String INFO = "info";
-
-	public static final String WARNING = "warning";
-
-	public static final String DANGER = "danger";
-	
-	public static final String MUTED = "muted";
-	
-	public static final String LINK = "link";
-
 
 	protected final Map<String, Object> params;
 
@@ -148,6 +101,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	
 	protected List<IconTagHandler> iconTags;
 
+	protected List<BindTagHandler> bindTags;
 
 	protected StringWriter outputWriter;
 
@@ -188,9 +142,10 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	public String onSelect;
 
 	public SmartTagHandler() {
-		params = new LinkedHashMap<String, Object>();
-		ajaxTags = new ArrayList<AjaxTagHandler>();
-		iconTags = new ArrayList<IconTagHandler>();
+		params = new LinkedHashMap<String, Object>(3);
+		ajaxTags = new ArrayList<AjaxTagHandler>(2);
+		iconTags = new ArrayList<IconTagHandler>(2);
+		bindTags = new ArrayList<BindTagHandler>(2);
 	}
 
 	@Override
@@ -245,6 +200,18 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	
 	public List<IconTagHandler> getIconTags() {
 		return iconTags;
+	}
+
+	public List<BindTagHandler> getBindTags() {
+		return bindTags;
+	}
+	
+	public void addBindTag(BindTagHandler bindTag) {
+		this.bindTags.add(bindTag);
+	}
+	
+	public void addAllBindTag(List<BindTagHandler> list) {
+		this.bindTags.addAll(list);
 	}
 	
 	public List<AjaxTagHandler> getAjaxTags() {
@@ -459,7 +426,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	
 	protected StringBuilder getBindFunction(String id, String event, StringBuilder script) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').on('").append(event).append("', function(e){");
+		builder.append("$('#").append(id).append("').on('").append(event.toLowerCase()).append("', function(e){");
 		builder.append(script);
 		builder.append("});");
 		return builder;
@@ -474,6 +441,30 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 			httpRequest.setAttribute(SmartConstants.REQUEST_SCRIPT_BUILDER_ATTR, script);
 		}
 		script.addText(builder.toString());
+	}
+	
+	protected void appendAjax(String id) {
+		appendAjax(this, id);
+	}
+
+	protected void appendAjax(SmartTagHandler tagHandler, String id) {
+		if (!tagHandler.ajaxTags.isEmpty()) {
+			for (AjaxTagHandler ajax : tagHandler.ajaxTags) {
+				appendScript(ajax.getFunction(id));
+			}
+		}
+	}
+
+	protected void appendBind(String id) {
+		appendBind(this, id);
+	}
+	
+	protected void appendBind(SmartTagHandler tagHandler, String id) {
+		if (!tagHandler.bindTags.isEmpty()) {
+			for (BindTagHandler bind : tagHandler.bindTags) {
+				appendScript(bind.getFunction(id));
+			}
+		}
 	}
 
 	protected void appendValidator(Tag tag) throws JspException, IOException {

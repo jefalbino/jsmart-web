@@ -19,44 +19,44 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
+import com.jsmart5.framework.json.JsonBind;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.html.Tag;
-import com.jsmart5.framework.tag.type.Type;
+import com.jsmart5.framework.tag.type.Event;
 
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class FormatTagHandler extends SmartTagHandler {
-	
-	private String type;
+public final class BindTagHandler extends SmartTagHandler {
 
-	private String regex;
+	private String event;
+
+	private String execute;
+
+	private Integer timeout;
 
 	@Override
 	public void validateTag() throws JspException {
-		if (!Type.validateFormat(type)) {
-			throw InvalidAttributeException.fromPossibleValues("format", "type", Type.getFormatValues());
+		if (event != null && !Event.validate(event)) {
+			throw InvalidAttributeException.fromPossibleValues("ajax", "event", Event.getValues());
+		}
+		if (timeout != null && timeout < 0) {
+			throw InvalidAttributeException.fromConstraint("ajax", "timeout", "greater or equal to 0"); 
 		}
 	}
 	
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof OutputTagHandler) {
+		if (parent instanceof SmartTagHandler) {
 
-			((OutputTagHandler) parent).setFormat(this);
-			return false;
+			((SmartTagHandler) parent).addBindTag(this);
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -65,30 +65,27 @@ public final class FormatTagHandler extends SmartTagHandler {
 		return null;
 	}
 
-	String formatValue(final Object value) {
-		if (value != null) {
-			if (Type.NUMBER.name().equalsIgnoreCase(type)) {
-				return new DecimalFormat(regex).format(value);
-						
-			} else if (Type.DATE.name().equalsIgnoreCase(type)) {
-				if (value instanceof Date) {
-					return new SimpleDateFormat(regex, getRequest().getLocale()).format(value);
-	
-				} else if (value instanceof DateTime) {
-					return ((DateTime) value).toString(DateTimeFormat.forPattern(regex).withLocale(getRequest().getLocale()));
-				}
-			}
-			return value.toString();
-		}
-		return null;
+	public StringBuilder getFunction(String id) {
+		JsonBind jsonBind = new JsonBind();
+		jsonBind.setTimeout((Integer) getTagValue(timeout));
+		jsonBind.setExecute((String) getTagValue(execute));
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
+
+		return getBindFunction(id, event, builder);
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setEvent(String event) {
+		this.event = event;
 	}
 
-	public void setRegex(String regex) {
-		this.regex = regex;
+	public void setExecute(String execute) {
+		this.execute = execute;
+	}
+
+	public void setTimeout(Integer timeout) {
+		this.timeout = timeout;
 	}
 
 }

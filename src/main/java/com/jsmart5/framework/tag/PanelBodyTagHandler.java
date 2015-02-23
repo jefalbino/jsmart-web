@@ -24,37 +24,28 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.FieldSet;
 import com.jsmart5.framework.tag.html.Section;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Align;
+import com.jsmart5.framework.tag.type.Type;
 
 public final class PanelBodyTagHandler extends SmartTagHandler {
-	
-	private static final String LEFT = "left";
-	
-	private static final String RIGHT = "right";
-	
-	private static final String CENTER = "center";
-
-	private static final String FIELDSET_TYPE = "fieldset";
-
-	private static final String SECTION_TYPE = "section";
 
 	private String align;
 
 	private String type;
 
 	public void validateTag() throws JspException {
-		if (type != null && !FIELDSET_TYPE.equalsIgnoreCase(type) && !SECTION_TYPE.equalsIgnoreCase(type)) {
-			throw new JspException("Invalid type value for panel tag. Valid values are "
-					+ FIELDSET_TYPE + " and " + SECTION_TYPE);
+		if (type != null && !Type.validatePanel(type)) {
+			throw InvalidAttributeException.fromPossibleValues("panelbody", "type", Type.getPanelValues());
 		}
-		if (align != null && !LEFT.equalsIgnoreCase(align) && !RIGHT.equalsIgnoreCase(align) && !CENTER.equalsIgnoreCase(align)) {
-			throw new JspException("Invalid align attribute for panel tag. Valid values are "
-					+ LEFT + ", " + RIGHT + ", " + CENTER);
+		if (align != null && !Align.validateLeftRightCenter(align)) {
+			throw InvalidAttributeException.fromPossibleValues("panelbody", "align", Align.getLeftRightCenterValues());
 		}
 	}
 
@@ -73,9 +64,9 @@ public final class PanelBodyTagHandler extends SmartTagHandler {
 
 		Tag content = null;
 
-		if (FIELDSET_TYPE.equals(type)) {
+		if (Type.FIELDSET.name().equalsIgnoreCase(type)) {
 			content = new FieldSet();
-		} else if (SECTION_TYPE.equals(type)) {
+		} else if (Type.SECTION.name().equalsIgnoreCase(type)) {
 			content = new Section();
 		} else {
 			content = new Div();
@@ -90,11 +81,8 @@ public final class PanelBodyTagHandler extends SmartTagHandler {
 
 		appendEvent(content);
 
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		return content;
 	}

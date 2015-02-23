@@ -24,20 +24,18 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Button;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Size;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class ModalTagHandler extends SmartTagHandler {
-	
-	private static final String SMALL = "small";
-
-	private static final String LARGE = "large";
 
 	private boolean opened;
 
@@ -57,8 +55,8 @@ public final class ModalTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (size != null && !size.equalsIgnoreCase(SMALL) && !size.equalsIgnoreCase(LARGE)) {
-			throw new JspException("Invalid size value for modal tag. Valid values are " + SMALL + ", " + LARGE);
+		if (size != null && !Size.validateSmallLarge(size)) {
+			throw InvalidAttributeException.fromPossibleValues("modal", "size", Size.getSmallLargeValues());
 		}
 	}
 
@@ -84,9 +82,9 @@ public final class ModalTagHandler extends SmartTagHandler {
 		modalDialog.addAttribute("class", Bootstrap.MODAL_DIALOG)
 			.addAttribute("style", style);
 		
-		if (SMALL.equalsIgnoreCase(size)) {
+		if (Size.SMALL.name().equalsIgnoreCase(size)) {
 			modalDialog.addAttribute("class", Bootstrap.MODAL_SMALL);
-		} else if (LARGE.equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 			modalDialog.addAttribute("class", Bootstrap.MODAL_LARGE);
 		}
 

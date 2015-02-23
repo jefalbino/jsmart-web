@@ -33,6 +33,8 @@ import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Select;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.type.Size;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -99,10 +101,10 @@ public final class SelectTagHandler extends SmartTagHandler {
 			if (parent instanceof FormTagHandler) {
 				String size = ((FormTagHandler) parent).getSize();
 
-				if (FormTagHandler.LARGE.equalsIgnoreCase(size)) {
+				if (Size.LARGE.name().equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
 
-				} else if (FormTagHandler.SMALL.equalsIgnoreCase(size)) {
+				} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
 				}
 			}
@@ -181,11 +183,8 @@ public final class SelectTagHandler extends SmartTagHandler {
 			}
 		}
 
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+		appendAjax(id);
+		appendBind(id);
 
 		if (ajax) {
 			appendScript(getFunction());
@@ -200,17 +199,13 @@ public final class SelectTagHandler extends SmartTagHandler {
 	}
 
 	private StringBuilder getFunction() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("$('#").append(id).append("').bind('").append(EVENT_CHANGE).append("', function(){");
-
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
 
+		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_SELECT.format(getJsonValue(jsonAjax)));
-
-		builder.append("});");
-		return builder;
+		return getBindFunction(id, Event.CHANGE.name(), builder);
 	}
 	
 	void setChildAddOn(SmartTagHandler childAddOn) {

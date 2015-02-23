@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
@@ -32,19 +33,13 @@ import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class LinkTagHandler extends SmartTagHandler {
-	
-	static final String JUSTIFIED = "justified";
-	
-	static final String LARGE = "large";
-
-	static final String SMALL = "small";
-
-	static final String XSMALL = "xsmall";
 
 	private String label;
 
@@ -76,9 +71,8 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (size != null && !size.equalsIgnoreCase(XSMALL) && !size.equalsIgnoreCase(SMALL) 
-				&& !size.equalsIgnoreCase(LARGE) && !size.equalsIgnoreCase(JUSTIFIED)) {
-			throw new JspException("Invalid size value for link tag. Valid values are " + XSMALL + ", " + SMALL + ", " + LARGE + ", " + JUSTIFIED);
+		if (size != null && !Size.validate(size)) {
+			throw InvalidAttributeException.fromPossibleValues("link", "size", Size.getValues());
 		}
 	}
 
@@ -104,13 +98,13 @@ public final class LinkTagHandler extends SmartTagHandler {
 			linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP)
 				.addAttribute("role", "group");
 			
-			if (XSMALL.equalsIgnoreCase(size)) {
+			if (Size.XSMALL.name().equalsIgnoreCase(size)) {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-			} else if (SMALL.equalsIgnoreCase(size)) {
+			} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-			} else if (LARGE.equalsIgnoreCase(size)) {
+			} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
-			} else if (JUSTIFIED.equalsIgnoreCase(size)) {
+			} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
 			}
 			
@@ -174,13 +168,13 @@ public final class LinkTagHandler extends SmartTagHandler {
 			}
 		}
 
-		if (XSMALL.equalsIgnoreCase(size)) {
+		if (Size.XSMALL.name().equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_XSMALL);
-		} else if (SMALL.equalsIgnoreCase(size)) {
+		} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_SMALL);
-		} else if (LARGE.equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_LARGE);
-		} else if (JUSTIFIED.equalsIgnoreCase(size)) {
+		} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_JUSTIFIED);
 		}
 
@@ -219,13 +213,15 @@ public final class LinkTagHandler extends SmartTagHandler {
 			linkGroup.addTag(ul);
 		}
 
+		appendBind(id);
+
 		return linkGroup != null ? linkGroup : link;
 	}
 	
 	private StringBuilder getExecFunction() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_EXEC.format(beforeSend.trim()));	
-		return getBindFunction(id, EVENT_CLICK, builder);
+		return getBindFunction(id, Event.CLICK.name(), builder);
 	}
 	
 	private StringBuilder getFunction(String url) {
@@ -264,7 +260,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BUTTON.format(getJsonValue(jsonAjax)) + "return false;");
-		return getBindFunction(id, EVENT_CLICK, builder);
+		return getBindFunction(id, Event.CLICK.name(), builder);
 	}
 
 	void setDropMenu(DropMenuTagHandler dropMenu) {
