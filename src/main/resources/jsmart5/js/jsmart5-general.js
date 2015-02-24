@@ -801,32 +801,6 @@ var Jsmart5 = (function() {
 	 * AJAX FUNCTIONS
 	 ******************************************************/
 	
-	function getBasicAjaxOptions() {
-		return {
-			type: 'post', 
-			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
-			success: function (data) {
-				var reset = $(data).find(SESSION_RESET); 
-				if (reset && reset.length > 0) {
-					$(location).attr('href', $(location).attr('href'));
-				} else {
-					resetMessage(data);
-					var redirect = $(data).find(REDIRECT_PATH); 
-					if (redirect && redirect.length > 0) {
-						$(location).attr('href', redirect.val());
-					}
-				}
-			},
-			error: function (xhr, status, error) {
-				showOnConsole(xhr.responseText);
-			},
-			complete: function (xhr, status) {
-				jQuery.event.trigger('ajaxStop');
-			},
-			async: true
-		};
-	}
-	
 	function getAjaxOptions(map) {
 		return {
 			type: map.method, 
@@ -845,7 +819,6 @@ var Jsmart5 = (function() {
 						doUpdate(map.update, data);
 						doExecute(map.success, data, xhr, status);
 	
-						resetMessage(data);
 						var redirect = $(data).find(REDIRECT_PATH); 
 						if (redirect && redirect.length > 0) {
 							$(location).attr('href', redirect.val());
@@ -859,7 +832,6 @@ var Jsmart5 = (function() {
 			},
 			complete: function (xhr, status) {
 				doExecute(map.complete, xhr, status);
-				jQuery.event.trigger('ajaxStop');
 			},
 			async: true
 		};

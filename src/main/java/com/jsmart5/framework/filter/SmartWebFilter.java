@@ -79,13 +79,7 @@ public final class SmartWebFilter implements Filter {
 
 	private static final Pattern START_HEAD_PATTERN = Pattern.compile("<head.*?>");
 
-	private static final Pattern SCRIPT_HEAD_PATTERN = Pattern.compile("<script.*?>");
-
-	private static final Pattern CLOSE_HEAD_PATTERN = Pattern.compile("</head.*?>");
-
 	private static final Pattern CLOSE_BODY_PATTERN = Pattern.compile("</body.*?>");
-
-	private static final Pattern HEAD_CONTENT_PATTERN = Pattern.compile("<head.*?</head.*?>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 
 	private static final Pattern FORM_PATTERN = Pattern.compile("<form.*?>");
 
@@ -200,32 +194,14 @@ public final class SmartWebFilter implements Filter {
 		    	String startHeadMatch = startHeadMatcher.group();
 		    	html = html.replaceFirst(startHeadMatch, startHeadMatch + headerStyles);
 
-		    	// Try to place the javascript as the first script before no other inside head content
-		    	Matcher headContentMatcher = HEAD_CONTENT_PATTERN.matcher(html);
-		    	if (headContentMatcher.find()) {
-		    		String headContentMatch = headContentMatcher.group();
-		    		
-		    		Matcher scriptHeadMatcher = SCRIPT_HEAD_PATTERN.matcher(headContentMatch);
-					if (scriptHeadMatcher.find()) {
-						String scriptHeadMatch = scriptHeadMatcher.group();
-						html = html.replaceFirst(scriptHeadMatch, headerScripts + scriptHeadMatch);
-
-					} else {
-						Matcher closeHeadMatcher = CLOSE_HEAD_PATTERN.matcher(html);
-						if (closeHeadMatcher.find()) {
-							String closeHeadMatch = closeHeadMatcher.group();
-							html = html.replaceFirst(closeHeadMatch, headerScripts + closeHeadMatch);
-						}
-					}
-		    	}
-
 		    } else {
 		    	String htmlMatch = htmlMatcher.group();
 		    	Head head = new Head();
-		    	head.addText(headerStyles).addText(headerScripts);
+		    	head.addText(headerStyles);
 		    	html = html.replaceFirst(htmlMatch, htmlMatch + head.getHtml());
 		    }
 
+			// Case redirect via ajax, place tag with path to be handled by java script
 	    	String ajaxPath = (String) httpRequest.getAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR);
 			if (ajaxPath != null) {
 
@@ -234,18 +210,16 @@ public final class SmartWebFilter implements Filter {
 					String formMatch = formMatcher.group();
 
 					Input input = new Input();
-					input.addAttribute("id", REQUEST_REDIRECT_PATH)
-						.addAttribute("type", "hidden")
-						.addAttribute("value", ajaxPath);
+					input.addAttribute("id", REQUEST_REDIRECT_PATH).addAttribute("type", "hidden").addAttribute("value", ajaxPath);
 
 					html = html.replace(formMatch, formMatch + input.getHtml());
 				}
 			}
 
-			// Case redirect via ajax, place tag with path to be handled by javascript
+			// Case session reset, place tag to force java script reset the page
 		    HttpSession session = httpRequest.getSession();
 		    synchronized (session) {
-				// Case session reset, place tag to force javascript reset the page
+
 				if (session.getAttribute(SESSION_RESET_ATTR) != null) {
 					if (ajaxPath == null && SmartContext.isAjaxRequest()) {
 
@@ -254,8 +228,7 @@ public final class SmartWebFilter implements Filter {
 							String formMatch = formMatcher.group();
 
 							Input input = new Input();
-							input.addAttribute("id", SESSION_RESET_ATTR)
-								.addAttribute("type", "hidden");
+							input.addAttribute("id", SESSION_RESET_ATTR).addAttribute("type", "hidden");
 							
 							html = html.replaceFirst(formMatch, formMatch + input.getHtml());
 						}
@@ -263,16 +236,14 @@ public final class SmartWebFilter implements Filter {
 		        }
 		    }
 
-		    Script script = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
-			if (script != null) {
-				Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
-				
-				if (closeBodyMatcher.find()) {
-					String closeBodyMatch = closeBodyMatcher.group();
-					html = html.replace(closeBodyMatch, script.getHtml() + closeBodyMatch);
-				} else {
-					throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
-				}
+		    Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
+			if (bodyMatcher.find()) {
+				Script script = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
+
+				String bodyMatch = bodyMatcher.group();
+				html = html.replace(bodyMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + bodyMatch);
+			} else {
+				throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
 			}
         }
 		return html;
