@@ -51,7 +51,7 @@ public final class HeaderTagHandler extends SmartTagHandler {
 			((PanelTagHandler) parent).setHeader(this);
 			return false;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -63,6 +63,8 @@ public final class HeaderTagHandler extends SmartTagHandler {
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
+
+		SmartTagHandler parent = (SmartTagHandler) getParent();
 
 		JspFragment body = getJspBody();
 		if (body != null) {
@@ -78,7 +80,6 @@ public final class HeaderTagHandler extends SmartTagHandler {
 			header = new Tag(type);
 		}
 
-		JspTag parent = getParent();
 		if (parent instanceof RowTagHandler) {
 			if (header == null) {
 				header = new Tag(Output.H4.name().toLowerCase());
@@ -121,8 +122,8 @@ public final class HeaderTagHandler extends SmartTagHandler {
 			}
 		}
 		
-		appendAjax(id);
-		appendBind(id);
+		appendAjax(parent.getId());
+		appendBind(parent.getId());
 
 		return header;
 	}

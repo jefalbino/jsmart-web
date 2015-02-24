@@ -200,10 +200,10 @@ public final class LinkTagHandler extends SmartTagHandler {
 		link.addAttribute("class", styleClass);
 		
 		if (action != null) {		
-			appendScript(getFunction(url));
+			appendScript(id, getFunction(url));
 		} else {
 			if (beforeSend != null) {
-				appendScript(getExecFunction());
+				appendScript(id, getExecFunction());
 			}
 		}
 
@@ -233,7 +233,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 			jsonAjax.setAction(getTagName(J_SBMT, action));
 
 			for (String name : params.keySet()) {						
-				jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
+				jsonAjax.addParam(new JsonParam(name, params.get(name)));
 			}
 
 			if (update == null && onError == null && onSuccess == null && onComplete == null) {

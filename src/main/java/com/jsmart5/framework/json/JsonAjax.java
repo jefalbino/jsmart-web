@@ -88,6 +88,10 @@ public final class JsonAjax {
 	public List<JsonParam> getParams() {
 		return params;
 	}
+	
+	public void addParam(JsonParam param) {
+		this.params.add(param);
+	}
 
 	public void setParams(List<JsonParam> params) {
 		this.params = params;

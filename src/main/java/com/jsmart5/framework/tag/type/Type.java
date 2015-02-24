@@ -46,7 +46,10 @@ public enum Type {
 	FILE,
 
 	FIELDSET,
-	SECTION;
+	SECTION,
+	
+	STACKED,
+	REGULAR;
 
 	public static boolean validate(String type) {
 		try {
@@ -63,6 +66,10 @@ public enum Type {
 	
 	public static boolean validatePanel(String panel) {
 		return FIELDSET.name().equalsIgnoreCase(panel) || SECTION.name().equalsIgnoreCase(panel);
+	}
+	
+	public static boolean validateTab(String tab) {
+		return STACKED.name().equalsIgnoreCase(tab) || REGULAR.name().equalsIgnoreCase(tab);
 	}
 	
 	public static boolean validateImage(String image) {
@@ -103,6 +110,13 @@ public enum Type {
 		String[] values = new String[2];
 		values[0] = FIELDSET.name().toLowerCase();
 		values[1] = SECTION.name().toLowerCase();
+		return values;
+	}
+	
+	public static String[] getTabValues() {
+		String[] values = new String[2];
+		values[0] = STACKED.name().toLowerCase();
+		values[1] = REGULAR.name().toLowerCase();
 		return values;
 	}
 

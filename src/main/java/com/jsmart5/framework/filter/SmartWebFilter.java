@@ -263,7 +263,7 @@ public final class SmartWebFilter implements Filter {
 		        }
 		    }
 
-			Script script = (Script) httpRequest.getAttribute(REQUEST_SCRIPT_BUILDER_ATTR);
+		    Script script = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
 			if (script != null) {
 				Matcher closeBodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
 				
@@ -271,7 +271,7 @@ public final class SmartWebFilter implements Filter {
 					String closeBodyMatch = closeBodyMatcher.group();
 					html = html.replace(closeBodyMatch, script.getHtml() + closeBodyMatch);
 				} else {
-					throw new RuntimeException("HTML tag 'body' could not be found. Please insert the body tag in your JSP");
+					throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
 				}
 			}
         }

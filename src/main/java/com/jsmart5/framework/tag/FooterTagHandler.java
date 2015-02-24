@@ -45,7 +45,7 @@ public final class FooterTagHandler extends SmartTagHandler {
 			((PanelTagHandler) parent).setFooter(this);
 			return false;
 		} 
-		return true;
+		return false;
 	}
 
 	@Override
@@ -55,6 +55,8 @@ public final class FooterTagHandler extends SmartTagHandler {
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
+
+		SmartTagHandler parent = (SmartTagHandler) getParent();
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -70,7 +72,6 @@ public final class FooterTagHandler extends SmartTagHandler {
 		footer.addAttribute("id", id)
 			.addAttribute("style", style);
 
-		JspTag parent = getParent();
 		if (parent instanceof ModalTagHandler) {
 			footer.addAttribute("class", Bootstrap.MODAL_FOOTER);
 			
@@ -82,8 +83,8 @@ public final class FooterTagHandler extends SmartTagHandler {
 			.addText(getTagValue(title))
 			.addText(sw.toString());
 		
-		appendAjax(id);
-		appendBind(id);
+		appendAjax(parent.getId());
+		appendBind(parent.getId());
 
 		return footer;
 	}

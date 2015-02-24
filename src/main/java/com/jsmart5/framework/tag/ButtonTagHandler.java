@@ -251,13 +251,13 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		}
 
 		if (ajax) {		
-			appendScript(getFunction(id, action, params));
+			appendScript(id, getFunction(id, action, params));
 		} else {
 			if (action != null) {
 				button.addAttribute("name", getTagName(J_SBMT, action));
 			}
 			if (beforeSend != null) {
-				appendScript(getExecFunction());
+				appendScript(id, getExecFunction());
 			}
 		}
 
@@ -287,7 +287,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			jsonAjax.setAction(getTagName(J_SBMT, action));
 
 			for (String name : params.keySet()) {						
-				jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
+				jsonAjax.addParam(new JsonParam(name, params.get(name)));
 			}
 		} else if (update != null) {
 			jsonAjax.setMethod("get");

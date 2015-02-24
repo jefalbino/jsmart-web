@@ -183,17 +183,17 @@ public final class SelectTagHandler extends SmartTagHandler {
 			}
 		}
 
-		appendAjax(id);
-		appendBind(id);
-
 		if (ajax) {
-			appendScript(getFunction());
+			appendScript(id, getFunction());
 		}
 
 		for (OptionTagHandler option : options) {
 			option.setName(selectValues);
 			select.addTag(option.executeTag());
 		}
+
+		appendAjax(id);
+		appendBind(id);
 
 		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : select;
 	}

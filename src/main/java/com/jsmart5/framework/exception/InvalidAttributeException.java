@@ -19,7 +19,6 @@
 package com.jsmart5.framework.exception;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import javax.servlet.jsp.JspException;
 
@@ -46,4 +45,7 @@ public class InvalidAttributeException extends JspException {
 		return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. Value must be {2}", attr, tag, constraint));
 	}
 
+	public static InvalidAttributeException fromConflict(String tag, String attr, String conflict) {
+		return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. Attribute values {2}", attr, tag, conflict));
+	}
 }

@@ -28,16 +28,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.json.JsonAjax;
+import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
+import com.jsmart5.framework.tag.type.Event;
+
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class ListTagHandler extends SmartTagHandler {
 
 	private String var;
 
-	private String value;
+	private String values;
 
 	private String selectValue;
 
@@ -76,73 +81,54 @@ public final class ListTagHandler extends SmartTagHandler {
 
 		appendEvent(ul);
 
-		Object object = getTagValue(value);
+		Object object = getTagValue(values);
 		if (object instanceof Collection<?>) {
+			Iterator<Object> iterator = ((Collection<Object>) object).iterator();
 
-			Collection<Object> collection = (Collection<Object>) object;
-
-			if (!collection.isEmpty()) {
-
-//				String command = ajaxCommand;
-//
-// 				if (select != null) {
-// 					JsonParams jsonParams = new JsonParams();
-// 					jsonParams.addParam(new JsonParam(getTagName(J_SEL, select), getTagName(J_SEL, value)));
-// 					jsonParams.addParam(new JsonParam(getTagName(J_SEL_VAL, select), "%s"));
-//
-// 					String parameters = "ajaxoutside=\"" + getJsonValue(jsonParams) + "\" ";
-//
-// 					if (command != null) {
-// 						if (command.startsWith(ON_CLICK)) {
-// 							if (command.contains(JSMART_AJAX.toString())) {
-// 								command += parameters;
-// 							} else {
-// 								command = command.replace(ON_CLICK, ON_CLICK + JSMART_LIST.format(async, "$(this)")) + parameters;
-// 							}
-// 						} else {
-// 							command += ON_CLICK + JSMART_LIST.format(async, "$(this)") + "\" " + parameters;
-// 						}
-// 					} else {
-// 						command = ON_CLICK + JSMART_LIST.format(async, "$(this)") + "\" " + parameters;
-// 					}
-// 				}
-
-				Iterator<Object> iterator = collection.iterator();
-				
-				while (iterator.hasNext()) {
-					request.setAttribute(var, iterator.next());
-
-					for (RowTagHandler row : rows) {
+			long selectIndex = 0;
+			while (iterator.hasNext()) {
+				request.setAttribute(var, iterator.next());
+				for (RowTagHandler row : rows) {
+					if (selectValue != null) {
 	 					row.setSelectValue(selectValue);
-	 					row.addAllAjaxTag(ajaxTags);
-	 					row.addAllBindTag(bindTags);
-	 					setEvents(row);
-
-//	 					if (command != null) {
-//	 						if (select != null) {
-//	 							row.setAjaxCommand(String.format(command, i));
-//	 						} else {
-//	 							row.setAjaxCommand(command);
-//	 						}
-//	 					}
-
-	 					ul.addTag(row.executeTag());
-	 				}
-
-					request.removeAttribute(var);
-				}
+	 					row.setSelectIndex(selectIndex);
+					}
+ 					setEvents(row);
+ 					ul.addTag(row.executeTag());
+ 				}
+				selectIndex++;
+				request.removeAttribute(var);
 			}
 		}
 		
+		appendDelegateAjax(id, selectValue != null ? "a" : "li");
+		appendDelegateBind(id, selectValue != null ? "a" : "li");
+
+		if (selectValue != null) {
+			appendScript(id, getAjaxFunction());
+		}
+
 		return ul;
+	}
+
+	private StringBuilder getAjaxFunction() {
+		JsonAjax jsonAjax = new JsonAjax();
+		jsonAjax.setId(id);
+		jsonAjax.setMethod("post");
+		jsonAjax.addParam(new JsonParam(getTagName(J_SEL, selectValue), getTagName(J_SEL, values)));
+		jsonAjax.addParam(new JsonParam(getTagName(J_SEL_VAL, selectValue), ""));
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_LIST.format(getJsonValue(jsonAjax)));
+		return getDelegateFunction(id, "a", Event.CLICK.name(), builder);
 	}
 
 	void addRow(RowTagHandler row) {
 		rows.add(row);
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setValues(String values) {
+		this.values = values;
 	}
 
 	public void setSelectValue(String selectValue) {

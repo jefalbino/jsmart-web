@@ -128,14 +128,14 @@ public final class ModalTagHandler extends SmartTagHandler {
 		}
 		
 		if (onShow != null) {
-			appendScript(getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
+			appendScript(id, getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
 		}
 		if (onHide != null) {
-			appendScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
+			appendScript(id, getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
 		}
 
 		if (opened) {
-			appendScript(new StringBuilder(JSMART_DIALOG.format(id)));
+			appendScript(id, new StringBuilder(JSMART_DIALOG.format(id)));
 		}
 		return modal;
 	}

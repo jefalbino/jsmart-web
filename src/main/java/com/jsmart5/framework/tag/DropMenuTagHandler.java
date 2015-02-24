@@ -69,7 +69,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 			((DropDownTagHandler) parent).setDropMenu(this);
 			return false;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -81,6 +81,8 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
+
+		SmartTagHandler parent = (SmartTagHandler) getParent();
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -153,7 +155,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 				ul.addTag(dividerLi);
 			}
 			
-			appendScript(getFunction(dropAction));
+			appendScript(parent.getId(), getFunction(dropAction));
 		}
 
 		return ul;
@@ -168,7 +170,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 			jsonAjax.setAction(getTagName(J_SBMT, dropAction.getAction()));
 
 			for (String name : dropAction.getParams().keySet()) {						
-				jsonAjax.getParams().add(new JsonParam(name, dropAction.getParams().get(name)));
+				jsonAjax.addParam(new JsonParam(name, dropAction.getParams().get(name)));
 			}
 		} else if (dropAction.getUpdate() != null) {
 			jsonAjax.setMethod("get");

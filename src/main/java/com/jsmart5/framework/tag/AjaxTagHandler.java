@@ -75,8 +75,8 @@ public final class AjaxTagHandler extends SmartTagHandler {
 		// DO NOTHING
 		return null;
 	}
-
-	public StringBuilder getFunction(String id) {
+	
+	private JsonAjax getJsonAjax(String id) {
 		JsonAjax jsonAjax = new JsonAjax();
 		jsonAjax.setId(id);
 		jsonAjax.setTimeout(timeout);
@@ -86,7 +86,7 @@ public final class AjaxTagHandler extends SmartTagHandler {
 			jsonAjax.setAction(getTagName(J_SBMT, action));
 
 			for (String name : params.keySet()) {						
-				jsonAjax.getParams().add(new JsonParam(name, params.get(name)));
+				jsonAjax.addParam(new JsonParam(name, params.get(name)));
 			}
 		} else if (update != null) {
 			jsonAjax.setMethod("get");
@@ -106,11 +106,21 @@ public final class AjaxTagHandler extends SmartTagHandler {
 		if (onComplete != null) {
 			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
 		}
+		return jsonAjax;
+	}
 
+	public StringBuilder getBindFunction(String id) {
+		JsonAjax jsonAjax = getJsonAjax(id);
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-
 		return getBindFunction(id, event, builder);
+	}
+
+	public StringBuilder getDelegateFunction(String id, String child) {
+		JsonAjax jsonAjax = getJsonAjax(id);
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+		return getDelegateFunction(id, child, event, builder);
 	}
 
 	public void setEvent(String event) {

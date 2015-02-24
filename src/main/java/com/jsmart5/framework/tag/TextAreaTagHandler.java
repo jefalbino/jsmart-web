@@ -109,12 +109,9 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 		if (formGroup != null) {
 			formGroup.addTag(textArea);
 		}
-		
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
+
+		appendAjax(id);
+		appendBind(id);
 
 		return formGroup != null ? formGroup : textArea;
 	}

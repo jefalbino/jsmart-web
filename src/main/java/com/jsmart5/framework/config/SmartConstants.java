@@ -22,7 +22,7 @@ public final class SmartConstants {
 	
 	public static final String REQUEST_USER_ACCESS = "jsmart5_user_access_request";
 
-	public static final String REQUEST_SCRIPT_BUILDER_ATTR = "jsmart_request_script_builder_attr";
+	public static final String REQUEST_PAGE_SCRIPT_ATTR = "jsmart5_page_script_attr";
 
 	public static final String REQUEST_REDIRECT_PATH = "jsmart5_redirect_ajax_path";
 

@@ -209,14 +209,12 @@
 			                        <cssSourceDir>resources/jsmart5/css</cssSourceDir>
 									<cssSourceFiles>
 										<cssSourceFile>jsmart5.general.css</cssSourceFile>
-										<cssSourceFile>jsmart5-theme.css</cssSourceFile>
 									</cssSourceFiles>
 									<cssTargetDir>classes/jsmart5/css</cssTargetDir>
 									<cssFinalFile>jsmart5.css</cssFinalFile>
 
 									<jsSourceDir>resources/jsmart5/js</jsSourceDir>
 									<jsSourceFiles>
-										<jsSourceFile>jquery.form.js</jsSourceFile>
 										<jsSourceFile>jsmart5-general.js</jsSourceFile>
 									</jsSourceFiles>
 									<jsTargetDir>classes/jsmart5/js</jsTargetDir>
@@ -237,13 +235,10 @@
 						<configuration>
 							<excludes>
 								<exclude>**/jsmart5.general.css</exclude>
-								<exclude>**/jsmart5.base.css</exclude>
-								<exclude>**/jsmart5-theme.css</exclude>
-								<exclude>**/jsmart5.min.css</exclude> -->
+								<exclude>**/jsmart5.min.css</exclude>
 
-								<exclude>**/jquery.form.js</exclude>
 								<exclude>**/jsmart5-general.js</exclude>
-								<exclude>**/jsmart5.min.js</exclude> -->
+								<exclude>**/jsmart5.min.js</exclude>
 							</excludes>
 						</configuration>
 					</plugin>

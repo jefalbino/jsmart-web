@@ -25,19 +25,17 @@ public enum JsConstants {
 	JSMART_BIND("Jsmart5.bind", "(%s);"),
 	JSMART_BUTTON("Jsmart5.button", "(%s);"),
 	JSMART_EXEC("Jsmart5.execute", "('%s');"),
-	JSMART_CHECK("Jsmart5.check", "(%s);"),
+	JSMART_CHECK("Jsmart5.check", "($(this),%s);"),
 	JSMART_CHECKBOX("Jsmart5.checkbox", "('%s');"),
 	JSMART_SELECT("Jsmart5.select", "(%s);"),
 	JSMART_DIALOG("Jsmart5.dialog", "('%s');"),
-
-
+	JSMART_LIST("Jsmart5.list", "($(this),%s);"),
 	JSMART_TAB("Jsmart5.tab", "(%s);"),
-	JSMART_TABPANE("Jsmart5.tabpane", "(%s);"),
-	JSMART_LIST("Jsmart5.list", "(%s,%s);"),
+	JSMART_TABPANE("Jsmart5.tabpane", "($(this),%s);"),
+
 	
 
 	JSMART_REST("Jsmart5.rest", "(%s,%s,%s);"),
-
 	JSMART_TABLE("Jsmart5.table", "(%s,'%s',%s);"),
 	JSMART_TABLE_SELECT("Jsmart5.tableSelect", "(%s,'%s',%s);"),
 	JSMART_TABLE_EDIT("Jsmart5.tableEdit", "(%s,'%s',%s);"),
@@ -45,7 +43,6 @@ public enum JsConstants {
 	JSMART_TABLE_EDIT_CANCEL("Jsmart5.tableEditCancel", "('%s',%s,%s,%s);"),
 	JSMART_TABLE_ROW_EXPAND("Jsmart5.tableRowExpand", "('%s');"),
 	JSMART_TABLE_SCROLL("Jsmart5.tableScroll", "('%s');"),
-
 	JSMART_SWITCH("Jsmart5.xswitch", "('%s',%s,%s);"),
 	JSMART_SWITCH_RESET("Jsmart5.resetSwitch", "('%s');"),
 	JSMART_BALLOON("Jsmart5.balloon", "('%s','%s',%s,%s,'%s');"),

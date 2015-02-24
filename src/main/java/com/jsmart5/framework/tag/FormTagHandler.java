@@ -104,7 +104,7 @@ public final class FormTagHandler extends SmartTagHandler {
 		}
 
 		appendBind(id);
-		appendScript(getFunction());
+		appendScript(id, getFunction());
 
 		return form;
 	}

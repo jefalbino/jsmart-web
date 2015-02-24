@@ -23,7 +23,7 @@ var Jsmart5 = (function() {
 	var DIALOG_CLOSE = 'close()';
 	var SESSION_RESET = '#jsmart5_session_reset_attr';
 	var REDIRECT_PATH = '#jsmart5_redirect_ajax_path';
-
+	
 	var MESSAGES_EXEC = 'jsmart_messages';
 	var MULTI_SELECT_ALL = "_multi_select_all";
 	var MULTI_SELECT_ITEM_ID = "_multi_select_item_";
@@ -107,18 +107,6 @@ var Jsmart5 = (function() {
 		dialog: function(id) {
 			openDialog(id);
 		},
-
-		list: function (element) {
-			doList(element);
-		},
-		
-		tab: function (id) {
-			doTab(id);
-		},
-		
-		tabpane: function (id) {
-			doTabPane(id);
-		},
 		
 		select: function (map) {
 			doSelect(map);
@@ -128,11 +116,22 @@ var Jsmart5 = (function() {
 			doCheckbox(id);
 		},
 		
-		check: function (map) {
-			doCheck(map);
+		check: function (element, map) {
+			doCheck(element, map);
 		},
 
+		list: function (element, map) {
+			doList(element, map);
+		},
 		
+		tab: function (map) {
+			doTab(map);
+		},
+		
+		tabpane: function (element, map) {
+			doTabPane(element, map);
+		},
+
 		
 		
 		// STILL NEED FIXES
@@ -418,13 +417,20 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doList(element) {
-		if ($(element) && $(element).attr('ajaxoutside')) {
-	
-			var options = getBasicAjaxOptions();
+	function doList(element, map) {
+		if (element && element.length > 0) {
+			var postParam = getAjaxParams(map);
+			var options = getAjaxOptions(map);
 			var closestForm = $(element).closest('form');
-			var postParam = getAjaxOutsideParams(element);
-	
+
+			for (var i = 0; i < postParam.length; i++) {
+				// Look for SEL_VAL parameter to place the index clicked
+				if (postParam[i].name.indexOf(TAG_INIT + '007_') >= 0) {
+					postParam[i].value = element.attr('list-index');
+					break;
+				}
+			}
+
 			if (closestForm && closestForm.length > 0) {
 				if (!doValidate($(closestForm).attr('id'))) {
 					return;
@@ -432,9 +438,9 @@ var Jsmart5 = (function() {
 			} else {
 				postParam = $.param(postParam);			
 			}
-	
+
 			options.data = postParam;
-	
+
 			if (closestForm && closestForm.length > 0) {
 				$(closestForm).ajaxSubmit(options);
 			} else {
@@ -443,86 +449,58 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doTab(id) {
-		// TODO
-		if (id && id.length > 0) {
-			var tabElement = $(getId(id));
-			var ajaxAttr = tabElement.attr('ajax');
-	
-			if (ajaxAttr) {
-				var ajax = $.parseJSON(ajaxAttr);
-	
-				tabElement.find('>div').each(function(index) {
-					$(this).hide();
-				});
-	
-				var value = null;
-				if ($(getId(id + TAB_INDEX))) {
-					value = $(getId(id + TAB_INDEX)).val();
-				}
-	
-				var tabItem = null;
-				if (value && value.length > 0) {
-					tabItem = tabElement.find('>ul li[val="' + value + '"]');
-					var closeItem = tabElement.find('>ul li[active="true"]');
-	
-					if (closeItem.attr('val') != value) {
-						if (closeItem) {
-							closeItem.removeAttr('active');
-							$(getId(closeItem.attr('tab'))).hide();
-						}
-					}
-				} else {
-					tabItem = tabElement.find('>ul li:first');
-				}
-	
-				tabItem.attr('active', 'true');
-				$(getId(tabItem.attr('tab'))).show();
-	
-				tabElement.find('>ul li').each(function(index) {
-					if (ajax.hover == 'true') {
-						$(this).mouseover(function() {
-							applyTab($(this), ajax.ajax, id, ajax.collapsible, ajax.position);
-						});
-					} else {
-						$(this).click(function() {
-							applyTab($(this), ajax.ajax, id, ajax.collapsible, ajax.position);
-						});
-					}
-				});
-			}
+	function doTab(map) {
+		var tabElement = $(getId(map.id));
+
+		// Get active tab via hidden input name sent on map
+		var tabValue = $('input[name="' + map.params[0].name + '"]').val();
+		if (tabValue && tabValue.length > 0) {
+			var tabPane = tabElement.find('>ul li[tab-value="' + tabValue + '"]');
+			tabPane.find('>a').tab('show');
+			tabPane.closest('li.dropdown').addClass('active');
 		}
 	}
 	
-	function doTabPane(id) {
-		// TODO
-	}
-	
-	// TODO
-	function doTabAction(id, name, value) {
-		var options = getBasicAjaxOptions();
-		var closestForm = $(getId(id)).closest('form');
-		var postParam = [{name: name, value: value}];
-	
-		if (closestForm && closestForm.length > 0) {
-			if (!doValidate($(closestForm).attr('id'))) {
+	function doTabPane(element, map) {
+		if (element && element.length > 0) {
+			
+			// Case is dropdown menu do not send the tab value
+			if (element.find('ul.dropdown-menu').length > 0) {
 				return;
 			}
-		} else {
-			postParam = $.param(postParam);			
-		}
+			
+			var tabElement = $(getId(map.id));
 	
-		options.data = postParam;
-	
-		if (closestForm && closestForm.length > 0) {
-			$(closestForm).ajaxSubmit(options);
-		} else {
-			$.ajax(options);
+			// Get active tab via hidden input name sent on map
+			var tabInput = $('input[name="' + map.params[0].name + '"]');
+			tabInput.val(element.attr('tab-value'));
+
+			var postParam = getAjaxParams(map);
+			var options = getAjaxOptions(map);
+			var closestForm = $(element).closest('form');
+
+			// Set the hidden input value
+			postParam[0].value = tabInput.val();
+
+			if (closestForm && closestForm.length > 0) {
+				if (!doValidate($(closestForm).attr('id'))) {
+					return;
+				}
+			} else {
+				postParam = $.param(postParam);			
+			}
+
+			options.data = postParam;
+
+			if (closestForm && closestForm.length > 0) {
+				$(closestForm).ajaxSubmit(options);
+			} else {
+				$.ajax(options);
+			}
 		}
 	}
 
 	function doSelect(map) {
-
 		var postParam = [];
 		var element = $(getId(map.id));
 		var options = getAjaxOptions(map);
@@ -568,8 +546,7 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doCheck(map) {
-		var element = $(getId(map.id));
+	function doCheck(element, map) {
 		if (element && element.length > 0) {
 			var postParam = [];
 			var options = getAjaxOptions(map);
@@ -866,7 +843,7 @@ var Jsmart5 = (function() {
 						$(location).attr('href', map.url);
 					} else {
 						doUpdate(map.update, data);
-						var dialogs = doExecute(map.success, data, xhr, status);
+						doExecute(map.success, data, xhr, status);
 	
 						resetMessage(data);
 						var redirect = $(data).find(REDIRECT_PATH); 
@@ -979,20 +956,11 @@ var Jsmart5 = (function() {
 	
 	function doUpdate(update, a) {
 		if (update && update.length > 0) {
-			var updateEval = "";
 			var updates = update.split(',');
+
 			for (var i = 0; i < updates.length; i++) {
-				if (!doTableScrollUpdate(a, updates[i])) {
-					var updateId = getId(updates[i]);
-					updateEval += "$('" + updateId + "').replaceWith($(a).find('" + updateId + "'));";
-				}
-			}
-			if (updateEval.length > 0) {
-				try {
-					eval(updateEval);
-				} catch(err) {
-					showOnConsole(err.message); 
-				}
+				var updateId = getId(updates[i]);
+				$(updateId).replaceWith($(a).find(updateId));
 			}
 		}
 	}
@@ -3333,7 +3301,7 @@ var Jsmart5 = (function() {
 	
 	function getId(id) {
 		if (id) {
-			id = '#' + id;
+			id = '#' + $.trim(id);
 		}
 		return id;
 	}

@@ -64,16 +64,26 @@ public final class BindTagHandler extends SmartTagHandler {
 		// DO NOTHING
 		return null;
 	}
-
-	public StringBuilder getFunction(String id) {
+	
+	private JsonBind getJsonBind(String id) {
 		JsonBind jsonBind = new JsonBind();
 		jsonBind.setTimeout((Integer) getTagValue(timeout));
 		jsonBind.setExecute((String) getTagValue(execute));
+		return jsonBind;
+	}
 
+	public StringBuilder getBindFunction(String id) {
+		JsonBind jsonBind = getJsonBind(id);
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
-
 		return getBindFunction(id, event, builder);
+	}
+
+	public StringBuilder getDelegateFunction(String id, String child) {
+		JsonBind jsonBind = getJsonBind(id);
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
+		return getDelegateFunction(id, child, event, builder);
 	}
 
 	public void setEvent(String event) {

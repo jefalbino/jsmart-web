@@ -42,6 +42,8 @@ public final class RowTagHandler extends SmartTagHandler {
 	
 	private String selectValue;
 	
+	private Long selectIndex;
+	
 	private HeaderTagHandler header;
 
 	@Override
@@ -87,7 +89,8 @@ public final class RowTagHandler extends SmartTagHandler {
 			.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
-			.addAttribute("class", styleClass);
+			.addAttribute("class", styleClass)
+			.addAttribute("list-index", selectIndex);
 		
 		String lookVal = (String) getTagValue(look);
 
@@ -105,12 +108,6 @@ public final class RowTagHandler extends SmartTagHandler {
 		tag.addAttribute("class", styleClass);
 
 		appendEvent(tag);
-		
-		if (!ajaxTags.isEmpty()) {
-			for (AjaxTagHandler ajax : ajaxTags) {
-				appendScript(ajax.getFunction(id));
-			}
-		}
 
 		if (header != null) {
 			tag.addTag(header.executeTag());
@@ -126,6 +123,10 @@ public final class RowTagHandler extends SmartTagHandler {
 	
 	void setSelectValue(String selectValue) {
 		this.selectValue = selectValue;
+	}
+	
+	void setSelectIndex(Long selectIndex) {
+		this.selectIndex = selectIndex;
 	}
 
 	public void setLook(String look) {

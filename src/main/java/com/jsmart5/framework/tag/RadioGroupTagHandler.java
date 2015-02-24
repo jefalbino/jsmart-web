@@ -18,6 +18,8 @@
 
 package com.jsmart5.framework.tag;
 
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_CHECK;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +27,11 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Event;
 
 public final class RadioGroupTagHandler extends SmartTagHandler {
 
@@ -68,26 +72,40 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 			.addAttribute("align", align)
 			.addAttribute("radiogroup", "");
 
- 		int index = 0;
+ 		long checkIndex = 0;
 		for (CheckTagHandler check : checks) {
 
-			check.setId(id + "_" + index++);
+			check.setCheckIndex(checkIndex++);
 			check.setStyle(style);
 			check.setStyleClass(styleClass);
 			check.setInline(inline);
 			check.setRest(rest);
 			check.setValidator(validator);
 			check.setName(selectValue);
-			check.setAjax(ajax);
-			check.addAllAjaxTag(ajaxTags);
-			check.addAllBindTag(bindTags);
 			check.setType(CheckTagHandler.RADIO);
 			setEvents(check);
 
 			div.addTag(check.executeTag());
 		}
 
+		appendDelegateAjax(id, "input");
+		appendDelegateBind(id, "input");
+		
+		if (ajax) {
+			appendScript(id, getFunction());
+		}
+
 		return div;
+	}
+
+	private StringBuilder getFunction() {
+		JsonAjax jsonAjax = new JsonAjax();
+		jsonAjax.setId(id);
+		jsonAjax.setMethod("post");
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_CHECK.format(getJsonValue(jsonAjax)));
+		return getDelegateFunction(id, "input", Event.CLICK.name(), builder);
 	}
 
 	void addCheck(CheckTagHandler check) {
