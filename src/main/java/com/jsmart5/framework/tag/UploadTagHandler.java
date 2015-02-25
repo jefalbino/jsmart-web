@@ -90,10 +90,10 @@ public final class UploadTagHandler extends SmartTagHandler {
 			if (parent instanceof FormTagHandler) {
 				String size = ((FormTagHandler) parent).getSize();
 
-				if (Size.LARGE.name().equalsIgnoreCase(size)) {
+				if (Size.LARGE.equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
 
-				} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
+				} else if (Size.SMALL.equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
 				}
 			}
@@ -111,9 +111,9 @@ public final class UploadTagHandler extends SmartTagHandler {
 			inputGroup = new Div();
 			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			if (Size.SMALL.name().equalsIgnoreCase(size)) {
+			if (Size.SMALL.equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
-			} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+			} else if (Size.LARGE.equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
 			}
 
@@ -155,9 +155,9 @@ public final class UploadTagHandler extends SmartTagHandler {
 		
 		input.addAttribute("value", getTagValue(value));
 		
-		if (Size.SMALL.name().equalsIgnoreCase(size)) {
+		if (Size.SMALL.equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_SMALL);
-		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_LARGE);
 		}
 

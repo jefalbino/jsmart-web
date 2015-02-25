@@ -29,16 +29,15 @@ import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
+import com.jsmart5.framework.tag.type.Look;
 
 public final class IconTagHandler extends SmartTagHandler {
 
-	static final String LEFT = "left";
-	
-	static final String RIGHT = "right";
-
 	private String name;
 
-	private String side = LEFT;
+	private String side = Align.LEFT.name();
+	
+	private String look;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
@@ -56,14 +55,43 @@ public final class IconTagHandler extends SmartTagHandler {
 		if (side != null && !Align.validateLeftRight(side)) {
 			throw InvalidAttributeException.fromPossibleValues("icon", "side", Align.getLeftRightValues());
 		}
+		if (look != null && !Look.validateLook(look)) {
+			throw InvalidAttributeException.fromPossibleValues("icon", "look", Look.getLookValues());
+		}
 	}
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
+		
+		if (id == null) {
+			id = getRandonId();
+		}
+
 		Span span = new Span();
-		span.addAttribute("class", Bootstrap.GLYPHICON)
+		span.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("class", Bootstrap.GLYPHICON)
 			.addAttribute("class", getTagValue(name))
 			.addAttribute("aria-hidden", "true");
+		
+		if (Look.PRIMARY.equalsIgnoreCase(look)) {
+			span.addAttribute("class", Bootstrap.TEXT_PRIMARY);
+		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
+			span.addAttribute("class", Bootstrap.TEXT_SUCCESS);
+		} else if (Look.INFO.equalsIgnoreCase(look)) {
+			span.addAttribute("class", Bootstrap.TEXT_INFO);
+		} else if (Look.WARNING.equalsIgnoreCase(look)) {
+			span.addAttribute("class", Bootstrap.TEXT_WARNING);
+		} else if (Look.DANGER.equalsIgnoreCase(look)) {
+			span.addAttribute("class", Bootstrap.TEXT_DANGER);
+		}
+		
+		// At last place the style class
+		span.addAttribute("class", styleClass);
+
+		appendAjax(id);
+		appendBind(id);
+
 		return span;
 	}
 
@@ -79,4 +107,7 @@ public final class IconTagHandler extends SmartTagHandler {
 		this.side = side;
 	}
 
+	public void setLook(String look) {
+		this.look = look;
+	}
 }

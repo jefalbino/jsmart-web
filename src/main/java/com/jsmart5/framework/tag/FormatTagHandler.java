@@ -67,10 +67,10 @@ public final class FormatTagHandler extends SmartTagHandler {
 
 	String formatValue(final Object value) {
 		if (value != null) {
-			if (Type.NUMBER.name().equalsIgnoreCase(type)) {
+			if (Type.NUMBER.equalsIgnoreCase(type)) {
 				return new DecimalFormat(regex).format(value);
 						
-			} else if (Type.DATE.name().equalsIgnoreCase(type)) {
+			} else if (Type.DATE.equalsIgnoreCase(type)) {
 				if (value instanceof Date) {
 					return new SimpleDateFormat(regex, getRequest().getLocale()).format(value);
 	

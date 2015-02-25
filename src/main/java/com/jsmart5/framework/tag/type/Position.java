@@ -34,7 +34,7 @@ public enum Position {
 	}
 
 	public static boolean validateVerticalHorizontal(String position) {
-		return VERTICAL.name().equalsIgnoreCase(position) || HORIZONTAL.name().equalsIgnoreCase(position);
+		return VERTICAL.equalsIgnoreCase(position) || HORIZONTAL.equalsIgnoreCase(position);
 	}
 
 	public static String[] getValues() {
@@ -53,5 +53,9 @@ public enum Position {
 		values[0] = VERTICAL.name().toLowerCase();
 		values[1] = HORIZONTAL.name().toLowerCase();
 		return values;
+	}
+	
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
 	}
 }

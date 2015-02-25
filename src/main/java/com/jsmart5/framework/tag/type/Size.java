@@ -35,7 +35,7 @@ public enum Size {
 	}
 	
 	public static boolean validateSmallLarge(String size) {
-		return LARGE.name().equalsIgnoreCase(size) || SMALL.name().equalsIgnoreCase(size);
+		return LARGE.equalsIgnoreCase(size) || SMALL.equalsIgnoreCase(size);
 	}
 
 	public static String[] getValues() {
@@ -54,5 +54,9 @@ public enum Size {
 		values[0] = SMALL.name().toLowerCase();
 		values[1] = LARGE.name().toLowerCase();
 		return values;
+	}
+	
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
 	}
 }

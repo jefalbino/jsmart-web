@@ -91,13 +91,13 @@ public final class ImageTagHandler extends SmartTagHandler {
 			image.addAttribute("alt", nameValue);
 		}
 		
-		if (Type.RESPONSIVE.name().equalsIgnoreCase(type)) {
+		if (Type.RESPONSIVE.equalsIgnoreCase(type)) {
 			image.addAttribute("class", Bootstrap.IMAGE_RESPONSIVE);
-		} else if (Type.ROUND.name().equalsIgnoreCase(type)) {
+		} else if (Type.ROUND.equalsIgnoreCase(type)) {
 			image.addAttribute("class", Bootstrap.IMAGE_ROUNDED);
-		} else if (Type.CIRCLE.name().equalsIgnoreCase(type)) {
+		} else if (Type.CIRCLE.equalsIgnoreCase(type)) {
 			image.addAttribute("class", Bootstrap.IMAGE_CIRCLE);
-		} else if (Type.THUMBNAIL.name().equalsIgnoreCase(type)) {
+		} else if (Type.THUMBNAIL.equalsIgnoreCase(type)) {
 			image.addAttribute("class", Bootstrap.IMAGE_THUMBNAIL);
 		}
 		

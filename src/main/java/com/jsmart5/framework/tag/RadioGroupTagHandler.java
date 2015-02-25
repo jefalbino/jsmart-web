@@ -92,7 +92,7 @@ public final class RadioGroupTagHandler extends SmartTagHandler {
 		appendDelegateBind(id, "input");
 		
 		if (ajax) {
-			appendScript(id, getFunction());
+			appendScript(getFunction());
 		}
 
 		return div;

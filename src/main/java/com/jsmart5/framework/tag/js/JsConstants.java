@@ -30,6 +30,7 @@ public enum JsConstants {
 	JSMART_SELECT("Jsmart5.select", "(%s);"),
 	JSMART_DIALOG("Jsmart5.dialog", "('%s');"),
 	JSMART_LIST("Jsmart5.list", "($(this),%s);"),
+	JSMART_LISTSCROLL("Jsmart5.listscroll", "($(this),%s);"),
 	JSMART_TAB("Jsmart5.tab", "(%s);"),
 	JSMART_TABPANE("Jsmart5.tabpane", "($(this),%s);"),
 

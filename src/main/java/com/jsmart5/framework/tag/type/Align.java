@@ -35,11 +35,11 @@ public enum Align {
 	}
 
 	public static boolean validateLeftRight(String align) {
-		return LEFT.name().equalsIgnoreCase(align) || RIGHT.name().equalsIgnoreCase(align);
+		return LEFT.equalsIgnoreCase(align) || RIGHT.equalsIgnoreCase(align);
 	}
 	
 	public static boolean validateLeftRightCenter(String align) {
-		return validateLeftRight(align) || CENTER.name().equalsIgnoreCase(align);
+		return validateLeftRight(align) || CENTER.equalsIgnoreCase(align);
 	}
 
 	public static String[] getValues() {
@@ -67,4 +67,9 @@ public enum Align {
 		values[2] = CENTER.name().toLowerCase();
 		return values;
 	}
+
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
+	}
+
 }

@@ -46,6 +46,6 @@ public class InvalidAttributeException extends JspException {
 	}
 
 	public static InvalidAttributeException fromConflict(String tag, String attr, String conflict) {
-		return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. Attribute values {2}", attr, tag, conflict));
+		return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. {2}", attr, tag, conflict));
 	}
 }

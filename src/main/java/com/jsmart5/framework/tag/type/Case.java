@@ -44,4 +44,7 @@ public enum Case {
 		return values;
 	}
 
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
+	}
 }

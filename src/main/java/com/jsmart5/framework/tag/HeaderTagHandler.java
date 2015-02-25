@@ -28,6 +28,7 @@ import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.SmartTagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Output;
 
 public final class HeaderTagHandler extends SmartTagHandler {
@@ -107,7 +108,7 @@ public final class HeaderTagHandler extends SmartTagHandler {
 			.addAttribute("class", styleClass);
 
 		for (IconTagHandler iconTag : iconTags) {
-			if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
 				header.addTag(iconTag.executeTag());
 				header.addText(" ");
 			}
@@ -116,7 +117,7 @@ public final class HeaderTagHandler extends SmartTagHandler {
 		header.addText(getTagValue(title));
 
 		for (IconTagHandler iconTag : iconTags) {
-			if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
 				header.addText(" ");
 				header.addTag(iconTag.executeTag());
 			}

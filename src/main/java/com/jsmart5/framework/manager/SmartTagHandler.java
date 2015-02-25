@@ -441,7 +441,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 		return builder;
 	}
 
-	protected void appendScript(String id, StringBuilder builder) {
+	protected void appendScript(StringBuilder builder) {
 		HttpServletRequest httpRequest = getRequest();
 		Script script = (Script) httpRequest.getAttribute(SmartConstants.REQUEST_PAGE_SCRIPT_ATTR);
 
@@ -460,7 +460,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected void appendAjax(SmartTagHandler tagHandler, String id) {
 		if (!tagHandler.ajaxTags.isEmpty()) {
 			for (AjaxTagHandler ajax : tagHandler.ajaxTags) {
-				appendScript(id, ajax.getBindFunction(id));
+				appendScript(ajax.getBindFunction(id));
 			}
 		}
 	}
@@ -472,7 +472,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected void appendDelegateAjax(SmartTagHandler tagHandler, String id, String child) {
 		if (!tagHandler.ajaxTags.isEmpty()) {
 			for (AjaxTagHandler ajax : tagHandler.ajaxTags) {
-				appendScript(id, ajax.getDelegateFunction(id, child));
+				appendScript(ajax.getDelegateFunction(id, child));
 			}
 		}
 	}
@@ -484,7 +484,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected void appendBind(SmartTagHandler tagHandler, String id) {
 		if (!tagHandler.bindTags.isEmpty()) {
 			for (BindTagHandler bind : tagHandler.bindTags) {
-				appendScript(id, bind.getBindFunction(id));
+				appendScript(bind.getBindFunction(id));
 			}
 		}
 	}
@@ -496,7 +496,7 @@ public abstract class SmartTagHandler extends SimpleTagSupport {
 	protected void appendDelegateBind(SmartTagHandler tagHandler, String id, String child) {
 		if (!tagHandler.bindTags.isEmpty()) {
 			for (BindTagHandler bind : tagHandler.bindTags) {
-				appendScript(id, bind.getDelegateFunction(id, child));
+				appendScript(bind.getDelegateFunction(id, child));
 			}
 		}
 	}

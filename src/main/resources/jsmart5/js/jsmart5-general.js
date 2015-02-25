@@ -124,6 +124,10 @@ var Jsmart5 = (function() {
 			doList(element, map);
 		},
 		
+		listscroll: function (element, map) {
+			doListScroll(element, map);
+		},
+		
 		tab: function (map) {
 			doTab(map);
 		},
@@ -447,6 +451,10 @@ var Jsmart5 = (function() {
 				$.ajax(options);
 			}
 		}
+	}
+	
+	function doListScroll(element, map) {
+		
 	}
 
 	function doTab(map) {

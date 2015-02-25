@@ -86,41 +86,41 @@ public final class OutputTagHandler extends SmartTagHandler {
 
 		Tag tag = null;
 
-		if (Output.LEGEND.name().equalsIgnoreCase(type)) {
+		if (Output.LEGEND.equalsIgnoreCase(type)) {
 			tag =  new Tag("legend");
-		} else if (Output.STRONG.name().equalsIgnoreCase(type)) {
+		} else if (Output.STRONG.equalsIgnoreCase(type)) {
 			tag =  new Tag("strong");
-		} else if (Output.MARK.name().equalsIgnoreCase(type)) {
+		} else if (Output.MARK.equalsIgnoreCase(type)) {
 			tag =  new Tag("mark");
-		} else if (Output.EM.name().equalsIgnoreCase(type)) {
+		} else if (Output.EM.equalsIgnoreCase(type)) {
 			tag =  new Tag("em");
-		} else if (Output.SMALL.name().equalsIgnoreCase(type)) {
+		} else if (Output.SMALL.equalsIgnoreCase(type)) {
 			tag =  new Tag("small");
-		} else if (Output.LABEL.name().equalsIgnoreCase(type)) {
+		} else if (Output.LABEL.equalsIgnoreCase(type)) {
 			tag =  new Tag("label");
-		} else if (Output.OUTPUT.name().equalsIgnoreCase(type)) {
+		} else if (Output.OUTPUT.equalsIgnoreCase(type)) {
 			tag =  new Tag("output");
-		} else if (Output.DEL.name().equalsIgnoreCase(type)) {
+		} else if (Output.DEL.equalsIgnoreCase(type)) {
 			tag =  new Tag("del");
-		} else if (Output.S.name().equalsIgnoreCase(type)) {
+		} else if (Output.S.equalsIgnoreCase(type)) {
 			tag =  new Tag("s");
-		} else if (Output.INS.name().equalsIgnoreCase(type)) {
+		} else if (Output.INS.equalsIgnoreCase(type)) {
 			tag =  new Tag("ins");
-		} else if (Output.U.name().equalsIgnoreCase(type)) {
+		} else if (Output.U.equalsIgnoreCase(type)) {
 			tag =  new Tag("u");
-		} else if (Output.P.name().equalsIgnoreCase(type)) {
+		} else if (Output.P.equalsIgnoreCase(type)) {
 			tag =  new Tag("p");
-		} else if (Output.H1.name().equalsIgnoreCase(type)) {
+		} else if (Output.H1.equalsIgnoreCase(type)) {
 			tag =  new Tag("h1");
-		} else if (Output.H2.name().equalsIgnoreCase(type)) {
+		} else if (Output.H2.equalsIgnoreCase(type)) {
 			tag =  new Tag("h2");
-		} else if (Output.H3.name().equalsIgnoreCase(type)) {
+		} else if (Output.H3.equalsIgnoreCase(type)) {
 			tag =  new Tag("h3");
-		} else if (Output.H4.name().equalsIgnoreCase(type)) {
+		} else if (Output.H4.equalsIgnoreCase(type)) {
 			tag =  new Tag("h4");
-		} else if (Output.H5.name().equalsIgnoreCase(type)) {
+		} else if (Output.H5.equalsIgnoreCase(type)) {
 			tag =  new Tag("h5");
-		} else if (Output.H6.name().equalsIgnoreCase(type)) {
+		} else if (Output.H6.equalsIgnoreCase(type)) {
 			tag =  new Tag("h6");
 		} else {
 			tag =  new Span();
@@ -129,35 +129,35 @@ public final class OutputTagHandler extends SmartTagHandler {
 		tag.addAttribute("id", id)
 			.addAttribute("style", style);
 
-		if (Case.CAPITALIZE.name().equalsIgnoreCase(transform)) {
+		if (Case.CAPITALIZE.equalsIgnoreCase(transform)) {
 			tag.addAttribute("class", Bootstrap.TEXT_CAPITALIZE);
-		} else if (Case.UPPERCASE.name().equalsIgnoreCase(transform)) {
+		} else if (Case.UPPERCASE.equalsIgnoreCase(transform)) {
 			tag.addAttribute("class", Bootstrap.TEXT_UPPERCASE);
-		} else if (Case.LOWERCASE.name().equalsIgnoreCase(transform)) {
+		} else if (Case.LOWERCASE.equalsIgnoreCase(transform)) {
 			tag.addAttribute("class", Bootstrap.TEXT_LOWERCASE);
 		}
 		
-		if (Align.LEFT.name().equalsIgnoreCase(align)) {
+		if (Align.LEFT.equalsIgnoreCase(align)) {
 			tag.addAttribute("class", Bootstrap.TEXT_LEFT);
-		} else if (Align.RIGHT.name().equalsIgnoreCase(align)) {
+		} else if (Align.RIGHT.equalsIgnoreCase(align)) {
 			tag.addAttribute("class", Bootstrap.TEXT_RIGHT);
-		} else if (Align.CENTER.name().equalsIgnoreCase(align)) {
+		} else if (Align.CENTER.equalsIgnoreCase(align)) {
 			tag.addAttribute("class", Bootstrap.TEXT_CENTER);
-		} else if (Align.JUSTIFY.name().equalsIgnoreCase(align)) {
+		} else if (Align.JUSTIFY.equalsIgnoreCase(align)) {
 			tag.addAttribute("class", Bootstrap.TEXT_JUSTIFY);
 		}
 		
-		if (Look.PRIMARY.name().equalsIgnoreCase(look)) {
+		if (Look.PRIMARY.equalsIgnoreCase(look)) {
 			tag.addAttribute("class", Bootstrap.TEXT_PRIMARY);
-		} else if (Look.SUCCESS.name().equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
 			tag.addAttribute("class", Bootstrap.TEXT_SUCCESS);
-		} else if (Look.INFO.name().equalsIgnoreCase(look)) {
+		} else if (Look.INFO.equalsIgnoreCase(look)) {
 			tag.addAttribute("class", Bootstrap.TEXT_INFO);
-		} else if (Look.WARNING.name().equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.equalsIgnoreCase(look)) {
 			tag.addAttribute("class", Bootstrap.TEXT_WARNING);
-		} else if (Look.DANGER.name().equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.equalsIgnoreCase(look)) {
 			tag.addAttribute("class", Bootstrap.TEXT_DANGER);
-		} else if (Look.MUTED.name().equalsIgnoreCase(look)) {
+		} else if (Look.MUTED.equalsIgnoreCase(look)) {
 			tag.addAttribute("class", Bootstrap.TEXT_MUTED);
 		}
 
@@ -169,12 +169,12 @@ public final class OutputTagHandler extends SmartTagHandler {
 		// Add the style class at last
 		tag.addAttribute("class", styleClass);
 
-		if (target != null && (Output.LABEL.name().equalsIgnoreCase(type) || Output.OUTPUT.name().equalsIgnoreCase(type))) {
+		if (target != null && (Output.LABEL.equalsIgnoreCase(type) || Output.OUTPUT.equalsIgnoreCase(type))) {
 			tag.addAttribute("for", target);
 		}
 		
 		for (IconTagHandler iconTag : iconTags) {
-			if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.LEFT.name().equalsIgnoreCase(iconTag.getSide())) {
 				tag.addTag(iconTag.executeTag());
 			}
 		}
@@ -197,7 +197,7 @@ public final class OutputTagHandler extends SmartTagHandler {
 		}
 
 		for (IconTagHandler iconTag : iconTags) {
-			if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.RIGHT.name().equalsIgnoreCase(iconTag.getSide())) {
 				tag.addTag(iconTag.executeTag());
 			}
 		}

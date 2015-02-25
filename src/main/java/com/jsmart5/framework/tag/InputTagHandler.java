@@ -121,10 +121,10 @@ public final class InputTagHandler extends SmartTagHandler {
 			if (parent instanceof FormTagHandler) {
 				String size = ((FormTagHandler) parent).getSize();
 
-				if (Size.LARGE.name().equalsIgnoreCase(size)) {
+				if (Size.LARGE.equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
 
-				} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
+				} else if (Size.SMALL.equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
 				}
 			}
@@ -142,9 +142,9 @@ public final class InputTagHandler extends SmartTagHandler {
 			inputGroup = new Div();
 			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			if (Size.SMALL.name().equalsIgnoreCase(size)) {
+			if (Size.SMALL.equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
-			} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+			} else if (Size.LARGE.equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
 			}
 
@@ -180,13 +180,13 @@ public final class InputTagHandler extends SmartTagHandler {
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
 			 .addAttribute("data-mask", mask);
 		
-		if (Size.SMALL.name().equalsIgnoreCase(size)) {
+		if (Size.SMALL.equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_SMALL);
-		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_LARGE);
 		}
 		
-		if (Type.NUMBER.name().equalsIgnoreCase(type) || Type.RANGE.name().equalsIgnoreCase(type)) {
+		if (Type.NUMBER.equalsIgnoreCase(type) || Type.RANGE.equalsIgnoreCase(type)) {
 			input.addAttribute("min", minValue)
 				 .addAttribute("max", maxValue)
 				 .addAttribute("step", stepValue);
@@ -195,7 +195,7 @@ public final class InputTagHandler extends SmartTagHandler {
 		// Add the style class at last
 		input.addAttribute("class", styleClass);
 		
-		if (!Type.PASSWORD.name().equalsIgnoreCase(type)) {
+		if (!Type.PASSWORD.equalsIgnoreCase(type)) {
 			input.addAttribute("value", getTagValue(value));
 		} else {
 			setTagValue(value, null);

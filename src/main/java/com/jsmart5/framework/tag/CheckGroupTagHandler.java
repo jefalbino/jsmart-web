@@ -92,7 +92,7 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 		appendDelegateBind(id, "input");
 
 		if (ajax) {
-			appendScript(id, getFunction());
+			appendScript(getFunction());
 		}
 
 		return div;

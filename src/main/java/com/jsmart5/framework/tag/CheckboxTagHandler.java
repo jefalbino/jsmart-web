@@ -94,10 +94,10 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 			input.addAttribute("value", "false");
 		}
 
-		appendScript(id, getFunction());
+		appendScript(getFunction());
 
 		if (ajax) {
-			appendScript(id, getAjaxFunction());
+			appendScript(getAjaxFunction());
 		}
 
 		appendAjax(id);

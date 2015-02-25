@@ -40,27 +40,27 @@ public enum Look {
 	}
 	
 	public static boolean validateValidate(String look) {
-		return SUCCESS.name().equalsIgnoreCase(look) || WARNING.name().equalsIgnoreCase(look)
-				|| ERROR.name().equalsIgnoreCase(look);
+		return SUCCESS.equalsIgnoreCase(look) || WARNING.equalsIgnoreCase(look)
+				|| ERROR.equalsIgnoreCase(look);
 	}
 	
 	public static boolean validateBasic(String look) {
-		return SUCCESS.name().equalsIgnoreCase(look) || INFO.name().equalsIgnoreCase(look)
-				|| WARNING.name().equalsIgnoreCase(look) || DANGER.name().equalsIgnoreCase(look);
+		return SUCCESS.equalsIgnoreCase(look) || INFO.equalsIgnoreCase(look)
+				|| WARNING.equalsIgnoreCase(look) || DANGER.equalsIgnoreCase(look);
 	}
 	
 	public static boolean validateLook(String look) {
-		return DEFAULT.name().equalsIgnoreCase(look) || PRIMARY.name().equalsIgnoreCase(look)
-				|| SUCCESS.name().equalsIgnoreCase(look) || INFO.name().equalsIgnoreCase(look)
-				|| WARNING.name().equalsIgnoreCase(look) || DANGER.name().equalsIgnoreCase(look);
+		return DEFAULT.equalsIgnoreCase(look) || PRIMARY.equalsIgnoreCase(look)
+				|| SUCCESS.equalsIgnoreCase(look) || INFO.equalsIgnoreCase(look)
+				|| WARNING.equalsIgnoreCase(look) || DANGER.equalsIgnoreCase(look);
 	}
 	
 	public static boolean validateButton(String look) {
-		return validateLook(look) || LINK.name().equalsIgnoreCase(look);
+		return validateLook(look) || LINK.equalsIgnoreCase(look);
 	}
 	
 	public static boolean validateText(String look) {
-		return validateLook(look) || MUTED.name().equalsIgnoreCase(look);
+		return validateLook(look) || MUTED.equalsIgnoreCase(look);
 	}
 
 	public static String[] getValues() {
@@ -124,5 +124,9 @@ public enum Look {
 		values[5] = DANGER.name().toLowerCase();
 		values[5] = MUTED.name().toLowerCase();
 		return values;
+	}
+	
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
 	}
 }

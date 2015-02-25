@@ -101,10 +101,10 @@ public final class SelectTagHandler extends SmartTagHandler {
 			if (parent instanceof FormTagHandler) {
 				String size = ((FormTagHandler) parent).getSize();
 
-				if (Size.LARGE.name().equalsIgnoreCase(size)) {
+				if (Size.LARGE.equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
 
-				} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
+				} else if (Size.SMALL.equalsIgnoreCase(size)) {
 					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
 				}
 			}
@@ -184,7 +184,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 		}
 
 		if (ajax) {
-			appendScript(id, getFunction());
+			appendScript(getFunction());
 		}
 
 		for (OptionTagHandler option : options) {

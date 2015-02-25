@@ -82,8 +82,6 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
-		SmartTagHandler parent = (SmartTagHandler) getParent();
-
 		// Just to call nested tags
 		JspFragment body = getJspBody();
 		if (body != null) {
@@ -100,7 +98,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 			.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.DROPDOWN_MENU);
 		
-		if (Align.RIGHT.name().equalsIgnoreCase(align)) {
+		if (Align.RIGHT.equalsIgnoreCase(align)) {
 			ul.addAttribute("class", Bootstrap.DROPDOWN_MENU_RIGHT);
 		}
 		
@@ -134,7 +132,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 			li.addTag(a);
 			
 			for (IconTagHandler iconTag : dropAction.getIconTags()) {
-				if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+				if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
 					a.addTag(iconTag.executeTag());
 					a.addText(" ");
 				}
@@ -143,7 +141,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 			a.addText(getTagValue(dropAction.getLabel()));
 
 			for (IconTagHandler iconTag : dropAction.getIconTags()) {
-				if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+				if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
 					a.addText(" ");
 					a.addTag(iconTag.executeTag());
 				}
@@ -155,7 +153,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 				ul.addTag(dividerLi);
 			}
 			
-			appendScript(parent.getId(), getFunction(dropAction));
+			appendScript(getFunction(dropAction));
 		}
 
 		return ul;

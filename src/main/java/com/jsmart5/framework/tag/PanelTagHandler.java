@@ -31,6 +31,7 @@ import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Look;
 
 public final class PanelTagHandler extends SmartTagHandler {
@@ -75,15 +76,15 @@ public final class PanelTagHandler extends SmartTagHandler {
 
 		String lookVal = Bootstrap.PANEL_DEFAULT;
 		
-		if (Look.PRIMARY.name().equalsIgnoreCase(look)) {
+		if (Look.PRIMARY.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_PRIMARY;
-		} else if (Look.SUCCESS.name().equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_SUCCESS;
-		} else if (Look.INFO.name().equalsIgnoreCase(look)) {
+		} else if (Look.INFO.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_INFO;
-		} else if (Look.WARNING.name().equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_WARNING;
-		} else if (Look.DANGER.name().equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.PANEL_DANGER;
 		}
 
@@ -101,7 +102,7 @@ public final class PanelTagHandler extends SmartTagHandler {
 			head.addAttribute("class", Bootstrap.PANEL_HEADING);
 
 			for (IconTagHandler iconTag : iconTags) {
-				if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+				if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
 					head.addTag(iconTag.executeTag());
 				}
 			}
@@ -124,7 +125,7 @@ public final class PanelTagHandler extends SmartTagHandler {
 			}
 			
 			for (IconTagHandler iconTag : iconTags) {
-				if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+				if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
 					head.addTag(iconTag.executeTag());
 				}
 			}

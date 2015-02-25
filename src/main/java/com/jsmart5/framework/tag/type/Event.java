@@ -34,7 +34,8 @@ public enum Event {
 	KEYPRESS,
 	KEYUP,
 	FOCUS,
-	SUBMIT;
+	SUBMIT,
+	SCROLL;
 
 	public static boolean validate(String event) {
 		try {
@@ -56,4 +57,7 @@ public enum Event {
 		return values;
 	}
 
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
+	}
 }

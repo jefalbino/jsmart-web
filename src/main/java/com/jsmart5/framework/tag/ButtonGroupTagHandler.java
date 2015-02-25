@@ -68,13 +68,13 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_VERTICAL);
 		}
 
-		if (Size.XSMALL.name().equalsIgnoreCase(size)) {
+		if (Size.XSMALL.equalsIgnoreCase(size)) {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-		} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
+		} else if (Size.SMALL.equalsIgnoreCase(size)) {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.equalsIgnoreCase(size)) {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
-		} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
+		} else if (Size.JUSTIFIED.equalsIgnoreCase(size)) {
 			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
 		}
 

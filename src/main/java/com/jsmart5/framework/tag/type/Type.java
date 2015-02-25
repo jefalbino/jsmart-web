@@ -61,31 +61,31 @@ public enum Type {
 	}
 	
 	public static boolean validateFormat(String format) {
-		return NUMBER.name().equalsIgnoreCase(format) || DATE.name().equalsIgnoreCase(format);
+		return NUMBER.equalsIgnoreCase(format) || DATE.equalsIgnoreCase(format);
 	}
 	
 	public static boolean validatePanel(String panel) {
-		return FIELDSET.name().equalsIgnoreCase(panel) || SECTION.name().equalsIgnoreCase(panel);
+		return FIELDSET.equalsIgnoreCase(panel) || SECTION.equalsIgnoreCase(panel);
 	}
 	
 	public static boolean validateTab(String tab) {
-		return STACKED.name().equalsIgnoreCase(tab) || REGULAR.name().equalsIgnoreCase(tab);
+		return STACKED.equalsIgnoreCase(tab) || REGULAR.equalsIgnoreCase(tab);
 	}
 	
 	public static boolean validateImage(String image) {
-		return RESPONSIVE.name().equalsIgnoreCase(image) || ROUND.name().equalsIgnoreCase(image)
-				|| CIRCLE.name().equalsIgnoreCase(image) || THUMBNAIL.name().equalsIgnoreCase(image);
+		return RESPONSIVE.equalsIgnoreCase(image) || ROUND.equalsIgnoreCase(image)
+				|| CIRCLE.equalsIgnoreCase(image) || THUMBNAIL.equalsIgnoreCase(image);
 	}
 	
 	public static boolean validateInput(String input) {
-		return TEXT.name().equalsIgnoreCase(input) || PASSWORD.name().equalsIgnoreCase(input)
-				|| HIDDEN.name().equalsIgnoreCase(input) || NUMBER.name().equalsIgnoreCase(input)
-				|| SEARCH.name().equalsIgnoreCase(input) || RANGE.name().equalsIgnoreCase(input)
-				|| EMAIL.name().equalsIgnoreCase(input) || URL.name().equalsIgnoreCase(input)
-				|| DATE.name().equalsIgnoreCase(input) || MONTH.name().equalsIgnoreCase(input)
-				|| WEEK.name().equalsIgnoreCase(input) || TIME.name().equalsIgnoreCase(input)
-				|| DATETIME.name().equalsIgnoreCase(input) || DATETIME_LOCAL.name().replace("_", "-").equalsIgnoreCase(input)
-				|| COLOR.name().equalsIgnoreCase(input) || TEL.name().equalsIgnoreCase(input);
+		return TEXT.equalsIgnoreCase(input) || PASSWORD.equalsIgnoreCase(input)
+				|| HIDDEN.equalsIgnoreCase(input) || NUMBER.equalsIgnoreCase(input)
+				|| SEARCH.equalsIgnoreCase(input) || RANGE.equalsIgnoreCase(input)
+				|| EMAIL.equalsIgnoreCase(input) || URL.equalsIgnoreCase(input)
+				|| DATE.equalsIgnoreCase(input) || MONTH.equalsIgnoreCase(input)
+				|| WEEK.equalsIgnoreCase(input) || TIME.equalsIgnoreCase(input)
+				|| DATETIME.equalsIgnoreCase(input) || DATETIME_LOCAL.name().replace("_", "-").equalsIgnoreCase(input)
+				|| COLOR.equalsIgnoreCase(input) || TEL.equalsIgnoreCase(input);
 	}
 
 	public static String[] getValues() {
@@ -148,5 +148,9 @@ public enum Type {
 		values[14] = COLOR.name().toLowerCase();
 		values[15] = TEL.name().toLowerCase();
 		return values;
+	}
+	
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
 	}
 }

@@ -38,7 +38,7 @@ public enum Method {
 	}
 
 	public static boolean validatePostGet(String method) {
-		return POST.name().equalsIgnoreCase(method) || GET.name().equalsIgnoreCase(method);
+		return POST.equalsIgnoreCase(method) || GET.equalsIgnoreCase(method);
 	}
 
 	public static String[] getValues() {
@@ -57,5 +57,9 @@ public enum Method {
 		values[0] = POST.name().toLowerCase();
 		values[1] = GET.name().toLowerCase();
 		return values;
+	}
+	
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
 	}
 }

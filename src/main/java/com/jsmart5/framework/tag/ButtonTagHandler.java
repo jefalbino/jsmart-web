@@ -36,6 +36,7 @@ import com.jsmart5.framework.tag.html.Button;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Size;
@@ -129,11 +130,11 @@ public final class ButtonTagHandler extends SmartTagHandler {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP);
 			}
 			
-			if (Size.XSMALL.name().equalsIgnoreCase(size)) {
+			if (Size.XSMALL.equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-			} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
+			} else if (Size.SMALL.equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-			} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+			} else if (Size.LARGE.equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
 			} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
 				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
@@ -153,34 +154,34 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		
 		String lookVal = Bootstrap.BUTTON_DEFAULT;
 		
-		if (Look.PRIMARY.name().equalsIgnoreCase(look)) {
+		if (Look.PRIMARY.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_PRIMARY;
-		} else if (Look.SUCCESS.name().equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_SUCCESS;
-		} else if (Look.INFO.name().equalsIgnoreCase(look)) {
+		} else if (Look.INFO.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_INFO;
-		} else if (Look.WARNING.name().equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_WARNING;
-		} else if (Look.DANGER.name().equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_DANGER;
-		} else if (Look.LINK.name().equalsIgnoreCase(look)) {
+		} else if (Look.LINK.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.BUTTON_LINK;
 		}
 
 		button.addAttribute("class", lookVal);
 			
-		if (Size.XSMALL.name().equalsIgnoreCase(size)) {
+		if (Size.XSMALL.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_XSMALL);
-		} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
+		} else if (Size.SMALL.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_SMALL);
-		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_LARGE);
-		} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
+		} else if (Size.JUSTIFIED.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_JUSTIFIED);
 		}
 
 		for (IconTagHandler iconTag : iconTags) {
-			if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
 				button.addTag(iconTag.executeTag());
 				button.addText(" ");
 			}
@@ -197,7 +198,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		button.addText(val);
 
 		for (IconTagHandler iconTag : iconTags) {
-			if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
 				button.addText(" ");
 				button.addTag(iconTag.executeTag());
 			}
@@ -251,13 +252,13 @@ public final class ButtonTagHandler extends SmartTagHandler {
 		}
 
 		if (ajax) {		
-			appendScript(id, getFunction(id, action, params));
+			appendScript(getFunction(id, action, params));
 		} else {
 			if (action != null) {
 				button.addAttribute("name", getTagName(J_SBMT, action));
 			}
 			if (beforeSend != null) {
-				appendScript(id, getExecFunction());
+				appendScript(getExecFunction());
 			}
 		}
 

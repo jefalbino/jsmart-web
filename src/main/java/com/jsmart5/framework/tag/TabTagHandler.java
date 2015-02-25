@@ -38,6 +38,7 @@ import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
+import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Type;
 
@@ -75,7 +76,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			throw InvalidAttributeException.fromPossibleValues("tab", "pills", Type.getTabValues());
 		}
 		if (Type.STACKED.name().equalsIgnoreCase(pills) && justified) {
-			throw InvalidAttributeException.fromConstraint("tab", "pills", "justified and stacked pills cannot coexist");
+			throw InvalidAttributeException.fromConflict("tab", "pills", "Attributes [justified] and [pills=stacked] cannot coexist");
 		}
 	}
 
@@ -116,7 +117,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			ul.addAttribute("class", Bootstrap.NAV_TABS);
 		} else {
 			ul.addAttribute("class", Bootstrap.NAV_PILLS);
-			if (Type.STACKED.name().equalsIgnoreCase(pills)) {
+			if (Type.STACKED.equalsIgnoreCase(pills)) {
 				ul.addAttribute("class", Bootstrap.NAV_STACKED);
 			}
 		}
@@ -163,7 +164,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			A a = new A();
 
 			for (IconTagHandler iconTag : tabPane.getIconTags()) {
-				if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+				if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
 					a.addTag(iconTag.executeTag());
 					a.addText(" ");
 				}
@@ -172,7 +173,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			a.addText(getTagValue(tabPane.getLabel()));
 
 			for (IconTagHandler iconTag : tabPane.getIconTags()) {
-				if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+				if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
 					a.addText(" ");
 					a.addTag(iconTag.executeTag());
 				}
@@ -232,17 +233,17 @@ public final class TabTagHandler extends SmartTagHandler {
 		if (input != null) {
 			input.addAttribute("value", tabVal);
 
-			appendScript(id, getTabFunction());			
+			appendScript(getTabFunction());			
 			if (ajax) {
-				appendScript(id, getTabPaneFunction());
+				appendScript(getTabPaneFunction());
 			}
 		}
 
 		if (onShow != null) {
-			appendScript(id, getBindFunction(id, "show.bs.tab", new StringBuilder(onShow)));
+			appendScript(getBindFunction(id, "show.bs.tab", new StringBuilder(onShow)));
 		}
 		if (onHide != null) {
-			appendScript(id, getBindFunction(id, "hide.bs.tab", new StringBuilder(onHide)));
+			appendScript(getBindFunction(id, "hide.bs.tab", new StringBuilder(onHide)));
 		}
 
 		return tab;
@@ -281,7 +282,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			.addAttribute("aria-expanded", "false");
 		
 		for (IconTagHandler iconTag : dropPane.getIconTags()) {
-			if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
 				dropA.addTag(iconTag.executeTag());
 				dropA.addText(" ");
 			}
@@ -290,7 +291,7 @@ public final class TabTagHandler extends SmartTagHandler {
 		dropA.addText(getTagValue(dropPane.getLabel()));
 		
 		for (IconTagHandler iconTag : dropPane.getIconTags()) {
-			if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
 				dropA.addText(" ");
 				dropA.addTag(iconTag.executeTag());
 			}

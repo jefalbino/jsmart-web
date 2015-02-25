@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.JsonAjax;
 import com.jsmart5.framework.json.JsonParam;
 import com.jsmart5.framework.manager.SmartTagHandler;
@@ -45,6 +46,10 @@ public final class ListTagHandler extends SmartTagHandler {
 	private String values;
 
 	private String selectValue;
+	
+	private Integer scrollSize;
+	
+	private Integer maxHeight;
 
 	private final List<RowTagHandler> rows;
 
@@ -54,7 +59,15 @@ public final class ListTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (scrollSize != null && scrollSize <= 0) {
+			throw InvalidAttributeException.fromConstraint("list", "scrollSize", "greater than zero");
+		}
+		if (maxHeight != null && maxHeight <= 0) {
+			throw InvalidAttributeException.fromConstraint("list", "maxHeight", "greater than zero");
+		}
+		if (scrollSize != null && maxHeight == null) {
+			throw InvalidAttributeException.fromConflict("list", "maxHeight", "Attribute [maxHeight] must be specified");
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -76,8 +89,14 @@ public final class ListTagHandler extends SmartTagHandler {
 		Ul ul = new Ul();
 		ul.addAttribute("id", id)
 			.addAttribute("style", style)
+			.addAttribute("style", maxHeight != null ? "max-height: " + maxHeight + " px;" : null)
 			.addAttribute("class", Bootstrap.LIST_GROUP)
 			.addAttribute("class", styleClass);
+
+		if (scrollSize != null) {
+			ul.addAttribute("style", "overflow: auto;")
+				.addAttribute("scroll-size", scrollSize);
+		}
 
 		appendEvent(ul);
 
@@ -105,7 +124,11 @@ public final class ListTagHandler extends SmartTagHandler {
 		appendDelegateBind(id, selectValue != null ? "a" : "li");
 
 		if (selectValue != null) {
-			appendScript(id, getAjaxFunction());
+			appendScript(getAjaxFunction());
+		}
+		
+		if (scrollSize != null) {
+			appendScript(getScrollFunction());
 		}
 
 		return ul;
@@ -122,6 +145,16 @@ public final class ListTagHandler extends SmartTagHandler {
 		builder.append(JSMART_LIST.format(getJsonValue(jsonAjax)));
 		return getDelegateFunction(id, "a", Event.CLICK.name(), builder);
 	}
+	
+	private StringBuilder getScrollFunction() {
+		JsonAjax jsonAjax = new JsonAjax();
+		jsonAjax.setId(id);
+		jsonAjax.setMethod("post");
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_LISTSCROLL.format(getJsonValue(jsonAjax)));
+		return getBindFunction(id, Event.SCROLL.name(), builder);
+	}
 
 	void addRow(RowTagHandler row) {
 		rows.add(row);
@@ -137,6 +170,14 @@ public final class ListTagHandler extends SmartTagHandler {
 
 	public void setVar(String var) {
 		this.var = var;
+	}
+
+	public void setScrollSize(Integer scrollSize) {
+		this.scrollSize = scrollSize;
+	}
+
+	public void setMaxHeight(Integer maxHeight) {
+		this.maxHeight = maxHeight;
 	}
 
 }

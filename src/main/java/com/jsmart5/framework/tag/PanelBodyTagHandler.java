@@ -64,9 +64,9 @@ public final class PanelBodyTagHandler extends SmartTagHandler {
 
 		Tag content = null;
 
-		if (Type.FIELDSET.name().equalsIgnoreCase(type)) {
+		if (Type.FIELDSET.equalsIgnoreCase(type)) {
 			content = new FieldSet();
-		} else if (Type.SECTION.name().equalsIgnoreCase(type)) {
+		} else if (Type.SECTION.equalsIgnoreCase(type)) {
 			content = new Section();
 		} else {
 			content = new Div();

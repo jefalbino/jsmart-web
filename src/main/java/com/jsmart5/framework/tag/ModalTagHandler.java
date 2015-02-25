@@ -82,9 +82,9 @@ public final class ModalTagHandler extends SmartTagHandler {
 		modalDialog.addAttribute("class", Bootstrap.MODAL_DIALOG)
 			.addAttribute("style", style);
 		
-		if (Size.SMALL.name().equalsIgnoreCase(size)) {
+		if (Size.SMALL.equalsIgnoreCase(size)) {
 			modalDialog.addAttribute("class", Bootstrap.MODAL_SMALL);
-		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.equalsIgnoreCase(size)) {
 			modalDialog.addAttribute("class", Bootstrap.MODAL_LARGE);
 		}
 
@@ -128,14 +128,14 @@ public final class ModalTagHandler extends SmartTagHandler {
 		}
 		
 		if (onShow != null) {
-			appendScript(id, getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
+			appendScript(getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
 		}
 		if (onHide != null) {
-			appendScript(id, getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
+			appendScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
 		}
 
 		if (opened) {
-			appendScript(id, new StringBuilder(JSMART_DIALOG.format(id)));
+			appendScript(new StringBuilder(JSMART_DIALOG.format(id)));
 		}
 		return modal;
 	}

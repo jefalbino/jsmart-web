@@ -49,8 +49,8 @@ public enum Output {
 	}
 
 	public static boolean validateHeader(String header) {
-		return H1.name().equalsIgnoreCase(header) || H2.name().equalsIgnoreCase(header) || H3.name().equalsIgnoreCase(header)
-				|| H4.name().equalsIgnoreCase(header) || H5.name().equalsIgnoreCase(header) || H6.name().equalsIgnoreCase(header);
+		return H1.equalsIgnoreCase(header) || H2.equalsIgnoreCase(header) || H3.equalsIgnoreCase(header)
+				|| H4.equalsIgnoreCase(header) || H5.equalsIgnoreCase(header) || H6.equalsIgnoreCase(header);
 	}
 
 	public static String[] getValues() {
@@ -73,5 +73,9 @@ public enum Output {
 		values[4] = H5.name().toLowerCase();
 		values[5] = H6.name().toLowerCase();
 		return values;
+	}
+	
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
 	}
 }

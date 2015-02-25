@@ -56,17 +56,17 @@ public final class OutputListTagHandler extends SmartTagHandler {
 		
 		String lookVal = null;
 
-		if (Look.PRIMARY.name().equalsIgnoreCase(look)) {
+		if (Look.PRIMARY.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_PRIMARY;
-		} else if (Look.SUCCESS.name().equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_SUCCESS;
-		} else if (Look.INFO.name().equalsIgnoreCase(look)) {
+		} else if (Look.INFO.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_INFO;
-		} else if (Look.WARNING.name().equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_WARNING;
-		} else if (Look.DANGER.name().equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_DANGER;
-		} else if (Look.MUTED.name().equalsIgnoreCase(look)) {
+		} else if (Look.MUTED.equalsIgnoreCase(look)) {
 			lookVal = Bootstrap.TEXT_MUTED;
 		}
 

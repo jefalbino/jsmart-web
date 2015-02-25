@@ -94,13 +94,13 @@ public final class RowTagHandler extends SmartTagHandler {
 		
 		String lookVal = (String) getTagValue(look);
 
-		if (Look.SUCCESS.name().equalsIgnoreCase(lookVal)) {
+		if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_SUCCESS);
-		} else if (Look.INFO.name().equalsIgnoreCase(lookVal)) {
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_INFO);
-		} else if (Look.WARNING.name().equalsIgnoreCase(lookVal)) {
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_WARNING);
-		} else if (Look.DANGER.name().equalsIgnoreCase(lookVal)) {
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_DANGER);
 		}
 

@@ -33,6 +33,7 @@ import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.util.SmartUtils;
@@ -98,13 +99,13 @@ public final class LinkTagHandler extends SmartTagHandler {
 			linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP)
 				.addAttribute("role", "group");
 			
-			if (Size.XSMALL.name().equalsIgnoreCase(size)) {
+			if (Size.XSMALL.equalsIgnoreCase(size)) {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-			} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
+			} else if (Size.SMALL.equalsIgnoreCase(size)) {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-			} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+			} else if (Size.LARGE.equalsIgnoreCase(size)) {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
-			} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
+			} else if (Size.JUSTIFIED.equalsIgnoreCase(size)) {
 				linkGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
 			}
 			
@@ -138,7 +139,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 		link.addAttribute("href", href);
 		
 		for (IconTagHandler iconTag : iconTags) {
-			if (IconTagHandler.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
 				link.addTag(iconTag.executeTag());
 				link.addText(" ");
 			}
@@ -162,19 +163,19 @@ public final class LinkTagHandler extends SmartTagHandler {
 		}
 		
 		for (IconTagHandler iconTag : iconTags) {
-			if (IconTagHandler.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
 				link.addText(" ");
 				link.addTag(iconTag.executeTag());
 			}
 		}
 
-		if (Size.XSMALL.name().equalsIgnoreCase(size)) {
+		if (Size.XSMALL.equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_XSMALL);
-		} else if (Size.SMALL.name().equalsIgnoreCase(size)) {
+		} else if (Size.SMALL.equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_SMALL);
-		} else if (Size.LARGE.name().equalsIgnoreCase(size)) {
+		} else if (Size.LARGE.equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_LARGE);
-		} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
+		} else if (Size.JUSTIFIED.equalsIgnoreCase(size)) {
 			link.addAttribute("class", Bootstrap.BUTTON_JUSTIFIED);
 		}
 
@@ -200,10 +201,10 @@ public final class LinkTagHandler extends SmartTagHandler {
 		link.addAttribute("class", styleClass);
 		
 		if (action != null) {		
-			appendScript(id, getFunction(url));
+			appendScript(getFunction(url));
 		} else {
 			if (beforeSend != null) {
-				appendScript(id, getExecFunction());
+				appendScript(getExecFunction());
 			}
 		}
 
