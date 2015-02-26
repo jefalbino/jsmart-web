@@ -25,16 +25,16 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.config.SmartConstants;
+import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Look;
 
-public final class RowTagHandler extends SmartTagHandler {
+public final class RowTagHandler extends TagHandler {
 	
 	private String look;
 
@@ -42,7 +42,9 @@ public final class RowTagHandler extends SmartTagHandler {
 	
 	private String selectValue;
 	
-	private Long selectIndex;
+	private Integer selectIndex;
+	
+	private Integer scrollIndex;
 	
 	private HeaderTagHandler header;
 
@@ -59,7 +61,7 @@ public final class RowTagHandler extends SmartTagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !look.startsWith(SmartConstants.START_EL) && !Look.validateBasic(look)) {
+		if (look != null && !look.startsWith(Constants.START_EL) && !Look.validateBasic(look)) {
 			throw InvalidAttributeException.fromPossibleValues("row", "look", Look.getBasicValues());
 		}
 	}
@@ -71,10 +73,6 @@ public final class RowTagHandler extends SmartTagHandler {
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(sw);
-		}
-		
-		if (id == null) {
-			id = getRandonId();
 		}
 
 		Tag tag = null;
@@ -90,7 +88,8 @@ public final class RowTagHandler extends SmartTagHandler {
 			.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
 			.addAttribute("class", styleClass)
-			.addAttribute("list-index", selectIndex);
+			.addAttribute("list-index", selectIndex)
+			.addAttribute("scroll-index", scrollIndex);
 		
 		String lookVal = (String) getTagValue(look);
 
@@ -125,7 +124,11 @@ public final class RowTagHandler extends SmartTagHandler {
 		this.selectValue = selectValue;
 	}
 	
-	void setSelectIndex(Long selectIndex) {
+	void setScrollIndex(Integer scrollIndex) {
+		this.scrollIndex = scrollIndex;
+	}
+	
+	void setSelectIndex(Integer selectIndex) {
 		this.selectIndex = selectIndex;
 	}
 

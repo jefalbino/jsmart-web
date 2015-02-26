@@ -30,12 +30,12 @@ import javax.servlet.jsp.tagext.JspTag;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class DateTagHandler extends SmartTagHandler {
+public final class DateTagHandler extends TagHandler {
 
 	private boolean opened;
 

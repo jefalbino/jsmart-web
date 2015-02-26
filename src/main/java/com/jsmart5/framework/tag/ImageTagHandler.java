@@ -24,7 +24,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.FigCaption;
 import com.jsmart5.framework.tag.html.Figure;
@@ -33,7 +33,7 @@ import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Type;
 import com.jsmart5.framework.util.SmartImage;
 
-public final class ImageTagHandler extends SmartTagHandler {
+public final class ImageTagHandler extends TagHandler {
 
 	private String lib;
 
@@ -66,9 +66,7 @@ public final class ImageTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("image");
 
 		String libValue = (String) getTagValue(lib);
 		String nameValue = (String) getTagValue(name);

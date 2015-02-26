@@ -766,6 +766,28 @@
             <required>false</required>
         </attribute>
     </tag>
+    
+    <tag>
+        <name>badge</name>
+        <tag-class>com.jsmart5.framework.tag.BadgeTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required> 
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+		</attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+		</attribute>
+        <attribute>
+            <name>label</name>
+            <required>true</required>
+        </attribute>
+    </tag>
 
     <tag>
         <name>image</name>
@@ -2669,22 +2691,6 @@
         <body-content>empty</body-content>
         <attribute>
             <name>id</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>label</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>image</name>
-            <required>false</required>
-        </attribute>
-		<attribute>
-            <name>html</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>size</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2693,6 +2699,14 @@
         </attribute>
          <attribute>
             <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>label</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>type</name>
             <required>false</required>
         </attribute>
     </tag>

@@ -24,15 +24,15 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JsonParam;
-import com.jsmart5.framework.json.JsonRest;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Param;
+import com.jsmart5.framework.json.Rest;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class RestTagHandler extends SmartTagHandler {
+public final class RestTagHandler extends TagHandler {
 
 	private static final String CONTENT_TYPE_JSON = "json";
 

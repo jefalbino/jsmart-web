@@ -25,7 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Button;
 import com.jsmart5.framework.tag.html.Div;
@@ -35,7 +35,7 @@ import com.jsmart5.framework.tag.type.Size;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class ModalTagHandler extends SmartTagHandler {
+public final class ModalTagHandler extends TagHandler {
 
 	private boolean opened;
 

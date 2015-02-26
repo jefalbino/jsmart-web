@@ -23,12 +23,12 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.SmartImage;
 import com.jsmart5.framework.util.SmartUtils;
 
-public final class CarouselItemTagHandler extends SmartTagHandler {
+public final class CarouselItemTagHandler extends TagHandler {
 
 	private String lib;
 

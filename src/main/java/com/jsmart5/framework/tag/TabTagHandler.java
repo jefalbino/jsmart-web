@@ -27,9 +27,9 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.json.JsonParam;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Param;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
@@ -44,13 +44,11 @@ import com.jsmart5.framework.tag.type.Type;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class TabTagHandler extends SmartTagHandler {
+public final class TabTagHandler extends TagHandler {
 	
 	private String tabStyle;
 
 	private String tabClass;
-
-	private boolean ajax;
 
 	private String tabValue;
 
@@ -88,9 +86,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("tab");
 
 		Div tab = new Div();
 		tab.addAttribute("id", id)
@@ -140,16 +136,14 @@ public final class TabTagHandler extends SmartTagHandler {
 
 		for (TabPaneTagHandler tabPane : tabPanes) {
 
-			if (tabPane.getId() == null) {
-				tabPane.setId(getRandonId());
-			}
-
 			// The execute tag must be called first to decide if there are drop down children
 			StringWriter swPane = new StringWriter();
 			tabPane.setOutputWriter(swPane);
 			tabPane.executeTag();
 
-			String liId = getRandonId();
+			setRandomId(tabPane, "tabpane");
+
+			String liId = getRandomId();
 
 			Li li = new Li();
 			li.addAttribute("id", liId)
@@ -250,9 +244,7 @@ public final class TabTagHandler extends SmartTagHandler {
 	}
 
 	private Li createDropTab(Ul dropUl, TabPaneTagHandler dropPane) throws JspException, IOException {
-		if (dropPane.getId() == null) {
-			dropPane.setId(getRandonId());
-		}
+		setRandomId(dropPane, "tabpane");
 
 		if (dropPane.getHeader() != null) {
 			Li headerLi = new Li();
@@ -262,7 +254,7 @@ public final class TabTagHandler extends SmartTagHandler {
 			dropUl.addTag(headerLi);
 		}
 		
-		String dropLiId = getRandonId();
+		String dropLiId = getRandomId();
 		
 		Li dropLi = new Li();
 		dropLi.addAttribute("id", dropLiId)
@@ -341,24 +333,24 @@ public final class TabTagHandler extends SmartTagHandler {
 	}
 
 	private StringBuilder getTabFunction() {
-		JsonAjax jsonAjax = getJsonAjax();
+		Ajax jsonAjax = getJsonAjax();
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_TAB.format(getJsonValue(jsonAjax)));
 		return builder;
 	}
 
 	private StringBuilder getTabPaneFunction() {
-		JsonAjax jsonAjax = getJsonAjax();
+		Ajax jsonAjax = getJsonAjax();
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_TABPANE.format(getJsonValue(jsonAjax)));
 		return getDelegateFunction(id, "ul li", Event.CLICK.name(), builder);
 	}
 	
-	private JsonAjax getJsonAjax() {
-		JsonAjax jsonAjax = new JsonAjax();
+	private Ajax getJsonAjax() {
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
-		jsonAjax.addParam(new JsonParam(getTagName(J_TAG, tabValue), ""));
+		jsonAjax.addParam(new Param(getTagName(J_TAG, tabValue), ""));
 		return jsonAjax;
 	}
 
@@ -372,10 +364,6 @@ public final class TabTagHandler extends SmartTagHandler {
 
 	public void setTabClass(String tabClass) {
 		this.tabClass = tabClass;
-	}
-
-	public void setAjax(boolean ajax) {
-		this.ajax = ajax;
 	}
 
 	public void setTabValue(String tabValue) {

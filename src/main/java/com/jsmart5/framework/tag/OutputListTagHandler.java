@@ -24,14 +24,14 @@ import java.util.Collection;
 import javax.servlet.jsp.JspException;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.tag.type.Look;
 
-public final class OutputListTagHandler extends SmartTagHandler {
+public final class OutputListTagHandler extends TagHandler {
 
 	private Object values;
 	

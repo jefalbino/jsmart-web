@@ -31,7 +31,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
-import com.jsmart5.framework.manager.SmartTableTagHandler;
+import com.jsmart5.framework.manager.TableExpressionHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
@@ -71,7 +71,7 @@ import static com.jsmart5.framework.tag.js.JsConstants.*;
  *    "filters": [{"name": "", "field": "", "value": ""}, ...]
  * }
  */
-public final class TableTagHandler extends SmartTableTagHandler {
+public final class TableTagHandler extends TableExpressionHandler {
 
 	private static final String MULTI_SELECT_ALL_ID = "_multi_select_all";
 

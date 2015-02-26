@@ -126,6 +126,10 @@ public interface Bootstrap {
 	public static final String SR_ONLY = "sr-only";
 	
 	public static final String GLYPHICON = "glyphicon";
+
+	public static final String GLYPHICON_REFRESH = "glyphicon-refresh";
+	
+	public static final String GLYPHICON_ANIMATE = "glyphicon-animate";
 	
 	public static final String ACTIVE = "active";
 	

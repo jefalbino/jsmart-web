@@ -25,7 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.FieldSet;
@@ -34,7 +34,7 @@ import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Type;
 
-public final class PanelBodyTagHandler extends SmartTagHandler {
+public final class PanelBodyTagHandler extends TagHandler {
 
 	private String align;
 
@@ -58,9 +58,7 @@ public final class PanelBodyTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("panelbody");
 
 		Tag content = null;
 

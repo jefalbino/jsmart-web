@@ -23,10 +23,10 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class ParamTagHandler extends SmartTagHandler {
+public final class ParamTagHandler extends TagHandler {
 
 	private String name;
 
@@ -40,11 +40,11 @@ public final class ParamTagHandler extends SmartTagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof SmartTagHandler) {
+		if (parent instanceof TagHandler) {
 
 			String key = getTagName(J_TAG, name);
 			Object obj = getTagValue(value);
-			putParam((SmartTagHandler) parent, key, obj);
+			((TagHandler) parent).addParam(key, obj);
 		}
 		return true;
 	}

@@ -24,14 +24,14 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.TextArea;
 
-public final class TextAreaTagHandler extends SmartTagHandler {
+public final class TextAreaTagHandler extends TagHandler {
 
 	private Integer rows;
 
@@ -65,9 +65,7 @@ public final class TextAreaTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("textarea");
 
 		Div formGroup = null;
 

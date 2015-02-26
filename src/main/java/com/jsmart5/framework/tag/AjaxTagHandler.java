@@ -24,15 +24,15 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.json.JsonParam;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Param;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class AjaxTagHandler extends SmartTagHandler {
+public final class AjaxTagHandler extends TagHandler {
 
 	private String event;
 
@@ -63,9 +63,9 @@ public final class AjaxTagHandler extends SmartTagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof SmartTagHandler) {
+		if (parent instanceof TagHandler) {
 
-			((SmartTagHandler) parent).addAjaxTag(this);
+			((TagHandler) parent).addAjaxTag(this);
 		}
 		return true;
 	}
@@ -76,8 +76,8 @@ public final class AjaxTagHandler extends SmartTagHandler {
 		return null;
 	}
 	
-	private JsonAjax getJsonAjax(String id) {
-		JsonAjax jsonAjax = new JsonAjax();
+	private Ajax getJsonAjax(String id) {
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setTimeout(timeout);
 
@@ -86,7 +86,7 @@ public final class AjaxTagHandler extends SmartTagHandler {
 			jsonAjax.setAction(getTagName(J_SBMT, action));
 
 			for (String name : params.keySet()) {						
-				jsonAjax.addParam(new JsonParam(name, params.get(name)));
+				jsonAjax.addParam(new Param(name, params.get(name)));
 			}
 		} else if (update != null) {
 			jsonAjax.setMethod("get");
@@ -110,14 +110,14 @@ public final class AjaxTagHandler extends SmartTagHandler {
 	}
 
 	public StringBuilder getBindFunction(String id) {
-		JsonAjax jsonAjax = getJsonAjax(id);
+		Ajax jsonAjax = getJsonAjax(id);
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 		return getBindFunction(id, event, builder);
 	}
 
 	public StringBuilder getDelegateFunction(String id, String child) {
-		JsonAjax jsonAjax = getJsonAjax(id);
+		Ajax jsonAjax = getJsonAjax(id);
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 		return getDelegateFunction(id, child, event, builder);

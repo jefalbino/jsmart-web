@@ -24,10 +24,10 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class EditTagHandler extends SmartTagHandler {
+public final class EditTagHandler extends TagHandler {
 
 	private static final String INPUT = "input";
 

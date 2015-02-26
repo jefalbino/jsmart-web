@@ -25,7 +25,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
@@ -34,7 +34,7 @@ import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.tag.type.Type;
 
-public final class InputTagHandler extends SmartTagHandler {
+public final class InputTagHandler extends TagHandler {
 	
 	private String type;
 
@@ -70,7 +70,7 @@ public final class InputTagHandler extends SmartTagHandler {
 
 	private boolean disabled;
 
-	private SmartTagHandler childAddOn;
+	private TagHandler childAddOn;
 
 	@Override
 	public void validateTag() throws JspException {
@@ -106,9 +106,7 @@ public final class InputTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("input");
 
 		Div formGroup = null;
 		Div inputGroup = null;
@@ -228,7 +226,7 @@ public final class InputTagHandler extends SmartTagHandler {
 		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : input;
 	}
 	
-	void setChildAddOn(SmartTagHandler childAddOn) {
+	void setChildAddOn(TagHandler childAddOn) {
 		this.childAddOn = childAddOn;
 	}
 

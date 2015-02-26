@@ -1,6 +1,7 @@
 {
 	"styles": [
-		"<link rel=\"stylesheet\" type=\"text/css\" href=\"jsmart5/bootstrap-3.3.2/css/bootstrap.min.css\"/>"
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"jsmart5/bootstrap-3.3.2/css/bootstrap.min.css\"/>",
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"jsmart5/css/jsmart5.css\"/>"
 		],
 	"scripts": [
 		"<script type=\"text/javascript\" src=\"jsmart5/jquery-1.11.2/jquery-1.11.2.js\"></script>",

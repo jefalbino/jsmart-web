@@ -25,15 +25,14 @@ import java.util.Collection;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
-import com.jsmart5.framework.manager.SmartValidateTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class CheckTagHandler extends SmartTagHandler {
+public final class CheckTagHandler extends TagHandler {
 
 	static final String CHECKBOX = "checkbox";
 
@@ -167,10 +166,6 @@ public final class CheckTagHandler extends SmartTagHandler {
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
-	}
-
-	void setValidator(SmartValidateTagHandler validator) {
-		this.validator = validator;
 	}
 
 }

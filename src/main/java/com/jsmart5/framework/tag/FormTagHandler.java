@@ -25,7 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.FieldSet;
 import com.jsmart5.framework.tag.html.Form;
@@ -37,7 +37,7 @@ import com.jsmart5.framework.tag.type.Size;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class FormTagHandler extends SmartTagHandler {
+public final class FormTagHandler extends TagHandler {
 
 	private String method;
 	
@@ -71,9 +71,7 @@ public final class FormTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("form");
 
 		Form form = new Form();
 		form.addAttribute("id", id)

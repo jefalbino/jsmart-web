@@ -24,10 +24,10 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class CaptchaTagHandler extends SmartTagHandler {
+public final class CaptchaTagHandler extends TagHandler {
 
 	private static final String DEFAULT_LENGTH = "6";
 

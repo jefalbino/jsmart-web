@@ -26,10 +26,10 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
-public class TreeTagHandler extends SmartTagHandler {
+public class TreeTagHandler extends TagHandler {
 
 	@Override
 	public void validateTag() throws JspException {

@@ -21,17 +21,18 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Look;
 
-public final class IconTagHandler extends SmartTagHandler {
+public final class IconTagHandler extends TagHandler {
 
 	private String name;
 
@@ -42,9 +43,9 @@ public final class IconTagHandler extends SmartTagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof SmartTagHandler) {
+		if (parent instanceof TagHandler) {
 
-			((SmartTagHandler) parent).addIconTag(this);
+			((TagHandler) parent).addIconTag(this);
 			return false;
 		}
 		return true;
@@ -63,9 +64,12 @@ public final class IconTagHandler extends SmartTagHandler {
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 		
-		if (id == null) {
-			id = getRandonId();
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
 		}
+
+		setRandomId("icon");
 
 		Span span = new Span();
 		span.addAttribute("id", id)

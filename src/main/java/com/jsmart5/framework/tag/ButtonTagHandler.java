@@ -28,9 +28,9 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.json.JsonParam;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Param;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Button;
 import com.jsmart5.framework.tag.html.Div;
@@ -41,7 +41,7 @@ import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Size;
 
-public final class ButtonTagHandler extends SmartTagHandler {
+public final class ButtonTagHandler extends TagHandler {
 
 	private String look;
 
@@ -54,8 +54,6 @@ public final class ButtonTagHandler extends SmartTagHandler {
 	private String size;
 
 	private String action;
-	
-	private boolean ajax;
 
 	private String update;
 
@@ -115,9 +113,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("button");
 
 		Div buttonGroup = null;
 
@@ -280,7 +276,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 	}
 	
 	private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
-		JsonAjax jsonAjax = new JsonAjax();
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 
 		if (action != null) {
@@ -288,7 +284,7 @@ public final class ButtonTagHandler extends SmartTagHandler {
 			jsonAjax.setAction(getTagName(J_SBMT, action));
 
 			for (String name : params.keySet()) {						
-				jsonAjax.addParam(new JsonParam(name, params.get(name)));
+				jsonAjax.addParam(new Param(name, params.get(name)));
 			}
 		} else if (update != null) {
 			jsonAjax.setMethod("get");
@@ -340,10 +336,6 @@ public final class ButtonTagHandler extends SmartTagHandler {
 
 	public void setAction(String action) {
 		this.action = action;
-	}
-
-	public void setAjax(boolean ajax) {
-		this.ajax = ajax;
 	}
 
 	public void setUpdate(String update) {

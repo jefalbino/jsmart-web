@@ -24,12 +24,12 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class SwitchTagHandler extends SmartTagHandler {
+public final class SwitchTagHandler extends TagHandler {
 
 	private String value;
 
@@ -38,8 +38,6 @@ public final class SwitchTagHandler extends SmartTagHandler {
 	private String labelOn;
 
 	private String labelOff;
-
-	private boolean ajax;
 
 	private boolean disabled;
 
@@ -196,10 +194,6 @@ public final class SwitchTagHandler extends SmartTagHandler {
 
 	public void setLabelOff(String labelOff) {
 		this.labelOff = labelOff;
-	}
-
-	public void setAjax(boolean ajax) {
-		this.ajax = ajax;
 	}
 
 	public void setDisabled(boolean disabled) {

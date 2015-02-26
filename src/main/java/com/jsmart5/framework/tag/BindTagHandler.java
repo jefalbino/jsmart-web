@@ -24,14 +24,14 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.json.JsonBind;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Bind;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class BindTagHandler extends SmartTagHandler {
+public final class BindTagHandler extends TagHandler {
 
 	private String event;
 
@@ -52,9 +52,9 @@ public final class BindTagHandler extends SmartTagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof SmartTagHandler) {
+		if (parent instanceof TagHandler) {
 
-			((SmartTagHandler) parent).addBindTag(this);
+			((TagHandler) parent).addBindTag(this);
 		}
 		return false;
 	}
@@ -65,22 +65,22 @@ public final class BindTagHandler extends SmartTagHandler {
 		return null;
 	}
 	
-	private JsonBind getJsonBind(String id) {
-		JsonBind jsonBind = new JsonBind();
+	private Bind getJsonBind(String id) {
+		Bind jsonBind = new Bind();
 		jsonBind.setTimeout((Integer) getTagValue(timeout));
 		jsonBind.setExecute((String) getTagValue(execute));
 		return jsonBind;
 	}
 
 	public StringBuilder getBindFunction(String id) {
-		JsonBind jsonBind = getJsonBind(id);
+		Bind jsonBind = getJsonBind(id);
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
 		return getBindFunction(id, event, builder);
 	}
 
 	public StringBuilder getDelegateFunction(String id, String child) {
-		JsonBind jsonBind = getJsonBind(id);
+		Bind jsonBind = getJsonBind(id);
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
 		return getDelegateFunction(id, child, event, builder);

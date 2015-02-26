@@ -34,8 +34,7 @@ public enum Event {
 	KEYPRESS,
 	KEYUP,
 	FOCUS,
-	SUBMIT,
-	SCROLL;
+	SUBMIT;
 
 	public static boolean validate(String event) {
 		try {

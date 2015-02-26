@@ -23,12 +23,12 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class ProgressTagHandler extends SmartTagHandler {
+public final class ProgressTagHandler extends TagHandler {
 
 	private static final String PROGRESS_FRAME = "_progress_frame";
 
@@ -39,8 +39,6 @@ public final class ProgressTagHandler extends SmartTagHandler {
 	private static final Integer DEFAULT_MAX = 100;
 
 	private static final Integer DEFAULT_MIN = 0;
-
-	private boolean ajax;
 
 	private boolean disabled;
 
@@ -194,10 +192,6 @@ public final class ProgressTagHandler extends SmartTagHandler {
 //
 //		appendScriptDeprecated(new StringBuilder(JSMART_PROGRESS.format(id)));
 		return null;
-	}
-
-	public void setAjax(boolean ajax) {
-		this.ajax = ajax;
 	}
 
 	public void setDisabled(boolean disabled) {

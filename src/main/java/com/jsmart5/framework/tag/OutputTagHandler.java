@@ -25,7 +25,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
@@ -34,7 +34,7 @@ import com.jsmart5.framework.tag.type.Case;
 import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Output;
 
-public final class OutputTagHandler extends SmartTagHandler {
+public final class OutputTagHandler extends TagHandler {
 
 	private Object value;
 	
@@ -80,9 +80,7 @@ public final class OutputTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 		
-		if ((!ajaxTags.isEmpty() || !bindTags.isEmpty()) && id == null) {
-			id = getRandonId();
-		}
+		setRandomId("output");
 
 		Tag tag = null;
 

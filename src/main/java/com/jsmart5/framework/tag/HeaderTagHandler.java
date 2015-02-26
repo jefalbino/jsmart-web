@@ -25,13 +25,13 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Output;
 
-public final class HeaderTagHandler extends SmartTagHandler {
+public final class HeaderTagHandler extends TagHandler {
 	
 	private String title;
 	
@@ -52,7 +52,7 @@ public final class HeaderTagHandler extends SmartTagHandler {
 			((PanelTagHandler) parent).setHeader(this);
 			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -65,16 +65,14 @@ public final class HeaderTagHandler extends SmartTagHandler {
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
-		SmartTagHandler parent = (SmartTagHandler) getParent();
+		TagHandler parent = (TagHandler) getParent();
 
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(null);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("header");
 
 		Tag header = null;
 		if (type != null) {
@@ -123,8 +121,8 @@ public final class HeaderTagHandler extends SmartTagHandler {
 			}
 		}
 		
-		appendAjax(parent.getId());
-		appendBind(parent.getId());
+		appendAjax(id);
+		appendBind(id);
 
 		return header;
 	}

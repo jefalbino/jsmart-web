@@ -24,12 +24,19 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
-import com.jsmart5.framework.manager.SmartValidateTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Look;
 
-public final class ValidateTagHandler extends SmartValidateTagHandler {
+public final class ValidateTagHandler extends TagHandler {
+
+	private String text;
+
+	private String maxLength;
+
+	private Integer minLength;
+
+	private String look = Look.ERROR.name().toLowerCase();
 
 	@Override
 	public void validateTag() throws JspException {
@@ -41,9 +48,10 @@ public final class ValidateTagHandler extends SmartValidateTagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof SmartTagHandler) {
+		if (parent instanceof TagHandler) {
 
-			setValidator((SmartTagHandler) parent, this);
+			((TagHandler) parent).setValidator(this);
+			return false;
 		}
 		return true;
 	}
@@ -54,4 +62,35 @@ public final class ValidateTagHandler extends SmartValidateTagHandler {
 		return null;
 	}
 
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public String getLook() {
+		return look;
+	}
+
+	public void setLook(String look) {
+		this.look = look;
+	}
+
+	public String getMaxLength() {
+		return maxLength;
+	}
+
+	public void setMaxLength(String maxLength) {
+		this.maxLength = maxLength;
+	}
+
+	public Integer getMinLength() {
+		return minLength;
+	}
+
+	public void setMinLength(Integer minLength) {
+		this.minLength = minLength;
+	}
 }

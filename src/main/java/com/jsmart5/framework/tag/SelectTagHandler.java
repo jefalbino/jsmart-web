@@ -26,8 +26,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Label;
@@ -38,15 +38,13 @@ import com.jsmart5.framework.tag.type.Size;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class SelectTagHandler extends SmartTagHandler {
+public final class SelectTagHandler extends TagHandler {
 	
 	private static final String SMALL = "small";
 
 	private static final String LARGE = "large";
 
 	private String selectValues;
-
-	private boolean ajax;
 
 	private boolean multiple;
 
@@ -64,7 +62,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 	private List<OptionTagHandler> options;
 
-	private SmartTagHandler childAddOn;
+	private TagHandler childAddOn;
 
 	public SelectTagHandler() {
 		options = new ArrayList<OptionTagHandler>();
@@ -86,9 +84,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("select");
 
 		Div formGroup = null;
 		Div inputGroup = null;
@@ -199,7 +195,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 	}
 
 	private StringBuilder getFunction() {
-		JsonAjax jsonAjax = new JsonAjax();
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
 
@@ -208,7 +204,7 @@ public final class SelectTagHandler extends SmartTagHandler {
 		return getBindFunction(id, Event.CHANGE.name(), builder);
 	}
 	
-	void setChildAddOn(SmartTagHandler childAddOn) {
+	void setChildAddOn(TagHandler childAddOn) {
 		this.childAddOn = childAddOn;
 	}
 
@@ -218,10 +214,6 @@ public final class SelectTagHandler extends SmartTagHandler {
 
 	public void setSelectValues(String selectValues) {
 		this.selectValues = selectValues;
-	}
-
-	public void setAjax(boolean ajax) {
-		this.ajax = ajax;
 	}
 
 	public void setMultiple(boolean multiple) {

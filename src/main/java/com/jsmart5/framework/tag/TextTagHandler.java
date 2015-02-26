@@ -25,10 +25,10 @@ import java.util.regex.Pattern;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class TextTagHandler extends SmartTagHandler {
+public final class TextTagHandler extends TagHandler {
 	
 	private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
 

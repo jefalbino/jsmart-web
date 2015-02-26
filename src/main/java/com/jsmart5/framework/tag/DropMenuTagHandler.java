@@ -29,9 +29,9 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.json.JsonParam;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Param;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Li;
@@ -40,7 +40,7 @@ import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
 
-public final class DropMenuTagHandler extends SmartTagHandler {
+public final class DropMenuTagHandler extends TagHandler {
 
 	private String align;
 	
@@ -88,9 +88,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("dropmenu");
 
 		Ul ul = new Ul();
 		ul.addAttribute("id", id)
@@ -108,9 +106,9 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 		for (DropActionTagHandler dropAction : dropActions) {
 
 			if (dropAction.getId() == null) {
-				dropAction.setId(getRandonId());
+				setRandomId(dropAction, "dropaction");
 			}
-			
+
 			if (dropAction.getHeader() != null) {
 				Li headerLi = new Li();
 				headerLi.addAttribute("role", "presentation")
@@ -160,7 +158,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 	}
 	
 	private StringBuilder getFunction(DropActionTagHandler dropAction) {
-		JsonAjax jsonAjax = new JsonAjax();
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(dropAction.getId());
 
 		if (dropAction.getAction() != null) {
@@ -168,7 +166,7 @@ public final class DropMenuTagHandler extends SmartTagHandler {
 			jsonAjax.setAction(getTagName(J_SBMT, dropAction.getAction()));
 
 			for (String name : dropAction.getParams().keySet()) {						
-				jsonAjax.addParam(new JsonParam(name, dropAction.getParams().get(name)));
+				jsonAjax.addParam(new Param(name, dropAction.getParams().get(name)));
 			}
 		} else if (dropAction.getUpdate() != null) {
 			jsonAjax.setMethod("get");

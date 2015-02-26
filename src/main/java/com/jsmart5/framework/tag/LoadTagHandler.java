@@ -18,116 +18,90 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.exception.InvalidAttributeException;
+import com.jsmart5.framework.manager.TagHandler;
+import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Output;
 
-import static com.jsmart5.framework.tag.js.JsConstants.*;
-
-public final class LoadTagHandler extends SmartTagHandler {
-
-	private static final String SMALL = "small";
-
-	private static final String MEDIUM = "medium";
-
-	private static final String LARGE = "large";
+public final class LoadTagHandler extends TagHandler {
 
 	private String label;
 
-	private String image;
+	private String type;
 
-	private String html;
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof TagHandler) {
 
-	private String size;
+			((TagHandler) parent).setLoadTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
-		if (size != null && !size.equals(SMALL) && !size.equals(MEDIUM) && !size.equals(LARGE)) {
-			throw new JspException("Invalid size value for load tag. Valid values are " + SMALL + ", " + MEDIUM + ", " + LARGE);
+		if (type != null && !Output.validateHeader(type)) {
+			throw InvalidAttributeException.fromPossibleValues("load", "type", Output.getHeaderValues());
 		}
 	}
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
-//
-//		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG + "id=\"" + id + "\" ");
-//
-//		if (style != null) {
-//			builder.append("style=\"" + style + "\" ");
-//		}
-//		if (styleClass != null) {
-//			builder.append("class=\"" + styleClass + "\" ");
-//		}
-//
-//		builder.append(">");
-//
-//		if (size != null) {
-//			builder.append(OPEN_SPAN_TAG);
-//
-//			if (size.equals(LARGE)) {
-//				appendClass(builder, CSS_LOAD_LARGE);
-//
-//			} else if (size.equals(MEDIUM)) {
-//				appendClass(builder, CSS_LOAD_MEDIUM);
-//
-//			} else {
-//				appendClass(builder, CSS_LOAD_SMALL);
-//			}
-//			builder.append(">" + CLOSE_SPAN_TAG);
-//		}
-//
-//		if (image != null) {
-//			builder.append(IMG_TAG + "src=\"" + getTagValue(image) + "\" />");
-//
-//		} else if (html != null) {
-//			try {
-//				InputStream is = getResourceStream(html);
-//				if (is != null) {
-//					BufferedReader br = new BufferedReader(new InputStreamReader(is));
-//
-//					String line;
-//			    	while ((line = br.readLine()) != null) {
-//			    		builder.append(line);
-//			    	}
-//			    	br.close();
-//				}
-//			} catch (IOException ex) {
-//				throw new JspException(ex);
-//			}
-//		}
-//
-//		if (label != null) {
-//			builder.append(OPEN_LABEL_TAG + ">" + getTagValue(label) + CLOSE_LABEL_TAG); 
-//		}
-//
-//		builder.append(CLOSE_DIV_TAG);		
-//
-//		appendScriptDeprecated(new StringBuilder(JSMART_LOAD.format(id)));
-//
-//		printOutput(builder);
-		return null;
+
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}
+
+		setRandomId("load");
+		
+		Tag header = null;
+		if (type != null) {
+			header = new Tag(type);
+		} else {
+			header = new Tag(Output.H3.name().toLowerCase());
+		}
+
+		header.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("class", styleClass);
+
+		Span span = new Span();
+		span.addAttribute("refresh-icon", "")
+			.addAttribute("class", Bootstrap.GLYPHICON)
+			.addAttribute("class", Bootstrap.GLYPHICON_REFRESH)
+			.addAttribute("class", Bootstrap.GLYPHICON_ANIMATE)
+			.addAttribute("aria-hidden", "true");
+
+		header.addTag(span);
+		
+		if (label != null) { 
+			header.addText(" ")
+				.addText(getTagValue(label));
+		}
+		
+		appendAjax(id);
+		appendBind(id);
+
+		return header;
 	}
 
 	public void setLabel(String label) {
 		this.label = label;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public void setHtml(String html) {
-		this.html = html;
-	}
-
-	public void setSize(String size) {
-		this.size = size;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

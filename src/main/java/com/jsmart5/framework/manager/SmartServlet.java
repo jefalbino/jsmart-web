@@ -30,12 +30,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.jsmart5.framework.config.SmartConstants;
+import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.listener.SmartContextListener;
 import com.jsmart5.framework.util.SmartUtils;
 
-import static com.jsmart5.framework.manager.SmartExpression.*;
-import static com.jsmart5.framework.manager.SmartHandler.*;
+import static com.jsmart5.framework.manager.ExpressionHandler.*;
+import static com.jsmart5.framework.manager.BeanHandler.*;
 
 public final class SmartServlet extends HttpServlet {
 
@@ -149,7 +149,7 @@ public final class SmartServlet extends HttpServlet {
 			// Case is ajax post action, let JavaScript redirect page
 			if (SmartContext.isAjaxRequest()) {
 				if (redirectAjax) {
-					request.setAttribute(SmartConstants.REQUEST_REDIRECT_PATH_AJAX_ATTR, 
+					request.setAttribute(Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR, 
 							(responsePath.startsWith("/") ? request.getContextPath() : "") + responsePath);
 				}
 				responsePath = path;
@@ -187,7 +187,7 @@ public final class SmartServlet extends HttpServlet {
 
     	// Case is ajax post action, let JavaScript redirect page
 		if (SmartContext.isAjaxRequest()) {
-			request.setAttribute(SmartConstants.REQUEST_REDIRECT_PATH_AJAX_ATTR, 
+			request.setAttribute(Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR, 
 					(path.startsWith("/") ? request.getContextPath() : "") + path);
 		}
 

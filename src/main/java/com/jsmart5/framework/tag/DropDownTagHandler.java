@@ -23,7 +23,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
@@ -31,7 +31,7 @@ import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class DropDownTagHandler extends SmartTagHandler {
+public final class DropDownTagHandler extends TagHandler {
 
 	private String label;
 	
@@ -55,9 +55,7 @@ public final class DropDownTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("dropdown");
 
 		Tag dropDown;
 		if (navbar) {

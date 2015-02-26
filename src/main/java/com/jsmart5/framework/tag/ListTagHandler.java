@@ -20,7 +20,7 @@ package com.jsmart5.framework.tag;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,18 +28,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.adapter.ListAdapter;
+import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.json.JsonParam;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Param;
+import com.jsmart5.framework.json.Scroll;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.tag.type.Event;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class ListTagHandler extends SmartTagHandler {
+public final class ListTagHandler extends TagHandler {
 
 	private String var;
 
@@ -49,7 +53,7 @@ public final class ListTagHandler extends SmartTagHandler {
 	
 	private Integer scrollSize;
 	
-	private Integer maxHeight;
+	private String maxHeight;
 
 	private final List<RowTagHandler> rows;
 
@@ -61,9 +65,6 @@ public final class ListTagHandler extends SmartTagHandler {
 	public void validateTag() throws JspException {
 		if (scrollSize != null && scrollSize <= 0) {
 			throw InvalidAttributeException.fromConstraint("list", "scrollSize", "greater than zero");
-		}
-		if (maxHeight != null && maxHeight <= 0) {
-			throw InvalidAttributeException.fromConstraint("list", "maxHeight", "greater than zero");
 		}
 		if (scrollSize != null && maxHeight == null) {
 			throw InvalidAttributeException.fromConflict("list", "maxHeight", "Attribute [maxHeight] must be specified");
@@ -80,18 +81,26 @@ public final class ListTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("list");
 
 		HttpServletRequest request = getRequest();
 
 		Ul ul = new Ul();
 		ul.addAttribute("id", id)
 			.addAttribute("style", style)
-			.addAttribute("style", maxHeight != null ? "max-height: " + maxHeight + " px;" : null)
+			.addAttribute("style", maxHeight != null ? "max-height: " + maxHeight + ";" : null)
 			.addAttribute("class", Bootstrap.LIST_GROUP)
 			.addAttribute("class", styleClass);
+
+		if (loadTag != null) {
+			Li li = new Li();
+			li.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
+				.addAttribute("style", "display: none;")
+				.addAttribute("style", "text-align: center;");
+
+			li.addTag(loadTag.executeTag());
+			ul.addTag(li);
+		}
 
 		if (scrollSize != null) {
 			ul.addAttribute("style", "overflow: auto;")
@@ -100,16 +109,41 @@ public final class ListTagHandler extends SmartTagHandler {
 
 		appendEvent(ul);
 
-		Object object = getTagValue(values);
-		if (object instanceof Collection<?>) {
-			Iterator<Object> iterator = ((Collection<Object>) object).iterator();
+		// Get the scroll parameters case requested by scroll list
+		Scroll jsonScroll = null;
 
-			long selectIndex = 0;
+		Object object = request.getAttribute(Constants.REQUEST_LIST_ADAPTER);
+		if (object == null) {
+			// It means that a scroll maybe happened
+			String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
+
+			if (scrollParam != null) {
+				jsonScroll =  GSON.fromJson(scrollParam, Scroll.class);
+			}
+			object = getListContent(getTagValue(values), jsonScroll);
+
+		} else {
+			// It means that the select on list was performed and the content was 
+			// loaded via adapter
+			String scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
+
+			if (scrollParam != null) {
+				jsonScroll =  GSON.fromJson(scrollParam, Scroll.class);
+			}
+		}
+
+		if (object instanceof List<?>) {
+			Iterator<Object> iterator = ((List<Object>) object).iterator();
+
+			int scrollIndex = jsonScroll != null ? jsonScroll.getIndex() : 0;
+			int selectIndex = scrollIndex;
+			
 			while (iterator.hasNext()) {
 				request.setAttribute(var, iterator.next());
 				for (RowTagHandler row : rows) {
 					if (selectValue != null) {
 	 					row.setSelectValue(selectValue);
+	 					row.setScrollIndex(scrollIndex);
 	 					row.setSelectIndex(selectIndex);
 					}
  					setEvents(row);
@@ -119,7 +153,7 @@ public final class ListTagHandler extends SmartTagHandler {
 				request.removeAttribute(var);
 			}
 		}
-		
+
 		appendDelegateAjax(id, selectValue != null ? "a" : "li");
 		appendDelegateBind(id, selectValue != null ? "a" : "li");
 
@@ -133,13 +167,43 @@ public final class ListTagHandler extends SmartTagHandler {
 
 		return ul;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private List<?> getListContent(Object object, Scroll jsonScroll) {
+		int index = jsonScroll != null ? jsonScroll.getIndex() : 0;
+
+		if (object instanceof ListAdapter) {
+			ListAdapter<Object> listAdapter = (ListAdapter<Object>) object;
+
+			return listAdapter.load(index, scrollSize);
+
+		} else if (object instanceof List) {
+			List<Object> list = (List<Object>) object;
+			Object[] array = list.toArray();
+
+			List<Object> retList = new ArrayList<Object>();
+
+ 	 		int size = index + scrollSize >= list.size() ? list.size() : (int) (index + scrollSize);
+
+ 	 		for (int i = index; i < size; i++) {
+ 	 			retList.add(array[i]);
+ 	 		}
+ 	 		return retList;
+		}
+		return Collections.EMPTY_LIST;
+	}
 
 	private StringBuilder getAjaxFunction() {
-		JsonAjax jsonAjax = new JsonAjax();
+		Ajax jsonAjax = new Ajax();
+
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
-		jsonAjax.addParam(new JsonParam(getTagName(J_SEL, selectValue), getTagName(J_SEL, values)));
-		jsonAjax.addParam(new JsonParam(getTagName(J_SEL_VAL, selectValue), ""));
+		jsonAjax.addParam(new Param(getTagName(J_SEL, selectValue), getTagName(J_VALUES, values)));
+		jsonAjax.addParam(new Param(getTagName(J_SEL_VAL, selectValue), ""));
+
+		if (scrollSize != null) {
+			jsonAjax.addParam(new Param(getTagName(J_SCROLL, selectValue), ""));
+		}
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_LIST.format(getJsonValue(jsonAjax)));
@@ -147,13 +211,14 @@ public final class ListTagHandler extends SmartTagHandler {
 	}
 	
 	private StringBuilder getScrollFunction() {
-		JsonAjax jsonAjax = new JsonAjax();
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
-		
+		jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
+
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_LISTSCROLL.format(getJsonValue(jsonAjax)));
-		return getBindFunction(id, Event.SCROLL.name(), builder);
+		return builder;
 	}
 
 	void addRow(RowTagHandler row) {
@@ -176,7 +241,7 @@ public final class ListTagHandler extends SmartTagHandler {
 		this.scrollSize = scrollSize;
 	}
 
-	public void setMaxHeight(Integer maxHeight) {
+	public void setMaxHeight(String maxHeight) {
 		this.maxHeight = maxHeight;
 	}
 

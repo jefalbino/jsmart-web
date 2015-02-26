@@ -27,13 +27,13 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
 
-public final class CheckGroupTagHandler extends SmartTagHandler {
+public final class CheckGroupTagHandler extends TagHandler {
 
 	protected final List<CheckTagHandler> checks;
 
@@ -42,8 +42,6 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 	private String selectValues;
 
 	private boolean inline;
-
-	private boolean ajax;
 
 	public CheckGroupTagHandler() {
 		checks = new ArrayList<CheckTagHandler>();
@@ -63,9 +61,7 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("checkgroup");
 		
 		Div div = new Div();
 		div.addAttribute("id", id)
@@ -99,7 +95,7 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 	}
 	
 	private StringBuilder getFunction() {
-		JsonAjax jsonAjax = new JsonAjax();
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
 
@@ -122,10 +118,6 @@ public final class CheckGroupTagHandler extends SmartTagHandler {
 
 	public void setInline(boolean inline) {
 		this.inline = inline;
-	}
-
-	public void setAjax(boolean ajax) {
-		this.ajax = ajax;
 	}
 
 }

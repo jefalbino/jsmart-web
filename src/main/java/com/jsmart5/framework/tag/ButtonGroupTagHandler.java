@@ -25,13 +25,13 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Size;
 
-public class ButtonGroupTagHandler extends SmartTagHandler {
+public class ButtonGroupTagHandler extends TagHandler {
 
 	private boolean inline = true;
 
@@ -53,9 +53,7 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("buttongroup");
 
 		Div buttonGroup = new Div();
 		buttonGroup.addAttribute("id", id)
@@ -79,6 +77,9 @@ public class ButtonGroupTagHandler extends SmartTagHandler {
 		}
 
 		buttonGroup.addText(sw.toString());
+		
+		appendAjax(id);
+		appendBind(id);
 
 		return buttonGroup;
 	}

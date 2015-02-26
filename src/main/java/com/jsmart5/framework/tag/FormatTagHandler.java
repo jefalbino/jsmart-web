@@ -30,12 +30,12 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Type;
 
 
-public final class FormatTagHandler extends SmartTagHandler {
+public final class FormatTagHandler extends TagHandler {
 	
 	private String type;
 

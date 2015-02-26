@@ -25,12 +25,12 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class FooterTagHandler extends SmartTagHandler {
+public final class FooterTagHandler extends TagHandler {
 	
 	private String title;
 	
@@ -45,7 +45,7 @@ public final class FooterTagHandler extends SmartTagHandler {
 			((PanelTagHandler) parent).setFooter(this);
 			return false;
 		} 
-		return false;
+		return true;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public final class FooterTagHandler extends SmartTagHandler {
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
-		SmartTagHandler parent = (SmartTagHandler) getParent();
+		TagHandler parent = (TagHandler) getParent();
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -64,9 +64,7 @@ public final class FooterTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("footer");
 
 		Div footer = new Div();
 		footer.addAttribute("id", id)
@@ -83,8 +81,8 @@ public final class FooterTagHandler extends SmartTagHandler {
 			.addText(getTagValue(title))
 			.addText(sw.toString());
 		
-		appendAjax(parent.getId());
-		appendBind(parent.getId());
+		appendAjax(id);
+		appendBind(id);
 
 		return footer;
 	}

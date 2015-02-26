@@ -22,11 +22,11 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
 @SuppressWarnings("unused")
-public final class UrlParamTagHandler extends SmartTagHandler {
+public final class UrlParamTagHandler extends TagHandler {
 
 	private String name;
 

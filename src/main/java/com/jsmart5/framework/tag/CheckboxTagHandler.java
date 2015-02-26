@@ -23,8 +23,8 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
@@ -34,15 +34,13 @@ import com.jsmart5.framework.tag.type.Event;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class CheckboxTagHandler extends SmartTagHandler {
+public final class CheckboxTagHandler extends TagHandler {
 
 	private String value;
 
 	private String label;
 
 	private boolean disabled;
-	
-	private boolean ajax;
 
 	private Integer tabIndex;
 
@@ -60,9 +58,7 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("checkbox");
 
 		Input input = new Input();
 		input.addAttribute("id", id)
@@ -113,7 +109,7 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 	}
 
 	private StringBuilder getAjaxFunction() {
-		JsonAjax jsonAjax = new JsonAjax();
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
 
@@ -136,10 +132,6 @@ public final class CheckboxTagHandler extends SmartTagHandler {
 
 	public void setTabIndex(Integer tabIndex) {
 		this.tabIndex = tabIndex;
-	}
-
-	public void setAjax(boolean ajax) {
-		this.ajax = ajax;
 	}
 
 }

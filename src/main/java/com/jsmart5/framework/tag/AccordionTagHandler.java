@@ -24,12 +24,12 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class AccordionTagHandler extends SmartTagHandler {
+public final class AccordionTagHandler extends TagHandler {
 
 	public void validateTag() throws JspException {
 		// DO NOTHING
@@ -38,15 +38,13 @@ public final class AccordionTagHandler extends SmartTagHandler {
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
-		if (id == null) {
-			id = getRandonId();
-		}
-
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(sw);
 		}
+
+		setRandomId("accordion");
 
 		Div div = new Div();
 		div.addAttribute("id", id)
@@ -59,6 +57,9 @@ public final class AccordionTagHandler extends SmartTagHandler {
 		div.addText(sw.toString());
 		
 		appendEvent(div);
+
+		appendAjax(id);
+		appendBind(id);
 
 		return div;
 	}

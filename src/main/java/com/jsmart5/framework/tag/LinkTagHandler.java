@@ -25,9 +25,9 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.json.JsonAjax;
-import com.jsmart5.framework.json.JsonParam;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Param;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
@@ -40,7 +40,7 @@ import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-public final class LinkTagHandler extends SmartTagHandler {
+public final class LinkTagHandler extends TagHandler {
 
 	private String label;
 
@@ -88,9 +88,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 			body.invoke(sw);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("link");
 
 		Div linkGroup = null;
 
@@ -226,7 +224,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 	}
 	
 	private StringBuilder getFunction(String url) {
-		JsonAjax jsonAjax = new JsonAjax();
+		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 
 		if (action != null) {
@@ -234,7 +232,7 @@ public final class LinkTagHandler extends SmartTagHandler {
 			jsonAjax.setAction(getTagName(J_SBMT, action));
 
 			for (String name : params.keySet()) {						
-				jsonAjax.addParam(new JsonParam(name, params.get(name)));
+				jsonAjax.addParam(new Param(name, params.get(name)));
 			}
 
 			if (update == null && onError == null && onSuccess == null && onComplete == null) {

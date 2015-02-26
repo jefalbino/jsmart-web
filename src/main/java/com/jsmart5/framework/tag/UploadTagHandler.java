@@ -25,7 +25,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.manager.SmartTagHandler;
+import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css3.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
@@ -35,7 +35,7 @@ import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.tag.type.Type;
 
-public final class UploadTagHandler extends SmartTagHandler {
+public final class UploadTagHandler extends TagHandler {
 
 	private String value;
 
@@ -57,7 +57,7 @@ public final class UploadTagHandler extends SmartTagHandler {
 
 	private boolean autoFocus;
 	
-	private SmartTagHandler childAddOn;
+	private TagHandler childAddOn;
 
 	@Override
 	public void validateTag() throws JspException {
@@ -75,9 +75,7 @@ public final class UploadTagHandler extends SmartTagHandler {
 			body.invoke(null);
 		}
 		
-		if (id == null) {
-			id = getRandonId();
-		}
+		setRandomId("upload");
 
 		Div formGroup = null;
 		Div inputGroup = null;
@@ -197,7 +195,7 @@ public final class UploadTagHandler extends SmartTagHandler {
 		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : set;
 	}
 
-	void setChildAddOn(SmartTagHandler childAddOn) {
+	void setChildAddOn(TagHandler childAddOn) {
 		this.childAddOn = childAddOn;
 	}
 

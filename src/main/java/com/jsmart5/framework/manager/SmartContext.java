@@ -237,6 +237,11 @@ public final class SmartContext implements Serializable {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.messages : null;
 	}
+	
+	static Map<String, SmartMessage> getMessages(final String id) {
+		SmartContext context = getCurrentInstance();
+		return context != null ? context.fixedMessages.get(id) : null;
+	}
 
 	/**
 	 * Add message by type category to be presented on client side after the response is returned. 
@@ -251,11 +256,6 @@ public final class SmartContext implements Serializable {
 		if (context != null && message != null && type != null) {
 			context.messages.put(message, type);
 		}
-	}
-
-	static Map<String, SmartMessage> getMessages(final String id) {
-		SmartContext context = getCurrentInstance();
-		return context != null ? context.fixedMessages.get(id) : null;
 	}
 
 	/**
@@ -279,6 +279,110 @@ public final class SmartContext implements Serializable {
 			}
 			messages.put(message, type);
 		}
+	}
+	
+	/**
+	 * Add info message to be presented on client side after the response is returned. 
+	 * <br>
+	 * This method only take effect if the message tag is mapped on the page returned to the client.
+	 * 
+	 * @param message message to be presented on the client side.
+	 */
+	public static void addInfo(final String message) {
+		addMessage(SmartMessage.INFO, message);
+	}
+	
+	/**
+	 * Add info message to be presented on client side after the response is returned. 
+	 * <br>
+	 * This method only take effect if the message tag is mapped with specified id and with position fixed
+	 * on the page returned to the client.
+	 * <br>
+	 * The message is placed on the same position where the the message tag is mapped.
+	 * 
+	 * @param id message tag id to receive the message.
+	 * @param message message to be presented on the client side.
+	 */
+	public static void addInfo(final String id, final String message) {
+		addMessage(id, SmartMessage.INFO, message);
+	}
+	
+	/**
+	 * Add warning message to be presented on client side after the response is returned. 
+	 * <br>
+	 * This method only take effect if the message tag is mapped on the page returned to the client.
+	 * 
+	 * @param message message to be presented on the client side.
+	 */
+	public static void addWarning(final String message) {
+		addMessage(SmartMessage.WARNING, message);
+	}
+	
+	/**
+	 * Add warning message to be presented on client side after the response is returned. 
+	 * <br>
+	 * This method only take effect if the message tag is mapped with specified id and with position fixed
+	 * on the page returned to the client.
+	 * <br>
+	 * The message is placed on the same position where the the message tag is mapped.
+	 * 
+	 * @param id message tag id to receive the message.
+	 * @param message message to be presented on the client side.
+	 */
+	public static void addWarning(final String id, final String message) {
+		addMessage(id, SmartMessage.WARNING, message);
+	}
+	
+	/**
+	 * Add success message to be presented on client side after the response is returned. 
+	 * <br>
+	 * This method only take effect if the message tag is mapped on the page returned to the client.
+	 * 
+	 * @param message message to be presented on the client side.
+	 */
+	public static void addSuccess(final String message) {
+		addMessage(SmartMessage.SUCCESS, message);
+	}
+	
+	/**
+	 * Add success message to be presented on client side after the response is returned. 
+	 * <br>
+	 * This method only take effect if the message tag is mapped with specified id and with position fixed
+	 * on the page returned to the client.
+	 * <br>
+	 * The message is placed on the same position where the the message tag is mapped.
+	 * 
+	 * @param id message tag id to receive the message.
+	 * @param message message to be presented on the client side.
+	 */
+	public static void addSuccess(final String id, final String message) {
+		addMessage(id, SmartMessage.SUCCESS, message);
+	}
+	
+	/**
+	 * Add error message to be presented on client side after the response is returned. 
+	 * <br>
+	 * This method only take effect if the message tag is mapped on the page returned to the client.
+	 * 
+	 * @param message message to be presented on the client side.
+	 */
+	public static void addError(final String message) {
+		addMessage(SmartMessage.ERROR, message);
+	}
+	
+	/**
+	 * Add error message to be presented on client side after the response is returned. 
+	 * <br>
+	 * This method only take effect if the message tag is mapped with specified id and with position fixed
+	 * on the page returned to the client.
+	 * <br>
+	 * The message is placed on the same position where the the message tag is mapped.
+	 * 
+	 * @param id message tag id to receive the message.
+	 * @param message message to be presented on the client side.
+	 */
+	public static void addError(final String id, final String message) {
+		addMessage(id, SmartMessage.ERROR, message);
 	}
 
 	static String getParameter(final String name) {
