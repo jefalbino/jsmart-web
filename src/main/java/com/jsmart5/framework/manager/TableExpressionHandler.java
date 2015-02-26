@@ -37,11 +37,11 @@ public abstract class TableExpressionHandler extends TagHandler {
 	}
 
 	protected static String getSelectIndexes() {
-		return SmartContext.getSelectIndexes();
+		return null;
 	}
 
 	protected static String getSelectIndexes(long index) {
-		String multiIndexes = SmartContext.getSelectIndexes();
+		String multiIndexes = "";
 		return !multiIndexes.isEmpty() ? multiIndexes + "," + index : String.valueOf(index);
 	}
 

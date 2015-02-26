@@ -49,6 +49,7 @@ import javax.servlet.annotation.WebListener;
 import org.springframework.web.context.ContextLoader;
 
 import com.jsmart5.framework.annotation.SmartFilter;
+import com.jsmart5.framework.annotation.SmartServlet;
 import com.jsmart5.framework.config.InitParam;
 import com.jsmart5.framework.config.SecureMethod;
 import com.jsmart5.framework.config.UploadConfig;
@@ -81,8 +82,8 @@ public final class ContainerListener implements ServletContextListener {
 	        servletContext.setInitParameter("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
 
 	        String contextConfigLocation = "com.jsmart5.framework.manager";
-	        if (CONFIG.getContent().getSmartScan() != null) {
-	        	contextConfigLocation += "," + CONFIG.getContent().getSmartScan();
+	        if (CONFIG.getContent().getPackageScan() != null) {
+	        	contextConfigLocation += "," + CONFIG.getContent().getPackageScan();
 	        }
 
 	        // Tell Spring where to scan for annotations
@@ -94,13 +95,13 @@ public final class ContainerListener implements ServletContextListener {
 	        TEXTS.init(CONFIG.getContent().getMessageFiles(), CONFIG.getContent().getDefaultLocale());
 	        HANDLER.init(servletContext);
 
-	        // SmartServlet -> @MultipartConfig @WebServlet(name = "SmartServlet", displayName = "SmartServlet", loadOnStartup = 1)
-	        Servlet smartServlet = servletContext.createServlet((Class<? extends Servlet>) Class.forName("com.jsmart5.framework.manager.SmartServlet"));
-	        ServletRegistration.Dynamic servletReg = (ServletRegistration.Dynamic) servletContext.addServlet("SmartServlet", smartServlet);
+	        // WebServlet -> @MultipartConfig @WebServlet(name = "WebServlet", displayName = "WebServlet", loadOnStartup = 1)
+	        Servlet webServlet = servletContext.createServlet((Class<? extends Servlet>) Class.forName("com.jsmart5.framework.manager.WebServlet"));
+	        ServletRegistration.Dynamic servletReg = (ServletRegistration.Dynamic) servletContext.addServlet("WebServlet", webServlet);
 	        servletReg.setAsyncSupported(true);
 	        servletReg.setLoadOnStartup(1);
 
-	        // SmartServlet Initial Parameters
+	        // WebServlet Initial Parameters
 	        InitParam[] initParams = CONFIG.getContent().getInitParams();
 	        if (initParams != null) {
 	        	for (InitParam initParam : initParams) {
@@ -108,13 +109,13 @@ public final class ContainerListener implements ServletContextListener {
 	        	}
 	        }
 
-	        // MultiPart to allow file upload on SmartServlet 
+	        // MultiPart to allow file upload on WebServlet 
 	        MultipartConfigElement multipartElement = getServletMultipartElement();
 	        if (multipartElement != null) {
 	        	servletReg.setMultipartConfig(multipartElement);
 	        }
 
-	        // Security constraint to SmartServlet
+	        // Security constraint to WebServlet
 	        ServletSecurityElement servletSecurityElement = getServletSecurityElement(servletContext);
 	        if (servletSecurityElement != null) {
 	        	servletReg.setServletSecurity(servletSecurityElement);
@@ -126,7 +127,7 @@ public final class ContainerListener implements ServletContextListener {
 	        // servletReg.setRunAsRole("admin");
 	        // servletContext.declareRoles("admin");
 
-	        // SmartServlet URL mapping
+	        // WebServlet URL mapping
 	        String[] servletMapping = getServletMapping();
 	        servletReg.addMapping(servletMapping);
 
@@ -159,34 +160,34 @@ public final class ContainerListener implements ServletContextListener {
 	        	Filter customFilter = servletContext.createFilter((Class<? extends Filter>) HANDLER.smartFilters.get(filterName));
 	        	HANDLER.executeInjection(customFilter);
 
-	        	SmartFilter customSmartFilter = customFilter.getClass().getAnnotation(SmartFilter.class);
+	        	SmartFilter smartFilter = customFilter.getClass().getAnnotation(SmartFilter.class);
      	        FilterRegistration.Dynamic customFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter(filterName, customFilter);
 
-     	        if (customSmartFilter.initParams() != null) {
-     	        	for (WebInitParam initParam : customSmartFilter.initParams()) {
+     	        if (smartFilter.initParams() != null) {
+     	        	for (WebInitParam initParam : smartFilter.initParams()) {
      	        		customFilterReg.setInitParameter(initParam.name(), initParam.value());
      	        	}
      	        }
 
-     	        customFilterReg.setAsyncSupported(customSmartFilter.asyncSupported());
-     	        customFilterReg.addMappingForUrlPatterns(EnumSet.copyOf(Arrays.asList(customSmartFilter.dispatcherTypes())), true, customSmartFilter.urlPatterns());
+     	        customFilterReg.setAsyncSupported(smartFilter.asyncSupported());
+     	        customFilterReg.addMappingForUrlPatterns(EnumSet.copyOf(Arrays.asList(smartFilter.dispatcherTypes())), true, smartFilter.urlPatterns());
 	        }
 
-	        // WebFilter -> @WebFilter(servletNames = {"SmartServlet"})
+	        // WebFilter -> @WebFilter(servletNames = {"WebServlet"})
 	        Filter webFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.WebFilter"));
 	        FilterRegistration.Dynamic webFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("WebFilter", webFilter);
 
 	        webFilterReg.setAsyncSupported(true);
 	        webFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "SmartServlet");
+	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "WebServlet");
 
-	        // OutputFilter -> @WebFilter(servletNames = {"SmartServlet"})
+	        // OutputFilter -> @WebFilter(servletNames = {"WebServlet"})
 	        Filter outputFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.OutputFilter"));
 	        FilterRegistration.Dynamic outputFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("OutputFilter", outputFilter);
 
 	        outputFilterReg.setAsyncSupported(true);
 	        outputFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "SmartServlet");
+	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "WebServlet");
 
 
 	        // SessionControl - > @WebListener
@@ -199,13 +200,13 @@ public final class ContainerListener implements ServletContextListener {
 	        	Servlet customServlet = servletContext.createServlet((Class<? extends Servlet>) HANDLER.smartServlets.get(servletName));
 	        	HANDLER.executeInjection(customServlet);
 
-	        	com.jsmart5.framework.annotation.SmartServlet customSmartServlet = customServlet.getClass().getAnnotation(com.jsmart5.framework.annotation.SmartServlet.class);
+	        	SmartServlet smartServlet = customServlet.getClass().getAnnotation(SmartServlet.class);
 	        	ServletRegistration.Dynamic customReg = (ServletRegistration.Dynamic) servletContext.addServlet(servletName, customServlet);
 
-	        	customReg.setLoadOnStartup(customSmartServlet.loadOnStartup());
-	        	customReg.setAsyncSupported(customSmartServlet.asyncSupported());
+	        	customReg.setLoadOnStartup(smartServlet.loadOnStartup());
+	        	customReg.setAsyncSupported(smartServlet.asyncSupported());
 
-	        	WebInitParam[] customInitParams = customSmartServlet.initParams();
+	        	WebInitParam[] customInitParams = smartServlet.initParams();
 	        	if (customInitParams != null) {
 	        		for (WebInitParam customInitParam : customInitParams) {
 	        			customReg.setInitParameter(customInitParam.name(), customInitParam.value());
@@ -213,7 +214,7 @@ public final class ContainerListener implements ServletContextListener {
 	        	}
 
 		        // Add mapping url for custom servlet
-		        customReg.addMapping(customSmartServlet.urlPatterns());
+		        customReg.addMapping(smartServlet.urlPatterns());
 
 		        if (customServlet.getClass().isAnnotationPresent(MultipartConfig.class)) {
 		        	customReg.setMultipartConfig(new MultipartConfigElement(customServlet.getClass().getAnnotation(MultipartConfig.class)));
@@ -259,9 +260,9 @@ public final class ContainerListener implements ServletContextListener {
 	}
 
 	private ServletSecurityElement getServletSecurityElement(ServletContext servletContext) {
-		SecureMethod[] smartMethods = CONFIG.getContent().getSecureMethods();
+		SecureMethod[] secureMethods = CONFIG.getContent().getSecureMethods();
 
-        if (smartMethods != null && smartMethods.length > 0) {
+        if (secureMethods != null && secureMethods.length > 0) {
 
         	HttpConstraintElement constraint = new HttpConstraintElement();
 
@@ -277,14 +278,14 @@ public final class ContainerListener implements ServletContextListener {
         		}
 
         	} else {
-        		for (SecureMethod method : smartMethods) {
-        			HttpConstraintElement constraintElement = getHttpConstraintElement(method);
+        		for (SecureMethod secureMethod : secureMethods) {
+        			HttpConstraintElement constraintElement = getHttpConstraintElement(secureMethod);
         			if (constraintElement != null) {
 
-        				if (method.getMethod() == null || !METHODS.contains(method.getMethod().toUpperCase())) {
-        					throw new RuntimeException("Method name declared in <secure-method> tag is unsupported! Supported values are HTTP methods.");
+        				if (secureMethod.getMethod() == null || !METHODS.contains(secureMethod.getMethod().toUpperCase())) {
+        					throw new RuntimeException("Method name declared in [secure-method] tag is unsupported! Supported values are HTTP methods.");
         				}
-        				methodConstraints.add(new HttpMethodConstraintElement(method.getMethod().toUpperCase(), constraintElement));
+        				methodConstraints.add(new HttpMethodConstraintElement(secureMethod.getMethod().toUpperCase(), constraintElement));
         			}
         		}
         	}
@@ -295,35 +296,35 @@ public final class ContainerListener implements ServletContextListener {
         return null;
 	}
 
-	private HttpConstraintElement getHttpConstraintElement(SecureMethod smartMethod) {
+	private HttpConstraintElement getHttpConstraintElement(SecureMethod secureMethod) {
 		HttpConstraintElement constraintElement = null;
 
-		if (smartMethod.getEmptyRole() != null && smartMethod.getTransport() != null) {
+		if (secureMethod.getEmptyRole() != null && secureMethod.getTransport() != null) {
 
-			EmptyRoleSemantic emptyRole = getEmptyRoleSemantic(smartMethod.getEmptyRole());
+			EmptyRoleSemantic emptyRole = getEmptyRoleSemantic(secureMethod.getEmptyRole());
 
-			TransportGuarantee transport = getTransportGuarantee(smartMethod.getTransport());
+			TransportGuarantee transport = getTransportGuarantee(secureMethod.getTransport());
 
 			if (transport == null || emptyRole == null) {
-				throw new RuntimeException("Invalid transport or emptyRole attribute for <secure-method> tag! Values allowed are confidential or none.");
+				throw new RuntimeException("Invalid transport or emptyRole attribute for [secure-method] tag! Values allowed are [confidential, none].");
 			}
-			constraintElement = new HttpConstraintElement(emptyRole, transport, smartMethod.getRoles() != null ? smartMethod.getRoles() : new String[]{});
+			constraintElement = new HttpConstraintElement(emptyRole, transport, secureMethod.getRoles() != null ? secureMethod.getRoles() : new String[]{});
 
-		} else if (smartMethod.getTransport() != null) {
+		} else if (secureMethod.getTransport() != null) {
 
-			TransportGuarantee transport = getTransportGuarantee(smartMethod.getTransport());
+			TransportGuarantee transport = getTransportGuarantee(secureMethod.getTransport());
 
 			if (transport == null) {
-				throw new RuntimeException("Invalid transport attribute for <secure-method> tag! Values allowed are confidential or none.");
+				throw new RuntimeException("Invalid transport attribute for [secure-method] tag! Values allowed are [confidential, none].");
 			}
-			constraintElement = new HttpConstraintElement(transport, smartMethod.getRoles() != null ? smartMethod.getRoles() : new String[]{});
+			constraintElement = new HttpConstraintElement(transport, secureMethod.getRoles() != null ? secureMethod.getRoles() : new String[]{});
 
-		} else if (smartMethod.getEmptyRole() != null) {
+		} else if (secureMethod.getEmptyRole() != null) {
 
-			EmptyRoleSemantic emptyRole = getEmptyRoleSemantic(smartMethod.getEmptyRole());
+			EmptyRoleSemantic emptyRole = getEmptyRoleSemantic(secureMethod.getEmptyRole());
 
 			if (emptyRole == null) {
-				throw new RuntimeException("Invalid emptyRole attribute for <secure-method> tag! Values allowed are deny or permit.");
+				throw new RuntimeException("Invalid emptyRole attribute for [secure-method] tag! Values allowed are [deny, permit].");
 			}
 			constraintElement = new HttpConstraintElement(emptyRole);
 		}
@@ -343,7 +344,7 @@ public final class ContainerListener implements ServletContextListener {
 		List<String> mapping = new ArrayList<String>();
 
 		if (CONFIG.getContent().getUrlPatterns() == null) {
-        	throw new RuntimeException("None <url-pattern> tags were found in configuration file jsmart5.xml for url mapping! At lease one URL pattern must be informed.");
+        	throw new RuntimeException("None [url-pattern] tags were found in configuration file jsmart5.xml for url mapping! At lease one URL pattern must be informed.");
         }
 
     	for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {

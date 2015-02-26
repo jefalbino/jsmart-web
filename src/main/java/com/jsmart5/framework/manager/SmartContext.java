@@ -75,8 +75,6 @@ public final class SmartContext implements Serializable {
 
 	private Map<String, String> parameters = new HashMap<String, String>();
 
-	private String selectIndexes = new String();
-
 	private SmartContext(final HttpServletRequest request, final HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
@@ -113,7 +111,6 @@ public final class SmartContext implements Serializable {
 		fixedMessages = null;
 		parameters.clear();
 		parameters = null;
-		selectIndexes = null;
 		JSP_FACTORY.releasePageContext(pageContext);
 		pageContext = null;
 	}
@@ -237,7 +234,7 @@ public final class SmartContext implements Serializable {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.messages : null;
 	}
-	
+
 	static Map<String, SmartMessage> getMessages(final String id) {
 		SmartContext context = getCurrentInstance();
 		return context != null ? context.fixedMessages.get(id) : null;
@@ -406,20 +403,6 @@ public final class SmartContext implements Serializable {
 		SmartContext context = getCurrentInstance();
 		if (context != null) {
 			context.parameters.putAll(parameters);
-		}
-	}
-
-	static String getSelectIndexes() {
-		SmartContext context = getCurrentInstance();
-		return context != null ? context.selectIndexes : null;
-	}
-
-	static void setSelectIndexes(final Integer[] selectIndexes) {
-		SmartContext context = getCurrentInstance();
-		if (context != null) {
-			for (int i = 0; i < selectIndexes.length; i++) {
-				context.selectIndexes += selectIndexes[i] + (i < selectIndexes.length -1 ? "," : "");
-			}
 		}
 	}
 

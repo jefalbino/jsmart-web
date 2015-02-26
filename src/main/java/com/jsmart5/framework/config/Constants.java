@@ -18,6 +18,8 @@
 
 package com.jsmart5.framework.config;
 
+import java.util.regex.Pattern;
+
 public final class Constants {
 	
 	public static final String REQUEST_USER_ACCESS = "jsmart5_request_user_access";
@@ -59,11 +61,11 @@ public final class Constants {
 
 	public static final String EL_PARAM_READ_ONLY = "#";
 
-	public static final String EL_PATTERN = "@\\{(.[^@\\{\\}]*)\\}";
+	public static final Pattern EL_PATTERN = Pattern.compile("@\\{(.[^@\\{\\}]*)\\}");
 
-	public static final String URL_PARAM_PATTERN = "<.*" + URL_PARAM_TAG + "?.*";
+	public static final Pattern URL_PARAM_PATTERN = Pattern.compile("<.*" + URL_PARAM_TAG + "?.*");
 
-	public static final String INCLUDE_JSPF_PATTERN = START_JSP_TAG + ".*" + INCLUDE_TAG + ".*" + INCLUDE_FILE_ATTR + "?.*";
+	public static final Pattern INCLUDE_JSPF_PATTERN = Pattern.compile(START_JSP_TAG + ".*" + INCLUDE_TAG + ".*" + INCLUDE_FILE_ATTR + "?.*");
 	
 
 	public static final String WEB_INF = "/WEB-INF";

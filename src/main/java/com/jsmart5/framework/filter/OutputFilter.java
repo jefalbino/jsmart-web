@@ -30,12 +30,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import static com.jsmart5.framework.config.Constants.*;
+import com.jsmart5.framework.config.Constants;
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
 
 public final class OutputFilter implements Filter {
-
-	private static final Pattern OUTPUT_PATTERN = Pattern.compile(EL_PATTERN);
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
@@ -56,7 +54,7 @@ public final class OutputFilter implements Filter {
         boolean foundRegex = false;
         String html = responseWrapper.toString();
 
-        Matcher outputMatcher = OUTPUT_PATTERN.matcher(html);
+        Matcher outputMatcher = Constants.EL_PATTERN.matcher(html);
 	    while (outputMatcher.find()) {
 	    	foundRegex = true;
 	    	String expression = outputMatcher.group();

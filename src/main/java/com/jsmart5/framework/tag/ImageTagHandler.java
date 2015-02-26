@@ -25,7 +25,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
-import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.FigCaption;
 import com.jsmart5.framework.tag.html.Figure;
 import com.jsmart5.framework.tag.html.Image;

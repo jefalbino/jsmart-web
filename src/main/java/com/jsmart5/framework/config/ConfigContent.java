@@ -60,7 +60,7 @@ public final class ConfigContent {
 
 	private HtmlCompress compressHtml;
 
-	private String smartScan;
+	private String packageScan;
 
 	private String ejbLookup = "global";
 
@@ -266,14 +266,14 @@ public final class ConfigContent {
 		this.compressHtml = compressHtml;
 	}
 
-	@XmlElement(name = "smart-scan")
-	public String getSmartScan() {
-		return smartScan;
+	@XmlElement(name = "package-scan")
+	public String getPackageScan() {
+		return packageScan;
 	}
 
-	public void setSmartScan(String smartScan) {
-		if (smartScan != null && !smartScan.trim().isEmpty()) {
-			this.smartScan = smartScan;
+	public void setPackageScan(String packageScan) {
+		if (packageScan != null && !packageScan.trim().isEmpty()) {
+			this.packageScan = packageScan;
 		}
 	}
 

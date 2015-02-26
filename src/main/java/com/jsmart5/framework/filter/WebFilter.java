@@ -112,7 +112,7 @@ public final class WebFilter implements Filter {
 		SmartContext.initCurrentInstance(httpRequest, httpResponse);
 
 		// Anonymous subclass to wrap HTTP response to print output
-		SmartWebServletResponseWrapper responseWrapper = new SmartWebServletResponseWrapper(httpResponse);
+		WebFilterResponseWrapper responseWrapper = new WebFilterResponseWrapper(httpResponse);
 
         Throwable throwable = null;
 
@@ -346,11 +346,11 @@ public final class WebFilter implements Filter {
 		}
 	}
 
-	private class SmartWebServletResponseWrapper extends HttpServletResponseWrapper {
+	private class WebFilterResponseWrapper extends HttpServletResponseWrapper {
 
-		private SmartWebServletOutputStream outputStream = new SmartWebServletOutputStream();
+		private WebFilterOutputStream outputStream = new WebFilterOutputStream();
 
-		public SmartWebServletResponseWrapper(HttpServletResponse servletResponse) {
+		public WebFilterResponseWrapper(HttpServletResponse servletResponse) {
 			super(servletResponse);
 		}
 
@@ -384,7 +384,7 @@ public final class WebFilter implements Filter {
 		}
 	}
 
-	private class SmartWebServletOutputStream extends ServletOutputStream {
+	private class WebFilterOutputStream extends ServletOutputStream {
 
 		private StringWriter writer = new StringWriter();
 		

@@ -37,11 +37,11 @@ import com.jsmart5.framework.util.SmartUtils;
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
 
-public final class SmartServlet extends HttpServlet {
+public final class WebServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -4462762772195421585L;
 
-	private static final Logger LOGGER = Logger.getLogger(SmartServlet.class.getPackage().getName());
+	private static final Logger LOGGER = Logger.getLogger(WebServlet.class.getPackage().getName());
 
 	@Override
     public void init(ServletConfig servletConfig) throws ServletException {
@@ -97,7 +97,7 @@ public final class SmartServlet extends HttpServlet {
 		// Check if user is authorized to access the page. Send HTTP 403 response case they did not have
 		Integer httpStatus = HANDLER.checkAuthorization(path);
 		if (httpStatus != null) {
-			LOGGER.log(Level.INFO, "SmartBean access not authorized on page " + path);
+			LOGGER.log(Level.INFO, "SmartBean access not authorized on page [" + path + "]");
 			response.sendError(httpStatus);
 			return;
 		}
@@ -109,7 +109,7 @@ public final class SmartServlet extends HttpServlet {
     	try {
     		HANDLER.instantiateBeans(path, expressions);
     	} catch (Exception ex) {
-    		LOGGER.log(Level.INFO, "SmartBeans on page " + path + " could not be instantiated: " + ex.getMessage());
+    		LOGGER.log(Level.INFO, "SmartBeans on page [" + path + "] could not be instantiated: " + ex.getMessage());
     		throw new ServletException(ex);
     	}
 
@@ -164,7 +164,7 @@ public final class SmartServlet extends HttpServlet {
 		// Check if user is authorized to access the page. Send HTTP 403 response case they did not have
 		Integer httpStatus = HANDLER.checkAuthorization(path);
 		if (httpStatus != null) {
-			LOGGER.log(Level.INFO, "SmartBean access not authorized on page " + path);
+			LOGGER.log(Level.INFO, "SmartBean access not authorized on page [" + path + "]");
 			response.sendError(httpStatus);
 			return;
 		}
@@ -173,7 +173,7 @@ public final class SmartServlet extends HttpServlet {
     	try {
     		HANDLER.instantiateBeans(path, null);
     	} catch (Exception ex) {
-    		LOGGER.log(Level.SEVERE, "SmartBeans on page " + path + " could not be instantiated: " + ex.getMessage());
+    		LOGGER.log(Level.SEVERE, "SmartBeans on page [" + path + "] could not be instantiated: " + ex.getMessage());
     		throw new ServletException(ex);
     	}
 

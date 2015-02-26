@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag.css3;
+package com.jsmart5.framework.tag.css;
 
 public interface Bootstrap {
 	

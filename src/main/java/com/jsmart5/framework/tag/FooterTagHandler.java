@@ -26,7 +26,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.TagHandler;
-import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
 
@@ -81,8 +81,13 @@ public final class FooterTagHandler extends TagHandler {
 			.addText(getTagValue(title))
 			.addText(sw.toString());
 		
-		appendAjax(id);
-		appendBind(id);
+		if (parent instanceof TagHandler) {
+			appendAjax(parent.getId());
+			appendBind(parent.getId());
+		} else {
+			appendAjax(id);
+			appendBind(id);
+		}
 
 		return footer;
 	}

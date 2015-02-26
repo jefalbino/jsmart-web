@@ -35,7 +35,7 @@ import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Param;
 import com.jsmart5.framework.json.Scroll;
 import com.jsmart5.framework.manager.TagHandler;
-import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;

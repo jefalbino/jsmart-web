@@ -84,7 +84,7 @@ public enum BeanHandler {
 
 	private static final Logger LOGGER = Logger.getLogger(BeanHandler.class.getPackage().getName());
 
-	private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN + "|" + URL_PARAM_PATTERN + "|" + INCLUDE_JSPF_PATTERN);
+	private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + URL_PARAM_PATTERN.pattern() + "|" + INCLUDE_JSPF_PATTERN.pattern());
 	
 	private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
 
@@ -781,7 +781,7 @@ public enum BeanHandler {
 										userAccess.addAll((Collection<String>) object);
 									}
 								} catch (Exception ex) {
-									LOGGER.log(Level.INFO, "Authorize access mapped on smart bean " + bean + " could not be cast to Collection<String>: " + ex.getMessage());
+									LOGGER.log(Level.INFO, "Authorize access mapped on smart bean [" + bean + "] could not be cast to Collection<String>: " + ex.getMessage());
 								}
 								break;
 							}
@@ -830,12 +830,12 @@ public enum BeanHandler {
 		contextListeners = new HashSet<SmartContextListener>();
 		sessionListeners = new HashSet<SmartSessionListener>();
 
-		if (CONFIG.getContent().getSmartScan() == null) {
-			LOGGER.log(Level.SEVERE, "None <smart-scan> tag was provided on jsmart5.xml file! Skipping package scanning.");
+		if (CONFIG.getContent().getPackageScan() == null) {
+			LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on jsmart5.xml file! Skipping package scanning.");
 			return;
 		}
 
-		Object[] packages = CONFIG.getContent().getSmartScan().split(",");
+		Object[] packages = CONFIG.getContent().getPackageScan().split(",");
 		Reflections reflections = new Reflections(packages);
 
 		Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(SmartBean.class);
@@ -845,7 +845,7 @@ public enum BeanHandler {
 
 			if ((bean.scope() == ScopeType.PAGE_SCOPE || bean.scope() == ScopeType.SESSION_SCOPE)
 					&& !Serializable.class.isAssignableFrom(clazz)) {
-				throw new RuntimeException("Mapped SmartBean class " + clazz + " with scope " + bean.scope() + " must implement java.io.Serializable interface");
+				throw new RuntimeException("Mapped SmartBean class [" + clazz + "] with scope [" + bean.scope() + "] must implement java.io.Serializable interface");
 			}
 
 			setBeanFields(clazz);
@@ -860,7 +860,7 @@ public enum BeanHandler {
 				LOGGER.log(Level.INFO, "Mapping AuthenticateBean class: " + clazz);
 
 				if (!Serializable.class.isAssignableFrom(clazz)) {
-					throw new RuntimeException("Mapped AuthenticateBean class " + clazz + " must implement java.io.Serializable interface");
+					throw new RuntimeException("Mapped AuthenticateBean class [" + clazz + "] must implement java.io.Serializable interface");
 				}
 
 				setBeanFields(clazz);
@@ -895,19 +895,19 @@ public enum BeanHandler {
 			try {
 				Object listenerObj = clazz.newInstance();
 				if (SmartContextListener.class.isInstance(listenerObj)) {
-					LOGGER.log(Level.INFO, "Mapping SmartListener class: " + clazz);
+					LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
 					setBeanFields(clazz);
 					setBeanMethods(clazz);
 					contextListeners.add((SmartContextListener) listenerObj);
 
 				} else if (SmartSessionListener.class.isInstance(listenerObj)) {
-					LOGGER.log(Level.INFO, "Mapping SmartListener class: " + clazz);
+					LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
 					setBeanFields(clazz);
 					setBeanMethods(clazz);
 					sessionListeners.add((SmartSessionListener) listenerObj);
 				}
 			} catch (Exception ex) {
-				LOGGER.log(Level.INFO, "SmartListener class " + clazz.getName() + " could not be instantiated!");
+				LOGGER.log(Level.INFO, "SmartListener class [" + clazz.getName() + "] could not be instantiated!");
 			}
 		}
 
@@ -948,10 +948,9 @@ public enum BeanHandler {
     			String prevJsp = forwardPaths.put(urlPattern.getUrl(), urlPattern.getJsp());
 
     			if (prevJsp != null) {
-    				LOGGER.log(Level.INFO, "Overriding path mapping " + urlPattern.getUrl() + " from " + prevJsp +
-    						" to " + urlPattern.getJsp());
+    				LOGGER.log(Level.INFO, "Overriding path mapping [" + urlPattern.getUrl() + "] from [" + prevJsp + "] to [" + urlPattern.getJsp() + "]");
     			} else {
-    				LOGGER.log(Level.INFO, "Mapping path  " + urlPattern.getUrl() + " to " + urlPattern.getJsp());
+    				LOGGER.log(Level.INFO, "Mapping path  [" + urlPattern.getUrl() + "] to [" + urlPattern.getJsp() + "]");
     			}
     		}
     	}
@@ -979,7 +978,7 @@ public enum BeanHandler {
     	try {
 	    	URL webXml = servletContext.getResource("/WEB-INF/web.xml");
 	    	if (webXml != null) {
-	    		throw new RuntimeException("JSmart5 framework is not compatible with /WEB-INF/web.xml file. Please remove the web.xml and compile your project with failOnMissingWebXml set to false");
+	    		throw new RuntimeException("JSmart5 framework is not compatible with [/WEB-INF/web.xml] file. Please remove the web.xml and compile your project with [failOnMissingWebXml=false]");
 	    	}
     	} catch (MalformedURLException ex) {
     		LOGGER.log(Level.WARNING, "/WEB-INF/web.xml malformed Url: " + ex.getMessage());

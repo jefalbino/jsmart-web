@@ -25,7 +25,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.manager.TagHandler;
-import com.jsmart5.framework.tag.css3.Bootstrap;
+import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
 
@@ -38,13 +38,13 @@ public final class AccordionTagHandler extends TagHandler {
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
+		setRandomId("accordion");
+
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
 		if (body != null) {
 			body.invoke(sw);
 		}
-
-		setRandomId("accordion");
 
 		Div div = new Div();
 		div.addAttribute("id", id)
@@ -57,9 +57,6 @@ public final class AccordionTagHandler extends TagHandler {
 		div.addText(sw.toString());
 		
 		appendEvent(div);
-
-		appendAjax(id);
-		appendBind(id);
 
 		return div;
 	}

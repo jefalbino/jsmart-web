@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
@@ -330,7 +329,7 @@ public enum ExpressionHandler {
 				}
 	 	 	}
 
-			SmartContext.setSelectIndexes(indexes);
+			// SmartContext.setSelectIndexes(indexes);
 			ELContext context = SmartContext.getPageContext().getELContext();
 
 			if (selectType == SELECT_TYPE.MULTI) {
@@ -499,23 +498,23 @@ public enum ExpressionHandler {
 
 	public Object getExpressionValue(Object expr) {
 		if (expr != null) {
-			String union = expr.toString();
-			Matcher matcher = Pattern.compile(Constants.EL_PATTERN).matcher(expr.toString());
+			String exprString = expr.toString();
+			Matcher matcher = Constants.EL_PATTERN.matcher(exprString);
 			List<Object> list = new ArrayList<Object>();
 
 			while (matcher.find()) {
 				String group = matcher.group();
 				list.add(evaluateExpression(group));
-				union = union.replace(group, "%s");
+				exprString = exprString.replace(group, "%s");
 			}
 
 			if (list.isEmpty()) {
 				return expr;
 			} else {
-				if (union.equals("%s")) {
+				if (exprString.equals("%s")) {
 					return list.get(0);
 				} else {
-					return String.format(union, list.toArray());
+					return String.format(exprString, list.toArray());
 				}
 			}
 		}

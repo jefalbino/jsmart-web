@@ -483,8 +483,8 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}	
 
 	protected void setRandomId(TagHandler tagHandler, String tag) throws JspException {
-		if (id == null) {
-			if (ajax) {
+		if (tagHandler.id == null) {
+			if (tagHandler.ajax) {
 				throw InvalidAttributeException.fromConstraint(tag, "id", "specified because [ajax=true]");
 			}
 			if (!tagHandler.ajaxTags.isEmpty()) {
@@ -493,7 +493,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 			if (!tagHandler.bindTags.isEmpty()) {
 				throw InvalidAttributeException.fromConstraint(tag, "id", "specified because tag contains [bind] tags");
 			}
-			id = SmartUtils.randomId();
+			tagHandler.id = SmartUtils.randomId();
 		}
 	}
 

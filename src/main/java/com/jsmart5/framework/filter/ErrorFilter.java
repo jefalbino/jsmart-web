@@ -74,7 +74,7 @@ public final class ErrorFilter implements Filter {
 
 			@Override
 			public void sendError(int error) throws IOException {
-				LOGGER.log(Level.INFO, "Request error " + error + " on path " + requestPath);
+				LOGGER.log(Level.INFO, "Request error [" + error + "] on path [" + requestPath + "]");
 
 				if (CONFIG.getContent().getErrorPage(error) != null) {
 					httpResponse.setStatus(error);
@@ -85,7 +85,7 @@ public final class ErrorFilter implements Filter {
 
 			@Override
 			public void sendError(int error, String message) throws IOException {
-				LOGGER.log(Level.INFO, "Request error " + error + " on path " + requestPath + " caused by: " + message);
+				LOGGER.log(Level.INFO, "Request error [" + error + "] on path [" + requestPath + "] caused by: [" + message + "]");
 
 				if (CONFIG.getContent().getErrorPage(error) != null) {
 					httpResponse.setStatus(error);
