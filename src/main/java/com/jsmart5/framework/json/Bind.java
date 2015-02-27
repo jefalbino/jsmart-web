@@ -40,4 +40,35 @@ public final class Bind {
 		this.execute = execute;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((execute == null) ? 0 : execute.hashCode());
+		result = prime * result + ((timeout == null) ? 0 : timeout.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Bind other = (Bind) obj;
+		if (execute == null) {
+			if (other.execute != null)
+				return false;
+		} else if (!execute.equals(other.execute))
+			return false;
+		if (timeout == null) {
+			if (other.timeout != null)
+				return false;
+		} else if (!timeout.equals(other.timeout))
+			return false;
+		return true;
+	}
+
 }

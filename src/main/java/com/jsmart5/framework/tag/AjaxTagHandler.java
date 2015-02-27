@@ -19,6 +19,8 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
@@ -29,6 +31,7 @@ import com.jsmart5.framework.json.Param;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.util.EventActions;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -49,6 +52,12 @@ public final class AjaxTagHandler extends TagHandler {
 	private String onSuccess;
 
 	private String onComplete;
+	
+	private List<Object> args;
+
+	public AjaxTagHandler() {
+		args = new ArrayList<Object>();
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -111,6 +120,15 @@ public final class AjaxTagHandler extends TagHandler {
 
 	public StringBuilder getBindFunction(String id) {
 		Ajax jsonAjax = getJsonAjax(id);
+
+		// It means that the ajax is inside some iterator tag, so the
+		// ajax actions will be set by iterator tag
+		EventActions eventActions = (EventActions) getPageValue(ITERATOR_TAG_PARENT);
+		if (eventActions != null) {
+			// actions.addAjax(jsonAjax);
+			return null;
+		}
+		
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 		return getBindFunction(id, event, builder);
@@ -118,9 +136,22 @@ public final class AjaxTagHandler extends TagHandler {
 
 	public StringBuilder getDelegateFunction(String id, String child) {
 		Ajax jsonAjax = getJsonAjax(id);
+		
+		// It means that the ajax is inside some iterator tag, so the
+		// ajax actions will be set by iterator tag
+		EventActions eventActions = (EventActions) getPageValue(ITERATOR_TAG_PARENT);
+		if (eventActions != null) {
+			// actions.addAjax(jsonAjax);
+			return null;
+		}
+
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 		return getDelegateFunction(id, child, event, builder);
+	}
+
+	void addArg(Object arg) {
+		this.args.add(arg);
 	}
 
 	public void setEvent(String event) {

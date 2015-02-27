@@ -58,13 +58,11 @@ public final class CheckTagHandler extends TagHandler {
 
 		if (parent instanceof RadioGroupTagHandler) {
 			((RadioGroupTagHandler) parent).addCheck(this);
-			return false;
 
 		} else if (parent instanceof CheckGroupTagHandler) {
 			((CheckGroupTagHandler) parent).addCheck(this);
-			return false;
 		}
-		return true;
+		return false;
 	}
 
 	@Override

@@ -28,6 +28,7 @@ import com.jsmart5.framework.json.Bind;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.util.EventActions;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -74,6 +75,15 @@ public final class BindTagHandler extends TagHandler {
 
 	public StringBuilder getBindFunction(String id) {
 		Bind jsonBind = getJsonBind(id);
+
+		// It means that the bind is inside some iterator tag, so the
+		// bind actions will be set by iterator tag
+		EventActions eventActions = (EventActions) getPageValue(ITERATOR_TAG_PARENT);
+		if (eventActions != null) {
+			// actions.addBind(jsonBind);
+			return null;
+		}
+
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
 		return getBindFunction(id, event, builder);
@@ -81,6 +91,15 @@ public final class BindTagHandler extends TagHandler {
 
 	public StringBuilder getDelegateFunction(String id, String child) {
 		Bind jsonBind = getJsonBind(id);
+
+		// It means that the bind is inside some iterator tag, so the
+		// bind actions will be set by iterator tag
+		EventActions eventActions = (EventActions) getPageValue(ITERATOR_TAG_PARENT);
+		if (eventActions != null) {
+			// actions.addBind(jsonBind);
+			return null;
+		}
+
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
 		return getDelegateFunction(id, child, event, builder);

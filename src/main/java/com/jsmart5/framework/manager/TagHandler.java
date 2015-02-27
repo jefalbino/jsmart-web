@@ -57,6 +57,8 @@ public abstract class TagHandler extends SimpleTagSupport {
 	
 	protected static final Gson GSON = new Gson();
 
+	protected static final String ITERATOR_TAG_PARENT = "iterator_tag_parent";
+
 	static final int J_TAG_LENGTH = 6;
 
 	static final String J_TAG_INIT = "j0";
@@ -85,19 +87,20 @@ public abstract class TagHandler extends SimpleTagSupport {
 
 	protected static final String J_FRMT = J_TAG_INIT + "012_";
 	
+	protected static final String J_ARGS = J_TAG_INIT + "013_";
+
 	
-	
-	protected static final String J_TBL = J_TAG_INIT + "013_";
+	protected static final String J_TBL = J_TAG_INIT + "015_";
 
-	protected static final String J_TBL_SEL = J_TAG_INIT + "014_";
+	protected static final String J_TBL_SEL = J_TAG_INIT + "016_";
 
-	protected static final String J_TBL_EDT = J_TAG_INIT + "015_";
+	protected static final String J_TBL_EDT = J_TAG_INIT + "017_";
 
-	protected static final String J_CAPTCHA = J_TAG_INIT + "016_";
+	protected static final String J_CAPTCHA = J_TAG_INIT + "018_";
 
-	protected static final String J_CAPTCHA_HASH = J_TAG_INIT + "017_";
+	protected static final String J_CAPTCHA_HASH = J_TAG_INIT + "019_";
 
-	protected static final String J_COMPLETE = J_TAG_INIT + "018_";
+	protected static final String J_COMPLETE = J_TAG_INIT + "020_";
 
 	protected static final String EL_PARAM_READ_ONLY = Constants.EL_PARAM_READ_ONLY;
 
@@ -392,6 +395,18 @@ public abstract class TagHandler extends SimpleTagSupport {
 		return SmartContext.getResponse();
 	}
 
+	protected Object getPageValue(final String name) {
+		return SmartContext.getPageValue(name);
+	}
+	
+	protected Object removePageValue(final String name) {
+		return SmartContext.removePageValue(name);
+	}
+
+	protected void addPageValue(final String name, final Object value) {
+		SmartContext.addPageValue(name, value);
+	}
+
 	protected String getRequestPath() {
 		HttpServletRequest request = getRequest();
 		String[] paths = request.getServletPath().split("/");
@@ -463,15 +478,17 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 
 	protected void appendScript(StringBuilder builder) {
-		HttpServletRequest httpRequest = getRequest();
-		Script script = (Script) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);
-
-		if (script == null) {
-			script = new Script();
-			script.addAttribute("type", "text/javascript");
-			httpRequest.setAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR, script);
+		if (builder != null) {
+			HttpServletRequest httpRequest = getRequest();
+			Script script = (Script) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);
+	
+			if (script == null) {
+				script = new Script();
+				script.addAttribute("type", "text/javascript");
+				httpRequest.setAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR, script);
+			}
+			script.addText(builder.toString());
 		}
-		script.addText(builder.toString());
 	}
 	
 	protected String getRandomId() {

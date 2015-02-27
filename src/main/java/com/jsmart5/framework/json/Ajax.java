@@ -137,4 +137,60 @@ public final class Ajax {
 		this.complete = complete;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((action == null) ? 0 : action.hashCode());
+		result = prime * result + ((before == null) ? 0 : before.hashCode());
+		result = prime * result + ((complete == null) ? 0 : complete.hashCode());
+		result = prime * result + ((error == null) ? 0 : error.hashCode());
+		result = prime * result + ((success == null) ? 0 : success.hashCode());
+		result = prime * result + ((update == null) ? 0 : update.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Ajax other = (Ajax) obj;
+		if (action == null) {
+			if (other.action != null)
+				return false;
+		} else if (!action.equals(other.action))
+			return false;
+		if (before == null) {
+			if (other.before != null)
+				return false;
+		} else if (!before.equals(other.before))
+			return false;
+		if (complete == null) {
+			if (other.complete != null)
+				return false;
+		} else if (!complete.equals(other.complete))
+			return false;
+		if (error == null) {
+			if (other.error != null)
+				return false;
+		} else if (!error.equals(other.error))
+			return false;
+		if (success == null) {
+			if (other.success != null)
+				return false;
+		} else if (!success.equals(other.success))
+			return false;
+		if (update == null) {
+			if (other.update != null)
+				return false;
+		} else if (!update.equals(other.update))
+			return false;
+		return true;
+	}
+
+	
 }

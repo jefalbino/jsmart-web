@@ -26,9 +26,7 @@ import javax.servlet.jsp.tagext.JspTag;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
-public final class ParamTagHandler extends TagHandler {
-
-	private String name;
+public final class ArgTagHandler extends TagHandler {
 
 	private Object value;
 
@@ -40,11 +38,10 @@ public final class ParamTagHandler extends TagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
+		if (parent instanceof AjaxTagHandler) {
 
-			String key = getTagName(J_TAG, name);
 			Object obj = getTagValue(value);
-			((TagHandler) parent).addParam(key, obj);
+			((AjaxTagHandler) parent).addArg(obj);
 		}
 		return false;
 	}
@@ -53,10 +50,6 @@ public final class ParamTagHandler extends TagHandler {
 	public Tag executeTag() throws JspException, IOException {
 		// DO NOTHING
 		return null;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void setValue(Object value) {

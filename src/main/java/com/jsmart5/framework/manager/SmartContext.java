@@ -75,6 +75,8 @@ public final class SmartContext implements Serializable {
 
 	private Map<String, String> parameters = new HashMap<String, String>();
 
+	private Map<String, Object> pageValues = new HashMap<String, Object>();
+
 	private SmartContext(final HttpServletRequest request, final HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
@@ -111,6 +113,8 @@ public final class SmartContext implements Serializable {
 		fixedMessages = null;
 		parameters.clear();
 		parameters = null;
+		pageValues.clear();
+		pageValues = null;
 		JSP_FACTORY.releasePageContext(pageContext);
 		pageContext = null;
 	}
@@ -403,6 +407,29 @@ public final class SmartContext implements Serializable {
 		SmartContext context = getCurrentInstance();
 		if (context != null) {
 			context.parameters.putAll(parameters);
+		}
+	}
+	
+	static Object getPageValue(final String name) {
+		SmartContext context = getCurrentInstance();
+		if (context != null) {
+			return context.pageValues.get(name);
+		}
+		return null;
+	}
+	
+	static Object removePageValue(final String name) {
+		SmartContext context = getCurrentInstance();
+		if (context != null) {
+			return context.pageValues.remove(name);
+		}
+		return null;
+	}
+
+	static void addPageValue(final String name, final Object value) {
+		SmartContext context = getCurrentInstance();
+		if (context != null) {
+			context.pageValues.put(name, value);
 		}
 	}
 

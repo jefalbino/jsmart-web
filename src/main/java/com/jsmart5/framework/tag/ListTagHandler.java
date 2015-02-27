@@ -40,6 +40,7 @@ import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.util.EventActions;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -54,6 +55,16 @@ public final class ListTagHandler extends TagHandler {
 	private Integer scrollSize;
 	
 	private String maxHeight;
+	
+	private String selectUpdate;
+	
+	private String beforeSend;
+	
+	private String onError;
+	
+	private String onSuccess;
+
+	private String onComplete;
 
 	private final List<RowTagHandler> rows;
 
@@ -74,6 +85,9 @@ public final class ListTagHandler extends TagHandler {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Tag executeTag() throws JspException, IOException {
+
+		// Need to indicate that it is list parent tag for deep inner tags
+		// addPageValue(ITERATOR_TAG_PARENT, new EventActions());
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -154,6 +168,9 @@ public final class ListTagHandler extends TagHandler {
 			}
 		}
 
+		// EventActions eventActions = (EventActions) removePageValue(ITERATOR_TAG_PARENT);
+		
+
 		appendDelegateAjax(id, selectValue != null ? "a" : "li");
 		appendDelegateBind(id, selectValue != null ? "a" : "li");
 
@@ -169,10 +186,14 @@ public final class ListTagHandler extends TagHandler {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<?> getListContent(Object object, Scroll jsonScroll) {
+	private List<?> getListContent(Object object, Scroll jsonScroll) throws JspException {
 		int index = jsonScroll != null ? jsonScroll.getIndex() : 0;
 
 		if (object instanceof ListAdapter) {
+			if (scrollSize == null) {
+				throw InvalidAttributeException.fromConflict("list", "scrollSize", "Attribute [scrollSize] must be specified to use ListAdapter");
+			}
+			
 			ListAdapter<Object> listAdapter = (ListAdapter<Object>) object;
 
 			return listAdapter.load(index, scrollSize);
@@ -182,8 +203,11 @@ public final class ListTagHandler extends TagHandler {
 			Object[] array = list.toArray();
 
 			List<Object> retList = new ArrayList<Object>();
-
- 	 		int size = index + scrollSize >= list.size() ? list.size() : (int) (index + scrollSize);
+			
+			int size = list.size();
+			if (scrollSize != null) {
+				size = index + scrollSize >= list.size() ? list.size() : (int) (index + scrollSize);
+			}
 
  	 		for (int i = index; i < size; i++) {
  	 			retList.add(array[i]);
@@ -203,6 +227,21 @@ public final class ListTagHandler extends TagHandler {
 
 		if (scrollSize != null) {
 			jsonAjax.addParam(new Param(getTagName(J_SCROLL, selectValue), ""));
+		}
+		if (selectUpdate != null) {
+			jsonAjax.setUpdate(selectUpdate.trim());
+		}
+		if (beforeSend != null) {
+			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+		}
+		if (onError != null) {
+			jsonAjax.setError((String) getTagValue(onError.trim()));
+		}
+		if (onSuccess != null) {
+			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+		}
+		if (onComplete != null) {
+			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
 		}
 
 		StringBuilder builder = new StringBuilder();
@@ -243,6 +282,26 @@ public final class ListTagHandler extends TagHandler {
 
 	public void setMaxHeight(String maxHeight) {
 		this.maxHeight = maxHeight;
+	}
+
+	public void setSelectUpdate(String selectUpdate) {
+		this.selectUpdate = selectUpdate;
+	}
+
+	public void setBeforeSend(String beforeSend) {
+		this.beforeSend = beforeSend;
+	}
+
+	public void setOnError(String onError) {
+		this.onError = onError;
+	}
+
+	public void setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+	}
+
+	public void setOnComplete(String onComplete) {
+		this.onComplete = onComplete;
 	}
 
 }

@@ -1378,6 +1378,16 @@
     </tag>
 
     <tag>
+        <name>arg</name>
+        <tag-class>com.jsmart5.framework.tag.ArgTagHandler</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>modal</name>
         <tag-class>com.jsmart5.framework.tag.ModalTagHandler</tag-class>
         <body-content>scriptless</body-content>
@@ -2395,6 +2405,26 @@
         </attribute>
         <attribute>
             <name>maxHeight</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>selectUpdate</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>beforeSend</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onError</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onSuccess</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onComplete</name>
             <required>false</required>
         </attribute>
         <attribute>
