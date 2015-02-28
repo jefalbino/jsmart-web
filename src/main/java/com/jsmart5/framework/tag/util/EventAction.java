@@ -18,49 +18,58 @@
 
 package com.jsmart5.framework.tag.util;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Bind;
 
-public class TagActions {
+public class EventAction {
 
-	private String ref;
-	
-	private Set<Ajax> ajaxs = new HashSet<Ajax>();
-	
-	private Set<Bind> binds = new HashSet<Bind>();
-	
-	public String getRef() {
-		return ref;
-	}
+	private Map<String, Set<Ajax>> ajaxs;
 
-	public void setRef(String ref) {
-		this.ref = ref;
-	}
+	private Map<String, Set<Bind>> binds;
 
-	public Set<Ajax> getAjaxs() {
+	public Map<String, Set<Ajax>> getAjaxs() {
 		return ajaxs;
 	}
+
+	public Set<Ajax> getAjax(String event) {
+		return ajaxs.get(event);
+	}
+
+	public void addAjax(String event, Ajax ajax) {
+		if (ajaxs == null) {
+			ajaxs = new HashMap<String, Set<Ajax>>();
+		}
+		Set<Ajax> set = ajaxs.get(event);
+		if (set == null) {
+			set = new LinkedHashSet<Ajax>(2);
+			ajaxs.put(event, set);
+		}
+		set.add(ajax);
+	}
 	
-	public void addAjax(Ajax ajax) {
-		this.ajaxs.add(ajax);
-	}
-
-	public void setAjaxs(Set<Ajax> ajaxs) {
-		this.ajaxs = ajaxs;
-	}
-
-	public Set<Bind> getBinds() {
+	public Map<String, Set<Bind>> getBinds() {
 		return binds;
 	}
-	
-	public void addBind(Bind bind) {
-		this.binds.add(bind);
+
+	public Set<Bind> getBind(String event) {
+		return binds.get(event);
 	}
 
-	public void setBinds(Set<Bind> binds) {
-		this.binds = binds;
+	public void addBind(String event, Bind bind) {
+		if (binds == null) {
+			binds = new HashMap<String, Set<Bind>>();
+		}
+		Set<Bind> set = binds.get(event);
+		if (set == null) {
+			set = new LinkedHashSet<Bind>(2);
+			binds.put(event, set);
+		}
+		set.add(bind);
 	}
+
 }

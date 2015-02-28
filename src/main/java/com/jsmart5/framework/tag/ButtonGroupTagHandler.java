@@ -77,9 +77,6 @@ public class ButtonGroupTagHandler extends TagHandler {
 		}
 
 		buttonGroup.addText(sw.toString());
-		
-		appendAjax(id);
-		appendBind(id);
 
 		return buttonGroup;
 	}

@@ -124,8 +124,9 @@ public final class OutputTagHandler extends TagHandler {
 			tag =  new Span();
 		}
 
-		tag.addAttribute("id", id)
-			.addAttribute("style", style);
+		tag.addAttribute("style", style);
+
+		appendId(tag, id);
 
 		if (Case.CAPITALIZE.equalsIgnoreCase(transform)) {
 			tag.addAttribute("class", Bootstrap.TEXT_CAPITALIZE);

@@ -56,7 +56,7 @@ public final class RowTagHandler extends TagHandler {
 			((ListTagHandler) parent).addRow(this);
 			return false;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -82,14 +82,17 @@ public final class RowTagHandler extends TagHandler {
 		} else {
 			tag = new Li();
 		}
+		
+		setRandomId("row");
 
-		tag.addAttribute("id", id)
-			.addAttribute("style", style)
+		tag.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
 			.addAttribute("class", styleClass)
 			.addAttribute("list-index", selectIndex)
 			.addAttribute("scroll-index", scrollIndex);
+		
+		appendId(tag, id);
 		
 		String lookVal = (String) getTagValue(look);
 
@@ -113,9 +116,12 @@ public final class RowTagHandler extends TagHandler {
 		}
 		tag.addText(sw.toString());
 
+		appendAjax(id);
+		appendBind(id);
+
 		return tag;
 	}
-	
+
 	void setHeader(HeaderTagHandler header) {
 		this.header = header;
 	}

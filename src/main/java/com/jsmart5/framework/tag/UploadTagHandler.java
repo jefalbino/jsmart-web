@@ -139,8 +139,7 @@ public final class UploadTagHandler extends TagHandler {
 			.addAttribute("name", name);
 
 		Input input = new Input();
-		input.addAttribute("id", id)
-			 .addAttribute("name", name.replace(J_FILE, J_PART))
+		input.addAttribute("name", name.replace(J_FILE, J_PART))
 			 .addAttribute("type", Type.FILE.name().toLowerCase())
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
@@ -150,6 +149,8 @@ public final class UploadTagHandler extends TagHandler {
 			 .addAttribute("placeholder", getTagValue(placeHolder))
 			 .addAttribute("datatype", Type.FILE.name().toLowerCase())
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
+		
+		appendId(input, id);
 		
 		input.addAttribute("value", getTagValue(value));
 		

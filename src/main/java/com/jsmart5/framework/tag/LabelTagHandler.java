@@ -56,11 +56,12 @@ public final class LabelTagHandler extends TagHandler {
 		setRandomId("label");
 
 		Span span = new Span();
-		span.addAttribute("id", id)
-			.addAttribute("style", style)
+		span.addAttribute("style", style)
 			.addAttribute("for", getTagValue(target))
 			.addAttribute("class", Bootstrap.LABEL)
 			.addText(getTagValue(value));
+		
+		appendId(span, id);
 
 		String lookVal = Bootstrap.LABEL_DEFAULT;
 

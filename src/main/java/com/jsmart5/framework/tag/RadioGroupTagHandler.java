@@ -18,11 +18,12 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.js.JsConstants.JSMART_CHECK;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -32,6 +33,7 @@ import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.util.RefAction;
 
 public final class RadioGroupTagHandler extends TagHandler {
 
@@ -42,6 +44,16 @@ public final class RadioGroupTagHandler extends TagHandler {
 	private String selectValue;
 
 	private boolean inline;
+	
+	private String update;
+	
+	private String beforeSend;
+	
+	private String onError;
+	
+	private String onSuccess;
+
+	private String onComplete;
 
 	public RadioGroupTagHandler() {
 		checks = new ArrayList<CheckTagHandler>();
@@ -64,9 +76,10 @@ public final class RadioGroupTagHandler extends TagHandler {
 		setRandomId("radiogroup");
 
 		Div div = new Div();
-		div.addAttribute("id", id)
-			.addAttribute("align", align)
+		div.addAttribute("align", align)
 			.addAttribute("radiogroup", "");
+		
+		appendId(div, id);
 
  		long checkIndex = 0;
 		for (CheckTagHandler check : checks) {
@@ -94,14 +107,43 @@ public final class RadioGroupTagHandler extends TagHandler {
 		return div;
 	}
 
+	@SuppressWarnings("unchecked")
 	private StringBuilder getFunction() {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
+		jsonAjax.setTag("radiogroup");
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_CHECK.format(getJsonValue(jsonAjax)));
-		return getDelegateFunction(id, "input", Event.CLICK.name(), builder);
+		if (update != null) {
+			jsonAjax.setUpdate(update.trim());
+		}
+		if (beforeSend != null) {
+			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+		}
+		if (onError != null) {
+			jsonAjax.setError((String) getTagValue(onError.trim()));
+		}
+		if (onSuccess != null) {
+			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+		}
+		if (onComplete != null) {
+			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+		}
+		
+		// It means that the ajax is inside some iterator tag, so the
+		// ajax actions will be set by iterator tag and the event bind
+		// will use the id as tag attribute
+		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		if (actionStack != null) {
+			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
+
+		} else {
+			StringBuilder builder = new StringBuilder();
+			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+			return getDelegateFunction(id, "input", Event.CLICK.name(), builder);
+		}
+		
+		return null;
 	}
 
 	void addCheck(CheckTagHandler check) {
@@ -118,6 +160,26 @@ public final class RadioGroupTagHandler extends TagHandler {
 
 	public void setInline(boolean inline) {
 		this.inline = inline;
+	}
+
+	public void setUpdate(String update) {
+		this.update = update;
+	}
+
+	public void setBeforeSend(String beforeSend) {
+		this.beforeSend = beforeSend;
+	}
+
+	public void setOnError(String onError) {
+		this.onError = onError;
+	}
+
+	public void setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+	}
+
+	public void setOnComplete(String onComplete) {
+		this.onComplete = onComplete;
 	}
 
 }

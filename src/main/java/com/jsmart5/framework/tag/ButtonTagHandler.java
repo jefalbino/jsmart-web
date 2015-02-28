@@ -22,6 +22,7 @@ import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -40,6 +41,7 @@ import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Size;
+import com.jsmart5.framework.tag.util.RefAction;
 
 public final class ButtonTagHandler extends TagHandler {
 
@@ -142,12 +144,13 @@ public final class ButtonTagHandler extends TagHandler {
 		}
 
 		Button button = new Button();
-		button.addAttribute("id", id)
-			.addAttribute("style", style)
+		button.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.BUTTON)
 			.addAttribute("tabindex", tabIndex)
 			.addAttribute("disabled", disabled ? "disabled" : null);
-		
+
+		appendId(button, id);
+
 		String lookVal = Bootstrap.BUTTON_DEFAULT;
 		
 		if (Look.PRIMARY.equalsIgnoreCase(look)) {
@@ -249,13 +252,8 @@ public final class ButtonTagHandler extends TagHandler {
 
 		if (ajax) {		
 			appendScript(getFunction(id, action, params));
-		} else {
-			if (action != null) {
-				button.addAttribute("name", getTagName(J_SBMT, action));
-			}
-			if (beforeSend != null) {
-				appendScript(getExecFunction());
-			}
+		} else if (action != null) {
+			button.addAttribute("name", getTagName(J_SBMT, action));
 		}
 
 		if (dropMenu != null) {
@@ -265,19 +263,16 @@ public final class ButtonTagHandler extends TagHandler {
 		}
 
 		appendBind(id);
+		appendAjax(id);
 
 		return buttonGroup != null ? buttonGroup : button;
 	}
 	
-	private StringBuilder getExecFunction() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_EXEC.format(beforeSend.trim()));	
-		return getBindFunction(id, Event.CLICK.name(), builder);
-	}
-	
+	@SuppressWarnings("unchecked")
 	private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
+		jsonAjax.setTag("button");
 
 		if (action != null) {
 			jsonAjax.setMethod("post");
@@ -304,10 +299,21 @@ public final class ButtonTagHandler extends TagHandler {
 		if (onComplete != null) {
 			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
 		}
+		
+		// It means that the ajax is inside some iterator tag, so the
+		// ajax actions will be set by iterator tag and the event bind
+		// will use the id as tag attribute
+		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		if (actionStack != null) {
+			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
+			
+		} else {
+			StringBuilder builder = new StringBuilder();
+			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+			return getBindFunction(id, Event.CLICK.name(), builder);
+		}
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_BUTTON.format(getJsonValue(jsonAjax)) + "return false;");
-		return getBindFunction(id, Event.CLICK.name(), builder);
+		return null;
 	}
 
 	void setDropMenu(DropMenuTagHandler dropMenu) {

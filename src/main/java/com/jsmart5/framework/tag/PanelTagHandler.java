@@ -92,9 +92,7 @@ public final class PanelTagHandler extends TagHandler {
 		panel.addAttribute("class", styleClass);
 
 		appendEvent(panel);
-		appendAjax(id);
-		appendBind(id);
-		
+
 		if (header != null || parentId != null) {
 			Div head = new Div();
 			head.addAttribute("class", Bootstrap.PANEL_HEADING);

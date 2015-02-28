@@ -72,10 +72,11 @@ public final class ImageTagHandler extends TagHandler {
 		String nameValue = (String) getTagValue(name);
 
 		Image image = new Image();
-		image.addAttribute("id", id)
-			.addAttribute("style", style)
+		image.addAttribute("style", style)
 			.addAttribute("width", width)
 			.addAttribute("height", height);
+		
+		appendId(image, id);
 
 		if (libValue != null) {
 			image.addAttribute("src",  SmartImage.IMAGES.getImage(libValue, nameValue));

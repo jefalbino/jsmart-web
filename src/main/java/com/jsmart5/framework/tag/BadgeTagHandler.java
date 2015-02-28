@@ -48,13 +48,12 @@ public final class BadgeTagHandler extends TagHandler {
 		setRandomId("badge");
 
 		Span span = new Span();
-		span.addAttribute("id", id)
-			.addAttribute("style", style)
+		span.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.BADGE)
-			.addAttribute("class", styleClass);
+			.addAttribute("class", styleClass)
+			.addText(getTagValue(label));
 
-		span.addText(getTagValue(label));
-
+		appendId(span, id);
 		appendAjax(id);
 		appendBind(id);
 

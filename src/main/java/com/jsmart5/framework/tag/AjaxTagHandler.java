@@ -21,8 +21,10 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
@@ -31,7 +33,7 @@ import com.jsmart5.framework.json.Param;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
-import com.jsmart5.framework.tag.util.EventActions;
+import com.jsmart5.framework.tag.util.RefAction;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -56,7 +58,7 @@ public final class AjaxTagHandler extends TagHandler {
 	private List<Object> args;
 
 	public AjaxTagHandler() {
-		args = new ArrayList<Object>();
+		args = new ArrayList<Object>(2);
 	}
 
 	@Override
@@ -73,6 +75,12 @@ public final class AjaxTagHandler extends TagHandler {
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof TagHandler) {
+
+			// Just to call nested tags
+			JspFragment body = getJspBody();
+			if (body != null) {
+				body.invoke(null);
+			}
 
 			((TagHandler) parent).addAjaxTag(this);
 		}
@@ -92,8 +100,16 @@ public final class AjaxTagHandler extends TagHandler {
 
 		if (action != null) {
 			jsonAjax.setMethod("post");
-			jsonAjax.setAction(getTagName(J_SBMT, action));
 
+			if (!args.isEmpty()) {
+				jsonAjax.setAction(getTagName(J_SBMT_ARGS, action));
+			} else {
+				jsonAjax.setAction(getTagName(J_SBMT, action));
+			}
+
+			for (Object arg : args) {
+				jsonAjax.addArg(arg);
+			}
 			for (String name : params.keySet()) {						
 				jsonAjax.addParam(new Param(name, params.get(name)));
 			}
@@ -118,36 +134,43 @@ public final class AjaxTagHandler extends TagHandler {
 		return jsonAjax;
 	}
 
+	@SuppressWarnings("unchecked")
 	public StringBuilder getBindFunction(String id) {
 		Ajax jsonAjax = getJsonAjax(id);
 
 		// It means that the ajax is inside some iterator tag, so the
-		// ajax actions will be set by iterator tag
-		EventActions eventActions = (EventActions) getPageValue(ITERATOR_TAG_PARENT);
-		if (eventActions != null) {
-			// actions.addAjax(jsonAjax);
-			return null;
+		// ajax actions will be set by iterator tag and the event bind
+		// will use the id as tag attribute
+		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		if (actionStack != null) {
+			actionStack.peek().addRef(id, event, jsonAjax);
+
+		} else {
+			StringBuilder builder = new StringBuilder();
+			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+			return getBindFunction(id, event, builder);
 		}
-		
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-		return getBindFunction(id, event, builder);
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public StringBuilder getDelegateFunction(String id, String child) {
 		Ajax jsonAjax = getJsonAjax(id);
+		jsonAjax.setTag("ajax");
 		
 		// It means that the ajax is inside some iterator tag, so the
-		// ajax actions will be set by iterator tag
-		EventActions eventActions = (EventActions) getPageValue(ITERATOR_TAG_PARENT);
-		if (eventActions != null) {
-			// actions.addAjax(jsonAjax);
-			return null;
-		}
+		// ajax actions will be set by iterator tag and the event bind
+		// will use the id as tag attribute
+		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		if (actionStack != null) {
+			actionStack.peek().addRef(id, event, jsonAjax);
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-		return getDelegateFunction(id, child, event, builder);
+		} else {
+			StringBuilder builder = new StringBuilder();
+			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+			return getDelegateFunction(id, child, event, builder);
+		}
+		return null;
 	}
 
 	void addArg(Object arg) {

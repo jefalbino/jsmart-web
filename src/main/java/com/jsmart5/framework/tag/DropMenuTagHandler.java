@@ -126,7 +126,7 @@ public final class DropMenuTagHandler extends TagHandler {
 			appendEvent(li, dropAction);
 
 			A a = new A();
-			a.addAttribute("href", "#");
+			a.addAttribute("style", "cursor: pointer;");
 			li.addTag(a);
 			
 			for (IconTagHandler iconTag : dropAction.getIconTags()) {
@@ -160,6 +160,7 @@ public final class DropMenuTagHandler extends TagHandler {
 	private StringBuilder getFunction(DropActionTagHandler dropAction) {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(dropAction.getId());
+		jsonAjax.setTag("dropaction");
 
 		if (dropAction.getAction() != null) {
 			jsonAjax.setMethod("post");
@@ -188,7 +189,7 @@ public final class DropMenuTagHandler extends TagHandler {
 		}
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_BUTTON.format(getJsonValue(jsonAjax)) + "return false;");
+		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 		return getBindFunction(dropAction.getId(), Event.CLICK.name(), builder);
 	}
 

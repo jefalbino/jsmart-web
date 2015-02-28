@@ -84,8 +84,7 @@ public final class TextAreaTagHandler extends TagHandler {
 		}
 
 		TextArea textArea = new TextArea();
-		textArea.addAttribute("id", id)
-			 .addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+		textArea.addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("rows", rows)
@@ -96,6 +95,8 @@ public final class TextAreaTagHandler extends TagHandler {
 			 .addAttribute("disabled", disabled ? "disabled" : null)
 			 .addAttribute("placeholder", getTagValue(placeHolder))
 			 .addText(getTagValue(value));
+		
+		appendId(textArea, id);
 		
 		// Add the style class at last
 		textArea.addAttribute("class", styleClass);

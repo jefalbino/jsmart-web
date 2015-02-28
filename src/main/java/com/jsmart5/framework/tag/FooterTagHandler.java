@@ -67,8 +67,9 @@ public final class FooterTagHandler extends TagHandler {
 		setRandomId("footer");
 
 		Div footer = new Div();
-		footer.addAttribute("id", id)
-			.addAttribute("style", style);
+		footer.addAttribute("style", style);
+		
+		appendId(footer, id);
 
 		if (parent instanceof ModalTagHandler) {
 			footer.addAttribute("class", Bootstrap.MODAL_FOOTER);
@@ -81,7 +82,7 @@ public final class FooterTagHandler extends TagHandler {
 			.addText(getTagValue(title))
 			.addText(sw.toString());
 		
-		if (parent instanceof TagHandler) {
+		if (parent instanceof TagHandler && getSharedValue(ITERATOR_TAG_PARENT) == null) {
 			appendAjax(parent.getId());
 			appendBind(parent.getId());
 		} else {

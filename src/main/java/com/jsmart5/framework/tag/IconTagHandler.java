@@ -72,11 +72,12 @@ public final class IconTagHandler extends TagHandler {
 		setRandomId("icon");
 
 		Span span = new Span();
-		span.addAttribute("id", id)
-			.addAttribute("style", style)
+		span.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.GLYPHICON)
 			.addAttribute("class", getTagValue(name))
 			.addAttribute("aria-hidden", "true");
+		
+		appendId(span, id);
 		
 		if (Look.PRIMARY.equalsIgnoreCase(look)) {
 			span.addAttribute("class", Bootstrap.TEXT_PRIMARY);

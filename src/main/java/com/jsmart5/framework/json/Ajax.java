@@ -24,6 +24,8 @@ import java.util.List;
 public final class Ajax {
 
 	private String id;
+	
+	private String tag;
 
 	private Integer timeout;
 
@@ -33,7 +35,9 @@ public final class Ajax {
 	
 	private String url;
 
-	private List<Param> params = new ArrayList<Param>();
+	private List<Param> params = new ArrayList<Param>(2);
+	
+	private List<Object> args = new ArrayList<Object>(2);
 
 	private String update;
 
@@ -51,6 +55,14 @@ public final class Ajax {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 	public Integer getTimeout() {
@@ -95,6 +107,18 @@ public final class Ajax {
 
 	public void setParams(List<Param> params) {
 		this.params = params;
+	}
+
+	public List<Object> getArgs() {
+		return args;
+	}
+
+	public void addArg(Object arg) {
+		this.args.add(arg);
+	}
+
+	public void setArgs(List<Object> args) {
+		this.args = args;
 	}
 
 	public String getUpdate() {
@@ -142,55 +166,45 @@ public final class Ajax {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((action == null) ? 0 : action.hashCode());
-		result = prime * result + ((before == null) ? 0 : before.hashCode());
-		result = prime * result + ((complete == null) ? 0 : complete.hashCode());
-		result = prime * result + ((error == null) ? 0 : error.hashCode());
-		result = prime * result + ((success == null) ? 0 : success.hashCode());
-		result = prime * result + ((update == null) ? 0 : update.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Ajax other = (Ajax) obj;
 		if (action == null) {
-			if (other.action != null)
+			if (other.action != null) {
 				return false;
-		} else if (!action.equals(other.action))
+			}
+		} else if (!action.equals(other.action)) {
 			return false;
-		if (before == null) {
-			if (other.before != null)
+		}
+		if (id == null) {
+			if (other.id != null) {
 				return false;
-		} else if (!before.equals(other.before))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
-		if (complete == null) {
-			if (other.complete != null)
+		}
+		if (url == null) {
+			if (other.url != null) {
 				return false;
-		} else if (!complete.equals(other.complete))
+			}
+		} else if (!url.equals(other.url)) {
 			return false;
-		if (error == null) {
-			if (other.error != null)
-				return false;
-		} else if (!error.equals(other.error))
-			return false;
-		if (success == null) {
-			if (other.success != null)
-				return false;
-		} else if (!success.equals(other.success))
-			return false;
-		if (update == null) {
-			if (other.update != null)
-				return false;
-		} else if (!update.equals(other.update))
-			return false;
+		}
 		return true;
 	}
 
-	
 }

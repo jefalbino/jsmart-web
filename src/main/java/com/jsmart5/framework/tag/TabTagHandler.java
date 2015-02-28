@@ -61,6 +61,16 @@ public final class TabTagHandler extends TagHandler {
 	private String onShow;
 	
 	private String onHide;
+	
+	private String update;
+	
+	private String beforeSend;
+	
+	private String onError;
+	
+	private String onSuccess;
+
+	private String onComplete;
 
 	private List<TabPaneTagHandler> tabPanes;
 
@@ -178,10 +188,10 @@ public final class TabTagHandler extends TagHandler {
 				li.addAttribute("class", Bootstrap.DROPDOWN);
 				
 				a.addAttribute("role", "button")
+					.addAttribute("style", "cursor: pointer;")
 					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
 					.addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
 					.addAttribute("data-toggle", "dropdown")
-					.addAttribute("href", "#")
 					.addAttribute("aria-expanded", "false");
 				
 				Span span = new Span();
@@ -350,7 +360,24 @@ public final class TabTagHandler extends TagHandler {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
+
 		jsonAjax.addParam(new Param(getTagName(J_TAG, tabValue), ""));
+		
+		if (update != null) {
+			jsonAjax.setUpdate(update.trim());
+		}
+		if (beforeSend != null) {
+			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+		}
+		if (onError != null) {
+			jsonAjax.setError((String) getTagValue(onError.trim()));
+		}
+		if (onSuccess != null) {
+			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+		}
+		if (onComplete != null) {
+			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+		}
 		return jsonAjax;
 	}
 
@@ -388,6 +415,26 @@ public final class TabTagHandler extends TagHandler {
 
 	public void setOnHide(String onHide) {
 		this.onHide = onHide;
+	}
+	
+	public void setUpdate(String update) {
+		this.update = update;
+	}
+
+	public void setBeforeSend(String beforeSend) {
+		this.beforeSend = beforeSend;
+	}
+
+	public void setOnError(String onError) {
+		this.onError = onError;
+	}
+
+	public void setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+	}
+
+	public void setOnComplete(String onComplete) {
+		this.onComplete = onComplete;
 	}
 
 }

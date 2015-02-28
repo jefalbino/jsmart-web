@@ -26,6 +26,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
@@ -39,10 +40,6 @@ import com.jsmart5.framework.tag.type.Size;
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class SelectTagHandler extends TagHandler {
-	
-	private static final String SMALL = "small";
-
-	private static final String LARGE = "large";
 
 	private String selectValues;
 
@@ -59,6 +56,16 @@ public final class SelectTagHandler extends TagHandler {
 	private String rightAddOn;
 	
 	private String size;
+	
+	private String update;
+	
+	private String beforeSend;
+	
+	private String onError;
+	
+	private String onSuccess;
+
+	private String onComplete;
 
 	private List<OptionTagHandler> options;
 
@@ -70,8 +77,8 @@ public final class SelectTagHandler extends TagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (size != null && !size.equals(SMALL) && !size.equals(LARGE)) {
-			throw new JspException("Invalid size value for select tag. Valid values are " + SMALL + ", " + LARGE);
+		if (size != null && !Size.validateSmallLarge(size)) {
+			throw InvalidAttributeException.fromPossibleValues("select", "size", Size.getSmallLargeValues());
 		}
 	}
 
@@ -118,9 +125,9 @@ public final class SelectTagHandler extends TagHandler {
 			inputGroup = new Div();
 			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			if (SMALL.equals(size)) {
+			if (Size.SMALL.equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
-			} else if (LARGE.equals(size)) {
+			} else if (Size.LARGE.equalsIgnoreCase(size)) {
 				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
 			}
 
@@ -149,9 +156,9 @@ public final class SelectTagHandler extends TagHandler {
 			 .addAttribute("disabled", disabled ? "disabled" : null)
 			 .addAttribute("multiple", multiple ? "multiple" : null);
 		
-		if (SMALL.equals(size)) {
+		if (Size.SMALL.equalsIgnoreCase(size)) {
 			select.addAttribute("class", Bootstrap.INPUT_SMALL);
-		} else if (LARGE.equals(size)) {
+		} else if (Size.LARGE.equalsIgnoreCase(size)) {
 			select.addAttribute("class", Bootstrap.INPUT_LARGE);
 		}
 		
@@ -198,9 +205,26 @@ public final class SelectTagHandler extends TagHandler {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
+		jsonAjax.setTag("select");
+
+		if (update != null) {
+			jsonAjax.setUpdate(update.trim());
+		}
+		if (beforeSend != null) {
+			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+		}
+		if (onError != null) {
+			jsonAjax.setError((String) getTagValue(onError.trim()));
+		}
+		if (onSuccess != null) {
+			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+		}
+		if (onComplete != null) {
+			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+		}
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_SELECT.format(getJsonValue(jsonAjax)));
+		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 		return getBindFunction(id, Event.CHANGE.name(), builder);
 	}
 	
@@ -243,4 +267,25 @@ public final class SelectTagHandler extends TagHandler {
 	public void setSize(String size) {
 		this.size = size;
 	}
+
+	public void setUpdate(String update) {
+		this.update = update;
+	}
+
+	public void setBeforeSend(String beforeSend) {
+		this.beforeSend = beforeSend;
+	}
+
+	public void setOnError(String onError) {
+		this.onError = onError;
+	}
+
+	public void setOnSuccess(String onSuccess) {
+		this.onSuccess = onSuccess;
+	}
+
+	public void setOnComplete(String onComplete) {
+		this.onComplete = onComplete;
+	}
+
 }

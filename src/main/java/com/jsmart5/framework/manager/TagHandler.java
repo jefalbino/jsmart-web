@@ -69,25 +69,25 @@ public abstract class TagHandler extends SimpleTagSupport {
 
 	protected static final String J_SBMT = J_TAG_INIT + "002_";
 	
-	protected static final String J_VALUES = J_TAG_INIT + "003_";
-
-	protected static final String J_SEL = J_TAG_INIT + "004_";
-
-	protected static final String J_SEL_VAL = J_TAG_INIT + "005_";
-
-	protected static final String J_ARRAY = J_TAG_INIT + "006_";
-
-	protected static final String J_FILE = J_TAG_INIT + "007_";
-
-	protected static final String J_PART = J_TAG_INIT + "008_";
+	protected static final String J_SBMT_ARGS = J_TAG_INIT + "003_";
 	
-	protected static final String J_SCROLL = J_TAG_INIT + "009_";
+	protected static final String J_VALUES = J_TAG_INIT + "004_";
+
+	protected static final String J_SEL = J_TAG_INIT + "005_";
+
+	protected static final String J_SEL_VAL = J_TAG_INIT + "006_";
+
+	protected static final String J_ARRAY = J_TAG_INIT + "007_";
+
+	protected static final String J_FILE = J_TAG_INIT + "008_";
+
+	protected static final String J_PART = J_TAG_INIT + "009_";
+	
+	protected static final String J_SCROLL = J_TAG_INIT + "010_";
 
 	protected static final String J_DATE = J_TAG_INIT + "011_";
 
 	protected static final String J_FRMT = J_TAG_INIT + "012_";
-	
-	protected static final String J_ARGS = J_TAG_INIT + "013_";
 
 	
 	protected static final String J_TBL = J_TAG_INIT + "015_";
@@ -395,16 +395,16 @@ public abstract class TagHandler extends SimpleTagSupport {
 		return SmartContext.getResponse();
 	}
 
-	protected Object getPageValue(final String name) {
-		return SmartContext.getPageValue(name);
+	protected Object getSharedValue(final String name) {
+		return SmartContext.getSharedValue(name);
 	}
 	
-	protected Object removePageValue(final String name) {
-		return SmartContext.removePageValue(name);
+	protected Object removeSharedValue(final String name) {
+		return SmartContext.removeSharedValue(name);
 	}
 
-	protected void addPageValue(final String name, final Object value) {
-		SmartContext.addPageValue(name, value);
+	protected void addSharedValue(final String name, final Object value) {
+		SmartContext.addSharedValue(name, value);
 	}
 
 	protected String getRequestPath() {
@@ -490,7 +490,15 @@ public abstract class TagHandler extends SimpleTagSupport {
 			script.addText(builder.toString());
 		}
 	}
-	
+
+	protected void appendId(Tag tag, String id) {
+		if (getSharedValue(ITERATOR_TAG_PARENT) != null) {
+			tag.addAttribute("tag-iterator", id);
+		} else {
+			tag.addAttribute("id", id);
+		}
+	}
+
 	protected String getRandomId() {
 		return SmartUtils.randomId();
 	}

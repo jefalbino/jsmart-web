@@ -64,11 +64,35 @@ var Jsmart5 = (function() {
 	
 	function initCheckboxes() {
 		$('input:checkbox').each(function(index) {
+
+			var id = $(this).attr('id');
 			var value = $(this).val();
 			var name = $(this).attr("name");
+
 			if (!value || value == 'false') {
 				$(this).after($('<input type="hidden" name="' + name + '" value="false" />'));
 			}
+
+			if (!id || id.length == 0) {
+				return;
+			}
+
+			// Bind function to keep track of checkbox status
+			$(document).on('click', '#' + id, function() {
+
+				var value = $(this).val();
+				var name = $(this).attr("name");
+			
+				if (!value || value == 'false') {
+					$(this).attr('value', 'true');
+					$("input:hidden[name='" + name + "']").each(function(index) {
+						$(this).remove();
+					});
+				} else {
+					$(this).attr('value', 'false');
+					$(this).after($('<input type="hidden" name="' + name + '" value="false" />'));
+				}
+			});
 		});
 	}
 
@@ -77,20 +101,16 @@ var Jsmart5 = (function() {
 	 ******************************************************/
 	return {
 		
-		ajax: function(map) {
-			doAjax(map);
+		ajax: function(map, el) {
+			doAjax(map, el);
 		},
 		
 		bind: function(map) {
 			doBind(map);
 		},
-		
-		button: function(map) {
-			doButton(map);
-		},
 
-		rest: function (element, timeout) {
-			doRest(element, timeout);
+		rest: function (el, timeout) {
+			doRest(el, timeout);
 		},
 		
 		buttonRestArray: function (id, operation) {
@@ -107,18 +127,6 @@ var Jsmart5 = (function() {
 		
 		dialog: function(id) {
 			openDialog(id);
-		},
-		
-		select: function (map) {
-			doSelect(map);
-		},
-		
-		checkbox: function (id) {
-			doCheckbox(id);
-		},
-		
-		check: function (input, map) {
-			doCheck(input, map);
 		},
 
 		list: function (li, map) {
@@ -237,38 +245,42 @@ var Jsmart5 = (function() {
 	 * PRIVATE FUNCTIONS
 	 ******************************************************/
 	
-	function doAjax(map) {
+	function doAjax(map, el) {
 		if (map.timeout && map.timeout > 0) {
 			var timeout = map.timeout;
 			map.timeout = null;
-			setTimeout(function() {doAjax(map);}, timeout);
+			setTimeout(function() {doAjax(map, el);}, timeout);
 
 		} else {
 			if (map.method) {
-				var element = $('#' + map.id);
+				if (map.tag && map.tag != 'checkbox' && map.tag != 'checkgroup' && map.tag != 'radiogroup') {
+					el = $(getId(map.id));
+				}
+
 				var options = getAjaxOptions(map);
-				var closestForm = element.closest('form');
+				var closestForm = el.closest('form');
+				var elParam = getElementParam(el, false);
 
 				if (map.method == 'post') {
 					var postParam = getAjaxParams(map);
-
-					var outsideParams = getAjaxOutsideParams(element);
-					for (var i = 0; i < outsideParams.length; i++) {
-						postParam.push(outsideParams[i]);
-					}
 
 					if (closestForm && closestForm.length > 0) {
 						if (!doValidate($(closestForm).attr('id'))) {
 							return;
 						}
+
+						if (map.tag && (map.tag == 'checkbox' || map.tag == 'select' || map.tag == 'checkgroup' 
+								|| map.tag == 'radiogroup')) {
+							if (elParam.length > 0 && elParam[0].value == null) {
+								postParam.push({name: elParam[0].name, value: elParam[0].value});
+							}
+						}
 					} else {
-						var elementParam = getElementParam(element, false);
-						for (var i = 0; i < elementParam.length; i++) {
-							postParam.push({name: elementParam[i].name, value: elementParam[i].value});
+						for (var i = 0; i < elParam.length; i++) {
+							postParam.push({name: elParam[i].name, value: elParam[i].value});
 						}
 						postParam = $.param(postParam);
 					}
-
 					options.data = postParam;
 				}
 
@@ -293,38 +305,6 @@ var Jsmart5 = (function() {
 
 		} else {
 			doExecute(map.execute);
-		}
-	}
-	
-	function doButton(map) {
-		if (map.method) {
-			var element = $('#' + map.id);
-			var options = getAjaxOptions(map);
-			var closestForm = $(element).closest('form');
-			
-			if (map.method == 'post') {
-				var postParam = null;
-
-				if (closestForm && closestForm.length > 0) {
-					if (!doValidate($(closestForm).attr('id'))) {
-						return;
-					}
-					postParam = getAjaxParams(map);
-				} else {
-					postParam = $.param(getAjaxParams(map));
-				}
-				options.data = postParam;
-			}
-
-			if (map.method == 'post' && closestForm && closestForm.length > 0) {
-				$(closestForm).ajaxSubmit(options);
-			} else {
-				$.ajax(options);
-			}
-		} else {
-			if (map.before) {
-				doExecute(map.before);
-			}
 		}
 	}
 
@@ -434,12 +414,12 @@ var Jsmart5 = (function() {
 
 			for (var i = 0; i < postParam.length; i++) {
 				// Look for J_SEL_VAL parameter to send the index clicked
-				if (postParam[i].name.indexOf(tagInit + '005_') >= 0) {
+				if (postParam[i].name.indexOf(tagInit + '006_') >= 0) {
 					postParam[i].value = li.attr('list-index');
 				}
 				
 				// Look for J_SCROLL parameter to send scroll values
-				if (postParam[i].name.indexOf(tagInit + '009_') >= 0) {
+				if (postParam[i].name.indexOf(tagInit + '010_') >= 0) {
 					postParam[i].value = JSON.stringify(jsonParam);
 				}
 			}
@@ -490,7 +470,7 @@ var Jsmart5 = (function() {
 
 				for (var i = 0; i < postParam.length; i++) {
 					// Look for J_SCROLL parameter to send scroll values
-					if (postParam[i].name.indexOf(tagInit + '009_') >= 0) {
+					if (postParam[i].name.indexOf(tagInit + '010_') >= 0) {
 						postParam[i].value = JSON.stringify(jsonParam);
 						break;
 					}
@@ -606,83 +586,6 @@ var Jsmart5 = (function() {
 
 			options.data = postParam;
 
-			if (closestForm && closestForm.length > 0) {
-				$(closestForm).ajaxSubmit(options);
-			} else {
-				$.ajax(options);
-			}
-		}
-	}
-
-	function doSelect(map) {
-		var postParam = [];
-		var element = $(getId(map.id));
-		var options = getAjaxOptions(map);
-		var closestForm = element.closest('form');
-		var elementParam = getElementParam(element, false);
-		
-		if (closestForm && closestForm.length > 0) {
-			if (!doValidate($(closestForm).attr('id'))) {
-				return;
-			}
-			if (elementParam.length > 0 && elementParam[0].value == null) {
-				postParam.push({name: elementParam[0].name, value: elementParam[0].value});
-			}
-		} else {
-			for (var i = 0; i < elementParam.length; i++) {
-				postParam.push({name: elementParam[i].name, value: elementParam[i].value});
-			}
-			postParam = $.param(postParam);			
-		}
-
-		options.data = postParam;
-
-		if (closestForm && closestForm.length > 0) {
-			$(closestForm).ajaxSubmit(options);
-		} else {
-			$.ajax(options);
-		}
-	}
-
-	function doCheckbox(id) {
-		var element = $(getId(id));
-		var value = element.val();
-		var name = element.attr("name");
-	
-		if (!value || value == 'false') {
-			element.attr('value', 'true');
-			$("input:hidden[name='" + name + "']").each(function(index) {
-				$(this).remove();
-			});
-		} else {
-			element.attr('value', 'false');
-			element.after($('<input type="hidden" name="' + name + '" value="false" />'));
-		}
-	}
-
-	function doCheck(input, map) {
-		if (input && input.length > 0) {
-			var postParam = [];
-			var options = getAjaxOptions(map);
-			var closestForm = $(input).closest('form');
-			var elementParam = getElementParam(input, false);
-	
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
-					return;
-				}
-				if (elementParam.length > 0 && elementParam[0].value == null) {
-					postParam.push({name: elementParam[0].name, value: elementParam[0].value});
-				}
-			} else {
-				for (var i = 0; i < elementParam.length; i++) {
-					postParam.push({name: elementParam[i].name, value: elementParam[i].value});
-				}
-				postParam = $.param(postParam);			
-			}
-	
-			options.data = postParam;
-	
 			if (closestForm && closestForm.length > 0) {
 				$(closestForm).ajaxSubmit(options);
 			} else {
@@ -1034,9 +937,12 @@ var Jsmart5 = (function() {
 				elementParam.push({name: name, value: true, array: false});
 			}
 		} else {
-			elementParam.push({name: name, value: $(element).val(), array: false});
+			var value = $(element).val();
+			if (value) {
+				elementParam.push({name: name, value: $(element).val(), array: false});
+			}
 		}
-	
+
 		return elementParam;
 	}
 	
@@ -2092,16 +1998,7 @@ var Jsmart5 = (function() {
 	
 	
 
-	function getAjaxOutsideParams(element) {
-		var params = [];
-		if ($(element) && $(element).attr('ajaxoutside')) {
-			var ajaxParams = $.parseJSON($(element).attr('ajaxoutside'));
-			if (ajaxParams.params.length > 0) {
-				params = ajaxParams.params;
-			}
-		}
-		return params;
-	}
+
 	
 	//This is only works for ajax tag inside table tag
 	function getAjaxEvalParams(element) {

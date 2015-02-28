@@ -72,9 +72,10 @@ public final class LoadTagHandler extends TagHandler {
 			header = new Tag(Output.H3.name().toLowerCase());
 		}
 
-		header.addAttribute("id", id)
-			.addAttribute("style", style)
+		header.addAttribute("style", style)
 			.addAttribute("class", styleClass);
+		
+		appendId(header, id);
 
 		Span span = new Span();
 		span.addAttribute("refresh-icon", "")

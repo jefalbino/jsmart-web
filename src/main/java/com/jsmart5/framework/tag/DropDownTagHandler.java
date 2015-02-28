@@ -64,12 +64,12 @@ public final class DropDownTagHandler extends TagHandler {
 			dropDown = new Div();
 		}
 
-		dropDown.addAttribute("id", id)
-			.addAttribute("style", style)
+		dropDown.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.DROPDOWN)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
 			.addAttribute("class", styleClass);
 		
+		appendId(dropDown, id);
 		appendEvent(dropDown);
 		
 		A a = new A();

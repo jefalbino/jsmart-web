@@ -79,9 +79,6 @@ public final class PanelBodyTagHandler extends TagHandler {
 
 		appendEvent(content);
 
-		appendAjax(id);
-		appendBind(id);
-
 		return content;
 	}
 

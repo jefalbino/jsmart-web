@@ -19,10 +19,20 @@
 package com.jsmart5.framework.json;
 
 public final class Bind {
+	
+	private String id;
 
 	private Integer timeout;
 
 	private String execute;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public Integer getTimeout() {
 		return timeout;
@@ -45,29 +55,36 @@ public final class Bind {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((execute == null) ? 0 : execute.hashCode());
-		result = prime * result + ((timeout == null) ? 0 : timeout.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Bind other = (Bind) obj;
 		if (execute == null) {
-			if (other.execute != null)
+			if (other.execute != null) {
 				return false;
-		} else if (!execute.equals(other.execute))
+			}
+		} else if (!execute.equals(other.execute)) {
 			return false;
-		if (timeout == null) {
-			if (other.timeout != null)
+		}
+		if (id == null) {
+			if (other.id != null) {
 				return false;
-		} else if (!timeout.equals(other.timeout))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		return true;
 	}
 

@@ -21,13 +21,8 @@ package com.jsmart5.framework.tag.js;
 public enum JsConstants {
 
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
-	JSMART_AJAX("Jsmart5.ajax", "(%s);"),
+	JSMART_AJAX("Jsmart5.ajax", "(%s,$(this));"),
 	JSMART_BIND("Jsmart5.bind", "(%s);"),
-	JSMART_BUTTON("Jsmart5.button", "(%s);"),
-	JSMART_EXEC("Jsmart5.execute", "('%s');"),
-	JSMART_CHECK("Jsmart5.check", "($(this),%s);"),
-	JSMART_CHECKBOX("Jsmart5.checkbox", "('%s');"),
-	JSMART_SELECT("Jsmart5.select", "(%s);"),
 	JSMART_DIALOG("Jsmart5.dialog", "('%s');"),
 	JSMART_LIST("Jsmart5.list", "($(this),%s);"),
 	JSMART_LISTSCROLL("Jsmart5.listscroll", "(%s);"),

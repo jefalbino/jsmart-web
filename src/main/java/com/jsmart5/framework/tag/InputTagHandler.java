@@ -163,8 +163,7 @@ public final class InputTagHandler extends TagHandler {
 		}
 
 		Input input = new Input();
-		input.addAttribute("id", id)
-			 .addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+		input.addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
 			 .addAttribute("type", type != null ? type : Type.TEXT.name().toLowerCase())
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
@@ -177,6 +176,8 @@ public final class InputTagHandler extends TagHandler {
 			 .addAttribute("pattern", pattern)
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
 			 .addAttribute("data-mask", mask);
+		
+		appendId(input, id);
 		
 		if (Size.SMALL.equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_SMALL);

@@ -20,6 +20,7 @@ package com.jsmart5.framework.tag;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Stack;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -36,6 +37,7 @@ import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Size;
+import com.jsmart5.framework.tag.util.RefAction;
 import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
@@ -113,12 +115,13 @@ public final class LinkTagHandler extends TagHandler {
 		}
 		
 		A link = new A();
-		link.addAttribute("id", id)
-			.addAttribute("style", style)
+		link.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.BUTTON)
 			.addAttribute("tabindex", tabIndex)
 			.addAttribute("class", Bootstrap.BUTTON_LINK)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
+		
+		appendId(link, id);
 
 		StringBuilder urlParams = new StringBuilder("?");
 		for (String key : params.keySet()) {
@@ -126,16 +129,18 @@ public final class LinkTagHandler extends TagHandler {
 		}
 
 		String url = "";
-		String href = "#";
-		String outcomeVal = SmartUtils.decodePath((String) getTagValue(outcome)); 
 
+		String outcomeVal = SmartUtils.decodePath((String) getTagValue(outcome)); 
 		if (outcomeVal != null) {
 			url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal) + urlParams.substring(0, urlParams.length() -1);
-			href = (!url.startsWith("http") && !url.startsWith("mailto") ? getRequest().getContextPath() + "/" : "") + url;
 		}
 
-		link.addAttribute("href", href);
-		
+		String href = "#";
+		if (action == null) {
+			href = (!url.startsWith("http") && !url.startsWith("mailto") ? getRequest().getContextPath() + "/" : "") + url;
+			link.addAttribute("href", href);
+		}
+
 		for (IconTagHandler iconTag : iconTags) {
 			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
 				link.addTag(iconTag.executeTag());
@@ -198,12 +203,8 @@ public final class LinkTagHandler extends TagHandler {
 		// Add the style class at last
 		link.addAttribute("class", styleClass);
 		
-		if (action != null) {		
+		if (action != null) {
 			appendScript(getFunction(url));
-		} else {
-			if (beforeSend != null) {
-				appendScript(getExecFunction());
-			}
 		}
 
 		if (dropMenu != null) {
@@ -217,15 +218,11 @@ public final class LinkTagHandler extends TagHandler {
 		return linkGroup != null ? linkGroup : link;
 	}
 	
-	private StringBuilder getExecFunction() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_EXEC.format(beforeSend.trim()));	
-		return getBindFunction(id, Event.CLICK.name(), builder);
-	}
-	
+	@SuppressWarnings("unchecked")
 	private StringBuilder getFunction(String url) {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
+		jsonAjax.setTag("link");
 
 		if (action != null) {
 			jsonAjax.setMethod("post");
@@ -257,9 +254,20 @@ public final class LinkTagHandler extends TagHandler {
 			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
 		}
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_BUTTON.format(getJsonValue(jsonAjax)) + "return false;");
-		return getBindFunction(id, Event.CLICK.name(), builder);
+		// It means that the ajax is inside some iterator tag, so the
+		// ajax actions will be set by iterator tag and the event bind
+		// will use the id as tag attribute
+		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		if (actionStack != null) {
+			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
+
+		} else {
+			StringBuilder builder = new StringBuilder();
+			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+			return getBindFunction(id, Event.CLICK.name(), builder);
+		}
+
+		return null;
 	}
 
 	void setDropMenu(DropMenuTagHandler dropMenu) {

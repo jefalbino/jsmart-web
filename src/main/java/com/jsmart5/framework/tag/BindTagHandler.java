@@ -19,6 +19,7 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.util.Stack;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
@@ -28,7 +29,7 @@ import com.jsmart5.framework.json.Bind;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
-import com.jsmart5.framework.tag.util.EventActions;
+import com.jsmart5.framework.tag.util.RefAction;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -68,41 +69,48 @@ public final class BindTagHandler extends TagHandler {
 	
 	private Bind getJsonBind(String id) {
 		Bind jsonBind = new Bind();
+		jsonBind.setId(id);
 		jsonBind.setTimeout((Integer) getTagValue(timeout));
 		jsonBind.setExecute((String) getTagValue(execute));
 		return jsonBind;
 	}
 
+	@SuppressWarnings("unchecked")
 	public StringBuilder getBindFunction(String id) {
 		Bind jsonBind = getJsonBind(id);
 
-		// It means that the bind is inside some iterator tag, so the
-		// bind actions will be set by iterator tag
-		EventActions eventActions = (EventActions) getPageValue(ITERATOR_TAG_PARENT);
-		if (eventActions != null) {
-			// actions.addBind(jsonBind);
-			return null;
+		// It means that the ajax is inside some iterator tag, so the
+		// bind actions will be set by iterator tag and the event bind
+		// will use the id as tag attribute
+		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		if (actionStack != null) {
+			actionStack.peek().addRef(id, event, jsonBind);
+		
+		} else {
+			StringBuilder builder = new StringBuilder();
+			builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
+			return getBindFunction(id, event, builder);
 		}
-
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
-		return getBindFunction(id, event, builder);
+		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public StringBuilder getDelegateFunction(String id, String child) {
 		Bind jsonBind = getJsonBind(id);
 
-		// It means that the bind is inside some iterator tag, so the
-		// bind actions will be set by iterator tag
-		EventActions eventActions = (EventActions) getPageValue(ITERATOR_TAG_PARENT);
-		if (eventActions != null) {
-			// actions.addBind(jsonBind);
-			return null;
-		}
+		// It means that the ajax is inside some iterator tag, so the
+		// bind actions will be set by iterator tag and the event bind
+		// will use the id as tag attribute
+		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		if (actionStack != null) {
+			actionStack.peek().addRef(id, event, jsonBind);
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
-		return getDelegateFunction(id, child, event, builder);
+		} else {
+			StringBuilder builder = new StringBuilder();
+			builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
+			return getDelegateFunction(id, child, event, builder);
+		}
+		return null;
 	}
 
 	public void setEvent(String event) {
