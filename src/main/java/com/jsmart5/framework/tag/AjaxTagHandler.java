@@ -19,8 +19,6 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 import javax.servlet.jsp.JspException;
@@ -54,12 +52,6 @@ public final class AjaxTagHandler extends TagHandler {
 	private String onSuccess;
 
 	private String onComplete;
-	
-	private List<Object> args;
-
-	public AjaxTagHandler() {
-		args = new ArrayList<Object>(2);
-	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -68,6 +60,9 @@ public final class AjaxTagHandler extends TagHandler {
 		}
 		if (timeout != null && timeout < 0) {
 			throw InvalidAttributeException.fromConstraint("ajax", "timeout", "greater or equal to 0"); 
+		}
+		if (action != null && action.trim().contains(" ")) {
+			throw InvalidAttributeException.fromConflict("ajax", "action", "Value cannot contains space characters");
 		}
 	}
 	
@@ -93,25 +88,38 @@ public final class AjaxTagHandler extends TagHandler {
 		return null;
 	}
 	
-	private Ajax getJsonAjax(String id) {
+	private Ajax getJsonAjax(String id, boolean hasIterator) {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setTimeout(timeout);
+		jsonAjax.setTag("ajax");
 
 		if (action != null) {
 			jsonAjax.setMethod("post");
+			jsonAjax.setAction(getTagName(J_SBMT, action));
 
+			String argName = null;
 			if (!args.isEmpty()) {
-				jsonAjax.setAction(getTagName(J_SBMT_ARGS, action));
-			} else {
-				jsonAjax.setAction(getTagName(J_SBMT, action));
+				argName = getTagName(J_SBMT_ARGS, action);
 			}
 
-			for (Object arg : args) {
-				jsonAjax.addArg(arg);
-			}
-			for (String name : params.keySet()) {						
-				jsonAjax.addParam(new Param(name, params.get(name)));
+			if (!hasIterator) {
+				for (Object arg : args) {
+					jsonAjax.addArg(new Param(argName, arg));
+				}
+				for (String name : params.keySet()) {						
+					jsonAjax.addParam(new Param(name, params.get(name)));
+				}
+			} else {
+				
+				// Do not place parameter value on json ajax because it depends on each tag
+				// being iterate via parent tag
+				if (argName != null) {
+					jsonAjax.addArg(new Param(argName, null));
+				}
+				for (String name : params.keySet()) {						
+					jsonAjax.addParam(new Param(name, null));
+				}
 			}
 		} else if (update != null) {
 			jsonAjax.setMethod("get");
@@ -136,12 +144,14 @@ public final class AjaxTagHandler extends TagHandler {
 
 	@SuppressWarnings("unchecked")
 	public StringBuilder getBindFunction(String id) {
-		Ajax jsonAjax = getJsonAjax(id);
 
 		// It means that the ajax is inside some iterator tag, so the
 		// ajax actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
+		
+		Ajax jsonAjax = getJsonAjax(id, actionStack != null);
+
 		if (actionStack != null) {
 			actionStack.peek().addRef(id, event, jsonAjax);
 
@@ -155,13 +165,14 @@ public final class AjaxTagHandler extends TagHandler {
 
 	@SuppressWarnings("unchecked")
 	public StringBuilder getDelegateFunction(String id, String child) {
-		Ajax jsonAjax = getJsonAjax(id);
-		jsonAjax.setTag("ajax");
-		
+
 		// It means that the ajax is inside some iterator tag, so the
 		// ajax actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
+		
+		Ajax jsonAjax = getJsonAjax(id, actionStack != null);
+
 		if (actionStack != null) {
 			actionStack.peek().addRef(id, event, jsonAjax);
 
@@ -173,12 +184,12 @@ public final class AjaxTagHandler extends TagHandler {
 		return null;
 	}
 
-	void addArg(Object arg) {
-		this.args.add(arg);
-	}
-
 	public void setEvent(String event) {
 		this.event = event;
+	}
+	
+	public String getAction() {
+		return action;
 	}
 
 	public void setAction(String action) {

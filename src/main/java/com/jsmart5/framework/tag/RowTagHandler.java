@@ -52,9 +52,8 @@ public final class RowTagHandler extends TagHandler {
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof ListTagHandler) {
-			
+
 			((ListTagHandler) parent).addRow(this);
-			return false;
 		}
 		return false;
 	}
@@ -68,6 +67,10 @@ public final class RowTagHandler extends TagHandler {
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
+		
+		// Need to clear for every list item 
+		// because the tag row is unique
+		clearTagParameters();
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -78,11 +81,11 @@ public final class RowTagHandler extends TagHandler {
 		Tag tag = null;
 		if (selectValue != null) {
 			tag = new A();
-			tag.addAttribute("href", "#");
+			tag.addAttribute("style", "cursor: pointer;");
 		} else {
 			tag = new Li();
 		}
-		
+
 		setRandomId("row");
 
 		tag.addAttribute("style", style)
@@ -92,7 +95,7 @@ public final class RowTagHandler extends TagHandler {
 			.addAttribute("list-index", selectIndex)
 			.addAttribute("scroll-index", scrollIndex);
 		
-		appendId(tag, id);
+		appendRefId(tag, id);
 		
 		String lookVal = (String) getTagValue(look);
 

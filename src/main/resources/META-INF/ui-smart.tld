@@ -585,7 +585,7 @@
         </attribute>
         <attribute>
             <name>action</name>
-            <required>false</required>
+            <required>true</required>
         </attribute>
         <attribute>
             <name>update</name>

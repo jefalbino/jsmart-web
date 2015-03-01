@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,6 +39,8 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import com.google.gson.Gson;
 import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.exception.InvalidAttributeException;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Bind;
 import com.jsmart5.framework.tag.AjaxTagHandler;
 import com.jsmart5.framework.tag.BindTagHandler;
 import com.jsmart5.framework.tag.IconTagHandler;
@@ -44,11 +48,15 @@ import com.jsmart5.framework.tag.LoadTagHandler;
 import com.jsmart5.framework.tag.ValidateTagHandler;
 import com.jsmart5.framework.tag.html.Script;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.util.EventAction;
+import com.jsmart5.framework.tag.util.RefAction;
 import com.jsmart5.framework.util.SmartMessage;
 import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_AJAX;
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_BIND;
 import static com.jsmart5.framework.util.SmartText.*;
 
 public abstract class TagHandler extends SimpleTagSupport {
@@ -106,6 +114,8 @@ public abstract class TagHandler extends SimpleTagSupport {
 
 
 	protected final Map<String, Object> params;
+	
+	protected List<Object> args;
 
 	protected ValidateTagHandler validator;
 
@@ -158,10 +168,19 @@ public abstract class TagHandler extends SimpleTagSupport {
 	public String onSelect;
 
 	public TagHandler() {
-		params = new LinkedHashMap<String, Object>(3);
 		ajaxTags = new ArrayList<AjaxTagHandler>(2);
 		iconTags = new ArrayList<IconTagHandler>(2);
 		bindTags = new ArrayList<BindTagHandler>(2);
+		params = new LinkedHashMap<String, Object>(3);
+		args = new ArrayList<Object>(3);
+	}
+
+	protected void clearTagParameters() {
+		ajaxTags.clear();
+		iconTags.clear();
+		bindTags.clear();
+		params.clear();
+		args.clear();
 	}
 
 	@Override
@@ -169,6 +188,8 @@ public abstract class TagHandler extends SimpleTagSupport {
 		// long start = System.currentTimeMillis();
 		try {
 			validateTag();
+			clearTagParameters();
+
 			if (beforeTag()) {
 				Tag tag = executeTag();
 				if (tag != null) {
@@ -196,6 +217,18 @@ public abstract class TagHandler extends SimpleTagSupport {
 			throw new JspException("Duplicated tag parameter " + key);
 		}
 		params.put(key, value);
+	}
+
+	public Map<String, Object> getParams() {
+		return params;
+	}
+
+	public void addArg(Object arg) {
+		this.args.add(arg);
+	}
+	
+	public List<Object> getArgs() {
+		return args;
 	}
 
 	public void setValidator(ValidateTagHandler validator) {
@@ -395,16 +428,16 @@ public abstract class TagHandler extends SimpleTagSupport {
 		return SmartContext.getResponse();
 	}
 
-	protected Object getSharedValue(final String name) {
-		return SmartContext.getSharedValue(name);
+	protected Object getMappedValue(final String name) {
+		return SmartContext.getMappedValue(name);
 	}
 	
-	protected Object removeSharedValue(final String name) {
-		return SmartContext.removeSharedValue(name);
+	protected Object removeMappedValue(final String name) {
+		return SmartContext.removeMappedValue(name);
 	}
 
-	protected void addSharedValue(final String name, final Object value) {
-		SmartContext.addSharedValue(name, value);
+	protected void addMappedValue(final String name, final Object value) {
+		SmartContext.addMappedValue(name, value);
 	}
 
 	protected String getRequestPath() {
@@ -460,6 +493,10 @@ public abstract class TagHandler extends SimpleTagSupport {
 		return GSON.toJson(object).replace("\u0027", "'");
 	}
 	
+	protected String getJsonHtmlValue(Object object) {
+		return GSON.toJson(object).replace("\"", "'");
+	}
+
 	protected StringBuilder getBindFunction(String id, String event, StringBuilder script) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("$(document).on('").append(event.toLowerCase()).append("','#").append(id).append("',function(e){");
@@ -490,10 +527,79 @@ public abstract class TagHandler extends SimpleTagSupport {
 			script.addText(builder.toString());
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	protected void pushIteratorTagParent() {
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
+		if (actionStack == null) {
+			actionStack = new Stack<RefAction>();
+			actionStack.push(new RefAction());
+			addMappedValue(ITERATOR_TAG_PARENT, actionStack);
+		} else {
+			actionStack.push(new RefAction());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected void popIteratorTagParent() {
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
+		
+		RefAction refAction = actionStack.pop();
+		if (actionStack.empty()) {
+			removeMappedValue(ITERATOR_TAG_PARENT);
+		}
 
-	protected void appendId(Tag tag, String id) {
-		if (getSharedValue(ITERATOR_TAG_PARENT) != null) {
+		Map<String, EventAction> refs = refAction.getRefs();
+		if (refs != null) {
+
+			for (String refId : refs.keySet()) {			
+				EventAction eventAction = refs.get(refId);
+				if (eventAction == null) {
+					continue;
+				}
+
+				Map<String, Set<Ajax>> refAjaxs = eventAction.getAjaxs();
+				if (refAjaxs != null) {
+					for (String event : refAjaxs.keySet()) {
+						for (Ajax jsonAjax : refAjaxs.get(event)) {
+							StringBuilder builder = new StringBuilder();
+							builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+							builder = getDelegateFunction(id, "*[tag-iterator=\"" + refId + "\"]", event.toLowerCase(), builder);
+							appendScript(builder);
+						}
+					}
+				}
+
+				Map<String, Set<Bind>> refBinds = eventAction.getBinds();
+				if (refBinds != null) {
+					for (String event : refBinds.keySet()) {
+						for (Bind jsonBind : refBinds.get(event)) {
+							StringBuilder builder = new StringBuilder();
+							builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
+							builder = getDelegateFunction(id, "*[tag-iterator=\"" + refId + "\"]", event.toLowerCase(), builder);
+							appendScript(builder);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	protected void appendRefId(Tag tag, String id) {
+		if (getMappedValue(ITERATOR_TAG_PARENT) != null && (!ajaxTags.isEmpty() || !bindTags.isEmpty())) {
 			tag.addAttribute("tag-iterator", id);
+			
+			// Place the arguments and parameters to this tag which is holding ajax tags
+			for (AjaxTagHandler ajaxTag : ajaxTags) {
+				for (String param : ajaxTag.params.keySet()) {
+					tag.addUniqueAttribute(param, ajaxTag.params.get(param));
+				}
+				
+				if (!ajaxTag.args.isEmpty()) {
+					String actionName = getTagName(J_SBMT_ARGS, ajaxTag.getAction());
+					tag.addUniqueAttribute(actionName, getJsonHtmlValue(ajaxTag.args));
+				}
+			}
 		} else {
 			tag.addAttribute("id", id);
 		}

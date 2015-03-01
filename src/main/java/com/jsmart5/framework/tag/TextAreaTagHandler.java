@@ -96,7 +96,7 @@ public final class TextAreaTagHandler extends TagHandler {
 			 .addAttribute("placeholder", getTagValue(placeHolder))
 			 .addText(getTagValue(value));
 		
-		appendId(textArea, id);
+		appendRefId(textArea, id);
 		
 		// Add the style class at last
 		textArea.addAttribute("class", styleClass);

@@ -49,6 +49,15 @@ public class Tag {
 		return this;
 	}
 
+	public Tag addUniqueAttribute(String name, Object value) {
+		if (value != null) {
+			if (attributes.get(name) == null) {
+				attributes.put(name, value);
+			}
+		}
+		return this;
+	}
+
 	public Tag addText(Object text) {
 		if (text != null) {
 			this.objects.add(text.toString());

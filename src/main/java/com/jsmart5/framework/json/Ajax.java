@@ -37,7 +37,7 @@ public final class Ajax {
 
 	private List<Param> params = new ArrayList<Param>(2);
 	
-	private List<Object> args = new ArrayList<Object>(2);
+	private List<Param> args = new ArrayList<Param>(2);
 
 	private String update;
 
@@ -109,15 +109,15 @@ public final class Ajax {
 		this.params = params;
 	}
 
-	public List<Object> getArgs() {
+	public List<Param> getArgs() {
 		return args;
 	}
 
-	public void addArg(Object arg) {
+	public void addArg(Param arg) {
 		this.args.add(arg);
 	}
 
-	public void setArgs(List<Object> args) {
+	public void setArgs(List<Param> args) {
 		this.args = args;
 	}
 

@@ -253,16 +253,21 @@ var Jsmart5 = (function() {
 
 		} else {
 			if (map.method) {
-				if (map.tag && map.tag != 'checkbox' && map.tag != 'checkgroup' && map.tag != 'radiogroup') {
+				if (map.tag && (map.tag == 'select' || map.tag == 'link' || map.tag == 'button' || map.tag == 'dropaction')) {
 					el = $(getId(map.id));
 				}
 
 				var options = getAjaxOptions(map);
 				var closestForm = el.closest('form');
 				var elParam = getElementParam(el, false);
+				var itParam = getIterateParam(el, map);
 
 				if (map.method == 'post') {
 					var postParam = getAjaxParams(map);
+
+					for (var i = 0; i < itParam.length; i++) {
+						postParam.push({name: itParam[i].name, value: itParam[i].value});
+					}
 
 					if (closestForm && closestForm.length > 0) {
 						if (!doValidate($(closestForm).attr('id'))) {
@@ -564,9 +569,10 @@ var Jsmart5 = (function() {
 			}
 			
 			var tabElement = $(getId(map.id));
+			var inputName = $.trim(map.params[0].name.replace(/\"/g, ''));
 	
 			// Get active tab via hidden input name sent on map
-			var tabInput = $('input[name="' + map.params[0].name + '"]');
+			var tabInput = $('input[name="' + inputName + '"]');
 			tabInput.val(li.attr('tab-value'));
 
 			var postParam = getAjaxParams(map);
@@ -857,24 +863,69 @@ var Jsmart5 = (function() {
 	function getAjaxParams(map) {
 		var params = [];
 		if (map.action) {
-			params.push({name: map.action, value: 0});
+			var action = $.trim(map.action);
+			params.push({name: action, value: 0});
+		}
+		
+		if (map.args) {
+			for (var i = 0; i < map.args.length; i++) {
+				if (map.args[i].value !== undefined) {
+					var name = $.trim(map.args[i].name);
+					params.push({name: name, value: map.args[i].value});
+				}
+			}
 		}
 
 		if (map.params) {
 			for (var i = 0; i < map.params.length; i++) {
-				params.push({name: map.params[i].name, value: map.params[i].value});
+				if (map.params[i].value !== undefined) {
+					var name = $.trim(map.params[i].name);
+					params.push({name: name, value: map.params[i].value});
+				}
 			}
 		}
 		return params;
 	}
-	
-	function getElementParam(element, rest) {
-		var elementParam = [];
-		var name = $(element).attr('name');
+
+	function getIterateParam(el, map) {
+		var itParams = [];
+		
+		if (map.params) {
+			for (var i = 0; i < map.params.length; i++) {
+				if (map.params[i].value === undefined) {
+					var name = $.trim(map.params[i].name);
+					var value = el.attr(name);
+					itParams.push({name: name, value: value});
+				}
+			}
+		}
+		
+		if (map.args) {
+			for (var i = 0; i < map.args.length; i++) {
+				if (map.args[i].value === undefined) {
+					var name = $.trim(map.args[i].name);
+					var value = el.attr(name);
+					if (value && value.length > 0) {
+
+						var values = $.parseJSON(value.replace(/\'/g, '"'));
+						for (var j = 0; j < values.length; j++) {
+							itParams.push({name: name, value: values[j]});
+						}
+					}
+				}
+			}
+		}
+		
+		return itParams;
+	}
+
+	function getElementParam(el, rest) {
+		var elParams = [];
+		var name = $(el).attr('name');
 		var checkgroups = new Array();
 	
-		if ($(element).is('select') && $(element).attr('multiple')) {
-			var values = $(element).val();
+		if ($(el).is('select') && $(el).attr('multiple')) {
+			var values = $(el).val();
 			if (values && values.length > 0) {
 				if (rest) {
 					var value = "";
@@ -882,24 +933,24 @@ var Jsmart5 = (function() {
 						value += values[i] + ",";
 					}
 					if (value.length > 0) {
-						elementParam.push({name: name, value: value.substring(0, value.length - 1), array: true});
+						elParams.push({name: name, value: value.substring(0, value.length - 1), array: true});
 					}
 				} else {
 					for (var i = 0; i < values.length; i++) {
-						elementParam.push({name: name, value: values[i], array: true});
+						elParams.push({name: name, value: values[i], array: true});
 					}
 				}
 			}
 	
-			if (elementParam.length == 0) {
-				elementParam.push({name: name, value: null, array: true});
+			if (elParams.length == 0) {
+				elParams.push({name: name, value: null, array: true});
 			}
-		} else if ($(element).is('input') && $(element).attr('checkgroup')) {
+		} else if ($(el).is('input') && $(el).attr('checkgroup')) {
 			if (!contains(checkgroups, name)) {
 				checkgroups[checkgroups.length] = name;
 	
 				var values = [];
-				$(element).parents('div[checkgroup]').find("input:checked[name='" + name + "']").each(function(index) {
+				$(el).parents('div[checkgroup]').find("input:checked[name='" + name + "']").each(function(index) {
 					values.push($(this).val());
 				});
 	
@@ -909,41 +960,41 @@ var Jsmart5 = (function() {
 						value += values[i] + ",";
 					}
 					if (value.length > 0) {
-						elementParam.push({name: name, value: value.substring(0, value.length - 1), array: true});
+						elParams.push({name: name, value: value.substring(0, value.length - 1), array: true});
 					}
 				} else {
 					for (var i = 0; i < values.length; i++) {
-						elementParam.push({name: name, value: values[i], array: true});
+						elParams.push({name: name, value: values[i], array: true});
 					}
 				}
 	
-				if (elementParam.length == 0) {
-					elementParam.push({name: name, value: null, array: true});
+				if (elParams.length == 0) {
+					elParams.push({name: name, value: null, array: true});
 				}
 			}
-		} else if ($(element).is('input') && $(element).attr('radiogroup')) {
+		} else if ($(el).is('input') && $(el).attr('radiogroup')) {
 			if (!contains(checkgroups, name)) {
 				checkgroups[checkgroups.length] = name;
 	
-				var val = $(element).parents('div[radiogroup]').find("input:checked[name='" + name + "']").val();
-				elementParam.push({name: name, value: val, array: false});
+				var val = $(el).parents('div[radiogroup]').find("input:checked[name='" + name + "']").val();
+				elParams.push({name: name, value: val, array: false});
 			}
-		} else if ($(element).is('input:checkbox')) {
-			var value = $(element).val();
+		} else if ($(el).is('input:checkbox')) {
+			var value = $(el).val();
 	
 			if (!value || value == 'false') {
-				elementParam.push({name: name, value: false, array: false});
+				elParams.push({name: name, value: false, array: false});
 			} else {
-				elementParam.push({name: name, value: true, array: false});
+				elParams.push({name: name, value: true, array: false});
 			}
 		} else {
-			var value = $(element).val();
+			var value = $(el).val();
 			if (value) {
-				elementParam.push({name: name, value: $(element).val(), array: false});
+				elParams.push({name: name, value: $(el).val(), array: false});
 			}
 		}
 
-		return elementParam;
+		return elParams;
 	}
 	
 	function doUpdate(update, a) {

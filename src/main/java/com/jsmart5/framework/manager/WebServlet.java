@@ -122,12 +122,11 @@ public final class WebServlet extends HttpServlet {
     	}
 
     	boolean redirectAjax = false;
-    	String responsePath = null;
-		String submitExpression = HANDLER.handleRequestExpressions(expressions);
+		String responsePath = HANDLER.handleRequestExpressions(expressions);
 
 		// Check authorization roles on submit expression and after execute it
-		if (submitExpression != null) {
-			responsePath = SmartUtils.decodePath(EXPRESSIONS.submitExpression(submitExpression));
+		if (responsePath != null) {
+			responsePath = SmartUtils.decodePath(responsePath);
 		}
 
 		// Case user had ordered redirect to specific path in submitted method

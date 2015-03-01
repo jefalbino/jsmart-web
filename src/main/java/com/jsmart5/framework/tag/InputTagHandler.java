@@ -177,7 +177,7 @@ public final class InputTagHandler extends TagHandler {
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
 			 .addAttribute("data-mask", mask);
 		
-		appendId(input, id);
+		appendRefId(input, id);
 		
 		if (Size.SMALL.equalsIgnoreCase(size)) {
 			input.addAttribute("class", Bootstrap.INPUT_SMALL);

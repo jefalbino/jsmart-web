@@ -260,14 +260,14 @@ public enum BeanHandler {
 	}
 
 	String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
-		String submitExpression = null;
+		String responsePath = null;
 		for (Entry<String, String> expr : expressions.entrySet()) {
-			String expression = EXPRESSIONS.handleRequestExpression(expr.getKey(), expr.getValue());
-			if (expression != null) {
-				submitExpression = expression;
+			String tempPath = EXPRESSIONS.handleRequestExpression(expr.getKey(), expr.getValue());
+			if (tempPath != null) {
+				responsePath = tempPath;
 			}
 		}
-		return submitExpression;
+		return responsePath;
 	}
 
 	void instantiateBeans(String path, Map<String, String> expressions) throws Exception {

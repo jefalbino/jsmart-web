@@ -104,7 +104,7 @@ public final class HeaderTagHandler extends TagHandler {
 		header.addAttribute("style", style)
 			.addAttribute("class", styleClass);
 		
-		appendId(header, id);
+		appendRefId(header, id);
 
 		for (IconTagHandler iconTag : iconTags) {
 			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
@@ -122,7 +122,7 @@ public final class HeaderTagHandler extends TagHandler {
 			}
 		}
 		
-		if (parent instanceof TagHandler && getSharedValue(ITERATOR_TAG_PARENT) == null) {
+		if (parent instanceof TagHandler && getMappedValue(ITERATOR_TAG_PARENT) == null) {
 			appendAjax(parent.getId());
 			appendBind(parent.getId());
 		} else {

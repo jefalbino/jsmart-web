@@ -59,7 +59,7 @@ final class TagEncrypter {
 		try {
 			if (encryptTagEnabled) {
 	            byte[] encode = encryptCipher.doFinal(value.getBytes("UTF8"));
-	            return prefix + new String(Base64.encodeBase64(encode));
+	            return prefix + new String(Base64.encodeBase64(encode, true, true)).trim();
 			}
         } catch (Exception ex) {
         	LOGGER.log(Level.INFO, "Failure to encrypt tag: " + value + " " + ex.getMessage());

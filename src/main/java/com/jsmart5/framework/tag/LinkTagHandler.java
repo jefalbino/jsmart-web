@@ -121,7 +121,7 @@ public final class LinkTagHandler extends TagHandler {
 			.addAttribute("class", Bootstrap.BUTTON_LINK)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
 		
-		appendId(link, id);
+		appendRefId(link, id);
 
 		StringBuilder urlParams = new StringBuilder("?");
 		for (String key : params.keySet()) {
@@ -257,7 +257,7 @@ public final class LinkTagHandler extends TagHandler {
 		// It means that the ajax is inside some iterator tag, so the
 		// ajax actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
 		if (actionStack != null) {
 			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
 

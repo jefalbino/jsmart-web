@@ -150,7 +150,7 @@ public final class UploadTagHandler extends TagHandler {
 			 .addAttribute("datatype", Type.FILE.name().toLowerCase())
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
 		
-		appendId(input, id);
+		appendRefId(input, id);
 		
 		input.addAttribute("value", getTagValue(value));
 		

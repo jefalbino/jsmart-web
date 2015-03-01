@@ -79,7 +79,7 @@ public final class CheckGroupTagHandler extends TagHandler {
 		div.addAttribute("align", align)
 			.addAttribute("checkgroup", "");
 		
-		appendId(div, id);
+		appendRefId(div, id);
 
  		long checkIndex = 0;
 		for (CheckTagHandler check : checks) {
@@ -110,7 +110,7 @@ public final class CheckGroupTagHandler extends TagHandler {
 	@SuppressWarnings("unchecked")
 	private StringBuilder getFunction() {
 		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId("id");
+		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
 		jsonAjax.setTag("checkgroup");
 
@@ -133,7 +133,7 @@ public final class CheckGroupTagHandler extends TagHandler {
 		// It means that the ajax is inside some iterator tag, so the
 		// ajax actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
 		if (actionStack != null) {
 			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
 

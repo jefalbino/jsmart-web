@@ -19,7 +19,6 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -156,10 +155,6 @@ public class DropActionTagHandler extends TagHandler {
 
 	public void setOnComplete(String onComplete) {
 		this.onComplete = onComplete;
-	}
-
-	Map<String, Object> getParams() {
-		return params;
 	}
 
 }

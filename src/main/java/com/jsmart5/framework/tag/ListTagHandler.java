@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -43,8 +40,6 @@ import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.tag.type.Event;
-import com.jsmart5.framework.tag.util.EventAction;
-import com.jsmart5.framework.tag.util.RefAction;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -91,13 +86,8 @@ public final class ListTagHandler extends TagHandler {
 	public Tag executeTag() throws JspException, IOException {
 
 		// Need to indicate that it is a list parent tag for deep inner tags
-		// so the ajax and bind action can be set by this class
-		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
-		if (actionStack == null) {
-			actionStack = new Stack<RefAction>();
-			actionStack.push(new RefAction());
-			addSharedValue(ITERATOR_TAG_PARENT, actionStack);
-		}
+		// so the ajax and bind actions can be set by this class
+		pushIteratorTagParent();
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -180,45 +170,9 @@ public final class ListTagHandler extends TagHandler {
 			}
 		}
 
-		// Pop step
-		RefAction refAction = actionStack.pop();
-		if (actionStack.empty()) {
-			removeSharedValue(ITERATOR_TAG_PARENT);
-		}
-
-		Map<String, EventAction> refs = refAction.getRefs();
-		if (refs != null) {
-			for (String refId : refs.keySet()) {			
-				EventAction eventAction = refs.get(refId);
-				if (eventAction == null) {
-					continue;
-				}
-
-				Map<String, Set<Ajax>> refAjaxs = eventAction.getAjaxs();
-				if (refAjaxs != null) {
-					for (String event : refAjaxs.keySet()) {
-						for (Ajax jsonAjax : refAjaxs.get(event)) {
-
-//							if param or arg contain "var" value
-//								// Perform list select
-//
-//							else 
-//								// Perform get set Tag J_TAG
-//
-//							jsonAjax.addParam( ....	
-							
-							//jsonAjax.addParam(new Param(getTagName(J_SEL, selectValue), getTagName(J_VALUES, values)));
-							//jsonAjax.addParam(new Param(getTagName(J_SEL_VAL, selectValue), ""));
-
-							StringBuilder builder = new StringBuilder();
-							builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-							builder = getDelegateFunction(id, "*[tag-iterator=\"" + refId + "\"]", event.toLowerCase(), builder);
-							appendScript(builder);
-						}
-					}		
-				}
-			}
-		}
+		// Needs to pop the iterator action so this class set the 
+		// ajax and bind actions carried via RefAction
+		popIteratorTagParent();
 
 		if (selectValue != null) {
 			appendScript(getAjaxFunction());
@@ -269,6 +223,8 @@ public final class ListTagHandler extends TagHandler {
 
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
+		jsonAjax.setTag("list");
+
 		jsonAjax.addParam(new Param(getTagName(J_SEL, selectValue), getTagName(J_VALUES, values)));
 		jsonAjax.addParam(new Param(getTagName(J_SEL_VAL, selectValue), ""));
 
@@ -300,6 +256,8 @@ public final class ListTagHandler extends TagHandler {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setMethod("post");
+		jsonAjax.setTag("listscroll");
+
 		jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
 
 		StringBuilder builder = new StringBuilder();

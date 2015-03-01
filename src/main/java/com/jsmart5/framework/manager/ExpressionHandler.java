@@ -91,7 +91,7 @@ public enum ExpressionHandler {
 
 	String handleRequestExpression(String param, String expr) throws ServletException, IOException {
 		try {
-			String submitExpression = null;
+			String responsePath = null;
 			String jTag = param.substring(0, TagHandler.J_TAG_LENGTH);
 	
 			if (jTag.equals(TagHandler.J_TAG)) {
@@ -119,9 +119,9 @@ public enum ExpressionHandler {
 				setExpressionCaptcha(expr, param);
 	
 			} else if (jTag.equals(TagHandler.J_SBMT)) {
-				submitExpression = expr;
+				responsePath = submitExpression(expr, param);
 			}
-			return submitExpression;
+			return responsePath;
 
 		} catch (PropertyNotWritableException e) {
 			LOGGER.log(Level.SEVERE, "Property " + expr + " is not writable");
@@ -129,14 +129,14 @@ public enum ExpressionHandler {
 		}
 	}
 
-	String submitExpression(String expr) {
-		String retExpr = null;
+	String submitExpression(String expr, String param) {
+		String responsePath = null;
 		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
 
+			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
 			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
 
 			Set<Object> objs = getExpressionBeans(expr);
-
 			for (Object obj : objs) {
 
 				// Check authorization to execute method
@@ -147,10 +147,24 @@ public enum ExpressionHandler {
 				// Call mapped method with @PreSubmit annotation
 				HANDLER.executePreSubmit(obj);
 
+				Object[] arguments = null;
+				String[] args = SmartContext.getRequest().getParameterValues(param.replaceFirst(TagHandler.J_SBMT, TagHandler.J_SBMT_ARGS));
+
+				if (args != null) {
+					boolean unescape = HANDLER.containsUnescapeMethod(names);
+					arguments = new Object[args.length];
+
+					for (int i = 0; i < args.length; i++) {
+						arguments[i] = unescape ? args[i] : escapeValue(args[i]);
+					}
+				}
+
 				// Call submit method
 				ELContext context = SmartContext.getPageContext().getELContext();
-				MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, expr, null, new Class<?>[]{});
-				retExpr = (String) methodExpr.invoke(context, null);
+				MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, expr, null, 
+						arguments != null ? new Class<?>[arguments.length] : new Class<?>[]{});
+
+				responsePath = (String) methodExpr.invoke(context, arguments);
 
 				// Call mapped method with @PostSubmit annotation
 				HANDLER.executePostSubmit(obj);
@@ -158,7 +172,7 @@ public enum ExpressionHandler {
 				break;
 			}
 		}
-		return retExpr;
+		return responsePath;
 	}
 
 	@SuppressWarnings("all")

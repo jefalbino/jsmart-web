@@ -149,7 +149,7 @@ public final class ButtonTagHandler extends TagHandler {
 			.addAttribute("tabindex", tabIndex)
 			.addAttribute("disabled", disabled ? "disabled" : null);
 
-		appendId(button, id);
+		appendRefId(button, id);
 
 		String lookVal = Bootstrap.BUTTON_DEFAULT;
 		
@@ -303,7 +303,7 @@ public final class ButtonTagHandler extends TagHandler {
 		// It means that the ajax is inside some iterator tag, so the
 		// ajax actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
 		if (actionStack != null) {
 			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
 			

@@ -71,7 +71,12 @@ public final class BindTagHandler extends TagHandler {
 		Bind jsonBind = new Bind();
 		jsonBind.setId(id);
 		jsonBind.setTimeout((Integer) getTagValue(timeout));
-		jsonBind.setExecute((String) getTagValue(execute));
+		
+		String exec = (String) getTagValue(execute);
+		if (exec != null && !exec.trim().endsWith(";")) {
+			exec += ";";
+		}
+		jsonBind.setExecute(exec);
 		return jsonBind;
 	}
 
@@ -82,7 +87,7 @@ public final class BindTagHandler extends TagHandler {
 		// It means that the ajax is inside some iterator tag, so the
 		// bind actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
 		if (actionStack != null) {
 			actionStack.peek().addRef(id, event, jsonBind);
 		
@@ -101,7 +106,7 @@ public final class BindTagHandler extends TagHandler {
 		// It means that the ajax is inside some iterator tag, so the
 		// bind actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getSharedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
 		if (actionStack != null) {
 			actionStack.peek().addRef(id, event, jsonBind);
 

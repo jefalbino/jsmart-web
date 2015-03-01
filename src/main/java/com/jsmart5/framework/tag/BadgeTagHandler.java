@@ -53,7 +53,7 @@ public final class BadgeTagHandler extends TagHandler {
 			.addAttribute("class", styleClass)
 			.addText(getTagValue(label));
 
-		appendId(span, id);
+		appendRefId(span, id);
 		appendAjax(id);
 		appendBind(id);
 

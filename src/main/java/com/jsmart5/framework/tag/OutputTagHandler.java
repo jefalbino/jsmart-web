@@ -126,7 +126,7 @@ public final class OutputTagHandler extends TagHandler {
 
 		tag.addAttribute("style", style);
 
-		appendId(tag, id);
+		appendRefId(tag, id);
 
 		if (Case.CAPITALIZE.equalsIgnoreCase(transform)) {
 			tag.addAttribute("class", Bootstrap.TEXT_CAPITALIZE);

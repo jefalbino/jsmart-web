@@ -77,7 +77,7 @@ public final class IconTagHandler extends TagHandler {
 			.addAttribute("class", getTagValue(name))
 			.addAttribute("aria-hidden", "true");
 		
-		appendId(span, id);
+		appendRefId(span, id);
 		
 		if (Look.PRIMARY.equalsIgnoreCase(look)) {
 			span.addAttribute("class", Bootstrap.TEXT_PRIMARY);

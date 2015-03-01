@@ -75,7 +75,7 @@ public final class LoadTagHandler extends TagHandler {
 		header.addAttribute("style", style)
 			.addAttribute("class", styleClass);
 		
-		appendId(header, id);
+		appendRefId(header, id);
 
 		Span span = new Span();
 		span.addAttribute("refresh-icon", "")
