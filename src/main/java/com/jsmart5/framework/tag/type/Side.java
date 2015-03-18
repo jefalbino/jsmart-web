@@ -16,31 +16,37 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.util;
+package com.jsmart5.framework.tag.type;
 
-/**
- * This enumerator represents the category of messages presented on client side.
- */
-public enum SmartMessage {
+public enum Side {
 
-	/**
-	 * It indicates the message as information message.
-	 */
-	INFO, 
+	LEFT,
+	RIGHT,
+	TOP,
+	BOTTOM;
 
-	/**
-	 * It indicates the message as warning message.
-	 */
-	WARNING,
+	public static boolean validate(String side) {
+		try {
+			Side.valueOf(side.toUpperCase());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	public static String[] getValues() {
+		int index = 0;
+		Side[] sides = values();
+		String[] values = new String[sides.length];
 
-	/**
-	 * It indicates the message as error message.
-	 */
-	ERROR, 
+		for (Side side : sides) {
+			values[index++] = side.name().toLowerCase();
+		}
+		return values;
+	}
 
-	/**
-	 * It indicates the message as success message.
-	 */
-	SUCCESS;
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
+	}
 
 }

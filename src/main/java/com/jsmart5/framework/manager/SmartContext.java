@@ -19,8 +19,10 @@
 package com.jsmart5.framework.manager;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -36,7 +38,8 @@ import javax.servlet.jsp.PageContext;
 
 import javax.annotation.PostConstruct;
 import com.jsmart5.framework.annotation.SmartBean;
-import com.jsmart5.framework.util.SmartMessage;
+import com.jsmart5.framework.util.SmartAlert;
+import com.jsmart5.framework.util.SmartAlert.AlertType;
 import com.jsmart5.framework.util.SmartUtils;
 
 /**
@@ -69,9 +72,7 @@ public final class SmartContext implements Serializable {
 
 	private PageContext pageContext;
 
-	private Map<String, SmartMessage> messages = new LinkedHashMap<String, SmartMessage>();
-
-	private Map<String, Map<String, SmartMessage>> fixedMessages = new LinkedHashMap<String, Map<String, SmartMessage>>();
+	private Map<String, List<SmartAlert>> alerts = new LinkedHashMap<String, List<SmartAlert>>();
 
 	private Map<String, String> parameters = new HashMap<String, String>();
 
@@ -107,10 +108,8 @@ public final class SmartContext implements Serializable {
 		request = null;
 		response = null;
 		redirectTo = null;
-		messages.clear();
-		messages = null;
-		fixedMessages.clear();
-		fixedMessages = null;
+		alerts.clear();
+		alerts = null;
 		parameters.clear();
 		parameters = null;
 		mappedValues.clear();
@@ -234,156 +233,88 @@ public final class SmartContext implements Serializable {
 		return request != null ? "XMLHttpRequest".equals(request.getHeader("X-Requested-With")) : false;
 	}
 
-	static Map<String, SmartMessage> getMessages() {
+	static List<SmartAlert> getAlerts(final String id) {
 		SmartContext context = getCurrentInstance();
-		return context != null ? context.messages : null;
+		return context != null ? context.alerts.get(id) : null;
 	}
 
-	static Map<String, SmartMessage> getMessages(final String id) {
+	public static void addAlert(final String id, final SmartAlert alert) {
 		SmartContext context = getCurrentInstance();
-		return context != null ? context.fixedMessages.get(id) : null;
-	}
-
-	/**
-	 * Add message by type category to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the message tag is mapped on the page returned to the client.
-	 * 
-	 * @param type category type of the message.
-	 * @param message message to be presented on the client side.
-	 */
-	public static void addMessage(final SmartMessage type, final String message) {
-		SmartContext context = getCurrentInstance();
-		if (context != null && message != null && type != null) {
-			context.messages.put(message, type);
-		}
-	}
-
-	/**
-	 * Add message by type category to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the message tag is mapped with specified id and with position fixed
-	 * on the page returned to the client.
-	 * <br>
-	 * The message is placed on the same position where the the message tag is mapped.
-	 * 
-	 * @param id message tag id to receive the message.
-	 * @param type category type of the message.
-	 * @param message message to be presented on the client side.
-	 */
-	public static void addMessage(final String id, final SmartMessage type, final String message) {
-		SmartContext context = getCurrentInstance();
-		if (context != null && id != null && message != null && type != null) {
-			Map<String, SmartMessage> messages = context.fixedMessages.get(id);
-			if (messages == null) {
-				context.fixedMessages.put(id, messages = new LinkedHashMap<String, SmartMessage>());
+		if (context != null && id != null && alert != null) {
+			List<SmartAlert> alerts = context.alerts.get(id);
+			if (alerts == null) {
+				context.alerts.put(id, alerts = new ArrayList<SmartAlert>());
 			}
-			messages.put(message, type);
+			alerts.add(alert);
 		}
 	}
-	
+
 	/**
-	 * Add info message to be presented on client side after the response is returned. 
+	 * Add info alert to be presented on client side after the response is returned. 
 	 * <br>
-	 * This method only take effect if the message tag is mapped on the page returned to the client.
-	 * 
-	 * @param message message to be presented on the client side.
-	 */
-	public static void addInfo(final String message) {
-		addMessage(SmartMessage.INFO, message);
-	}
-	
-	/**
-	 * Add info message to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the message tag is mapped with specified id and with position fixed
+	 * This method only take effect if the alert tag is mapped with specified id and with position fixed
 	 * on the page returned to the client.
 	 * <br>
 	 * The message is placed on the same position where the the message tag is mapped.
 	 * 
-	 * @param id message tag id to receive the message.
-	 * @param message message to be presented on the client side.
+	 * @param id of the tag to receive the message.
+	 * @param message to be presented on the client side.
 	 */
 	public static void addInfo(final String id, final String message) {
-		addMessage(id, SmartMessage.INFO, message);
+		SmartAlert alert = new SmartAlert(AlertType.INFO);
+		alert.setMessage(message);
+		addAlert(id, alert);
 	}
-	
+
 	/**
-	 * Add warning message to be presented on client side after the response is returned. 
+	 * Add warning alert to be presented on client side after the response is returned. 
 	 * <br>
-	 * This method only take effect if the message tag is mapped on the page returned to the client.
-	 * 
-	 * @param message message to be presented on the client side.
-	 */
-	public static void addWarning(final String message) {
-		addMessage(SmartMessage.WARNING, message);
-	}
-	
-	/**
-	 * Add warning message to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the message tag is mapped with specified id and with position fixed
+	 * This method only take effect if the alert tag is mapped with specified id and with position fixed
 	 * on the page returned to the client.
 	 * <br>
 	 * The message is placed on the same position where the the message tag is mapped.
 	 * 
-	 * @param id message tag id to receive the message.
-	 * @param message message to be presented on the client side.
+	 * @param id of the tag to receive the message.
+	 * @param message to be presented on the client side.
 	 */
 	public static void addWarning(final String id, final String message) {
-		addMessage(id, SmartMessage.WARNING, message);
+		SmartAlert alert = new SmartAlert(AlertType.WARNING);
+		alert.setMessage(message);
+		addAlert(id, alert);
 	}
 	
 	/**
-	 * Add success message to be presented on client side after the response is returned. 
+	 * Add success alert to be presented on client side after the response is returned. 
 	 * <br>
-	 * This method only take effect if the message tag is mapped on the page returned to the client.
-	 * 
-	 * @param message message to be presented on the client side.
-	 */
-	public static void addSuccess(final String message) {
-		addMessage(SmartMessage.SUCCESS, message);
-	}
-	
-	/**
-	 * Add success message to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the message tag is mapped with specified id and with position fixed
+	 * This method only take effect if the alert tag is mapped with specified id and with position fixed
 	 * on the page returned to the client.
 	 * <br>
 	 * The message is placed on the same position where the the message tag is mapped.
 	 * 
-	 * @param id message tag id to receive the message.
-	 * @param message message to be presented on the client side.
+	 * @param id of the tag to receive the message.
+	 * @param message to be presented on the client side.
 	 */
 	public static void addSuccess(final String id, final String message) {
-		addMessage(id, SmartMessage.SUCCESS, message);
+		SmartAlert alert = new SmartAlert(AlertType.SUCCESS);
+		alert.setMessage(message);
+		addAlert(id, alert);
 	}
 	
 	/**
-	 * Add error message to be presented on client side after the response is returned. 
+	 * Add error alert to be presented on client side after the response is returned. 
 	 * <br>
-	 * This method only take effect if the message tag is mapped on the page returned to the client.
-	 * 
-	 * @param message message to be presented on the client side.
-	 */
-	public static void addError(final String message) {
-		addMessage(SmartMessage.ERROR, message);
-	}
-	
-	/**
-	 * Add error message to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the message tag is mapped with specified id and with position fixed
+	 * This method only take effect if the alert tag is mapped with specified id and with position fixed
 	 * on the page returned to the client.
 	 * <br>
 	 * The message is placed on the same position where the the message tag is mapped.
 	 * 
-	 * @param id message tag id to receive the message.
-	 * @param message message to be presented on the client side.
+	 * @param id of the tag to receive the message.
+	 * @param message to be presented on the client side.
 	 */
 	public static void addError(final String id, final String message) {
-		addMessage(id, SmartMessage.ERROR, message);
+		SmartAlert alert = new SmartAlert(AlertType.DANGER);
+		alert.setMessage(message);
+		addAlert(id, alert);
 	}
 
 	static String getParameter(final String name) {

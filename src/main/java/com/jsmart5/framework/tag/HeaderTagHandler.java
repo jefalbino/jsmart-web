@@ -51,6 +51,10 @@ public final class HeaderTagHandler extends TagHandler {
 		} else if (parent instanceof PanelTagHandler) {
 			((PanelTagHandler) parent).setHeader(this);
 			return false;
+		
+		} else if (parent instanceof AlertTagHandler) {
+			((AlertTagHandler) parent).setHeader(this);
+			return false;
 		}
 		return true;
 	}
@@ -96,6 +100,11 @@ public final class HeaderTagHandler extends TagHandler {
 				header = new Tag(Output.H4.name().toLowerCase());
 			}
 			header.addAttribute("class", Bootstrap.MODAL_TITLE);
+			
+		} else if (parent instanceof AlertTagHandler) {
+			if (header == null) {
+				header = new Tag(Output.H4.name().toLowerCase());
+			}
 
 		} else if (header == null) {
 			header = new Tag(Output.H3.name().toLowerCase());

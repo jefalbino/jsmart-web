@@ -197,6 +197,18 @@ public final class SelectTagHandler extends TagHandler {
 
 		appendAjax(id);
 		appendBind(id);
+		
+		if (formGroup != null) {
+			appendTooltip(formGroup);
+			appendPopOver(formGroup);
+
+		} else if (inputGroup != null) {
+			appendTooltip(inputGroup);
+			appendPopOver(inputGroup);
+		} else {
+			appendTooltip(select);
+			appendPopOver(select);
+		}
 
 		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : select;
 	}

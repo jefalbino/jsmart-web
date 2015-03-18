@@ -2758,39 +2758,59 @@
     </tag>
 
     <tag>
-        <name>message</name>
-        <tag-class>com.jsmart5.framework.tag.MessageTagHandler</tag-class>
-        <body-content>empty</body-content>
+        <name>alert</name>
+        <tag-class>com.jsmart5.framework.tag.AlertTagHandler</tag-class>
+        <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>autoHide</name>
+            <name>style</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>width</name>
+            <name>styleClass</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>duration</name>
+            <name>dismissible</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>position</name>
+            <name>onHide</name>
+            <required>false</required>
+        </attribute>
+    </tag>
+    
+    <tag>
+        <name>tooltip</name>
+        <tag-class>com.jsmart5.framework.tag.TooltipTagHandler</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>title</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>modal</name>
+            <name>side</name>
+            <required>false</required>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>popover</name>
+        <tag-class>com.jsmart5.framework.tag.PopOverTagHandler</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>title</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>onShow</name>
+            <name>content</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>onClose</name>
+            <name>side</name>
             <required>false</required>
         </attribute>
     </tag>
@@ -2995,6 +3015,10 @@
         </attribute>
         <attribute>
             <name>maxLength</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>regex</name>
             <required>false</required>
         </attribute>
 	</tag>
@@ -3433,36 +3457,6 @@
         </attribute>
         <attribute>
             <name>onSelect</name>
-            <required>false</required>
-        </attribute>
-	</tag>
-
-	<tag>
-        <name>balloon</name>
-        <tag-class>com.jsmart5.framework.tag.BalloonTagHandler</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <name>target</name>
-            <required>true</required>
-        </attribute>
-		<attribute>
-            <name>message</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>position</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>opened</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>length</name>
             <required>false</required>
         </attribute>
 	</tag>

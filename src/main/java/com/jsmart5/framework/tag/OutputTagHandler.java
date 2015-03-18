@@ -204,6 +204,9 @@ public final class OutputTagHandler extends TagHandler {
 		appendAjax(id);
 		appendBind(id);
 		
+		appendTooltip(tag);
+		appendPopOver(tag);
+		
 		return tag;
 	}
 	

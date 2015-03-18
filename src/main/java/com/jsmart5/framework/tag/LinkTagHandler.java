@@ -214,6 +214,14 @@ public final class LinkTagHandler extends TagHandler {
 		}
 
 		appendBind(id);
+		
+		if (linkGroup != null) {
+			appendTooltip(linkGroup);
+			appendPopOver(linkGroup);
+		} else {
+			appendTooltip(link);
+			appendPopOver(link);
+		}
 
 		return linkGroup != null ? linkGroup : link;
 	}

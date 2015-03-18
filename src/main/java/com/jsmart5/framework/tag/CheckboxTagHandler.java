@@ -95,6 +95,9 @@ public final class CheckboxTagHandler extends TagHandler {
 		appendRest(input);
 		appendEvent(input);
 
+		appendTooltip(div);
+		appendPopOver(div);
+
 		Boolean object = (Boolean) getTagValue(value);
 		if (object != null) {
 			input.addAttribute("value", object)

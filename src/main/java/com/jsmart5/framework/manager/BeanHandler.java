@@ -146,17 +146,18 @@ public enum BeanHandler {
 	}
 
 	@SuppressWarnings("all")
-	void executePreSubmit(Object bean) {
+	boolean executePreSubmit(Object bean) {
 		for (Method method : getBeanMethods(bean.getClass())) {
 			if (method.isAnnotationPresent(PreSubmit.class)) {
 				try {
-					method.invoke(bean, null);
+					Boolean result = (Boolean) method.invoke(bean, null);
+					return result != null && result;
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				return;
 			}
 		}
+		return true;
 	}
 
 	@SuppressWarnings("all")

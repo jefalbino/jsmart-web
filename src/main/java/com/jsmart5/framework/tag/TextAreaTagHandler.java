@@ -104,6 +104,9 @@ public final class TextAreaTagHandler extends TagHandler {
 		appendValidator(textArea);
 		appendRest(textArea);
 		appendEvent(textArea);
+		
+		appendTooltip(textArea);
+		appendPopOver(textArea);
 
 		if (formGroup != null) {
 			formGroup.addTag(textArea);

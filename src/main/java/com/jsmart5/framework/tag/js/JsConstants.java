@@ -23,12 +23,11 @@ public enum JsConstants {
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
 	JSMART_AJAX("Jsmart5.ajax", "(%s,$(this));"),
 	JSMART_BIND("Jsmart5.bind", "(%s);"),
-	JSMART_DIALOG("Jsmart5.dialog", "('%s');"),
+	JSMART_MODAL("Jsmart5.modal", "('%s');"),
 	JSMART_LIST("Jsmart5.list", "($(this),%s);"),
 	JSMART_LISTSCROLL("Jsmart5.listscroll", "(%s);"),
 	JSMART_TAB("Jsmart5.tab", "(%s);"),
 	JSMART_TABPANE("Jsmart5.tabpane", "($(this),%s);"),
-
 	
 
 	JSMART_REST("Jsmart5.rest", "(%s,%s,%s);"),
@@ -49,7 +48,6 @@ public enum JsConstants {
 	JSMART_DATE("Jsmart5.date", "(%s);"),
 	JSMART_BACKUP_DATE("Jsmart5.backupDate", "(%s);"),
 
-	JSMART_MESSAGE("Jsmart5.message", "(%s,%s);"),
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
 	JSMART_TREE("Jsmart5.tree", "('%s');"),
 

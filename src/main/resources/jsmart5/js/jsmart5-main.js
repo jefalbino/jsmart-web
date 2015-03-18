@@ -19,13 +19,14 @@
 var Jsmart5 = (function() {
 
 	var tagInit = "j0";
-	var dialogOpen = 'open()';
-	var dialogClose = 'close()';
-	var sessionReset = '#jsmart5_sessionReset_attr';
+	var modalOpen = 'open()';
+	var modalHide = 'close()';
+	var sessionReset = '#jsmart5_session_reset_attr';
 	var redirectPath = '#jsmart5_redirect_ajax_path';
+	var alertShow = 'alert-show';
 	var refreshIcon = 'refresh-icon';
-	
-	var MESSAGES_EXEC = 'jsmart_messages';
+
+
 	var MULTI_SELECT_ALL = "_multi_select_all";
 	var MULTI_SELECT_ITEM_ID = "_multi_select_item_";
 	var EDIT_CELL_START_ITEM_ID = "_edit_cell_start_item_";
@@ -37,14 +38,9 @@ var Jsmart5 = (function() {
 	var SWITCH_BUTTON = "_switch_button";
 	var SWITCH_SPAN_ON = "_switch_span_on";
 	var SWITCH_SPAN_OFF = "_switch_span_off";
-	var BALLOON_HOLDER = "_balloon_holder";
 	var KEYPAD_HOLDER = "_keypad_holder";
-	var BALLOON_WRAPPER = "_balloon_wrapper";
 	var CAROUSEL_SLIDE = "_slide_";
 	var CAROUSEL_TIMERS = [];
-	var PANEL_COLLAPSE = "_panel_collpase";
-	var PANEL_CONTENT = "_panel_content";
-	var TAB_INDEX = "_tab_index";
 	var PROGRESS_FRAME = "_progress_frame";
 	var PROGRESS_PERCENT = "_progress_percent";
 	var PROGRESS_INPUT = "_progress_input";
@@ -60,7 +56,17 @@ var Jsmart5 = (function() {
 
 	$(function () {
 		initCheckboxes();
+		initPopOvers();
+		initTooltips();
 	});
+	
+	function initPopOvers() {
+		$('[data-toggle="popover"]').popover();
+	}
+	
+	function initTooltips() {
+		$('[data-toggle="tooltip"]').tooltip();
+	}
 	
 	function initCheckboxes() {
 		$('input:checkbox').each(function(index) {
@@ -125,8 +131,8 @@ var Jsmart5 = (function() {
 			doExecute(exec);
 		},
 		
-		dialog: function(id) {
-			openDialog(id);
+		modal: function(id) {
+			openModal(id);
 		},
 
 		list: function (li, map) {
@@ -144,8 +150,6 @@ var Jsmart5 = (function() {
 		tabpane: function (li, map) {
 			doTabPane(li, map);
 		},
-
-		
 		
 		// STILL NEED FIXES
 		
@@ -202,16 +206,8 @@ var Jsmart5 = (function() {
 			resetSwitch(id);
 		},
 		
-		balloon: function (target, position, opened, length, message) {
-			doBalloon(target, position, opened, length, message);
-		},
-
 		carousel: function (id) {
 			doCarousel(id);
-		},
-
-		message: function (messages, options) {
-			doMessage(messages, options);
 		},
 
 		// Table ajax={'ajax': '', 'max': '', 'min': '', 'interval': '', 'complete': '', 'callback': ''}
@@ -490,7 +486,7 @@ var Jsmart5 = (function() {
 				}
 
 				var refreshClone = null
-				var hiddenRefresh = ul.find('span[refresh-icon]').closest('li');
+				var hiddenRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
 
 				// Append loading icon on list if it was configured
 				if (hiddenRefresh && hiddenRefresh.length > 0) {
@@ -841,6 +837,7 @@ var Jsmart5 = (function() {
 					} else {
 						doUpdate(map.update, data);
 						doExecute(map.success, data, xhr, status);
+						doAlertCheck(data);
 	
 						var redirect = $(data).find(redirectPath); 
 						if (redirect && redirect.length > 0) {
@@ -1009,8 +1006,8 @@ var Jsmart5 = (function() {
 	}
 	
 	function doExecute(func, a, b, c) {
-		var showDialogs = [];
-		var hideDialogs = [];
+		var showModals = [];
+		var hideModals = [];
 		var callbacks = [];
 		var execute = '';
 
@@ -1021,11 +1018,11 @@ var Jsmart5 = (function() {
 			var funcs = func.split(';');
 	
 			for (var i = 0; i < funcs.length; i++) {
-				if (funcs[i].indexOf(dialogOpen) >= 0) {
-					showDialogs.push(funcs[i].substring(0, funcs[i].indexOf('.')));
+				if (funcs[i].indexOf(modalOpen) >= 0) {
+					showModals.push(funcs[i].substring(0, funcs[i].indexOf('.')));
 	
-				} else if (funcs[i].indexOf(dialogClose) >= 0) {
-					hideDialogs.push(funcs[i].substring(0, funcs[i].indexOf('.')));
+				} else if (funcs[i].indexOf(modalHide) >= 0) {
+					hideModals.push(funcs[i].substring(0, funcs[i].indexOf('.')));
 
 				} else {
 					var callback = window[funcs[i]];
@@ -1055,15 +1052,21 @@ var Jsmart5 = (function() {
 			}
 		}
 		
-		for (var i = 0; i < hideDialogs.length; i++) {
-			closeDialog(hideDialogs[i]);
+		for (var i = 0; i < hideModals.length; i++) {
+			hideModal(hideModals[i]);
 		}
-		for (var i = 0; i < showDialogs.length; i++) {
-			openDialog(showDialogs[i]);
+		for (var i = 0; i < showModals.length; i++) {
+			openModal(showModals[i]);
 		}
-		return showDialogs;
+		return showModals;
 	}
-	
+
+	function doAlertCheck(data) {
+		$(data).find('input[' + alertShow + ']').each(function() {
+			doUpdate($(this).val(), data);
+		});
+	}
+
 	/******************************************************
 	 * VALIDATE FUNCTIONS
 	 ******************************************************/
@@ -1219,11 +1222,11 @@ var Jsmart5 = (function() {
 	 * MODAL FUNCTIONS
 	 ******************************************************/
 	
-	function openDialog(id) {
+	function openModal(id) {
 		$(getId(id)).modal('show');
 	}
 		
-	function closeDialog(id) {
+	function hideModal(id) {
 		$(getId(id)).modal('hide');
 	}
 
@@ -1630,23 +1633,6 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doBalloon(target, position, opened, length, message) {
-		if (target && target.length > 0) {
-			var targetElement = $(getId(target));
-	
-			targetElement.hover(function() {
-				openBalloon(target, position, length, message);
-			},
-			function() {
-				closeBalloon(target);
-			});
-	
-			if (targetElement.is(":visible") && (opened == 'true' || opened == true)) {
-				openBalloon(target, position, length, message);
-			}
-		}
-	}
-
 	function doCarousel(id) {
 		if (id && id.length > 0) {
 			clearCarouselTimer(id);
@@ -1699,7 +1685,7 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doMessage(messages, options) {
+	function doMessage(id) {
 		var id = options.id;
 		var effectTime = 500;
 	
@@ -2427,182 +2413,6 @@ var Jsmart5 = (function() {
 		}
 	}
 	
-	function resetBalloon(id) {
-		var foundBalloon = false;
-		$(getId(id)).find('span[type="balloon"]').each(function(index) {
-			doBalloon($(this).attr("target"), $(this).attr("position"), $(this).attr("opened"),
-					$(this).attr("length"), $(this).attr("message"));
-			foundBalloon = true;
-		});
-		if (!foundBalloon) {
-			$(getId(id + BALLOON_HOLDER)).each(function(index) {
-				doBalloon($(this).attr("target"), $(this).attr("position"), $(this).attr("opened"),
-						$(this).attr("length"), $(this).attr("message"));
-			});
-		}
-	}
-	
-	function openBalloon(target, position, length, message) {
-	    var spikeLength = 10;
-	    var spikeWidth = 8;
-	    var spikeSkew = 0;
-	    
-	    var canvasMargin = 1;
-	    var canvasX = canvasMargin;
-	    var canvasY = canvasMargin;
-	
-	    var targetElement = $(getId(target)); 
-	    var targetWidth = targetElement.outerWidth();
-	    var targetHeight = targetElement.outerHeight();
-	    var targetPosition = targetElement.position();
-	
-	    // Get values from css
-	    var styleElement = $(getId(target + BALLOON_HOLDER));
-	
-	    var padding = $(styleElement).css('paddingTop');
-	    var radius = $(styleElement).css('borderTopLeftRadius');
-	    var strokeWidth = $(styleElement).css('borderTopWidth');
-	    var strokeColor = $(styleElement).css('borderTopColor');
-	    var fillColor = $(styleElement).css('backgroundColor');
-	    var fontColor = $(styleElement).css('color');
-	
-	    if (!padding || padding.length == 0) {
-	    	padding = 10;
-	    } else {
-	    	padding = parseInt(padding.replace('px', ''));
-	    }
-	
-	    if (!radius || radius.length == 0) {
-	    	radius = 4;
-	    } else {
-	    	radius = parseInt(radius.replace('px', ''));
-	    }
-	
-	    if (!strokeWidth || strokeWidth.length == 0) {
-	    	strokeWidth = 1;
-	    } else {
-	    	strokeWidth = parseInt(strokeWidth.replace('px', ''));
-	    }
-	
-	    if (!fillColor || fillColor.length == 0) {
-	    	fillColor = '#ffff66';
-	    }
-	    if (!strokeColor || strokeColor.length == 0) {
-	    	strokeColor = '#000000';
-	    }
-	
-	    // Remove old balloon if present
-	    var oldBalloon = $(getId(target + BALLOON_WRAPPER));
-	    if (oldBalloon && oldBalloon.length > 0) {
-	    	oldBalloon.remove();
-	    }
-	
-	    var parent = targetElement.parent();
-	    var text = $('<div></div>').css({'padding': padding, 'position': 'absolute', 'color': fontColor}).text(message);
-	    var box = $('<div id="' + target + BALLOON_WRAPPER + '"></div>').css({'position': 'absolute'}).append(text).appendTo(parent);
-	
-	    var canvas = document.createElement('canvas');
-	    var context = canvas.getContext("2d");
-	    
-	    // Set dimensions and position for content
-	    var metrics = context.measureText(message);
-
-	    if (metrics.width < length) {
-	    	length = metrics.width + (padding * 4);
-	    }
-	    text.css({'width': length});
-
-	    if (position == 'right') {
-	    	canvasX = canvasMargin + spikeLength;
-	    	text.css({'left': canvasX});
-	    }
-	    if (position == 'bottom') {
-	    	canvasY = canvasMargin + spikeLength;
-	    	text.css({'top': canvasY});
-	    }
-	
-	    // Set dimensions for div wrapper
-	    if (position == 'right' || position == 'left') {
-	    	box.css({'width': text.outerWidth() + spikeLength + (canvasMargin * 2), 'height': text.outerHeight() + (canvasMargin * 2)});
-	    } else {
-	    	box.css({'width': text.outerWidth() + (canvasMargin * 2), 'height': text.outerHeight() + spikeLength + (canvasMargin * 2)});
-	    }
-	
-	    // Positionate canvas
-	    $(canvas).attr('width', box.outerWidth()).attr('height', box.outerHeight()).appendTo(box);
-	
-	    // Positionate div wrapper
-	    if (position == 'bottom') {
-	    	box.css({'top': targetPosition.top + targetHeight, 'left': targetPosition.left + ((targetWidth - box.outerWidth()) / 2)});
-	    } else if (position == 'top') {
-	    	box.css({'top': targetPosition.top - box.outerHeight(), 'left': targetPosition.left + ((targetWidth - box.outerWidth()) / 2)});
-	    } else if (position == 'left') {
-	    	box.css({'top': targetPosition.top + ((targetHeight - box.outerHeight()) / 2), 'left': targetPosition.left - box.outerWidth()});
-	    } else if (position == 'right') {
-	    	box.css({'top': targetPosition.top + ((targetHeight - box.outerHeight()) / 2), 'left': targetPosition.left + targetWidth});
-	    }
-	
-	    drawBalloon(position, context, canvasX, canvasY, text.outerWidth(), text.outerHeight(), 
-	    			radius, spikeLength, spikeWidth, spikeSkew, strokeWidth, strokeColor, fillColor);
-	}
-	
-	function closeBalloon(id) {
-		$(getId(id + BALLOON_WRAPPER)).each(function(index) {
-			$(this).remove();
-		});
-	}
-	
-	function drawBalloon(position, ctx, x, y, width, height, radius, spikeLen, spikeW, spikeSkew, strokeW, strokeColor, fillColor) {
-		ctx.beginPath();
-		ctx.moveTo(x + radius, y);
-		
-		var skewFactor = spikeSkew > 0 ? (spikeW * 2) : 0;
-	
-		if (position == 'bottom') { 
-			ctx.lineTo(((x + width + skewFactor) / 2) - (spikeW / 2), y);
-			ctx.lineTo(((x + width + skewFactor) / 2) + spikeSkew,    y - spikeLen);
-			ctx.lineTo(((x + width + skewFactor) / 2) + (spikeW / 2), y);
-		}
-	
-		ctx.lineTo(x + width - radius, y);
-		ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-	
-		if (position == 'left') {
-			ctx.lineTo(x + width,            ((y + height + skewFactor) / 2) - (spikeW / 2));
-			ctx.lineTo(x + width + spikeLen, ((y + height + skewFactor) / 2) - spikeSkew);
-			ctx.lineTo(x + width,            ((y + height + skewFactor) / 2) + (spikeW / 2));
-		}
-		
-		ctx.lineTo(x + width, y + height - radius);
-		ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-	
-		if (position == 'top') {
-			ctx.lineTo(((x + width + skewFactor) / 2) + (spikeW / 2), y + height);
-			ctx.lineTo(((x + width + skewFactor) / 2) - spikeSkew,    y + height + spikeLen);
-			ctx.lineTo(((x + width + skewFactor) / 2) - (spikeW / 2), y + height);
-		}
-	
-		ctx.lineTo(x + radius, y + height);
-		ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-	
-		if (position == 'right') {
-			ctx.lineTo(x,            ((y + height + skewFactor) / 2) - (spikeW / 2));
-			ctx.lineTo(x - spikeLen, ((y + height + skewFactor) / 2) - spikeSkew);
-			ctx.lineTo(x,            ((y + height + skewFactor) / 2) + (spikeW / 2));
-		}
-	
-		ctx.lineTo(x, y + radius);
-		ctx.quadraticCurveTo(x, y, x + radius, y);
-		ctx.closePath();
-	
-		ctx.lineWidth = strokeW;
-		ctx.strokeStyle = strokeColor;
-		ctx.stroke();
-	
-		ctx.fillStyle = fillColor;
-		ctx.fill();
-	}
-	
 	function resetCarousel(id) {
 		if ($(getId(id)).is('div[carousel="carousel"]')) {
 			doCarousel(id);
@@ -2755,26 +2565,7 @@ var Jsmart5 = (function() {
 	}
 	
 	function resetMessage(data) {
-		var message = null;
-		$(data).find('input[id^="' + MESSAGES_EXEC + '"]').each(function(index) {
-			if ($(this).attr('id').split(MESSAGES_EXEC).length > 1) {
-				try {
-					eval($(this).val());
-				} catch (err) {
-					showOnConsole(err.message);
-				}
-			} else {
-				message = $(this);
-			}
-		});
-	
-		if (message) {
-			try {
-				eval($(message).val());
-			} catch (err) {
-				showOnConsole(err.message);
-			}
-		}
+		
 	}
 
 	function showMessage(div, left, top, effectTime, onShow) {

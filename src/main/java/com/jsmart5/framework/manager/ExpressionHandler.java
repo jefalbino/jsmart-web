@@ -145,30 +145,29 @@ public enum ExpressionHandler {
 				}
 
 				// Call mapped method with @PreSubmit annotation
-				HANDLER.executePreSubmit(obj);
-
-				Object[] arguments = null;
-				String[] args = SmartContext.getRequest().getParameterValues(param.replaceFirst(TagHandler.J_SBMT, TagHandler.J_SBMT_ARGS));
-
-				if (args != null) {
-					boolean unescape = HANDLER.containsUnescapeMethod(names);
-					arguments = new Object[args.length];
-
-					for (int i = 0; i < args.length; i++) {
-						arguments[i] = unescape ? args[i] : escapeValue(args[i]);
+				if (HANDLER.executePreSubmit(obj)) {
+					Object[] arguments = null;
+					String[] args = SmartContext.getRequest().getParameterValues(param.replaceFirst(TagHandler.J_SBMT, TagHandler.J_SBMT_ARGS));
+	
+					if (args != null) {
+						boolean unescape = HANDLER.containsUnescapeMethod(names);
+						arguments = new Object[args.length];
+	
+						for (int i = 0; i < args.length; i++) {
+							arguments[i] = unescape ? args[i] : escapeValue(args[i]);
+						}
 					}
+	
+					// Call submit method
+					ELContext context = SmartContext.getPageContext().getELContext();
+					MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, expr, null, 
+							arguments != null ? new Class<?>[arguments.length] : new Class<?>[]{});
+	
+					responsePath = (String) methodExpr.invoke(context, arguments);
+	
+					// Call mapped method with @PostSubmit annotation
+					HANDLER.executePostSubmit(obj);
 				}
-
-				// Call submit method
-				ELContext context = SmartContext.getPageContext().getELContext();
-				MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, expr, null, 
-						arguments != null ? new Class<?>[arguments.length] : new Class<?>[]{});
-
-				responsePath = (String) methodExpr.invoke(context, arguments);
-
-				// Call mapped method with @PostSubmit annotation
-				HANDLER.executePostSubmit(obj);
-
 				break;
 			}
 		}

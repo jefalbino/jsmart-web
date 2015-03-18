@@ -77,6 +77,9 @@ public class ButtonGroupTagHandler extends TagHandler {
 		}
 
 		buttonGroup.addText(sw.toString());
+		
+		appendTooltip(buttonGroup);
+		appendPopOver(buttonGroup);
 
 		return buttonGroup;
 	}

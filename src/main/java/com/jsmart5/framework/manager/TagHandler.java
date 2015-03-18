@@ -45,12 +45,14 @@ import com.jsmart5.framework.tag.AjaxTagHandler;
 import com.jsmart5.framework.tag.BindTagHandler;
 import com.jsmart5.framework.tag.IconTagHandler;
 import com.jsmart5.framework.tag.LoadTagHandler;
+import com.jsmart5.framework.tag.PopOverTagHandler;
+import com.jsmart5.framework.tag.TooltipTagHandler;
 import com.jsmart5.framework.tag.ValidateTagHandler;
 import com.jsmart5.framework.tag.html.Script;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.util.EventAction;
 import com.jsmart5.framework.tag.util.RefAction;
-import com.jsmart5.framework.util.SmartMessage;
+import com.jsmart5.framework.util.SmartAlert;
 import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
@@ -117,9 +119,13 @@ public abstract class TagHandler extends SimpleTagSupport {
 	
 	protected List<Object> args;
 
-	protected ValidateTagHandler validator;
+	protected ValidateTagHandler validatorTag;
 
 	protected LoadTagHandler loadTag;
+	
+	protected PopOverTagHandler popOverTag;
+	
+	protected TooltipTagHandler tooltipTag;
 
 	protected List<AjaxTagHandler> ajaxTags;
 	
@@ -231,12 +237,20 @@ public abstract class TagHandler extends SimpleTagSupport {
 		return args;
 	}
 
-	public void setValidator(ValidateTagHandler validator) {
-		this.validator = validator;
+	public void setValidatorTag(ValidateTagHandler validatorTag) {
+		this.validatorTag = validatorTag;
 	}
 	
 	public void setLoadTag(LoadTagHandler loadTag) {
 		this.loadTag = loadTag;
+	}
+	
+	public void setPopOverTag(PopOverTagHandler popOverTag) {
+		this.popOverTag = popOverTag;
+	}
+
+	public void setTooltipTag(TooltipTagHandler tooltipTag) {
+		this.tooltipTag = tooltipTag;
 	}
 
 	public void setOutputWriter(StringWriter outputWriter) {
@@ -481,12 +495,8 @@ public abstract class TagHandler extends SimpleTagSupport {
 		return HANDLER.getUserAuthorizationAccess();
 	}
 
-	protected Map<String, SmartMessage> getMessages() {
-		return SmartContext.getMessages();
-	}
-
-	protected Map<String, SmartMessage> getMessages(String id) {
-		return SmartContext.getMessages(id);
+	protected List<SmartAlert> getAlerts(String id) {
+		return SmartContext.getAlerts(id);
 	}
 
 	protected String getJsonValue(Object object) {
@@ -677,12 +687,32 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 
 	protected void appendValidator(Tag tag) throws JspException, IOException {
-		if (validator != null) {
+		if (validatorTag != null) {
 			tag.addAttribute("vldt-req", "true")
-				.addAttribute("vldt-min-l", validator.getMinLength())
-				.addAttribute("vldt-max-l", validator.getMaxLength())
-				.addAttribute("vldt-text", getTagValue(validator.getText()))
-				.addAttribute("vldt-look", validator.getLook());
+				.addAttribute("vldt-min-l", validatorTag.getMinLength())
+				.addAttribute("vldt-max-l", validatorTag.getMaxLength())
+				.addAttribute("vldt-regex", validatorTag.getRegex())
+				.addAttribute("vldt-text", getTagValue(validatorTag.getText()))
+				.addAttribute("vldt-look", validatorTag.getLook());
+		}
+	}
+	
+	protected void appendPopOver(Tag tag) throws JspException, IOException {
+		if (popOverTag != null) {
+			tag.addAttribute("data-container", "body")
+				.addAttribute("data-toggle", "popover")
+				.addAttribute("title", getTagValue(popOverTag.getTitle()))
+				.addAttribute("data-placement", popOverTag.getSide())
+				.addAttribute("data-content", getTagValue(popOverTag.getContent()));
+		}
+	}
+	
+	protected void appendTooltip(Tag tag) throws JspException, IOException {
+		if (tooltipTag != null) {
+			tag.addAttribute("data-container", "body")
+				.addAttribute("data-toggle", "tooltip")
+				.addAttribute("title", getTagValue(tooltipTag.getTitle()))
+				.addAttribute("data-placement", tooltipTag.getSide());	
 		}
 	}
 

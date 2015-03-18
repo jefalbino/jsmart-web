@@ -283,4 +283,20 @@ public interface Bootstrap {
 	public static final String MODAL_LARGE = "modal-lg";
 	
 	public static final String MODAL_SMALL = "modal-sm";
+
+
+	public static final String ALERT = "alert";
+
+	public static final String ALERT_DISMISSIBLE = "alert-dismissible";
+	
+	public static final String ALERT_LINK = "alert-link";
+
+	public static final String ALERT_SUCCESS = "alert-success";
+
+	public static final String ALERT_INFO = "alert-info";
+
+	public static final String ALERT_WARNING = "alert-warning";
+
+	public static final String ALERT_DANGER = "alert-danger";
+
 }

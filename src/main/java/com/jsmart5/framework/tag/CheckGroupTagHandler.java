@@ -80,6 +80,9 @@ public final class CheckGroupTagHandler extends TagHandler {
 			.addAttribute("checkgroup", "");
 		
 		appendRefId(div, id);
+		
+		appendTooltip(div);
+		appendPopOver(div);
 
  		long checkIndex = 0;
 		for (CheckTagHandler check : checks) {
@@ -88,7 +91,7 @@ public final class CheckGroupTagHandler extends TagHandler {
 			check.setStyle(style);
 			check.setStyleClass(styleClass);
 			check.setInline(inline);
-			check.setValidator(validator);
+			check.setValidatorTag(validatorTag);
 			check.setRest(rest);
 			check.setName(selectValues);
 			check.setType(CheckTagHandler.CHECKBOX);

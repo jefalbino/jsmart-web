@@ -223,6 +223,18 @@ public final class InputTagHandler extends TagHandler {
 
 		appendAjax(id);
 		appendBind(id);
+		
+		if (formGroup != null) {
+			appendTooltip(formGroup);
+			appendPopOver(formGroup);
+
+		} else if (inputGroup != null) {
+			appendTooltip(inputGroup);
+			appendPopOver(inputGroup);
+		} else {
+			appendTooltip(input);
+			appendPopOver(input);
+		}
 
 		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : input;
 	}

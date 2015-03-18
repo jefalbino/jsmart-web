@@ -35,6 +35,8 @@ public final class ValidateTagHandler extends TagHandler {
 	private String maxLength;
 
 	private Integer minLength;
+	
+	private String regex;
 
 	private String look = Look.ERROR.name().toLowerCase();
 
@@ -50,7 +52,7 @@ public final class ValidateTagHandler extends TagHandler {
 		JspTag parent = getParent();
 		if (parent instanceof TagHandler) {
 
-			((TagHandler) parent).setValidator(this);
+			((TagHandler) parent).setValidatorTag(this);
 			return false;
 		}
 		return true;
@@ -92,5 +94,13 @@ public final class ValidateTagHandler extends TagHandler {
 
 	public void setMinLength(Integer minLength) {
 		this.minLength = minLength;
+	}
+
+	public String getRegex() {
+		return regex;
+	}
+
+	public void setRegex(String regex) {
+		this.regex = regex;
 	}
 }

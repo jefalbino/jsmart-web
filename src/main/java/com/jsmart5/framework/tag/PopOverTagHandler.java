@@ -21,49 +21,67 @@ package com.jsmart5.framework.tag;
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
-import com.jsmart5.framework.tag.css.Bootstrap;
-import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Side;
 
-public final class BadgeTagHandler extends TagHandler {
+public final class PopOverTagHandler extends TagHandler {
 
-	private String label;
+	private String title;
+
+	private String content;
+
+	private String side = Side.RIGHT.name().toLowerCase();
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof TagHandler) {
+
+			((TagHandler) parent).setPopOverTag(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (side != null && !Side.validate(side)) {
+			throw InvalidAttributeException.fromPossibleValues("popover", "side", Side.getValues());
+		}
 	}
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
-		
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-
-		setRandomId("badge");
-
-		Span span = new Span();
-		span.addAttribute("style", style)
-			.addAttribute("class", Bootstrap.BADGE)
-			.addAttribute("class", styleClass)
-			.addText(getTagValue(label));
-
-		appendTooltip(span);
-		appendPopOver(span);
-		
-		appendRefId(span, id);
-		appendAjax(id);
-		appendBind(id);
-
-		return span;
+		// DO NOTHIG
+		return null;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public String getTitle() {
+		return title;
 	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getSide() {
+		return side;
+	}
+
+	public void setSide(String side) {
+		this.side = side;
+	}
+
 }

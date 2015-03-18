@@ -192,6 +192,18 @@ public final class UploadTagHandler extends TagHandler {
 		Set set = new Set();
 		set.addTag(input);
 		set.addTag(hidden);
+		
+		if (formGroup != null) {
+			appendTooltip(formGroup);
+			appendPopOver(formGroup);
+
+		} else if (inputGroup != null) {
+			appendTooltip(inputGroup);
+			appendPopOver(inputGroup);
+		} else {
+			appendTooltip(input);
+			appendPopOver(input);
+		}
 
 		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : set;
 	}

@@ -135,7 +135,7 @@ public final class ModalTagHandler extends TagHandler {
 		}
 
 		if (opened) {
-			appendScript(new StringBuilder(JSMART_DIALOG.format(id)));
+			appendScript(new StringBuilder(JSMART_MODAL.format(id)));
 		}
 		return modal;
 	}

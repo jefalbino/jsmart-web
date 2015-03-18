@@ -34,7 +34,6 @@ import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.listener.SmartContextListener;
 import com.jsmart5.framework.util.SmartUtils;
 
-import static com.jsmart5.framework.manager.ExpressionHandler.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
 
 public final class WebServlet extends HttpServlet {

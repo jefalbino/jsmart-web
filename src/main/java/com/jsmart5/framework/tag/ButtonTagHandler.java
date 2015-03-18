@@ -264,6 +264,14 @@ public final class ButtonTagHandler extends TagHandler {
 
 		appendBind(id);
 		appendAjax(id);
+		
+		if (buttonGroup != null) {
+			appendTooltip(buttonGroup);
+			appendPopOver(buttonGroup);
+		} else {
+			appendTooltip(button);
+			appendPopOver(button);
+		}
 
 		return buttonGroup != null ? buttonGroup : button;
 	}

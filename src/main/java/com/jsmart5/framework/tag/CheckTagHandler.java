@@ -115,6 +115,14 @@ public final class CheckTagHandler extends TagHandler {
 			.addAttribute("checked", verifyCheck(object) ? "checked" : null);
 		
 		lb.addTag(input).addText(getTagValue(label));
+		
+		if (div != null) {
+			appendTooltip(div);
+			appendPopOver(div);
+		} else {
+			appendTooltip(lb);
+			appendPopOver(lb);
+		}
 
 		return div != null ? div : lb;
 	}

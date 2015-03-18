@@ -85,6 +85,9 @@ public final class LabelTagHandler extends TagHandler {
 		appendEvent(span);
 		appendAjax(id);
 		appendBind(id);
+		
+		appendTooltip(span);
+		appendPopOver(span);
 
 		return span;
 	}

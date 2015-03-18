@@ -80,6 +80,9 @@ public final class RadioGroupTagHandler extends TagHandler {
 			.addAttribute("radiogroup", "");
 		
 		appendRefId(div, id);
+		
+		appendTooltip(div);
+		appendPopOver(div);
 
  		long checkIndex = 0;
 		for (CheckTagHandler check : checks) {
@@ -89,7 +92,7 @@ public final class RadioGroupTagHandler extends TagHandler {
 			check.setStyleClass(styleClass);
 			check.setInline(inline);
 			check.setRest(rest);
-			check.setValidator(validator);
+			check.setValidatorTag(validatorTag);
 			check.setName(selectValue);
 			check.setType(CheckTagHandler.RADIO);
 			setEvents(check);
