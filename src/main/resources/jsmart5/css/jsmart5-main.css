@@ -12,3 +12,13 @@
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
 }
+
+.js5-validate-text, .js5-validate-group {
+	display: block;
+	margin-top: -10px;
+	margin-bottom: 5px;
+}
+
+.js5-validate-group {
+	margin-top: 0px;
+}

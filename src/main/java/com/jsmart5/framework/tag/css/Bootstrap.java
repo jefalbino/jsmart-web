@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.tag.css;
 
-public interface Bootstrap {
+public final class Bootstrap {
 	
 	public static final String INPUT_LARGE = "input-lg";
 	
@@ -299,4 +299,8 @@ public interface Bootstrap {
 
 	public static final String ALERT_DANGER = "alert-danger";
 
+
+	private Bootstrap() {
+		// DO NOTHING
+	}
 }

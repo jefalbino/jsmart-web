@@ -77,7 +77,8 @@ public final class CheckGroupTagHandler extends TagHandler {
 		
 		Div div = new Div();
 		div.addAttribute("align", align)
-			.addAttribute("checkgroup", "");
+			.addAttribute("checkgroup", "")
+			.addAttribute("inline", inline ? inline : null);
 		
 		appendRefId(div, id);
 		

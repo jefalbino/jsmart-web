@@ -25,6 +25,8 @@ var Jsmart5 = (function() {
 	var redirectPath = '#jsmart5_redirect_ajax_path';
 	var alertShow = 'alert-show';
 	var refreshIcon = 'refresh-icon';
+	var validateTextStyle = 'js5-validate-text';
+	var validateGroupStyle = 'js5-validate-group';
 
 
 	var MULTI_SELECT_ALL = "_multi_select_all";
@@ -1085,13 +1087,19 @@ var Jsmart5 = (function() {
 				if (name.indexOf(tagInit) >= 0) {
 					var text = $(this).attr('vldt-text');
 					var look = 'has-' + $(this).attr('vldt-look');
+					var regex = $(this).attr('vldt-regex');
 					var value = getElementParam($(this), true);
 
 					var textLook = 'text-' + $(this).attr('vldt-look');
 					if (textLook.indexOf('error') >= 0) {
 						textLook = 'text-danger';
 					}
-	
+					textLook += ' ' + validateTextStyle;
+					
+					if (regex && regex.length > 0) {
+						regex = new RegExp(regex, "i");
+					}
+
 					if ($(this).is('input') && $(this).attr('checkgroup')) {
 						if (!contains(checkgroups, name)) {
 							checkgroups[checkgroups.length] = name;
@@ -1099,6 +1107,10 @@ var Jsmart5 = (function() {
 							$(this).closest('div[checkgroup]').removeClass(look);
 	
 							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
+								
+								if ($(this).closest('div[checkgroup]').attr('inline')) {
+									textLook = textLook.replace(validateTextStyle, validateGroupStyle);
+								}
 								addValidate($(this), text, 'checkgroup', look, textLook);
 								validated = false;
 							}
@@ -1110,6 +1122,10 @@ var Jsmart5 = (function() {
 							$(this).closest('div[radiogroup]').removeClass(look);
 
 							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
+								
+								if ($(this).closest('div[radiogroup]').attr('inline')) {
+									textLook = textLook.replace(validateTextStyle, validateGroupStyle);
+								}
 								addValidate($(this), text, 'radiogroup', look, textLook);
 								validated = false;
 							}
@@ -1155,6 +1171,11 @@ var Jsmart5 = (function() {
 									addValidate($(this), text, type, look, textLook);
 									validated = false;
 								}
+								
+								if (regex && !regex.test(value[0].value)) {
+									addValidate($(this), text, type, look, textLook);
+									validated = false;
+								}
 
 							} else {
 								addValidate($(this), text, type, look, textLook);
@@ -1180,6 +1201,12 @@ var Jsmart5 = (function() {
 									validated = false;
 								}
 							}
+
+							if (regex && !regex.test(value[0].value)) {
+								addValidate($(this), text, type, look, textLook);
+								validated = false;
+							}
+
 						} else {
 							addValidate($(this), text, type, look, textLook);
 							validated = false;
