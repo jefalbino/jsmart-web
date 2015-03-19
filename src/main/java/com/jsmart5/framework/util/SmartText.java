@@ -18,6 +18,7 @@
 
 package com.jsmart5.framework.util;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import com.jsmart5.framework.manager.SmartContext;
 
@@ -41,6 +43,8 @@ public enum SmartText {
 	TEXTS();
 
 	private static final Logger LOGGER = Logger.getLogger(SmartText.class.getPackage().getName());
+	
+	private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
 
 	private final SmartTextControl control = new SmartTextControl();
 
@@ -91,6 +95,20 @@ public enum SmartText {
 			LOGGER.log(Level.INFO, "Message for " + key + " not found: " + ex.getMessage());
 		}
 		return "???";
+	}
+	
+	public String getString(final String res, final String key, final Object ... params) {
+		String string = getString(res, key);
+		if (string != null && params != null && params.length > 0) {
+
+			if (BRACKETS.matcher(string).find()) {
+				string = MessageFormat.format(string, params);
+
+			} else if (string.contains("%s")) {
+				string = String.format(string, params);
+			}
+		}
+		return string;
 	}
 
 	private class SmartTextControl extends ResourceBundle.Control {

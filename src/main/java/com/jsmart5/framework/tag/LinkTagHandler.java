@@ -36,6 +36,7 @@ import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.tag.util.RefAction;
 import com.jsmart5.framework.util.SmartUtils;
@@ -43,6 +44,8 @@ import com.jsmart5.framework.util.SmartUtils;
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class LinkTagHandler extends TagHandler {
+	
+	private String look;
 
 	private String label;
 
@@ -76,6 +79,9 @@ public final class LinkTagHandler extends TagHandler {
 	public void validateTag() throws JspException {
 		if (size != null && !Size.validate(size)) {
 			throw InvalidAttributeException.fromPossibleValues("link", "size", Size.getValues());
+		}
+		if (look != null && !Look.validateButton(look)) {
+			throw InvalidAttributeException.fromPossibleValues("link", "look", Look.getButtonValues());
 		}
 	}
 
@@ -118,8 +124,25 @@ public final class LinkTagHandler extends TagHandler {
 		link.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.BUTTON)
 			.addAttribute("tabindex", tabIndex)
-			.addAttribute("class", Bootstrap.BUTTON_LINK)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
+		
+		String lookVal = Bootstrap.BUTTON_LINK;
+		
+		if (Look.PRIMARY.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_PRIMARY;
+		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_SUCCESS;
+		} else if (Look.INFO.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_INFO;
+		} else if (Look.WARNING.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_WARNING;
+		} else if (Look.DANGER.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_DANGER;
+		} else if (Look.DEFAULT.equalsIgnoreCase(look)) {
+			lookVal = Bootstrap.BUTTON_DEFAULT;
+		}
+
+		link.addAttribute("class", lookVal);
 		
 		appendRefId(link, id);
 
@@ -280,6 +303,10 @@ public final class LinkTagHandler extends TagHandler {
 
 	void setDropMenu(DropMenuTagHandler dropMenu) {
 		this.dropMenu = dropMenu;
+	}
+
+	public void setLook(String look) {
+		this.look = look;
 	}
 
 	public void setLabel(String label) {

@@ -478,6 +478,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>look</name>
+            <required>false</required>
+		</attribute>
+        <attribute>
             <name>outcome</name>
             <required>false</required>
         </attribute>
