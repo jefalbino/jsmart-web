@@ -22,3 +22,8 @@
 .js5-validate-group {
 	margin-top: 0px;
 }
+
+.js5-recaptcha-thumbnail {
+	width: 308px !important;
+	height: 66px !important;
+}

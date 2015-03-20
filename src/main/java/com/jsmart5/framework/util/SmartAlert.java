@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.util;
 
-public class SmartAlert {
+public final class SmartAlert {
 
 	private AlertType type;
 	

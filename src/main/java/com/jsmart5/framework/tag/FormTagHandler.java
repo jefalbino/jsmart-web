@@ -20,6 +20,8 @@ package com.jsmart5.framework.tag;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -29,6 +31,7 @@ import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.FieldSet;
 import com.jsmart5.framework.tag.html.Form;
+import com.jsmart5.framework.tag.html.Set;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Method;
@@ -48,6 +51,12 @@ public final class FormTagHandler extends TagHandler {
 	private String position;
 	
 	private String size;
+	
+	private List<Tag> beforeTags;
+
+	public FormTagHandler() {
+		beforeTags = new ArrayList<Tag>();
+	}
 
 	@Override
 	public void validateTag() throws JspException {
@@ -103,14 +112,23 @@ public final class FormTagHandler extends TagHandler {
 
 		appendBind(id);
 		appendScript(getFunction());
-
-		return form;
+		
+		Set set = new Set();
+		for (Tag tag : beforeTags) {
+			set.addTag(tag);
+		}
+		set.addTag(form);
+		return set;
 	}
-	
+
 	private StringBuilder getFunction() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("return " + JSMART_VALIDATE.format(id));
 		return getBindFunction(id, Event.SUBMIT.name(), builder);
+	}
+
+	void addBeforeTag(Tag tag) {
+		this.beforeTags.add(tag);
 	}
 
 	public void setMethod(String method) {

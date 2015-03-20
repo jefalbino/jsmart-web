@@ -79,7 +79,7 @@ public final class ImageTagHandler extends TagHandler {
 		appendRefId(image, id);
 
 		if (libValue != null) {
-			image.addAttribute("src",  SmartImage.IMAGES.getImage(libValue, nameValue));
+			image.addAttribute("src",  SmartImage.getImage(libValue, nameValue));
 		} else {
 			image.addAttribute("src", nameValue);
 		}

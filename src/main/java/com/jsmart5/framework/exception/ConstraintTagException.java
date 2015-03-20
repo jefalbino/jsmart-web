@@ -16,17 +16,22 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag.css;
+package com.jsmart5.framework.exception;
 
-public final class JSmart5 {
+import java.text.MessageFormat;
 
-	public static final String VALIDATE_TEXT = "js5-validate-text";
-	
-	public static final String VALIDATE_GROUP = "js5-validate-group";
-	
-	public static final String RECAPTCHA_THUMBNAIL = "js5-recaptcha-thumbnail";
-	
-	private JSmart5() {
-		// DO NOTHING
+import javax.servlet.jsp.JspException;
+
+public class ConstraintTagException extends JspException {
+
+	private static final long serialVersionUID = -7139156469829986156L;
+
+	public ConstraintTagException(String message) {
+		super(message);
 	}
+
+	public static ConstraintTagException fromConstraint(String tag, String constraint) {
+		return new ConstraintTagException(MessageFormat.format("Invalid [{0}] constraint. {1}", tag, constraint));
+	}
+
 }

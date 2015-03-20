@@ -59,7 +59,7 @@ import com.jsmart5.framework.json.Resources;
 import com.jsmart5.framework.manager.SmartContext;
 import com.jsmart5.framework.tag.html.Head;
 import com.jsmart5.framework.tag.html.Input;
-import com.jsmart5.framework.tag.html.Script;
+import com.jsmart5.framework.tag.html.DocScript;
 
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.config.Constants.*;
@@ -238,7 +238,7 @@ public final class WebFilter implements Filter {
 
 		    Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
 			if (bodyMatcher.find()) {
-				Script script = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
+				DocScript script = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
 
 				String bodyMatch = bodyMatcher.group();
 				html = html.replace(bodyMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + bodyMatch);

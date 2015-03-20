@@ -2291,27 +2291,6 @@ var Jsmart5 = (function() {
 		}
 	}
 	
-	function resetCaptcha(id) {
-		if (id && id.length > 0) {
-			var captchaElement = $(getId(id));
-			if (captchaElement.is('input[captcha]')) {
-				try {
-					eval(captchaElement.attr('captcha'));
-				} catch(err) {
-					showOnConsole(err.message);
-				}
-			} else {
-				captchaElement.find('input[captcha]').each(function(index) {
-					try {
-						eval($(this).attr('captcha'));
-					} catch(err) {
-						showOnConsole(err.message);
-					}
-				});
-			}
-		}
-	}
-	
 	function resetDatePicker(id) {
 		if (id && id.length > 0) {
 			var datepicker = $(getId(id));

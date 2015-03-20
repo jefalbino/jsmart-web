@@ -48,18 +48,18 @@ import com.jsmart5.framework.tag.LoadTagHandler;
 import com.jsmart5.framework.tag.PopOverTagHandler;
 import com.jsmart5.framework.tag.TooltipTagHandler;
 import com.jsmart5.framework.tag.ValidateTagHandler;
-import com.jsmart5.framework.tag.html.Script;
+import com.jsmart5.framework.tag.html.DocScript;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.util.EventAction;
 import com.jsmart5.framework.tag.util.RefAction;
 import com.jsmart5.framework.util.SmartAlert;
 import com.jsmart5.framework.util.SmartUtils;
 
+import com.jsmart5.framework.util.SmartText;
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
 import static com.jsmart5.framework.tag.js.JsConstants.JSMART_AJAX;
 import static com.jsmart5.framework.tag.js.JsConstants.JSMART_BIND;
-import static com.jsmart5.framework.util.SmartText.*;
 
 public abstract class TagHandler extends SimpleTagSupport {
 
@@ -99,16 +99,14 @@ public abstract class TagHandler extends SimpleTagSupport {
 
 	protected static final String J_FRMT = J_TAG_INIT + "012_";
 
+	protected static final String J_CAPTCHA = J_TAG_INIT + "013_";
+
 	
 	protected static final String J_TBL = J_TAG_INIT + "015_";
 
 	protected static final String J_TBL_SEL = J_TAG_INIT + "016_";
 
 	protected static final String J_TBL_EDT = J_TAG_INIT + "017_";
-
-	protected static final String J_CAPTCHA = J_TAG_INIT + "018_";
-
-	protected static final String J_CAPTCHA_HASH = J_TAG_INIT + "019_";
 
 	protected static final String J_COMPLETE = J_TAG_INIT + "020_";
 
@@ -488,7 +486,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 
 	protected String getResourceString(String resource, String key) {
-		return TEXTS.getString(resource, key);
+		return SmartText.getString(resource, key);
 	}
 
 	protected Collection<String> getUserAuthorizationAccess() {
@@ -527,10 +525,10 @@ public abstract class TagHandler extends SimpleTagSupport {
 	protected void appendScript(StringBuilder builder) {
 		if (builder != null) {
 			HttpServletRequest httpRequest = getRequest();
-			Script script = (Script) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);
+			DocScript script = (DocScript) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);
 	
 			if (script == null) {
-				script = new Script();
+				script = new DocScript();
 				script.addAttribute("type", "text/javascript");
 				httpRequest.setAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR, script);
 			}

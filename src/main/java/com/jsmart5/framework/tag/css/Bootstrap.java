@@ -143,6 +143,8 @@ public final class Bootstrap {
 	
 	public static final String BADGE = "badge";
 	
+	public static final String THUMBNAIL = "thumbnail";
+	
 	
 	public static final String IMAGE_RESPONSIVE = "img-responsive";
 	

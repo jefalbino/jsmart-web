@@ -3028,12 +3028,12 @@
 	</tag>
 
 	<tag>
-        <name>captcha</name>
-        <tag-class>com.jsmart5.framework.tag.CaptchaTagHandler</tag-class>
+        <name>recaptcha</name>
+        <tag-class>com.jsmart5.framework.tag.ReCaptchaTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>style</name>
@@ -3044,23 +3044,19 @@
             <required>false</required>
         </attribute>
 		<attribute>
-            <name>value</name>
+            <name>version</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>siteKey</name>
             <required>true</required>
         </attribute>
         <attribute>
-            <name>length</name>
+            <name>label</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>numbers</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>message</name>
-            <required>false</required>
-        </attribute>
-       	<attribute>
-            <name>disabled</name>
+            <name>audioLabel</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3068,7 +3064,27 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>autoFocus</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>placeHolder</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>disabled</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>locale</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>size</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>align</name>
             <required>false</required>
         </attribute>
         <attribute>

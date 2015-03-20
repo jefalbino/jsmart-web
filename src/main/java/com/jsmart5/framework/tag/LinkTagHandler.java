@@ -357,4 +357,7 @@ public final class LinkTagHandler extends TagHandler {
 		this.disabled = disabled;
 	}
 
+	public void setSize(String size) {
+		this.size = size;
+	}
 }

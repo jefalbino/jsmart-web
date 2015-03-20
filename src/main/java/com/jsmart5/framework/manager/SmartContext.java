@@ -74,8 +74,6 @@ public final class SmartContext implements Serializable {
 
 	private Map<String, List<SmartAlert>> alerts = new LinkedHashMap<String, List<SmartAlert>>();
 
-	private Map<String, String> parameters = new HashMap<String, String>();
-
 	private Map<String, Object> mappedValues = new HashMap<String, Object>();
 
 	private SmartContext(final HttpServletRequest request, final HttpServletResponse response) {
@@ -110,8 +108,6 @@ public final class SmartContext implements Serializable {
 		redirectTo = null;
 		alerts.clear();
 		alerts = null;
-		parameters.clear();
-		parameters = null;
 		mappedValues.clear();
 		mappedValues = null;
 		JSP_FACTORY.releasePageContext(pageContext);
@@ -316,30 +312,6 @@ public final class SmartContext implements Serializable {
 		alert.setMessage(message);
 		addAlert(id, alert);
 	}
-
-	static String getParameter(final String name) {
-		SmartContext context = getCurrentInstance();
-		if (context != null) {
-			String object = context.parameters.get(name);
-			if (object == null) {
-				object = context.request.getParameter(name);
-			}
-			return object;
-		}
-		return null;
-	}
-
-	static Map<String, String> getParameters() {
-		SmartContext context = getCurrentInstance();
-		return context != null ? context.parameters : null;
-	}
-
-	static void setParameters(final Map<String, String> parameters) {
-		SmartContext context = getCurrentInstance();
-		if (context != null) {
-			context.parameters.putAll(parameters);
-		}
-	}
 	
 	static Object getMappedValue(final String name) {
 		SmartContext context = getCurrentInstance();
@@ -422,6 +394,19 @@ public final class SmartContext implements Serializable {
 			return getApplication().getAttribute(name) != null;
 		}
 		return false;
+	}
+
+	public static boolean checkReCaptcha(final String secretKey) {
+		String responseField = (String) getMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME);
+		if (responseField != null) {
+			return ReCaptchaHandler.checkReCaptchaV1(secretKey, responseField);
+		}
+
+		responseField = (String) getMappedValue(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME);
+		if (responseField != null) {
+			return ReCaptchaHandler.checkReCaptchaV2(secretKey, responseField);
+		}
+		throw new RuntimeException("ReCaptcha not found on this submit. Plase make sure the recaptcha tag is included on submitted form");
 	}
 
 }

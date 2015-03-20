@@ -229,7 +229,9 @@ public enum BeanHandler {
 						for (Entry<String, String> expr : expressions.entrySet()) {
 
 							if (expr.getValue().contains(START_EL + name + "." + field.getName() + END_EL)) {
-								EXPRESSIONS.handleRequestExpression(expr.getKey(), expr.getValue());
+								String jTag = expr.getKey().substring(0, TagHandler.J_TAG_LENGTH);
+
+								EXPRESSIONS.handleRequestExpression(jTag, expr.getKey(), expr.getValue());
 								expressions.remove(expr.getKey());
 								break;
 							}
@@ -261,12 +263,21 @@ public enum BeanHandler {
 	}
 
 	String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
-		String responsePath = null;
+		Entry<String, String> submitExpr = null;
+
 		for (Entry<String, String> expr : expressions.entrySet()) {
-			String tempPath = EXPRESSIONS.handleRequestExpression(expr.getKey(), expr.getValue());
-			if (tempPath != null) {
-				responsePath = tempPath;
+			String jTag = expr.getKey().substring(0, TagHandler.J_TAG_LENGTH);
+
+			EXPRESSIONS.handleRequestExpression(jTag, expr.getKey(), expr.getValue());
+
+			if (jTag.equals(TagHandler.J_SBMT)) {
+				submitExpr = expr;
 			}
+		}
+
+		String responsePath = null;
+		if (submitExpr != null) {
+			responsePath = EXPRESSIONS.handleSubmitExpression(submitExpr.getValue(), submitExpr.getKey());
 		}
 		return responsePath;
 	}

@@ -16,17 +16,31 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag.css;
+package com.jsmart5.framework.tag.html;
 
-public final class JSmart5 {
+public class DocScript extends Tag {
 
-	public static final String VALIDATE_TEXT = "js5-validate-text";
-	
-	public static final String VALIDATE_GROUP = "js5-validate-group";
-	
-	public static final String RECAPTCHA_THUMBNAIL = "js5-recaptcha-thumbnail";
-	
-	private JSmart5() {
-		// DO NOTHING
+	public DocScript() {
+		super("script");
+	}
+
+	public StringBuilder getHtml() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("<").append(name);
+
+		for (String attr : attributes.keySet()) {
+			builder.append(" ").append(attr).append("=\"").append(attributes.get(attr)).append("\"");
+		}
+		builder.append(">");
+
+		builder.append("$(document).ready(function() {");
+
+		for (Object obj : objects) {
+			builder.append(obj);
+		}
+
+		builder.append("});");
+		builder.append("</").append(name).append(">");
+		return builder;
 	}
 }

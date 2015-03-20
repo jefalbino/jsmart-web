@@ -48,7 +48,7 @@ public enum SmartImage {
 	 * @param name name of the image including its extension.
 	 * @return the path to get the image resource.
 	 */
-	public String getImage(String library, String name) {
+	public static String getImage(String library, String name) {
 		if (library != null) {
 			if (!library.startsWith("/")) {
 				library = "/" + library;
@@ -56,7 +56,7 @@ public enum SmartImage {
 			if (library.endsWith("/")) {
 				library = library.substring(0, library.length() - 1);
 			}
-			Map<String, String> names = libraries.get(library);
+			Map<String, String> names = IMAGES.libraries.get(library);
 			if (names != null) {
 				return names.get(name);
 			}
@@ -64,7 +64,7 @@ public enum SmartImage {
 		return null;
 	}
 
-	private void lookupInResourcePath(ServletContext servletContext, String path) {
+	private static void lookupInResourcePath(ServletContext servletContext, String path) {
 		Set<String> resources = servletContext.getResourcePaths(path);
 		if (resources != null) {
 			Map<String, String> library = null;
@@ -83,7 +83,7 @@ public enum SmartImage {
 
 			// Add library to libraries
 			if (library != null) {
-				libraries.put(path.substring(0, path.length() -1), library);
+				IMAGES.libraries.put(path.substring(0, path.length() -1), library);
 			}
 		}
 	}

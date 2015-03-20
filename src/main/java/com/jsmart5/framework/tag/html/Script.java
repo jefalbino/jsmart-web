@@ -33,13 +33,9 @@ public class Script extends Tag {
 		}
 		builder.append(">");
 
-		builder.append("$(document).ready(function() {");
-
 		for (Object obj : objects) {
 			builder.append(obj);
 		}
-
-		builder.append("});");
 		builder.append("</").append(name).append(">");
 		return builder;
 	}

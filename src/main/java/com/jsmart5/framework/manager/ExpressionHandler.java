@@ -54,10 +54,11 @@ import com.jsmart5.framework.filter.WebFilter;
 import com.jsmart5.framework.json.Scroll;
 import com.jsmart5.framework.tag.TableAdapterHandler;
 
+import com.jsmart5.framework.util.SmartText;
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
 import static com.jsmart5.framework.manager.TableExpressionHandler.*;
-import static com.jsmart5.framework.util.SmartText.*;
+
 
 public enum ExpressionHandler {
 
@@ -89,11 +90,8 @@ public enum ExpressionHandler {
 		return null;
 	}
 
-	String handleRequestExpression(String param, String expr) throws ServletException, IOException {
+	void handleRequestExpression(String jTag, String param, String expr) throws ServletException, IOException {
 		try {
-			String responsePath = null;
-			String jTag = param.substring(0, TagHandler.J_TAG_LENGTH);
-	
 			if (jTag.equals(TagHandler.J_TAG)) {
 				setExpressionValue(expr, param, false);
 	
@@ -117,19 +115,14 @@ public enum ExpressionHandler {
 	
 			} else if (jTag.equals(TagHandler.J_CAPTCHA)) {
 				setExpressionCaptcha(expr, param);
-	
-			} else if (jTag.equals(TagHandler.J_SBMT)) {
-				responsePath = submitExpression(expr, param);
 			}
-			return responsePath;
-
 		} catch (PropertyNotWritableException e) {
 			LOGGER.log(Level.SEVERE, "Property " + expr + " is not writable");
 			throw e;
 		}
 	}
 
-	String submitExpression(String expr, String param) {
+	String handleSubmitExpression(String expr, String param) throws ServletException, IOException {
 		String responsePath = null;
 		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
 
@@ -181,13 +174,13 @@ public enum ExpressionHandler {
 			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
 			if (names.length > 0 && SmartContext.containsAttribute(names[0])) {
 
-				Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_VALUES, SmartContext.getParameter(param)));
+				Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_VALUES, SmartContext.getRequest().getParameter(param)));
 
 				List<Object> list = null;
 				Scroll jsonScroll = null;
 
 				if (object instanceof ListAdapter) {
-					String scrollParam = SmartContext.getParameter(param.replaceFirst(TagHandler.J_SEL, TagHandler.J_SCROLL));
+					String scrollParam = SmartContext.getRequest().getParameter(param.replaceFirst(TagHandler.J_SEL, TagHandler.J_SCROLL));
 					jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
 
 					list = ((ListAdapter) object).load(jsonScroll.getIndex(), jsonScroll.getSize());
@@ -204,7 +197,7 @@ public enum ExpressionHandler {
 					ELContext context = SmartContext.getPageContext().getELContext();
 
 					ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
-					Integer index = Integer.parseInt(SmartContext.getParameter(param.replaceFirst(TagHandler.J_SEL, TagHandler.J_SEL_VAL)));
+					Integer index = Integer.parseInt(SmartContext.getRequest().getParameter(param.replaceFirst(TagHandler.J_SEL, TagHandler.J_SEL_VAL)));
 
 					// Case scroll list with adapter need to calculate the difference between
 					// the first index of the loaded content with the clicked list item index 
@@ -270,12 +263,13 @@ public enum ExpressionHandler {
 				SmartContext.getRequest().setAttribute(var, value);
 
 				Map<String, String> editValues = getActionEditValues(jsonAction);
-				SmartContext.setParameters(editValues);
+				// SmartContext.addParameters(editValues);
 
 				for (String editParam : editValues.keySet()) {
 					String editExpr = extractExpression(editParam);
 					if (editExpr != null) {
-						handleRequestExpression(editParam, editExpr);
+						String jTag = editParam.substring(0, TagHandler.J_TAG_LENGTH);
+						handleRequestExpression(jTag, editParam, editExpr);
 					}
 				}
 
@@ -371,7 +365,7 @@ public enum ExpressionHandler {
 
 				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
 
-				Object val = SmartContext.getParameter(param);
+				Object val = SmartContext.getRequest().getParameter(param);
 
 				if (!HANDLER.containsUnescapeMethod(names)) {
 					val = escapeValue((String) val);
@@ -463,10 +457,10 @@ public enum ExpressionHandler {
 
 				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
 
-				String val = SmartContext.getParameter(date);
+				String val = SmartContext.getRequest().getParameter(date);
 
 				if (!val.trim().isEmpty()) {
-					String format = SmartContext.getParameter(date.replaceFirst(TagHandler.J_DATE, TagHandler.J_FRMT));
+					String format = SmartContext.getRequest().getParameter(date.replaceFirst(TagHandler.J_DATE, TagHandler.J_FRMT));
 
 					try {
 						// First try with jdk Date
@@ -493,18 +487,12 @@ public enum ExpressionHandler {
 	void setExpressionCaptcha(String expr, String param) throws ServletException {
 		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
 
-			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
-			if (names.length > 0 && SmartContext.containsAttribute(names[0])) {
-
-				expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
-				ELContext context = SmartContext.getPageContext().getELContext();
-
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
-
-				String value = SmartContext.getParameter(param);
-				String hashValue = SmartContext.getParameter(param.replaceFirst(TagHandler.J_CAPTCHA, TagHandler.J_CAPTCHA_HASH));
-
-				valueExpr.setValue(context, computeCaptchaHash(value).equals(hashValue));
+			// Just add the ReCaptcha value to mapped values for further validation
+			if (expr.contains(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)) {
+				SmartContext.addMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME, SmartContext.getRequest().getParameter(param));
+			} else {
+				SmartContext.addMappedValue(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME, 
+						SmartContext.getRequest().getParameter(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME));
 			}
 		}
 	}
@@ -552,8 +540,8 @@ public enum ExpressionHandler {
 
 			if (obj instanceof String) {
 				String[] objs = obj.toString().split(Constants.EL_SEPARATOR, 2);
-				if (objs.length == 2 && TEXTS.containsResource(objs[0])) {
-					return TEXTS.getString(objs[0], objs[1]);
+				if (objs.length == 2 && SmartText.containsResource(objs[0])) {
+					return SmartText.getString(objs[0], objs[1]);
 				}
 			}
 
@@ -562,8 +550,8 @@ public enum ExpressionHandler {
 			}
 
 			String[] exprs = expr.replace(Constants.JSP_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR, 2);
-			if (exprs.length == 2 && TEXTS.containsResource(exprs[0])) {
-				return TEXTS.getString(exprs[0], exprs[1]);
+			if (exprs.length == 2 && SmartText.containsResource(exprs[0])) {
+				return SmartText.getString(exprs[0], exprs[1]);
 			}
 
 			return null;
@@ -576,8 +564,8 @@ public enum ExpressionHandler {
 
 			String[] exprs = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR, 2);
 
-			if (exprs.length == 2 && TEXTS.containsResource(exprs[0])) {
-				return TEXTS.getString(exprs[0], exprs[1]);
+			if (exprs.length == 2 && SmartText.containsResource(exprs[0])) {
+				return SmartText.getString(exprs[0], exprs[1]);
 			}
 		}
 		return expr;
@@ -622,15 +610,6 @@ public enum ExpressionHandler {
 			}
 		}
 		return value;
-	}
-
-	private String computeCaptchaHash(String value) {
-		int hash = 5381;
-		value = value.toUpperCase();
-		for(int i = 0; i < value.length(); i++) {
-			hash = ((hash << 5) + hash) + value.charAt(i);
-		}
-		return String.valueOf(hash);
 	}
 
 }

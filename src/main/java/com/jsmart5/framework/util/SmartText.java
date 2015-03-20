@@ -70,8 +70,8 @@ public enum SmartText {
 	 * @param res resource name mapped on configuration file.
 	 * @return boolean indicating the presence of specified resource.
 	 */
-	public boolean containsResource(final String res) {
-		return resources.contains(res);
+	public static boolean containsResource(final String res) {
+		return TEXTS.resources.contains(res);
 	}
 
 	/**
@@ -84,10 +84,10 @@ public enum SmartText {
 	 * @param key key of the string inside the properties file
 	 * @return the string on resource file according to the {@link Locale} of the request.
 	 */
-	public String getString(final String res, final String key) {
+	public static String getString(final String res, final String key) {
 		try {
 			if (containsResource(res)) {
-				return ResourceBundle.getBundle(res, SmartContext.getLocale(), control).getString(key);
+				return ResourceBundle.getBundle(res, SmartContext.getLocale(), TEXTS.control).getString(key);
 			} else {
 				LOGGER.log(Level.INFO, "Resource " + res + " not found!");
 			}
@@ -97,7 +97,7 @@ public enum SmartText {
 		return "???";
 	}
 	
-	public String getString(final String res, final String key, final Object ... params) {
+	public static String getString(final String res, final String key, final Object ... params) {
 		String string = getString(res, key);
 		if (string != null && params != null && params.length > 0) {
 
