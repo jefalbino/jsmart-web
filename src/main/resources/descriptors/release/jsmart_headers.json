@@ -1,0 +1,8 @@
+{
+	"styles": [
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"jsmart5/css/jsmart5.min.css\"/>"
+	],
+	"scripts": [
+		"<script type=\"text/javascript\" src=\"jsmart5/js/jsmart5.min.js\"></script>"
+	]
+}

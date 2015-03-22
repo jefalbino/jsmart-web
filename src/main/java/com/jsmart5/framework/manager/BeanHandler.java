@@ -435,9 +435,12 @@ public enum BeanHandler {
 				// Inject URL Parameters
 				if (field.isAnnotationPresent(UrlParam.class)) {
 					UrlParam urlParam = field.getAnnotation(UrlParam.class);
+					String paramValue = request.getParameter(urlParam.name());
 
-					field.setAccessible(true);
-					field.set(bean, EXPRESSIONS.decodeUrl(request.getParameter(urlParam.name())));
+					if (paramValue != null) {
+						field.setAccessible(true);
+						field.set(bean, EXPRESSIONS.decodeUrl(paramValue));
+					}
 					continue;
 				}
 
