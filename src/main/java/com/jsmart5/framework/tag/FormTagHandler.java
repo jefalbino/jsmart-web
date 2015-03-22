@@ -52,10 +52,10 @@ public final class FormTagHandler extends TagHandler {
 	
 	private String size;
 	
-	private List<Tag> beforeTags;
+	private List<Tag> beforeForm;
 
 	public FormTagHandler() {
-		beforeTags = new ArrayList<Tag>();
+		beforeForm = new ArrayList<Tag>();
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public final class FormTagHandler extends TagHandler {
 		appendScript(getFunction());
 		
 		Set set = new Set();
-		for (Tag tag : beforeTags) {
+		for (Tag tag : beforeForm) {
 			set.addTag(tag);
 		}
 		set.addTag(form);
@@ -127,8 +127,8 @@ public final class FormTagHandler extends TagHandler {
 		return getBindFunction(id, Event.SUBMIT.name(), builder);
 	}
 
-	void addBeforeTag(Tag tag) {
-		this.beforeTags.add(tag);
+	void addBeforeFormTag(Tag tag) {
+		this.beforeForm.add(tag);
 	}
 
 	public void setMethod(String method) {

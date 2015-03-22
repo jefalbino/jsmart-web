@@ -69,6 +69,10 @@ public class Tag {
 		this.objects.add(tag);
 		return this;
 	}
+	
+	public Object getObject(int index) {
+		return this.objects.get(index);
+	}
 
 	public StringBuilder getHtml() {
 		StringBuilder builder = new StringBuilder();

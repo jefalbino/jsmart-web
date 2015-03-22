@@ -19,17 +19,16 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Collection;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.adapter.SlideAdapter;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
-
-public final class CheckListTagHandler extends TagHandler {
+public final class SlidesTagHandler extends TagHandler {
 
 	private String values;
 
@@ -44,21 +43,41 @@ public final class CheckListTagHandler extends TagHandler {
 		JspTag parent = getParent();
 		Object object = getTagValue(values);
 
-		if (object instanceof Map) {
-			Map<Object, Object> map = (Map<Object, Object>) object;
+		if (object instanceof Collection && parent instanceof CarouselTagHandler) {
+			
+			for (SlideAdapter adapter : (Collection<SlideAdapter>) object) {
+				SlideTagHandler slideTag = new SlideTagHandler();
+				slideTag.setParent(parent);
+				slideTag.setActive(adapter.isActive());
+				slideTag.setLabel(adapter.getLabel());
 
-			for (Entry<Object, Object> entry : map.entrySet()) {
-
-				CheckTagHandler check = new CheckTagHandler();
-				check.setValue(entry.getKey());
-				check.setLabel(entry.getValue() != null ? entry.getValue().toString() : null);
-
-				if (parent instanceof RadioGroupTagHandler) {
-					((RadioGroupTagHandler) parent).addCheck(check);
-
-				} else if (parent instanceof CheckGroupTagHandler) {
-					((CheckGroupTagHandler) parent).addCheck(check);
+				if (adapter.getHeader() != null) {
+					HeaderTagHandler headerTag = new HeaderTagHandler();
+					headerTag.setParent(slideTag);
+					headerTag.setTitle(adapter.getHeader().getTitle());
+					headerTag.setType(adapter.getHeader().getType());
+					
+					if (adapter.getHeader().getIcon() != null) {
+						IconTagHandler iconTag = new IconTagHandler();
+						iconTag.setParent(headerTag);
+						iconTag.setName(adapter.getHeader().getIcon());
+						headerTag.addIconTag(iconTag);
+					}
+					slideTag.setHeader(headerTag);
 				}
+				
+				if (adapter.getImage() != null) {
+					ImageTagHandler imageTag = new ImageTagHandler();
+					imageTag.setParent(slideTag);
+					imageTag.setLib(adapter.getImage().getLib());
+					imageTag.setName(adapter.getImage().getName());
+					imageTag.setAlt(adapter.getImage().getAlt());
+					imageTag.setWidth(adapter.getImage().getWidth());
+					imageTag.setHeight(adapter.getImage().getHeight());
+					slideTag.setImage(imageTag);
+				}
+
+				((CarouselTagHandler) parent).addSlide(slideTag);
 			}
 		}
 		return false;

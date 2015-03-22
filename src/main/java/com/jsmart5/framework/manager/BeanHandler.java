@@ -37,6 +37,7 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
@@ -69,6 +70,7 @@ import com.jsmart5.framework.annotation.SmartBean;
 import com.jsmart5.framework.annotation.SmartFilter;
 import com.jsmart5.framework.annotation.SmartListener;
 import com.jsmart5.framework.annotation.Unescape;
+import com.jsmart5.framework.annotation.UrlParam;
 import com.jsmart5.framework.config.UrlPattern;
 import com.jsmart5.framework.listener.SmartContextListener;
 import com.jsmart5.framework.listener.SmartSessionListener;
@@ -83,10 +85,14 @@ public enum BeanHandler {
 	HANDLER();
 
 	private static final Logger LOGGER = Logger.getLogger(BeanHandler.class.getPackage().getName());
+	
+	private static final Pattern INCLUDE_PATTERN = Pattern.compile("<%@*.include.*file=\"(.*)\".*%>");
 
-	private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + URL_PARAM_PATTERN.pattern() + "|" + INCLUDE_JSPF_PATTERN.pattern());
+	private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern());
 	
 	private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
+	
+	private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
 
 	Map<String, Class<?>> smartBeans;
 
@@ -146,12 +152,16 @@ public enum BeanHandler {
 	}
 
 	@SuppressWarnings("all")
-	boolean executePreSubmit(Object bean) {
+	boolean executePreSubmit(Object bean, String action) {
 		for (Method method : getBeanMethods(bean.getClass())) {
 			if (method.isAnnotationPresent(PreSubmit.class)) {
 				try {
-					Boolean result = (Boolean) method.invoke(bean, null);
-					return result != null && result;
+					String forAction = method.getAnnotation(PreSubmit.class).forAction();
+
+					if (action.equalsIgnoreCase(forAction)) {
+						Boolean result = (Boolean) method.invoke(bean, null);
+						return result != null && result;
+					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -161,11 +171,16 @@ public enum BeanHandler {
 	}
 
 	@SuppressWarnings("all")
-	void executePostSubmit(Object bean) {
+	void executePostSubmit(Object bean, String action) {
 		for (Method method : getBeanMethods(bean.getClass())) {
 			if (method.isAnnotationPresent(PostSubmit.class)) {
 				try {
-					method.invoke(bean, null);
+					String forAction = method.getAnnotation(PostSubmit.class).forAction();
+
+					if (action.equalsIgnoreCase(forAction)) {
+						method.invoke(bean, null);
+						return;
+					}
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -202,24 +217,6 @@ public enum BeanHandler {
 		}
 	}
 
-	void executeUrlParams(String name, Set<String> urlParams) {
-		if (urlParams != null && !urlParams.isEmpty()) {
-			Set<String> tempPresets = new HashSet<String>();
-
-			for (String urlParam : urlParams) {
-
-				if (urlParam.contains(name) && !tempPresets.contains(urlParam)) {
-					tempPresets.add(urlParam);
-
-					String attrName = urlParam.substring(urlParam.indexOf(URL_PARAM_NAME_ATTR) + URL_PARAM_NAME_ATTR.length());
-					String attrParam = urlParam.substring(urlParam.indexOf(URL_PARAM_PARAM_ATTR) + URL_PARAM_PARAM_ATTR.length());
-
-					EXPRESSIONS.setExpressionValue(attrName.substring(0, attrName.indexOf("\"")), attrParam.substring(0, attrParam.indexOf("\"")), true);
-				}
-			}
-		}
-	}
-
 	void executePostPreset(String name, Object bean, Map<String, String> expressions) {
 		try {
 			if (expressions != null) {
@@ -227,13 +224,20 @@ public enum BeanHandler {
 
 					if (field.isAnnotationPresent(PostPreset.class)) {
 						for (Entry<String, String> expr : expressions.entrySet()) {
+							
+							Matcher elMatcher = EL_PATTERN.matcher(expr.getValue());
+							if (elMatcher.find() && elMatcher.group(1).contains(name + "." + field.getName())) {
 
-							if (expr.getValue().contains(START_EL + name + "." + field.getName() + END_EL)) {
-								String jTag = expr.getKey().substring(0, TagHandler.J_TAG_LENGTH);
+								Matcher tagMatcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
+								if (tagMatcher.find()) {
 
-								EXPRESSIONS.handleRequestExpression(jTag, expr.getKey(), expr.getValue());
-								expressions.remove(expr.getKey());
-								break;
+									String jTag = tagMatcher.group(1);
+									String jParam = tagMatcher.group(2);
+	
+									EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
+									expressions.remove(expr.getKey());
+									break;
+								}
 							}
 						}
 					}
@@ -249,7 +253,9 @@ public enum BeanHandler {
 			Class<?> clazz = smartBeans.get(names[0]);
 			if (clazz != null) {
 				for (Method method : getBeanMethods(clazz)) {
-					if (method.getName().startsWith("set") && method.getName().endsWith(names[1].substring(1))) {
+					Matcher matcher = SET_METHOD_PATTERN.matcher(method.getName());
+
+					if (matcher.find() && names[1].equalsIgnoreCase(matcher.group(1))) {
 						return method.isAnnotationPresent(Unescape.class);
 					}
 				}
@@ -263,21 +269,27 @@ public enum BeanHandler {
 	}
 
 	String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
-		Entry<String, String> submitExpr = null;
+		String submitParam = null;
+		String submitExpr = null;
 
 		for (Entry<String, String> expr : expressions.entrySet()) {
-			String jTag = expr.getKey().substring(0, TagHandler.J_TAG_LENGTH);
+			Matcher matcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
+			if (matcher.find()) {
 
-			EXPRESSIONS.handleRequestExpression(jTag, expr.getKey(), expr.getValue());
-
-			if (jTag.equals(TagHandler.J_SBMT)) {
-				submitExpr = expr;
+				String jTag = matcher.group(1);
+				String jParam = matcher.group(2);
+				EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
+	
+				if (jTag.equals(TagHandler.J_SBMT)) {
+					submitExpr = expr.getValue();
+					submitParam = jParam;
+				}
 			}
 		}
 
 		String responsePath = null;
 		if (submitExpr != null) {
-			responsePath = EXPRESSIONS.handleSubmitExpression(submitExpr.getValue(), submitExpr.getKey());
+			responsePath = EXPRESSIONS.handleSubmitExpression(submitExpr, submitParam);
 		}
 		return responsePath;
 	}
@@ -289,7 +301,7 @@ public enum BeanHandler {
 			PageScope pageScope = new PageScope(path);
 
 			for (String name : jspPageBean.getBeanNames()) {
-				instantiateBean(name, expressions, jspPageBean.getUrlParams(), pageScope);
+				instantiateBean(name, expressions, pageScope);
 			}
 
 			// Include into session the path with respective page scoped bean names
@@ -302,7 +314,7 @@ public enum BeanHandler {
 		}
 	}
 
-	private Object instantiateBean(String name, Map<String, String> expressions, Set<String> urlParams, PageScope pageScope) throws Exception {
+	private Object instantiateBean(String name, Map<String, String> expressions, PageScope pageScope) throws Exception {
 		Object bean = null;
 		ServletContext context = SmartContext.getApplication();
 		HttpSession session = SmartContext.getSession();
@@ -355,7 +367,6 @@ public enum BeanHandler {
 			}
 
 			executeInjection(bean, pageScope);
-			executeUrlParams(name, urlParams);
 			executePostPreset(name, bean, expressions);
 			executePostConstruct(bean);
 		}
@@ -400,22 +411,34 @@ public enum BeanHandler {
 
 	private void executeInjection(Object bean, PageScope pageScope) {
 		try {
+			HttpSession session = SmartContext.getSession();
+			HttpServletRequest request = SmartContext.getRequest();
+
 			for (Field field : getBeanFields(bean.getClass())) {
 				if (field.isAnnotationPresent(Inject.class)) {
 
 					SmartBean sb = field.getType().getAnnotation(SmartBean.class);
 					if (sb != null) {
 						field.setAccessible(true);
-						field.set(bean, instantiateBean(getClassName(sb, field.getType()), null, null, pageScope));
+						field.set(bean, instantiateBean(getClassName(sb, field.getType()), null, pageScope));
 						continue;
 					}
 
 					AuthenticateBean ab = field.getType().getAnnotation(AuthenticateBean.class);
 					if (ab != null) {
 						field.setAccessible(true);
-						field.set(bean, instantiateAuthBean(getClassName(ab, field.getType()), SmartContext.getSession()));
+						field.set(bean, instantiateAuthBean(getClassName(ab, field.getType()), session));
 						continue;
 					}
+				}
+
+				// Inject URL Parameters
+				if (field.isAnnotationPresent(UrlParam.class)) {
+					UrlParam urlParam = field.getAnnotation(UrlParam.class);
+
+					field.setAccessible(true);
+					field.set(bean, EXPRESSIONS.decodeUrl(request.getParameter(urlParam.name())));
+					continue;
 				}
 
 				// Inject dependencies
@@ -862,7 +885,9 @@ public enum BeanHandler {
 
 			setBeanFields(clazz);
 			setBeanMethods(clazz);
-			smartBeans.put(getClassName(bean, clazz), clazz);
+			
+			String className = getClassName(bean, clazz); 
+			smartBeans.put(className, clazz);
 		}
 
 		annotations = reflections.getTypesAnnotatedWith(AuthenticateBean.class);
@@ -877,7 +902,8 @@ public enum BeanHandler {
 
 				setBeanFields(clazz);
 				setBeanMethods(clazz);
-				authBeans.put(getClassName(authBean, clazz), clazz);
+				String className = getClassName(authBean, clazz);
+				authBeans.put(className, clazz);
 				continue;
 			} else {
 				LOGGER.log(Level.SEVERE, "Only one AuthenticationBean must be declared! Skipping remained ones.");
@@ -949,7 +975,7 @@ public enum BeanHandler {
 
     private void initForwardPaths(ServletContext servletContext) {
     	forwardPaths = new HashMap<String, String>();
-    	lookupInResourcePath(servletContext, SEPARATOR);
+    	lookupInResourcePath(servletContext, PATH_SEPARATOR);
     	overrideForwardPaths();
     }
 
@@ -973,11 +999,11 @@ public enum BeanHandler {
     	if (resources != null) {
 	    	for (String res : resources) {
 	    		if (res.endsWith(".jsp") || res.endsWith(".jspf") || res.endsWith(".html")) {
-	    			String[] bars = res.split(SEPARATOR);
+	    			String[] bars = res.split(PATH_SEPARATOR);
 	    			if (res.endsWith(".jspf")) {
-	    				forwardPaths.put(SEPARATOR + bars[bars.length -1], res);
+	    				forwardPaths.put(PATH_SEPARATOR + bars[bars.length -1], res);
 	    			} else {
-	    				forwardPaths.put(SEPARATOR + bars[bars.length -1].replace(".jsp", "").replace(".html", ""), res);
+	    				forwardPaths.put(PATH_SEPARATOR + bars[bars.length -1].replace(".jsp", "").replace(".html", ""), res);
 	    			}
 	    		} else {
 	    			lookupInResourcePath(servletContext, res);
@@ -1087,35 +1113,24 @@ public enum BeanHandler {
 			Set<String> includes = new LinkedHashSet<String>();
 
 			try {
-				String match = null;
-				while ((match = fileScanner.findWithinHorizon(HANDLER_EL_PATTERN, 0)) != null) {
+				String lineScan = null;
+				while ((lineScan = fileScanner.findWithinHorizon(HANDLER_EL_PATTERN, 0)) != null) {
 
-					if (match.contains(URL_PARAM_TAG)) {
-						jspPageBean.addUrlParam(match);
+					Matcher matcher = INCLUDE_PATTERN.matcher(lineScan);
+					if (matcher.find()) {
+						lineScan = matcher.group(1);
+						includes.add(lineScan.contains("/") ? lineScan.substring(lineScan.lastIndexOf("/")) : lineScan);
+						continue;
+					}
 
-		            	// It gets an attribute name
-		            	match = match.substring(match.indexOf(URL_PARAM_NAME_ATTR) + URL_PARAM_NAME_ATTR.length());
-
-		            	for (String name : match.replace(START_EL, "").replace(END_EL, "").split(EL_SEPARATOR)) {
+					matcher = EL_PATTERN.matcher(lineScan);
+					if (matcher.find()) {
+		            	for (String name : matcher.group(1).split(EL_SEPARATOR)) {
 		            		if (smartBeans.containsKey(name)) {
 		            			jspPageBean.addBeanName(name);
 		            		}
 		            	}
-		            	continue;
-		            }
-
-					if (match.contains(INCLUDE_TAG)) {
-						match = match.replace(INCLUDE_TAG, "").replace(INCLUDE_FILE_ATTR, "").replace("\"", "")
-										.replace(START_JSP_TAG, "").replace(END_JSP_TAG, "").trim();
-						includes.add(match.contains("/") ? match.substring(match.lastIndexOf("/")) : match);
-						continue;
 					}
-
-	            	for (String name : match.replace(START_EL, "").replace(END_EL, "").split(EL_SEPARATOR)) {
-	            		if (smartBeans.containsKey(name)) {
-	            			jspPageBean.addBeanName(name);
-	            		}
-	            	}
 				}
 			} finally {
 				fileScanner.close();
@@ -1130,22 +1145,11 @@ public enum BeanHandler {
 
     private class JspPageBean {
 
-    	private Set<String> urlParams;
-
     	private Set<String> beanNames;
 
     	public JspPageBean() {
-    		this.urlParams = new LinkedHashSet<String>();
     		this.beanNames = new LinkedHashSet<String>();
     	}
-
-		public Set<String> getUrlParams() {
-			return urlParams;
-		}
-
-		public void addUrlParam(String urlParam) {
-			this.urlParams.add(urlParam);
-		}
 
 		public Set<String> getBeanNames() {
 			return beanNames;

@@ -16,21 +16,48 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.annotation;
+package com.jsmart5.framework.adapter;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public final class SlideAdapter {
 
-/**
- * The {@link PreSubmit} annotation is used on a method that needs to be executed 
- * before the submit method mapped on JSP file is invoked.
- */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PreSubmit {
+	private ImageAdapter image;
 
-	String forAction();
+	private HeaderAdapter header;
+
+	private boolean active;
+	
+	private String label;
+
+	public ImageAdapter getImage() {
+		return image;
+	}
+
+	public void setImage(ImageAdapter image) {
+		this.image = image;
+	}
+
+	public HeaderAdapter getHeader() {
+		return header;
+	}
+
+	public void setHeader(HeaderAdapter header) {
+		this.header = header;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
 }

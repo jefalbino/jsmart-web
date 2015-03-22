@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
@@ -50,6 +51,17 @@ public final class ImageTagHandler extends TagHandler {
 	private boolean figure;
 
 	private String type;
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+
+		if (parent instanceof SlideTagHandler) {
+			((SlideTagHandler) parent).setImage(this);
+			return false;
+		}
+		return true;
+	}
 
 	@Override
 	public void validateTag() throws JspException {

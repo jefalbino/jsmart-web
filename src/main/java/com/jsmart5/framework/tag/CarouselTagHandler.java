@@ -19,174 +19,222 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.ConstraintTagException;
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
+import com.jsmart5.framework.tag.css.Bootstrap;
+import com.jsmart5.framework.tag.css.JSmart5;
+import com.jsmart5.framework.tag.html.A;
+import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Li;
+import com.jsmart5.framework.tag.html.Ol;
+import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
-import com.jsmart5.framework.tag.js.JsConstants;
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class CarouselTagHandler extends TagHandler {
 
-	private static final String BASIC = "basic";
-
-	private static final String NUMBERED = "numbered";
-
-	private static final String TRANSITION_FADE = "fade";
-
-	private static final String TRANSITION_SLIDE = "slide";
-
-	protected final List<CarouselItemTagHandler> items;
-
-	private String type;
-
-	private String title;
-
-	private Integer width;
-
-	private Integer height;
-
-	private Integer transitionTime;
-
-	private String transitionType;
-
-	private Integer timer;
+	private Integer timeout;
+	
+	private boolean continuous = true;
+	
+	private String onSlide;
+	
+	private String width;
+	
+	private String height;
+	
+	protected final List<SlideTagHandler> slides;
 
 	public CarouselTagHandler() {
-		items = new ArrayList<CarouselItemTagHandler>();
+		slides = new ArrayList<SlideTagHandler>();
 	}
 
 	@Override
 	public void validateTag() throws JspException {
-		if (type != null && !type.equals(BASIC) && !type.equals(NUMBERED)) {
-			throw new JspException("Invalid type value for carousel tag. Valid values are " + BASIC + " and " + NUMBERED);
-		}
-		if (transitionType != null && !transitionType.equals(TRANSITION_FADE) && !transitionType.equals(TRANSITION_SLIDE)) {
-			throw new JspException("Invalid transitionType value for carousel tag. Valid values are "
-					+ TRANSITION_FADE + " and " + TRANSITION_SLIDE);
+		if (timeout != null && timeout < 0) {
+			throw InvalidAttributeException.fromConstraint("carousel", "timeout", "greater than 0"); 
 		}
 	}
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
-//		// Just to call nested tags
-//		JspFragment body = getJspBody();
-//		if (body != null) {
-//			body.invoke(null);
-//		}
-//
-//		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
-//		
-//		builder.append("id=\"" + id + "\" carousel=\"carousel\" ");
-//
-//		if (style != null) {
-//			builder.append("style=\"" + style + "\" ");
-//		}
-//		if (styleClass != null) {
-//			builder.append("class=\"" + styleClass + "\" ");
-//		} else {
-//			appendClass(builder, CSS_CAROUSEL);
-//		}
-//
-//		builder.append("width=\"" + width + "\" ");
-//		builder.append("height=\"" + height + "\" ");
-//		builder.append("timer=\"" + timer + "\" ");
-//
-//		if (transitionType != null) {
-//			builder.append("transitionType=\"" + transitionType + "\" ");
-//		}		
-//		if (transitionTime != null) {
-//			builder.append("transitionTime=\"" + transitionTime + "\" ");
-//		}
-//
-//		builder.append(CLOSE_TAG);
-//
-//		if (title != null) {
-//			builder.append(OPEN_PARAGRAPH_TAG + getTagValue(title) + CLOSE_PARAGRAPH_TAG);
-//		}
-//
-//		builder.append(OPEN_DIV_TAG);
-//		appendClass(builder, CSS_CAROUSEL_SLIDES);
-//		builder.append(">");
-//
-//		for (int i = 0; i < items.size(); i++) {
-//			StringWriter sw = new StringWriter();
-//			items.get(i).setOutputWriter(sw);
-//			items.get(i).setId(id + "_slide_" + (i + 1));
-//			items.get(i).executeTag();
-//			builder.append(sw.toString());
-//		}
-//
-//		if (NUMBERED.equals(type)) {
-//			// Numbers
-//			builder.append(OPEN_DIV_TAG);
-//			appendClass(builder, CSS_CAROUSEL_CONTROL);
-//			builder.append(" align=\"center\" >");
-//			builder.append(OPEN_DIV_TAG + "align=\"right\" >");
-//			for (int i = 0; i < items.size(); i++) {
-//				builder.append(OPEN_SPAN_TAG + CLOSE_TAG + (i + 1) + CLOSE_SPAN_TAG);
-//			}
-//			builder.append(CLOSE_DIV_TAG + CLOSE_DIV_TAG);
-//
-//			// Arrows Previous and Next
-//			builder.append(OPEN_DIV_TAG);
-//			appendClass(builder, CSS_CAROUSEL_CONTROL_ARROW);
-//			builder.append(CLOSE_TAG);
-//			builder.append(OPEN_SPAN_TAG + "direction=\"prev\" >");
-//			builder.append(OPEN_DIV_TAG + ">" + CLOSE_DIV_TAG);
-//			builder.append(CLOSE_SPAN_TAG);
-//			builder.append(OPEN_SPAN_TAG + "direction=\"next\" >");
-//			builder.append(OPEN_DIV_TAG + ">" + CLOSE_DIV_TAG);
-//			builder.append(CLOSE_SPAN_TAG);
-//			builder.append(CLOSE_DIV_TAG);
-//		}
-//
-//		builder.append(CLOSE_DIV_TAG + CLOSE_DIV_TAG);
-//
-//		StringBuilder scriptBuilder = new StringBuilder(JsConstants.JSMART_CAROUSEL.format(id));
-//
-//		appendScriptDeprecated(scriptBuilder);
-//
-//		printOutput(builder);
-		return null;
+		// Just to call nested tags
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}
+
+		if (this.slides.isEmpty()) {
+			throw ConstraintTagException.fromConstraint("carousel", "Tag must contain [slide] and or [slides] inner tags");
+		}
+
+		setRandomId("carousel");
+
+		Div div = new Div();
+		div.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("class", Bootstrap.CAROUSEL)
+			.addAttribute("class", Bootstrap.SLIDE)
+			.addAttribute("data-ride", "carousel")
+			.addAttribute("data-wrap", continuous);
+
+		if (width != null) {
+			div.addAttribute("style", "width: " + width + ";");
+		}
+		if (height != null) {
+			div.addAttribute("style", "height: " + height + ";");
+		}
+
+		if (timeout != null) {
+			div.addAttribute("data-interval", timeout == 0 ? "false" : timeout * 1000);
+		}
+
+		Ol ol = new Ol();
+		ol.addAttribute("class", Bootstrap.CAROUSEL_INDICATORS);
+
+		// Create indicators
+		boolean slideActive = false;
+
+		for (int i = 0; i < slides.size(); i++) {
+			Li li = new Li();
+			li.addAttribute("data-target", "#" + id)
+				.addAttribute("data-slide-to", i);
+			
+			if (slides.get(i).getImage() == null) {
+				li.addAttribute("class", JSmart5.CAROUSEL_INDICATOR);
+			}
+
+			if (!slideActive && slides.get(i).isActive()) {
+				li.addAttribute("class", Bootstrap.ACTIVE);
+				slideActive = true;
+			}
+			ol.addTag(li);
+		}
+
+		// Case no active was found
+		if (!slideActive) {
+			slides.get(0).setActive(true);
+
+			Tag li = (Tag) ol.getObject(0);
+			li.addAttribute("class", Bootstrap.ACTIVE);
+		}
+
+		div.addTag(ol);
+
+		// Slides wrapper
+		Div inner = new Div();
+		inner.addAttribute("class", Bootstrap.CAROUSEL_INNER)
+			.addAttribute("class", JSmart5.CAROUSEL_INNER)
+			.addAttribute("role", "listbox");
+		
+		// Slides
+		slideActive = false;
+		boolean noSlideImage = false;
+		
+		for (SlideTagHandler slide : slides) {
+			if (slideActive) {
+				slide.setActive(false);
+			}
+			if (!slideActive && slide.isActive()) {
+				slideActive = true;
+			}
+			inner.addTag(slide.executeTag());
+
+			noSlideImage |= slide.getImage() == null;
+		}
+		div.addTag(inner);
+		
+		// Controls
+		A left = new A();
+		left.addAttribute("class", Bootstrap.LEFT)
+			.addAttribute("class", Bootstrap.CAROUSEL_CONTROL)
+			.addAttribute("class", noSlideImage ? JSmart5.CAROUSEL_CONTROL : null)
+			.addAttribute("href", "#" + id)
+			.addAttribute("role", "button")
+			.addAttribute("data-slide", "prev");
+		
+		Span leftSpan = new Span();
+		leftSpan.addAttribute("class", "glyphicon")
+			.addAttribute("class", "glyphicon-chevron-left")
+			.addAttribute("aria-hidden", "true");
+		
+		Span srLeftSpan = new Span();
+		srLeftSpan.addAttribute("class", Bootstrap.SR_ONLY)
+			.addText("Previous");
+		left.addTag(leftSpan).addTag(srLeftSpan);
+
+		A right = new A();
+		right.addAttribute("class", Bootstrap.RIGHT)
+			.addAttribute("class", Bootstrap.CAROUSEL_CONTROL)
+			.addAttribute("class", noSlideImage ? JSmart5.CAROUSEL_CONTROL : null)
+			.addAttribute("href", "#" + id)
+			.addAttribute("role", "button")
+			.addAttribute("data-slide", "next");
+	
+		Span rightSpan = new Span();
+		rightSpan.addAttribute("class", "glyphicon")
+			.addAttribute("class", "glyphicon-chevron-right")
+			.addAttribute("aria-hidden", "true");
+
+		Span srRightSpan = new Span();
+		srRightSpan.addAttribute("class", Bootstrap.SR_ONLY)
+			.addText("Next");
+		right.addTag(rightSpan).addTag(srRightSpan);
+	
+		div.addTag(left).addTag(right);
+
+		if (onSlide != null) {
+			appendScript(getBindFunction(id, "slide.bs.carousel", new StringBuilder(onSlide)));
+		}
+
+		if (noSlideImage) {
+			StringBuilder script = new StringBuilder(JSMART_CAROUSEL.format(id));
+			appendScript(getBindFunction(id, "slid.bs.carousel", script));
+			
+			// This will be executed at document ready
+			appendScript(script);
+		}
+		return div;
 	}
 
-	void addItem(CarouselItemTagHandler item) {
-		this.items.add(item);
+	void addSlide(SlideTagHandler slide) {
+		this.slides.add(slide);
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setTimeout(Integer timeout) {
+		this.timeout = timeout;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setOnSlide(String onSlide) {
+		this.onSlide = onSlide;
 	}
 
-	public void setWidth(Integer width) {
+	public void setContinuous(boolean continuous) {
+		this.continuous = continuous;
+	}
+
+	String getWidth() {
+		return width;
+	}
+
+	public void setWidth(String width) {
 		this.width = width;
 	}
 
-	public void setHeight(Integer height) {
+	String getHeight() {
+		return height;
+	}
+
+	public void setHeight(String height) {
 		this.height = height;
-	}
-
-	public void setTransitionTime(Integer transitionTime) {
-		this.transitionTime = transitionTime;
-	}
-
-	public void setTransitionType(String transitionType) {
-		this.transitionType = transitionType;
-	}
-
-	public void setTimer(Integer timer) {
-		this.timer = timer;
 	}
 
 }

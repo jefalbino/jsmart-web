@@ -16,39 +16,11 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag;
+package com.jsmart5.framework.tag.html;
 
-import java.io.IOException;
+public class Ol extends Tag {
 
-import javax.servlet.jsp.JspException;
-
-import com.jsmart5.framework.manager.TagHandler;
-import com.jsmart5.framework.tag.html.Tag;
-
-@SuppressWarnings("unused")
-public final class UrlParamTagHandler extends TagHandler {
-
-	private String name;
-
-	private String param;
-
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
+	public Ol() {
+		super("ol");
 	}
-
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING: This is already done on bean creation
-		return null;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setParam(String param) {
-		this.param = param;
-	}
-
 }

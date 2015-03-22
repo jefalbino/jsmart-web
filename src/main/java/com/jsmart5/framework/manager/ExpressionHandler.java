@@ -21,50 +21,45 @@ package com.jsmart5.framework.manager;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
 import javax.el.PropertyNotWritableException;
 import javax.el.ValueExpression;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.jsmart5.framework.adapter.ListAdapter;
-import com.jsmart5.framework.annotation.ScopeType;
-import com.jsmart5.framework.annotation.SmartBean;
+
 import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.filter.WebFilter;
 import com.jsmart5.framework.json.Scroll;
-import com.jsmart5.framework.tag.TableAdapterHandler;
 
 import com.jsmart5.framework.util.SmartText;
 import static com.jsmart5.framework.config.Config.*;
+import static com.jsmart5.framework.config.Constants.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
-import static com.jsmart5.framework.manager.TableExpressionHandler.*;
-
 
 public enum ExpressionHandler {
 
 	EXPRESSIONS();
 	
 	private static final Logger LOGGER = Logger.getLogger(ExpressionHandler.class.getPackage().getName());
+
+	public static final Pattern EL_PATTERN = Pattern.compile("@\\{(.[^@\\{\\}]*)\\}");
 
 	private static final Gson GSON = new Gson();
 
@@ -80,41 +75,38 @@ public enum ExpressionHandler {
 	}
 
 	private String extractExpression(String param) {
-		if (param.length() >= TagHandler.J_TAG_LENGTH) {
-			String jTag = param.substring(0, TagHandler.J_TAG_LENGTH);
-
-			if (jTag.startsWith(TagHandler.J_TAG_INIT)) {
-				return TagEncrypter.complexDecrypt(jTag, param.replace("[]", ""));
-			}
+		Matcher matcher = TagHandler.J_TAG_PATTERN.matcher(param);
+		if (matcher.find()) {
+			return TagEncrypter.complexDecrypt(matcher.group(2).replace("[]", ""));
 		}
 		return null;
 	}
 
-	void handleRequestExpression(String jTag, String param, String expr) throws ServletException, IOException {
+	void handleRequestExpression(String jTag, String expr, String jParam) throws ServletException, IOException {
 		try {
 			if (jTag.equals(TagHandler.J_TAG)) {
-				setExpressionValue(expr, param, false);
+				setExpressionValue(expr, jParam);
 	
 			} else if (jTag.equals(TagHandler.J_ARRAY)) {
-				setExpressionValues(expr, param);
+				setExpressionValues(expr, jParam);
 	
 			} else if (jTag.equals(TagHandler.J_SEL)) {
-				setSelectionValue(expr, param);
+				setSelectionValue(expr, jParam);
 	
 			} else if (jTag.equals(TagHandler.J_TBL_SEL)) {
-				setTableSelectionValue(expr, param);
+				setTableSelectionValue(expr, jParam);
 	
 			} else if (jTag.equals(TagHandler.J_TBL_EDT)) {
-				setTableEditionValue(expr, param);
+				setTableEditionValue(expr, jParam);
 	
 			} else if (jTag.equals(TagHandler.J_FILE)) {
-				setExpressionFilePart(expr, param);
+				setExpressionFilePart(expr, jParam);
 	
 			} else if (jTag.equals(TagHandler.J_DATE)) {
-				setExpressionDate(expr, param);
+				setExpressionDate(expr, jParam);
 	
 			} else if (jTag.equals(TagHandler.J_CAPTCHA)) {
-				setExpressionCaptcha(expr, param);
+				setExpressionCaptcha(expr, jParam);
 			}
 		} catch (PropertyNotWritableException e) {
 			LOGGER.log(Level.SEVERE, "Property " + expr + " is not writable");
@@ -122,82 +114,98 @@ public enum ExpressionHandler {
 		}
 	}
 
-	String handleSubmitExpression(String expr, String param) throws ServletException, IOException {
+	String handleSubmitExpression(String expr, String jParam) throws ServletException, IOException {
 		String responsePath = null;
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+		Matcher matcher = EL_PATTERN.matcher(expr);
+		if (matcher.find()) {
 
-			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
-			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
-
-			Set<Object> objs = getExpressionBeans(expr);
-			for (Object obj : objs) {
+			String beanMethod = matcher.group(1);
+			String[] methodSign = beanMethod.split(EL_SEPARATOR);
+			
+			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+				Object bean = getExpressionBean(methodSign[0]);
+				beanMethod = String.format(JSP_EL, beanMethod);
 
 				// Check authorization to execute method
-				if (!HANDLER.checkExecuteAuthorization(obj, expr)) {
-					break;
+				if (!HANDLER.checkExecuteAuthorization(bean, beanMethod)) {
+					return responsePath;
 				}
 
-				// Call mapped method with @PreSubmit annotation
-				if (HANDLER.executePreSubmit(obj)) {
+				// Call mapped method with @PreSubmit annotation for specific action
+				if (HANDLER.executePreSubmit(bean, methodSign[methodSign.length -1])) {
+
 					Object[] arguments = null;
-					String[] args = SmartContext.getRequest().getParameterValues(param.replaceFirst(TagHandler.J_SBMT, TagHandler.J_SBMT_ARGS));
-	
-					if (args != null) {
-						boolean unescape = HANDLER.containsUnescapeMethod(names);
-						arguments = new Object[args.length];
-	
-						for (int i = 0; i < args.length; i++) {
-							arguments[i] = unescape ? args[i] : escapeValue(args[i]);
+					String[] paramArgs = SmartContext.getRequest().getParameterValues(TagHandler.J_SBMT_ARGS + jParam);
+
+					if (paramArgs != null) {
+						boolean unescape = HANDLER.containsUnescapeMethod(methodSign);
+						arguments = new Object[paramArgs.length];
+
+						for (int i = 0; i < paramArgs.length; i++) {
+							arguments[i] = unescape ? paramArgs[i] : escapeValue(paramArgs[i]);
 						}
 					}
-	
+
 					// Call submit method
 					ELContext context = SmartContext.getPageContext().getELContext();
-					MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, expr, null, 
-							arguments != null ? new Class<?>[arguments.length] : new Class<?>[]{});
-	
+
+					MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, beanMethod,
+							null, arguments != null ? new Class<?>[arguments.length] : new Class<?>[]{});
+
 					responsePath = (String) methodExpr.invoke(context, arguments);
-	
-					// Call mapped method with @PostSubmit annotation
-					HANDLER.executePostSubmit(obj);
+
+					// Call mapped method with @PostSubmit annotation for specific action
+					HANDLER.executePostSubmit(bean, methodSign[methodSign.length -1]);
 				}
-				break;
 			}
 		}
 		return responsePath;
 	}
 
 	@SuppressWarnings("all")
-	void setSelectionValue(String expr, String param) {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+	private void setSelectionValue(String expr, String jParam) {
+		Matcher matcher = EL_PATTERN.matcher(expr);
+		if (matcher.find()) {
 
-			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
-			if (names.length > 0 && SmartContext.containsAttribute(names[0])) {
+			String beanMethod = matcher.group(1);
+			String[] methodSign = beanMethod.split(EL_SEPARATOR);
+			
+			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
 
-				Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_VALUES, SmartContext.getRequest().getParameter(param)));
+				HttpServletRequest request = SmartContext.getRequest();
+				beanMethod = String.format(JSP_EL, beanMethod);
 
+				// Get parameter mapped by TagHandler.J_VALUES
+				String valuesParam = request.getParameter(TagHandler.J_SEL + jParam);
+				Matcher valuesMatcher = TagHandler.J_TAG_PATTERN.matcher(valuesParam);
+
+				Object object = null;
 				List<Object> list = null;
 				Scroll jsonScroll = null;
 
+				if (valuesMatcher.find()) {
+					object = getExpressionValue(TagEncrypter.complexDecrypt(valuesMatcher.group(2)));
+				}
+
 				if (object instanceof ListAdapter) {
-					String scrollParam = SmartContext.getRequest().getParameter(param.replaceFirst(TagHandler.J_SEL, TagHandler.J_SCROLL));
+					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
+
 					jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
 
 					list = ((ListAdapter) object).load(jsonScroll.getIndex(), jsonScroll.getSize());
 
 					// Save the loaded content on request to avoid calling load twice when loading the page
-					SmartContext.getRequest().setAttribute(Constants.REQUEST_LIST_ADAPTER, list);
+					request.setAttribute(REQUEST_LIST_ADAPTER, list);
 
 				} else if (object instanceof List<?>) {
 					list = (List<Object>) object;
 				}
 
 				if (list != null && !list.isEmpty()) {
-					expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
 					ELContext context = SmartContext.getPageContext().getELContext();
+					ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 
-					ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
-					Integer index = Integer.parseInt(SmartContext.getRequest().getParameter(param.replaceFirst(TagHandler.J_SEL, TagHandler.J_SEL_VAL)));
+					Integer index = Integer.parseInt(request.getParameter(TagHandler.J_SEL_VAL + jParam));
 
 					// Case scroll list with adapter need to calculate the difference between
 					// the first index of the loaded content with the clicked list item index 
@@ -215,71 +223,71 @@ public enum ExpressionHandler {
 	 * {"edit": "", "index": "", "varname": "", "values": [{"name": "", "value": ""}, ...], "first": "", "size": "", "sort": {"name": "", "order": ""}, "filters": [{"name": "", "field": "", "value": ""}, ...]}
 	 */
 	@SuppressWarnings("all")
-	void setTableEditionValue(String expr, String param) throws ServletException, IOException {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
-			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
-
-			// Get json value to retrieve object value from collection or adapter
-			JsonObject jsonAction = GSON.toJsonTree(SmartContext.getRequest().getParameter(param)).getAsJsonObject();
-
-			Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_TBL_EDT, getActionEdit(jsonAction)));
-
-			Long first = getActionFirst(jsonAction);
-			Long size = getActionSize(jsonAction);
-			Integer index = getActionIndex(jsonAction);
-
-			Object value = null;
-			
-			if (object instanceof TableAdapterHandler) {
-				List<Object> list = null;
-				Set<Object> objs = getExpressionBeans(expr);
-				TableAdapterHandler adapter = (TableAdapterHandler<Object>) object;
-
-				for (Object obj : objs) {
-					if (obj.getClass().getAnnotation(SmartBean.class).scope() == ScopeType.REQUEST_SCOPE) {
-						list = adapter.loadData(first, size.intValue(), getActionSortBy(jsonAction), 
-								getActionSortOrder(jsonAction), getActionFilters(jsonAction));
-					} else {
-						list = adapter.getLoaded();
-					}
-					break;
-				}
-
-				if (list != null && !list.isEmpty()) {
-					value = list.get(index);
-				}
-
-	 	 	} else if (object instanceof Collection) {
-	 	 		Collection collection = (Collection) object;
-
-	 	 		if (collection != null && !collection.isEmpty()) {
-	 	 			Object[] collectionArray = collection.toArray();
-	 	 			value = collectionArray[index];
-				}
-	 	 	}
-
-			if (value != null) {
-				String var = getActionVar(jsonAction);
-				SmartContext.getRequest().setAttribute(var, value);
-
-				Map<String, String> editValues = getActionEditValues(jsonAction);
-				// SmartContext.addParameters(editValues);
-
-				for (String editParam : editValues.keySet()) {
-					String editExpr = extractExpression(editParam);
-					if (editExpr != null) {
-						String jTag = editParam.substring(0, TagHandler.J_TAG_LENGTH);
-						handleRequestExpression(jTag, editParam, editExpr);
-					}
-				}
-
-				ELContext context = SmartContext.getPageContext().getELContext();
-				MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, expr, null, new Class<?>[]{value.getClass()});
-				methodExpr.invoke(context, new Object[]{value});
-
-				SmartContext.getRequest().removeAttribute(var);
-			}
-		}
+	private void setTableEditionValue(String expr, String param) throws ServletException, IOException {
+//		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+//			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
+//
+//			// Get json value to retrieve object value from collection or adapter
+//			JsonObject jsonAction = GSON.toJsonTree(SmartContext.getRequest().getParameter(param)).getAsJsonObject();
+//
+//			Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_TBL_EDT, getActionEdit(jsonAction)));
+//
+//			Long first = getActionFirst(jsonAction);
+//			Long size = getActionSize(jsonAction);
+//			Integer index = getActionIndex(jsonAction);
+//
+//			Object value = null;
+//			
+//			if (object instanceof TableAdapterHandler) {
+//				List<Object> list = null;
+//				Set<Object> objs = getExpressionBeans(expr);
+//				TableAdapterHandler adapter = (TableAdapterHandler<Object>) object;
+//
+//				for (Object obj : objs) {
+//					if (obj.getClass().getAnnotation(SmartBean.class).scope() == ScopeType.REQUEST_SCOPE) {
+//						list = adapter.loadData(first, size.intValue(), getActionSortBy(jsonAction), 
+//								getActionSortOrder(jsonAction), getActionFilters(jsonAction));
+//					} else {
+//						list = adapter.getLoaded();
+//					}
+//					break;
+//				}
+//
+//				if (list != null && !list.isEmpty()) {
+//					value = list.get(index);
+//				}
+//
+//	 	 	} else if (object instanceof Collection) {
+//	 	 		Collection collection = (Collection) object;
+//
+//	 	 		if (collection != null && !collection.isEmpty()) {
+//	 	 			Object[] collectionArray = collection.toArray();
+//	 	 			value = collectionArray[index];
+//				}
+//	 	 	}
+//
+//			if (value != null) {
+//				String var = getActionVar(jsonAction);
+//				SmartContext.getRequest().setAttribute(var, value);
+//
+//				Map<String, String> editValues = getActionEditValues(jsonAction);
+//				// SmartContext.addParameters(editValues);
+//
+//				for (String editParam : editValues.keySet()) {
+//					String editExpr = extractExpression(editParam);
+//					if (editExpr != null) {
+//						String jTag = editParam.substring(0, TagHandler.J_TAG_LENGTH);
+//						handleRequestExpression(jTag, editExpr, editParam);
+//					}
+//				}
+//
+//				ELContext context = SmartContext.getPageContext().getELContext();
+//				MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, expr, null, new Class<?>[]{value.getClass()});
+//				methodExpr.invoke(context, new Object[]{value});
+//
+//				SmartContext.getRequest().removeAttribute(var);
+//			}
+//		}
 	}
 
 	/*
@@ -287,130 +295,131 @@ public enum ExpressionHandler {
 	 * {"action": "", "type": "SINGLE/MULTI", "indexes": [], "first": "", "size": "", "sort": {"name": "", "order": ""}, "filters": [{"name": "", "field": "", "value": ""}, ...]}
 	 */
 	@SuppressWarnings("all")
-	void setTableSelectionValue(String expr, String param) throws ServletException {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
-			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
-
-			// Get json value to retrieve object value from collection or adapter
-			JsonObject jsonAction = GSON.toJsonTree(SmartContext.getRequest().getParameter(param)).getAsJsonObject();
-
-			Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_TBL_SEL, getActionSelect(jsonAction)));
-
-			Long first = getActionFirst(jsonAction);
-			Long size = getActionSize(jsonAction);
-			SELECT_TYPE selectType = getActionType(jsonAction);
-			Integer[] indexes = getActionIndexes(jsonAction);
-
-			List values = new ArrayList(indexes.length);
-
-			if (object instanceof TableAdapterHandler) {
-				List<Object> list = null;
-				Set<Object> objs = getExpressionBeans(expr);
-				TableAdapterHandler adapter = (TableAdapterHandler<Object>) object;
-
-				for (Object obj : objs) {
-					if (obj.getClass().getAnnotation(SmartBean.class).scope() == ScopeType.REQUEST_SCOPE) {
-						list = adapter.loadData(first, size.intValue(), getActionSortBy(jsonAction), 
-								getActionSortOrder(jsonAction), getActionFilters(jsonAction));
-					} else {
-						list = ((TableAdapterHandler<Object>) object).getLoaded();
-					}
-					break;
-				}
-
-				if (list != null && !list.isEmpty()) {
-					for (int i = 0; i < indexes.length; i++) {
-						values.add(list.get(indexes[i]));
-					}
-				}
-
-	 	 	} else if (object instanceof Collection) {
-	 	 		Collection collection = (Collection) object;
-
-	 	 		if (collection != null && !collection.isEmpty()) {
-	 	 			Object[] collectionArray = collection.toArray();
-
-	 	 			for (int i = 0; i < indexes.length; i++) {
-	 	 				values.add(collectionArray[indexes[i]]);
-	 	 			}
-				}
-	 	 	}
-
-			// SmartContext.setSelectIndexes(indexes);
-			ELContext context = SmartContext.getPageContext().getELContext();
-
-			if (selectType == SELECT_TYPE.MULTI) {
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, List.class);
-				valueExpr.setValue(context, values);
-
-			} else if (!values.isEmpty()) {				
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, values.get(0).getClass());
-				valueExpr.setValue(context, values.get(0));
-			}
-		}
+	private void setTableSelectionValue(String expr, String param) throws ServletException {
+//		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+//			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
+//
+//			// Get json value to retrieve object value from collection or adapter
+//			JsonObject jsonAction = GSON.toJsonTree(SmartContext.getRequest().getParameter(param)).getAsJsonObject();
+//
+//			Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_TBL_SEL, getActionSelect(jsonAction)));
+//
+//			Long first = getActionFirst(jsonAction);
+//			Long size = getActionSize(jsonAction);
+//			SELECT_TYPE selectType = getActionType(jsonAction);
+//			Integer[] indexes = getActionIndexes(jsonAction);
+//
+//			List values = new ArrayList(indexes.length);
+//
+//			if (object instanceof TableAdapterHandler) {
+//				List<Object> list = null;
+//				Set<Object> objs = getExpressionBeans(expr);
+//				TableAdapterHandler adapter = (TableAdapterHandler<Object>) object;
+//
+//				for (Object obj : objs) {
+//					if (obj.getClass().getAnnotation(SmartBean.class).scope() == ScopeType.REQUEST_SCOPE) {
+//						list = adapter.loadData(first, size.intValue(), getActionSortBy(jsonAction), 
+//								getActionSortOrder(jsonAction), getActionFilters(jsonAction));
+//					} else {
+//						list = ((TableAdapterHandler<Object>) object).getLoaded();
+//					}
+//					break;
+//				}
+//
+//				if (list != null && !list.isEmpty()) {
+//					for (int i = 0; i < indexes.length; i++) {
+//						values.add(list.get(indexes[i]));
+//					}
+//				}
+//
+//	 	 	} else if (object instanceof Collection) {
+//	 	 		Collection collection = (Collection) object;
+//
+//	 	 		if (collection != null && !collection.isEmpty()) {
+//	 	 			Object[] collectionArray = collection.toArray();
+//
+//	 	 			for (int i = 0; i < indexes.length; i++) {
+//	 	 				values.add(collectionArray[indexes[i]]);
+//	 	 			}
+//				}
+//	 	 	}
+//
+//			// SmartContext.setSelectIndexes(indexes);
+//			ELContext context = SmartContext.getPageContext().getELContext();
+//
+//			if (selectType == SELECT_TYPE.MULTI) {
+//				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, List.class);
+//				valueExpr.setValue(context, values);
+//
+//			} else if (!values.isEmpty()) {				
+//				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, values.get(0).getClass());
+//				valueExpr.setValue(context, values.get(0));
+//			}
+//		}
 	}
 
-	void setExpressionValue(String expr, String param, boolean isUrl) {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
-
-			if (isReadOnlyParameter(param)) {
-				return;
-			}
-
-			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
-			if (names.length > 0 && SmartContext.containsAttribute(names[0])) {
-
-				expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
-				ELContext context = SmartContext.getPageContext().getELContext();
-
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
-
-				Object val = SmartContext.getRequest().getParameter(param);
-
-				if (!HANDLER.containsUnescapeMethod(names)) {
-					val = escapeValue((String) val);
-				}
-
-				if (isUrl) {
-					val = decodeUrl(val);
-				}
-
-				valueExpr.setValue(context, val);
-			}
+	void setExpressionValue(String expr, String jParam) {
+		if (isReadOnlyParameter(jParam)) {
+			return;
 		}
-	}
 
-	void setAttributeValue(String expr, Object value) {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+		Matcher matcher = EL_PATTERN.matcher(expr);
+		if (matcher.find()) {
 
-			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
-			if (names.length > 0 && SmartContext.containsAttribute(names[0])) {
+			String beanMethod = matcher.group(1);	
+			String[] methodSign = beanMethod.split(EL_SEPARATOR);
 
-				expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
+			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+				beanMethod = String.format(JSP_EL, beanMethod);
+
 				ELContext context = SmartContext.getPageContext().getELContext();
+				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
+				Object value = SmartContext.getRequest().getParameter(TagHandler.J_TAG + jParam);
+
+				if (!HANDLER.containsUnescapeMethod(methodSign)) {
+					value = escapeValue((String) value);
+				}
 				valueExpr.setValue(context, value);
 			}
 		}
 	}
 
-	void setExpressionValues(String expr, String param) {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+	void setAttributeValue(String expr, Object value) {
+		Matcher matcher = EL_PATTERN.matcher(expr);
+		if (matcher.find()) {
 
-			if (isReadOnlyParameter(param)) {
-				return;
+			String beanMethod = matcher.group(1);	
+			String[] methodSign = beanMethod.split(EL_SEPARATOR);
+			
+			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+				beanMethod = String.format(JSP_EL, beanMethod);
+				
+				ELContext context = SmartContext.getPageContext().getELContext();
+				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+				valueExpr.setValue(context, value);
 			}
+		}
+	}
 
-			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
-			if (names.length > 0 && SmartContext.containsAttribute(names[0])) {
+	private void setExpressionValues(String expr, String jParam) {
+		if (isReadOnlyParameter(jParam)) {
+			return;
+		}
 
-				expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
+		Matcher matcher = EL_PATTERN.matcher(expr);
+		if (matcher.find()) {
+
+			String beanMethod = matcher.group(1);	
+			String[] methodSign = beanMethod.split(EL_SEPARATOR);
+			
+			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+				beanMethod = String.format(JSP_EL, beanMethod);
 
 				List<Object> list = new ArrayList<Object>();
-				String[] values = SmartContext.getRequest().getParameterValues(param);
+				String[] values = SmartContext.getRequest().getParameterValues(TagHandler.J_ARRAY + jParam);
 
-				boolean unescape = HANDLER.containsUnescapeMethod(names);
+				boolean unescape = HANDLER.containsUnescapeMethod(methodSign);
 
 				if (values != null) {
 					for (String val : values) {
@@ -424,58 +433,76 @@ public enum ExpressionHandler {
 				}
 
 				ELContext context = SmartContext.getPageContext().getELContext();
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
+				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 				valueExpr.setValue(context, list);
 			}
 		}
 	}
 
-	void setExpressionFilePart(String expr, String file) throws ServletException, IOException {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+	private void setExpressionFilePart(String expr, String jParam) throws ServletException, IOException {
+		Matcher matcher = EL_PATTERN.matcher(expr);
+		if (matcher.find()) {
+			
+			String beanMethod = matcher.group(1);	
+			String[] methodSign = beanMethod.split(EL_SEPARATOR);
+			
+			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+				beanMethod = String.format(JSP_EL, beanMethod);
 
-			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
-			if (names.length > 0 && SmartContext.containsAttribute(names[0])) {
-
-				expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
 				ELContext context = SmartContext.getPageContext().getELContext();
+				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
-				Object val = SmartContext.getRequest().getPart(file.replaceFirst(TagHandler.J_FILE, TagHandler.J_PART));
-				valueExpr.setValue(context, val);
+				Object value = SmartContext.getRequest().getPart(TagHandler.J_PART + jParam);
+				valueExpr.setValue(context, value);
 			}
 		}
 	}
 
-	void setExpressionDate(String expr, String date) throws ServletException {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+	private void setExpressionDate(String expr, String jParam) throws ServletException {
+		if (isReadOnlyParameter(jParam)) {
+			return;
+		}
 
-			String[] names = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR);
-			if (names.length > 0 && SmartContext.containsAttribute(names[0])) {
+		Matcher matcher = EL_PATTERN.matcher(expr);
+		if (matcher.find()) {
 
-				expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
+			String beanMethod = matcher.group(1);		
+			String[] methodSign = beanMethod.split(EL_SEPARATOR);
+
+			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+				beanMethod = String.format(JSP_EL, beanMethod);
+
 				ELContext context = SmartContext.getPageContext().getELContext();
+				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+				String value = SmartContext.getRequest().getParameter(TagHandler.J_DATE + jParam);
 
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
-
-				String val = SmartContext.getRequest().getParameter(date);
-
-				if (!val.trim().isEmpty()) {
-					String format = SmartContext.getRequest().getParameter(date.replaceFirst(TagHandler.J_DATE, TagHandler.J_FRMT));
+				if (value != null && !value.trim().isEmpty()) {
+					Throwable throwable = null;
 
 					try {
-						// First try with jdk Date
-						SimpleDateFormat sdf = new SimpleDateFormat(format, SmartContext.getLocale());
-						valueExpr.setValue(context, sdf.parse(val));
-
+						valueExpr.setValue(context, value);
+						return;
 					} catch (Exception ex) {
-						try {
-							// Second try with jodatime DateTime
-							DateTimeFormatter dtf = DateTimeFormat.forPattern(format).withLocale(SmartContext.getLocale());
-							valueExpr.setValue(context, DateTime.parse(val, dtf));
+						throwable = ex;
+					}
 
-						} catch (Exception ex1) {
-							throw new ServletException(ex1.getMessage());
-						}
+					Long timeMillis = Long.parseLong(value);
+					try {
+						valueExpr.setValue(context, new Date(timeMillis));
+						return;
+					} catch (Exception ex) {
+						throwable = ex;
+					}
+
+					try {
+						valueExpr.setValue(context, new DateTime(timeMillis));
+						return;
+					} catch (Exception ex) {
+						throwable = ex;
+					}
+
+					if (throwable != null) {
+						throw new ServletException(throwable.getMessage());
 					}
 				} else {
 					valueExpr.setValue(context, null);
@@ -484,62 +511,73 @@ public enum ExpressionHandler {
 		}
 	}
 
-	void setExpressionCaptcha(String expr, String param) throws ServletException {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+	private void setExpressionCaptcha(String expr, String jParam) throws ServletException {
+		HttpServletRequest request = SmartContext.getRequest();
 
-			// Just add the ReCaptcha value to mapped values for further validation
-			if (expr.contains(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)) {
-				SmartContext.addMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME, SmartContext.getRequest().getParameter(param));
-			} else {
-				SmartContext.addMappedValue(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME, 
-						SmartContext.getRequest().getParameter(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME));
-			}
+		// Just add the ReCaptcha value to mapped values for further validation
+		if (expr.contains(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)) {
+			SmartContext.addMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME, 
+					request.getParameter(TagHandler.J_CAPTCHA + jParam));
+			
+		} else {
+			SmartContext.addMappedValue(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME, 
+					request.getParameter(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME));
 		}
 	}
 
 	public Object getExpressionValue(Object expr) {
 		if (expr != null) {
-			String exprString = expr.toString();
-			Matcher matcher = Constants.EL_PATTERN.matcher(exprString);
-			List<Object> list = new ArrayList<Object>();
-
-			while (matcher.find()) {
-				String group = matcher.group();
-				list.add(evaluateExpression(group));
-				exprString = exprString.replace(group, "%s");
+			Matcher matcher = EL_PATTERN.matcher(expr.toString());
+			if (!matcher.find()) {
+				return expr;
 			}
 
-			if (list.isEmpty()) {
-				return expr;
+			String subExpr = matcher.group();
+			String formatValues = expr.toString();
+			List<Object> resultList = new ArrayList<Object>(2);
+
+			resultList.add(evaluateExpression(subExpr));
+			formatValues = formatValues.replace(subExpr, "%s");
+
+			while (matcher.find()) {
+				subExpr = matcher.group();
+				resultList.add(evaluateExpression(subExpr));
+				formatValues = formatValues.replace(subExpr, "%s");
+			}
+
+			if (formatValues.equals("%s")) {
+				return resultList.get(0);
 			} else {
-				if (exprString.equals("%s")) {
-					return list.get(0);
-				} else {
-					return String.format(exprString, list.toArray());
-				}
+				return String.format(formatValues, resultList.toArray());
 			}
 		}
 		return null;
 	}
 
-	private boolean isReadOnlyParameter(String param) {
-		if (param != null) {
-			return param.endsWith(Constants.EL_PARAM_READ_ONLY);
+	private boolean isReadOnlyParameter(String jParam) {
+		if (jParam != null) {
+			return jParam.endsWith(Constants.EL_PARAM_READ_ONLY);
 		}
 		return false;
 	}
 
 	private Object evaluateExpression(String expr) {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
+		if (expr == null) {
+			return expr;
+		}
 
-			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
+		Matcher matcher = EL_PATTERN.matcher(expr);
+		if (matcher.find()) {
+
+			String evaluate = matcher.group(1);
+			String jspExpr = String.format(JSP_EL, evaluate);
+
 			ELContext context = SmartContext.getPageContext().getELContext();
-
-			ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, Object.class);
+			ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, jspExpr, Object.class);
 			Object obj = valueExpr.getValue(context);
 
 			if (obj instanceof String) {
-				String[] objs = obj.toString().split(Constants.EL_SEPARATOR, 2);
+				String[] objs = obj.toString().split(EL_SEPARATOR, 2);
 				if (objs.length == 2 && SmartText.containsResource(objs[0])) {
 					return SmartText.getString(objs[0], objs[1]);
 				}
@@ -549,65 +587,32 @@ public enum ExpressionHandler {
 				return obj;
 			}
 
-			String[] exprs = expr.replace(Constants.JSP_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR, 2);
+			String[] exprs = evaluate.split(EL_SEPARATOR, 2);
 			if (exprs.length == 2 && SmartText.containsResource(exprs[0])) {
 				return SmartText.getString(exprs[0], exprs[1]);
 			}
-
 			return null;
 		}
 		return expr;
 	}
 
-	Object getResourceValue(String expr) {
-		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
-
-			String[] exprs = expr.replace(Constants.START_EL, "").replace(Constants.END_EL, "").split(Constants.EL_SEPARATOR, 2);
-
-			if (exprs.length == 2 && SmartText.containsResource(exprs[0])) {
-				return SmartText.getString(exprs[0], exprs[1]);
-			}
-		}
-		return expr;
-	}
-
-	private Set<Object> getExpressionBeans(String expr) {
-		Set<Object> objs = new HashSet<Object>();
-
-		if (expr != null && !expr.trim().isEmpty()) {
-
-			Set<String> names = new HashSet<String>(HANDLER.smartBeans.keySet());
-			names.addAll(HANDLER.authBeans.keySet());
-
-			for (String name : names) {
-				if (expr.contains(name + Constants.POINT)) {
-					Object attribute = SmartContext.getAttribute(name);
-					if (attribute != null) {
-						objs.add(attribute);
-					}
-				}
-			}
-
-		}
-		return objs;
+	private Object getExpressionBean(String name) {
+		return SmartContext.getAttribute(name);
 	}
 
 	private Object escapeValue(String value) {
 		if (value != null && CONFIG.getContent().isEscapeRequest()) {
 			value = StringEscapeUtils.escapeJavaScript(value);
 			value = StringEscapeUtils.escapeHtml(value);
-			//value = StringUtils.replaceEach(value, new String[]{"&", "\"", "<", ">", "$", "#"}, new String[]{"&amp;", "&quot;", "&lt;", "&gt;", "&#36;", "&#35;"});
 		}
     	return value;
     }
 
-	private Object decodeUrl(Object value) {
-		if (value instanceof String) {
-			try {
-				return URLDecoder.decode(String.valueOf(value), WebFilter.ENCODING);
-			} catch (UnsupportedEncodingException ex) {
-				ex.printStackTrace();
-			}
+	String decodeUrl(String value) {
+		try {
+			return URLDecoder.decode(value, WebFilter.ENCODING);
+		} catch (UnsupportedEncodingException ex) {
+			ex.printStackTrace();
 		}
 		return value;
 	}

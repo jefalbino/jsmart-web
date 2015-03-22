@@ -16,21 +16,42 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.annotation;
+package com.jsmart5.framework.adapter;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public final class HeaderAdapter {
 
-/**
- * The {@link PreSubmit} annotation is used on a method that needs to be executed 
- * before the submit method mapped on JSP file is invoked.
- */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PreSubmit {
+	private String title;
+	
+	private String icon;
+	
+	private String type;
+	
+	public HeaderAdapter(String title) {
+		this.title = title;
+	}
 
-	String forAction();
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 }

@@ -23,14 +23,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * The {@link PreSubmit} annotation is used on a method that needs to be executed 
- * before the submit method mapped on JSP file is invoked.
- */
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PreSubmit {
+@Target(ElementType.FIELD)
+public @interface UrlParam {
 
-	String forAction();
-
+	String name();
 }

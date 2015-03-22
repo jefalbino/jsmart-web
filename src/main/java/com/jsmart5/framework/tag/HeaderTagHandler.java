@@ -40,6 +40,7 @@ public final class HeaderTagHandler extends TagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
+
 		if (parent instanceof ModalTagHandler) {
 			((ModalTagHandler) parent).setHeader(this);
 			return false;
@@ -54,6 +55,10 @@ public final class HeaderTagHandler extends TagHandler {
 		
 		} else if (parent instanceof AlertTagHandler) {
 			((AlertTagHandler) parent).setHeader(this);
+			return false;
+			
+		} else if (parent instanceof SlideTagHandler) {
+			((SlideTagHandler) parent).setHeader(this);
 			return false;
 		}
 		return true;

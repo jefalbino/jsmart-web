@@ -16,21 +16,37 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.annotation;
+package com.jsmart5.framework.tag.type;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public enum Mode {
 
-/**
- * The {@link PreSubmit} annotation is used on a method that needs to be executed 
- * before the submit method mapped on JSP file is invoked.
- */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface PreSubmit {
+	YEARS,
+	MONTHS,
+	DAYS,
+	TIMEONLY;
 
-	String forAction();
+	public static boolean validate(String mode) {
+		try {
+			Mode.valueOf(mode.toUpperCase());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public static String[] getValues() {
+		int index = 0;
+		Mode[] modes = values();
+		String[] values = new String[modes.length];
+
+		for (Mode mode : modes) {
+			values[index++] = mode.name().toLowerCase();
+		}
+		return values;
+	}
+
+	public boolean equalsIgnoreCase(String string) {
+		return this.name().equalsIgnoreCase(string);
+	}
 
 }

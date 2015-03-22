@@ -28,7 +28,9 @@ public enum JsConstants {
 	JSMART_LISTSCROLL("Jsmart5.listscroll", "(%s);"),
 	JSMART_TAB("Jsmart5.tab", "(%s);"),
 	JSMART_TABPANE("Jsmart5.tabpane", "($(this),%s);"),
-	
+	JSMART_CAROUSEL("Jsmart5.carousel", "('%s');"),
+	JSMART_DATE("Jsmart5.date", "(%s);"),
+
 
 	JSMART_REST("Jsmart5.rest", "(%s,%s,%s);"),
 	JSMART_TABLE("Jsmart5.table", "(%s,'%s',%s);"),
@@ -41,12 +43,8 @@ public enum JsConstants {
 	JSMART_SWITCH("Jsmart5.xswitch", "('%s',%s,%s);"),
 	JSMART_SWITCH_RESET("Jsmart5.resetSwitch", "('%s');"),
 	JSMART_BALLOON("Jsmart5.balloon", "('%s','%s',%s,%s,'%s');"),
-	JSMART_CAROUSEL("Jsmart5.carousel", "('%s');"),
 	JSMART_PROGRESS("Jsmart5.progress", "('%s');"),
 	JSMART_RANGE("Jsmart5.range", "('%s');"),
-
-	JSMART_DATE("Jsmart5.date", "(%s);"),
-	JSMART_BACKUP_DATE("Jsmart5.backupDate", "(%s);"),
 
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
 	JSMART_TREE("Jsmart5.tree", "('%s');"),

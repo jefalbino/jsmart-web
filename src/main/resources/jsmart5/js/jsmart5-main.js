@@ -40,9 +40,7 @@ var Jsmart5 = (function() {
 	var SWITCH_BUTTON = "_switch_button";
 	var SWITCH_SPAN_ON = "_switch_span_on";
 	var SWITCH_SPAN_OFF = "_switch_span_off";
-	var KEYPAD_HOLDER = "_keypad_holder";
-	var CAROUSEL_SLIDE = "_slide_";
-	var CAROUSEL_TIMERS = [];
+
 	var PROGRESS_FRAME = "_progress_frame";
 	var PROGRESS_PERCENT = "_progress_percent";
 	var PROGRESS_INPUT = "_progress_input";
@@ -121,8 +119,8 @@ var Jsmart5 = (function() {
 			doRest(el, timeout);
 		},
 		
-		buttonRestArray: function (id, operation) {
-			doRestArray(id, operation);
+		buttonRestArray: function (id, op) {
+			doRestArray(id, op);
 		},
 			
 		validate: function (id) {
@@ -153,6 +151,14 @@ var Jsmart5 = (function() {
 			doTabPane(li, map);
 		},
 		
+		carousel: function(id) {
+			doCarousel(id);
+		},
+		
+		date: function (map) {
+			doDate(map);
+		},
+
 		// STILL NEED FIXES
 		
 		load: function (id) {
@@ -191,14 +197,6 @@ var Jsmart5 = (function() {
 		tableEditCancel: function (id, item, index, first) {
 			doTableEditCancel(id, item, index, first);
 		},
-
-		backupDate: function (input) {
-			input.attr('dbackup', input.val());
-		},
-
-		date: function (input) {
-			doDate(input);
-		},
 		
 		xswitch: function (id, ajax) {
 			doSwitch(id, ajax);
@@ -206,10 +204,6 @@ var Jsmart5 = (function() {
 		
 		resetSwitch: function (id) {
 			resetSwitch(id);
-		},
-		
-		carousel: function (id) {
-			doCarousel(id);
 		},
 
 		// Table ajax={'ajax': '', 'max': '', 'min': '', 'interval': '', 'complete': '', 'callback': ''}
@@ -595,6 +589,63 @@ var Jsmart5 = (function() {
 			} else {
 				$.ajax(options);
 			}
+		}
+	}
+
+	function doCarousel(id) {
+		var el = $(getId(id));
+		var active = el.find('div.active');
+
+		el.find('>ol li').removeClass('js5-carousel-indicator-active');
+		
+		if (active.find('>img').length > 0) {
+			el.find('>ol li').removeClass('js5-carousel-indicator');
+			el.find('>a').removeClass('js5-carousel-control');
+		} else {
+			el.find('>ol li').addClass('js5-carousel-indicator');
+			el.find('>ol li.active').addClass('js5-carousel-indicator-active');
+			el.find('>a').addClass('js5-carousel-control');
+		}
+	}
+	
+	function doDate(map) {
+		var dateOptions = {};
+		dateOptions.showTodayButton = true;
+		dateOptions.calendarWeeks = map.showWeeks;
+
+		if (map.locale && map.locale.length > 0) {
+			dateOptions.locale = map.locale;
+		}
+		if (map.format && map.format.length > 0) {
+			dateOptions.format = map.format;
+		}
+		if (map.viewMode && map.viewMode.length > 0) {
+			dateOptions.viewMode = map.viewMode;
+		}
+
+		var inputDate = $(getId(map.id));
+		var hiddenDate = $(getId(map.id) + '-date');
+
+		inputDate.datetimepicker(dateOptions);
+
+		// Initial hidden field update when page is loaded
+		if (hiddenDate.val() && hiddenDate.val().length > 0) {
+			hiddenDate.val(new Date(hiddenDate.val()).getTime());
+		}
+
+		// Update hidden field on change with date in milliseconds
+		inputDate.on('dp.change', function(event) {
+			hiddenDate.val(event.date.valueOf());
+		});
+
+		if (map.linkDate && map.linkDate.length > 0) {
+			inputDate.on('dp.change', function(event) {
+				$(getId(map.linkDate)).data('DateTimePicker').maxDate(event.date);
+			});
+
+			$(getId(map.linkDate)).on('dp.change', function (event) {
+				inputDate.data('DateTimePicker').minDate(event.date);
+			});
 		}
 	}
 
@@ -986,6 +1037,12 @@ var Jsmart5 = (function() {
 			} else {
 				elParams.push({name: name, value: true, array: false});
 			}
+		} else if ($(el).is('input') && $(el).attr('date')) {
+			var date = $('input[id^="' + $(el).attr('id') + '"]:hidden');
+
+			if (date && date.val()) {
+				elParams.push({name: date.attr('name'), value: date.val(), array: false});
+			}
 		} else {
 			var value = $(el).val();
 			if (value) {
@@ -1084,7 +1141,7 @@ var Jsmart5 = (function() {
 			validateElement.find('*[vldt-req]').each(function(index) {
 				var name = $(this).attr("name");
 
-				if (name.indexOf(tagInit) >= 0) {
+				if (name && name.indexOf(tagInit) >= 0) {
 					var text = $(this).attr('vldt-text');
 					var look = 'has-' + $(this).attr('vldt-look');
 					var regex = $(this).attr('vldt-regex');
@@ -1401,8 +1458,7 @@ var Jsmart5 = (function() {
 	
 							currTable.attr('ajaxscroll', ajaxTable.attr('ajaxscroll'));
 							currTBody.append(ajaxTBody.find('tr'));
-	
-							resetMessage(data);
+
 							var redirect = $(data).find(redirectPath); 
 							if (redirect && redirect.length > 0) {
 								$(location).attr('href', redirect.val());
@@ -1527,48 +1583,6 @@ var Jsmart5 = (function() {
 		});
 	}
 
-	function doDate(input) {
-		var regExp = null;
-		var formatInput = $('#' + input.attr('id') + DATE_FORMAT);
-
-		if (formatInput) {
-			var format = formatInput.val();
-			if (format) {
-				var parts = null;
-
-				if (format.indexOf('/') >= 0) {
-					parts = format.split('/');
-
-				} else if (format.indexOf('-') >= 0) {
-					parts = format.split('-');
-				}
-				
-				if (parts && parts.length > 0) {
-					var regex = '/\b%s\b/';
-
-					for (var i = 0; i < parts.length; i++) {
-						// It means month literal
-						if (parts[i].length > 2 && parts[i].toLowerCase().indexOf('m') >= 0) {
-							regex = regex.replace('%s', '[a-zA-Z]*%s');
-						} else {
-							regex = regex.replace('%s', '\d{1,' + parts[i].length + '}%s');
-						}
-						regex = (i < parts.length - 1) ? regex.replace('%s', '[\/-]%s') : regex.replace('%s', '');
-					}
-					regExp = new RegExp(regex);
-				}
-			}
-		}
-
-		if (!regExp) {
-			regExp = new RegExp(/\b\d{1,2}[\/-]\d{1,2}[\/-]\d{4}\b/);
-		}
-
-		if (!regExp.test(input.val())) {
-			input.attr('value', input.attr('dbackup'));
-		}
-	}
-
 	function doSwitch(id, ajax) {
 		var switchInput = $(getId(id + SWITCH_INPUT));
 		var switchButton = $(getId(id + SWITCH_BUTTON));
@@ -1655,259 +1669,6 @@ var Jsmart5 = (function() {
 					switchSpanOn.css({width: "0%"});
 					switchSpanOff.css({width: "100%", left: "0%"});
 					switchButton.css({left: "0%"});
-				}
-			}
-		}
-	}
-
-	function doCarousel(id) {
-		if (id && id.length > 0) {
-			clearCarouselTimer(id);
-	
-			var carousel = $(getId(id));
-			var slides = carousel.find('.jsmart5_carousel_slides');
-	
-			var width = carousel.attr('width');
-			var height = carousel.attr('height');
-			var timer = carousel.attr('timer');
-	
-			var transType = carousel.attr('transitionType');
-			if (!transType || transType.length == 0) {
-				transType = 'slide';
-			}
-			var transTime = carousel.attr('transitionTime');
-			if (!transTime || transTime.length == 0) {
-				transTime = 600;
-			}
-	
-			carousel.width(width);
-			carousel.height(height);
-	
-			// Capture title size
-			if (carousel.find('>p').length > 0) {
-				carousel.height(parseInt(height) + carousel.find('>p').outerHeight(true));
-			}
-	
-			slides.width(width);
-			slides.height(height);
-	
-			if (slides.find('[id^="' + id + CAROUSEL_SLIDE + '"]').length > 1) {
-	
-				slides.find('[id^="' + id + CAROUSEL_SLIDE + '"]').each(function (index) {
-					if (index == 0) {
-						carousel.attr("current", $(this).attr('id'));
-					} else {
-						$(this).css({'top': -5000, 'left': width + 'px'});
-					}
-	
-					$(this).find('label').each(function() {
-						$(this).css({'top': height - $(this).outerHeight(true), 'left': (width - $(this).outerWidth(true)) / 2});
-					});
-				});
-	
-				var timerId = setInterval(function() {doCarouselTransition(id, null, transType, transTime)}, timer);
-				CAROUSEL_TIMERS.push({id: id, value: timerId});
-				doCarouselControl(id, transType, transTime);
-			}
-		}
-	}
-
-	function doMessage(id) {
-		var id = options.id;
-		var effectTime = 500;
-	
-		var autoHide = options.autoHide;
-		var width = 200;
-		if (options.width) {
-			width = options.width;
-		}
-		var duration = 2000;
-		if (options.duration) {
-			duration = options.duration;
-		}
-		var position = 'right top';
-		if (options.position) {
-			position = options.position;
-		}
-		var modal = false;
-		if (options.modal) {
-			modal = options.modal;
-		}
-		var onShow = null;
-		if (options.onShow) {
-			onShow = options.onShow;
-		}
-		var onClose = null;
-		if (options.onClose) {
-			onClose = options.onClose;
-		}
-	
-		if (id && id.length > 0) {
-
-			// For fixed messages
-			var div = $(getId(id));
-
-			if (div && div.length > 0) {
-				div.empty().hide();
-	
-				if (messages.info.length > 0) {
-					var divInfo = $('<div fixedmessage="fixed" class="jsmart5_message_info"/>').css({'position': 'relative', 'min-width': width, 'text-align': 'left'}).html($('<span />')).appendTo(div);
-					for (var i = 0; i < messages.info.length; i++) {
-						divInfo.append($('<a />').text(messages.info[i])).append($('<br />'));
-					}
-				}
-				if (messages.warning.length > 0) {
-					var divWarning = $('<div fixedmessage="fixed" class="jsmart5_message_warning"/>').css({'position': 'relative', 'min-width': width, 'text-align': 'left'}).html($('<span />')).appendTo(div);
-					for (var i = 0; i < messages.warning.length; i++) {
-						divWarning.append($('<a />').text(messages.warning[i])).append($('<br />'));
-					}
-				}
-				if (messages.error.length > 0) {
-					var divError = $('<div fixedmessage="fixed" class="jsmart5_message_error"/>').css({'position': 'relative', 'min-width': width, 'text-align': 'left'}).html($('<span />')).appendTo(div);
-					for (var i = 0; i < messages.error.length; i++) {
-						divError.append($('<a />').text(messages.error[i])).append($('<br />'));
-					}
-				}
-				if (messages.success.length > 0) {
-					var divSuccess = $('<div fixedmessage="fixed" class="jsmart5_message_success"/>').css({'position': 'relative', 'min-width': width, 'text-align': 'left'}).html($('<span />')).appendTo(div);
-					for (var i = 0; i < messages.success.length; i++) {
-						divSuccess.append($('<a />').text(messages.success[i])).append($('<br />'));
-					}
-				}
-	
-				if (div.children().length > 0) {
-					div.children().each(function(index) {
-						if (autoHide) {
-							setTimeout((function(child, exec) {
-								return function() {
-									child.remove();
-									if ($('div[fixedmessage="fixed"]').length == 0) {
-										if (exec) {
-											doExecute(exec);
-										}
-									}
-						        };
-						    })($(this), onClose), duration);
-						} else {
-							$(this).css({'cursor': 'pointer'}).click(function(e) {
-								$(this).remove();
-								if ($('div[fixedmessage="fixed"]').length == 0) {
-									if (onClose) { 
-										doExecute(onClose);
-									}
-								}
-							});
-						}
-					});
-					div.show();
-					if (onShow) {
-						doExecute(onShow);
-					}
-				}
-			}
-		} else {
-
-			// For auto messages
-
-			var lastTopOffset = 0;
-			$('div[automessage="auto"]').each(function(index) {
-				lastTopOffset += $(this).outerHeight(true);
-				if ($(this).css('marginTop')) {
-					lastTopOffset -= parseInt($(this).css('marginTop').replace('px', ''));
-				}
-			});
-
-			var divs = [];
-			var totalHeight = 0;
-
-			for (var i = 0; i < messages.info.length; i++) {
-				divs[divs.length] = $('<div automessage="auto" position="' + position + '" class="jsmart5_message_info"/>')
-					.css({'opacity': 0, 'min-width': width}).html($('<span />').after($('<a />').text(messages.info[i]))).appendTo('body');
-				totalHeight += parseInt(divs[divs.length - 1].outerHeight(true));
-			}
-			for (var i = 0; i < messages.warning.length; i++) {
-				divs[divs.length] = $('<div automessage="auto" position="' + position + '" class="jsmart5_message_warning"/>')
-					.css({'opacity': 0, 'min-width': width}).html($('<span />').after($('<a />').text(messages.warning[i]))).appendTo('body');
-				totalHeight += parseInt(divs[divs.length - 1].outerHeight(true));
-			}
-			for (var i = 0; i < messages.error.length; i++) {
-				divs[divs.length] = $('<div automessage="auto" position="' + position + '" class="jsmart5_message_error"/>')
-					.css({'opacity': 0, 'min-width': width}).html($('<span />').after($('<a />').text(messages.error[i]))).appendTo('body');
-				totalHeight += parseInt(divs[divs.length - 1].outerHeight(true));
-			}
-			for (var i = 0; i < messages.success.length; i++) {
-				divs[divs.length] = $('<div automessage="auto" position="' + position + '" class="jsmart5_message_success"/>')
-					.css({'opacity': 0, 'min-width': width}).html($('<span />').after($('<a />').text(messages.success[i]))).appendTo('body');
-				totalHeight += parseInt(divs[divs.length - 1].outerHeight(true));
-			}
-		
-			if (divs.length > 0) {
-				var divWidth = parseInt(divs[0].outerWidth(true));
-				var divHeight = parseInt(divs[0].outerHeight(true));
-				var divMarginTop = 0;
-				if (divs[0].css('marginTop')) {
-					divMarginTop = parseInt(divs[0].css('marginTop').replace('px', ''));
-				}
-
-				// Width of the Brower
-				var docWidth = parseInt($(window).width());
-				var docHeight = parseInt($(window).height());
-		
-				// Scroll Position
-				var scrollTop = 0; // Not used for fixed position
-				var scrollLeft = 0; //Not used for fixed position
-
-				var overallTop = 0;
-				var overallLeft = 0;
-				var positions = position.split(" ");
-
-				// Horizontal position
-				if (positions.length > 0) {
-					if (positions[0] == 'left') {
-						overallLeft = scrollLeft;
-					} else if (positions[0] == 'center') {
-						overallLeft = scrollLeft + ((docWidth - divWidth) / 2);
-					} else if (positions[0] == 'right') {
-						overallLeft = scrollLeft + docWidth - divWidth;
-					}
-				}
-		
-				// Vertical position
-				if (positions.length > 1) {
-					if (positions[1] == 'top') {
-						overallTop = scrollTop + lastTopOffset;
-					} else if (positions[1] == 'center') {
-						overallTop = scrollTop + lastTopOffset + ((docHeight - totalHeight) / 2);
-					} else if (positions[1] == 'bottom') {
-						overallTop = scrollTop + docHeight - divHeight - lastTopOffset;
-					}
-				} else if (positions[0] == 'center') {
-					overallTop = scrollTop + lastTopOffset + ((docHeight - totalHeight) / 2);
-				}
-		
-				if (modal) {
-					var overlay = $('<div class="jsmart5_overlay_message" />').appendTo('body').show();
-				}
-
-				for (var i = 0; i < divs.length; i++) {
-					if (i > 0) {
-						onShow = null;
-						if (positions.length > 1 && positions[1] == 'bottom') {
-							overallTop -= divs[i - 1].outerHeight(true) - divMarginTop;
-						} else {
-							overallTop += divs[i - 1].outerHeight(true) - divMarginTop;
-						}
-					}
-
-					showMessage(divs[i], overallLeft, overallTop, effectTime, onShow);
-
-					if (autoHide) {
-						closeMessage(divs[i], modal, duration, effectTime, onClose);
-					} else {
-						$(divs[i]).css({'cursor': 'pointer'}).click(function(e) {
-							closeMessage($(this), modal, 0, effectTime, onClose);
-						});
-					}
 				}
 			}
 		}
@@ -2056,12 +1817,6 @@ var Jsmart5 = (function() {
 			});
 		}
 	}
-
-	
-	
-	
-	
-
 
 	
 	//This is only works for ajax tag inside table tag
@@ -2398,241 +2153,6 @@ var Jsmart5 = (function() {
 		}
 	}
 	
-	function resetKeypad(id) {
-		if (id && id.length > 0) {
-			var keypad = $(getId(id));
-			if (keypad.is('input') && $(getId(id + KEYPAD_HOLDER))) {
-				try {
-					eval($(getId(id + KEYPAD_HOLDER)).val());
-				} catch(err) {
-					showOnConsole(err.message);
-				}
-			} else {
-				keypad.find('input[keypad="keypad"]').each(function(index) {
-					try {
-						eval($(this).val());
-					} catch(err) {
-						showOnConsole(err.message);
-					}
-				});
-			}
-		}
-	}
-	
-	function resetCarousel(id) {
-		if ($(getId(id)).is('div[carousel="carousel"]')) {
-			doCarousel(id);
-		} else {
-			$(getId(id)).find('div[carousel="carousel"]').each(function(index) {
-				doCarousel($(this).attr("id"));
-			});
-		}
-	}
-	
-	function clearCarouselTimer(id) {
-		for (var i = 0; i < CAROUSEL_TIMERS.length; i++) {
-			if (CAROUSEL_TIMERS[i].id == id) {
-				clearInterval(CAROUSEL_TIMERS[i].value);
-			}
-		}
-	}
-	
-	function doCarouselControl(id, transType, transTime) {
-		var carousel = $(getId(id));
-		var control = carousel.find('.jsmart5_carousel_control');
-		if (control && control.length > 0) {
-			var current = carousel.attr("current");
-			var currentIndex = parseInt(current.replace(id + CAROUSEL_SLIDE, ''));
-			
-			var controlWrapper = control.find('>div');
-			var totalWidth = 0;
-			controlWrapper.find('span').each(function(index) {
-				totalWidth += $(this).outerWidth(true);
-	
-				if (index == currentIndex - 1) {
-					$(this).css({'backgroundColor': '#000000', 'color': '#ffffff', 'opacity': 0.4});
-				}
-				
-				$(this).click(function() {
-					clearCarouselTimer(id);
-					doCarouselTransition(id, $(this).text(), transType, transTime);
-				});
-			});
-			controlWrapper.width(totalWidth);
-		}
-	
-		var arrows = carousel.find('.jsmart5_carousel_control_arrow');
-		if (arrows && arrows.length > 0) {
-			var width = carousel.attr('width');
-			var height = carousel.attr('height');
-			
-			arrows.find('span').each(function(index) {
-				if ($(this).attr('direction') == 'next') {
-					$(this).css({'top': (height - $(this).height()) / 2, 'left': width - $(this).width()});
-				} else {
-					$(this).css({'top': (height - $(this).height()) / 2});
-				}
-	
-				// Just to center the arrow inside span
-				var arrowWidth = $(this).width();
-				var arrowNext = $(this).attr('direction') == 'next';
-	
-				$(this).find('>div').each(function() {
-					var thisWidth = parseInt($(this).css('borderBottomWidth').replace('px', ''));
-					if (arrowNext) {
-						$(this).css({'margin-left': (arrowWidth - thisWidth) / 2});
-					} else {
-						$(this).css({'margin-left': (arrowWidth / 2) - thisWidth});
-					}
-				});
-	
-				$(this).hover(function() {
-					$(this).stop().fadeTo("fast", 0.7);
-				}, function() {
-					$(this).stop().fadeTo("fast", 0.0);
-				});
-				
-				$(this).click(function() {
-					var current = carousel.attr("current");
-					var currentIndex = parseInt(current.replace(id + CAROUSEL_SLIDE, ''));
-					if ($(this).attr('direction') == 'next') {
-						currentIndex++;
-					} else {
-						currentIndex--;	
-					}
-					clearCarouselTimer(id);
-					doCarouselTransition(id, currentIndex.toString(), transType, transTime);
-				});
-			});
-		}
-	}
-	
-	function doCarouselTransition(id, nextIdx, transType, transTime) {
-		var carousel = $(getId(id));
-		var width = carousel.attr('width');
-		var current = carousel.attr("current");
-		var nextIndex = parseInt(current.replace(id + CAROUSEL_SLIDE, '')) + 1;
-	
-		if (nextIdx) {
-			if (nextIdx == '0') {
-				var last = carousel.find('[id^="' + id + CAROUSEL_SLIDE + '"]').last();
-				nextIndex = parseInt(last.attr('id').replace(id + CAROUSEL_SLIDE, ''));
-			} else {
-				nextIndex = parseInt(nextIdx);
-			}
-		}
-	
-		var next = $(getId(id + CAROUSEL_SLIDE + nextIndex));
-		if (!next || next.length == 0) {
-			nextIndex = 1;
-			next = $(getId(id + CAROUSEL_SLIDE + nextIndex));
-		}
-		carousel.attr("current", next.attr("id"));
-	
-		var control = carousel.find('.jsmart5_carousel_control');
-		if (control && control.length > 0) {
-			control.find('span').each(function(index){
-				if (index == nextIndex - 1) {
-					$(this).css({'backgroundColor': '#000000', 'color': '#ffffff', 'opacity': 0.4});
-				} else {
-					$(this).css({'backgroundColor': '#ffffff', 'color': '#000000', 'opacity': 0.7});
-				}
-			});
-		}
-	
-		var currentElement = $(getId(current));
-	
-		if (transType == 'slide') {
-			currentElement.stop().animate(
-				{"left": (width) * -1 + "px"},
-				{duration: transTime, complete: function() {
-					currentElement.css({'top': -5000, 'left': width + 'px'});
-				}
-		    });
-		
-			next.css({'top': 0, 'left': width + 'px'});
-			next.stop().animate({
-		        "left": "0px"
-		    }, {
-		        duration: transTime
-		    });
-			
-		} else if (transType == 'fade') {
-			currentElement.css({'zIndex': 2});
-			next.css({'top': 0, 'left': 0, 'zIndex': 1});
-	
-			currentElement.stop().animate(
-				{"opacity": 0},
-				{duration: transTime, complete: function() {
-					currentElement.css({'top': -5000, 'left': 0, 'opacity': 1});
-				}
-		    });
-		}
-	}
-	
-	function resetMessage(data) {
-		
-	}
-
-	function showMessage(div, left, top, effectTime, onShow) {
-		$(div).css({'left': left, 'top': top});
-		$(div).animate({'opacity': 1}, effectTime, function() {
-			if (onShow) {
-				if ($('div[automessage="auto"]').length == 1) {
-					doExecute(onShow);
-				}
-			}
-		});
-	}
-
-	function closeMessage(div, modal, duration, effectTime, onClose) {
-		setTimeout(function() {
-			$(div).animate({'opacity': 0}, effectTime, function() {
-				
-				var position = $(this).attr('position');
-				var scrollTop = parseInt($(window).scrollTop());
-				var top = $(this).offset().top - scrollTop;
-				var height = $(this).outerHeight(true);
-
-				$(this).remove();
-
-				moveMessages(position, top, height);
-
-				if ($('div[automessage="auto"]').length == 0) {
-					if (modal && $(".jsmart5_overlay_message").length > 0) {
-						$(".jsmart5_overlay_message").remove();
-					}
-					if (onClose) { 
-						doExecute(onClose);
-					}
-				}
-			});
-		}, duration);
-	}
-
-	function moveMessages(position, top, height) {
-		$('div[automessage="auto"]').each(function(index) {
-
-			var divTop = null;
-			var scrollTop = parseInt($(window).scrollTop());
-			var currTop = $(this).offset().top - scrollTop;
-
-			if (position.indexOf('bottom') >= 0) {
-				if (currTop < top) {
-					divTop = currTop + $(this).outerHeight();
-				}
-			} else {
-				if (currTop > top) {
-					divTop = currTop - height;
-				}
-			}
-
-			if (divTop || divTop === 0) {
-				$(this).animate({"top": divTop + "px"}, "fast");
-			}
-		});
-	}
-	
 	function resetProgress(id) {
 		if ($(getId(id)).is('div[progress="progress"]')) {
 			doProgress(id);
@@ -2738,8 +2258,7 @@ var Jsmart5 = (function() {
 					if (newInput && newInput.length > 0) {
 						input.replaceWith(newInput);
 					}
-	
-					resetMessage(data);
+
 					var redirect = $(data).find(redirectPath); 
 					if (redirect && redirect.length > 0) {
 						$(location).attr('href', redirect.val());
@@ -2864,7 +2383,6 @@ var Jsmart5 = (function() {
 						input.replaceWith(newInput);
 					}
 	
-					resetMessage(data);
 					var redirect = $(data).find(redirectPath); 
 					if (redirect && redirect.length > 0) {
 						$(location).attr('href', redirect.val());
@@ -3055,7 +2573,6 @@ var Jsmart5 = (function() {
 							}
 						}
 
-						resetMessage(data);
 						var redirect = $(data).find(redirectPath); 
 						if (redirect && redirect.length > 0) {
 							$(location).attr('href', redirect.val());
@@ -3171,7 +2688,7 @@ var Jsmart5 = (function() {
 	}
 	
 	function startsWith(string, str) {
-		return string.match("^"+str) == str;
+		return string.match("^" + str) == str;
 	}
 	
 	function endsWith(string, str) {

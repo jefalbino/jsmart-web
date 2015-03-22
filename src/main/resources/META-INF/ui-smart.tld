@@ -1331,7 +1331,7 @@
         <body-content>empty</body-content>
         <attribute>
             <name>type</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>regex</name>
@@ -1349,20 +1349,6 @@
         </attribute>
         <attribute>
             <name>key</name>
-            <required>true</required>
-        </attribute>
-    </tag>
-
-    <tag>
-        <name>urlparam</name>
-        <tag-class>com.jsmart5.framework.tag.UrlParamTagHandler</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <name>name</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>param</name>
             <required>true</required>
         </attribute>
     </tag>
@@ -2873,14 +2859,6 @@
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>style</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>styleClass</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2888,39 +2866,11 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>opened</name>
+            <name>style</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>label</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>months</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>fullMonth</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>format</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>changeMonth</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>changeYear</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>showWeek</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>showButton</name>
+            <name>styleClass</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2940,7 +2890,51 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>placeHolder</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>label</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>leftAddOn</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>rightAddOn</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>autoFocus</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>tabIndex</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>viewMode</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>hideIcon</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>showWeeks</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>defaultDate</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>locale</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>linkWith</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3151,7 +3145,7 @@
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>style</name>
@@ -3162,89 +3156,59 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>type</name>
+            <name>timeout</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>title</name>
+            <name>continuous</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onSlide</name>
             <required>false</required>
         </attribute>
         <attribute>
             <name>width</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>height</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>timer</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>transitionTime</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>transitionType</name>
             <required>false</required>
         </attribute>
 	</tag>
 
 	<tag>
-		<name>carouselitems</name>
-		<tag-class>com.jsmart5.framework.tag.CarouselItemsTagHandler</tag-class>
+		<name>slides</name>
+		<tag-class>com.jsmart5.framework.tag.SlidesTagHandler</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
-            <name>value</name>
+            <name>values</name>
             <required>true</required>
         </attribute>
 	</tag>
 
 	<tag>
-        <name>carouselitem</name>
-        <tag-class>com.jsmart5.framework.tag.CarouselItemTagHandler</tag-class>
-        <body-content>empty</body-content>
+        <name>slide</name>
+        <tag-class>com.jsmart5.framework.tag.SlideTagHandler</tag-class>
+        <body-content>scriptless</body-content>
         <attribute>
-            <name>lib</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>name</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>caption</name>
+            <name>id</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>link</name>
-            <required>false</required>
-        </attribute>
-	</tag>
-
-	<tag>
-        <name>keypad</name>
-        <tag-class>com.jsmart5.framework.tag.KeypadTagHandler</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <name>target</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>layout</name>
+            <name>style</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>opened</name>
+            <name>styleClass</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>onKeyPress</name>
+            <name>label</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>showButton</name>
+            <name>active</name>
             <required>false</required>
         </attribute>
 	</tag>

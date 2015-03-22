@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,10 +70,10 @@ public abstract class TagHandler extends SimpleTagSupport {
 	protected static final Gson GSON = new Gson();
 
 	protected static final String ITERATOR_TAG_PARENT = "iterator_tag_parent";
+	
+	protected static final Pattern J_TAG_PATTERN = Pattern.compile("^(j0\\d{3}_)(.*)");
 
-	static final int J_TAG_LENGTH = 6;
-
-	static final String J_TAG_INIT = "j0";
+	private static final String J_TAG_INIT = "j0";
 
 	protected static final int DEFAULT_VALUE = -1;
 
@@ -97,9 +99,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 
 	protected static final String J_DATE = J_TAG_INIT + "011_";
 
-	protected static final String J_FRMT = J_TAG_INIT + "012_";
-
-	protected static final String J_CAPTCHA = J_TAG_INIT + "013_";
+	protected static final String J_CAPTCHA = J_TAG_INIT + "012_";
 
 	
 	protected static final String J_TBL = J_TAG_INIT + "015_";
@@ -463,14 +463,21 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 
 	protected String fakeTagName(String name) {
-		return Constants.START_EL + name + Constants.END_EL;
+		return String.format(Constants.TAG_EL, name);
 	}
 
 	protected String getTagName(String prefix, String name) {
-		if (name != null && name.startsWith(Constants.START_EL) && name.endsWith(Constants.END_EL)) {
-			return TagEncrypter.complexEncrypt(prefix, name);
+		if (name != null) {
+			Matcher matcher = ExpressionHandler.EL_PATTERN.matcher(name);
+			if (matcher.find()) {
+				return prefix + TagEncrypter.complexEncrypt(name);
+			}
 		}
 		return name;
+	}
+	
+	protected boolean isEL(String name) {
+		return ExpressionHandler.EL_PATTERN.matcher(name).find();
 	}
 
 	protected Object getTagValue(Object name) {
@@ -479,10 +486,6 @@ public abstract class TagHandler extends SimpleTagSupport {
 
 	protected void setTagValue(String name, Object value) {
 		EXPRESSIONS.setAttributeValue(name, value);
-	}
-
-	protected void setQueryParamValue(String name, String param) {
-		EXPRESSIONS.setExpressionValue(name, param, true);
 	}
 
 	protected String getResourceString(String resource, String key) {

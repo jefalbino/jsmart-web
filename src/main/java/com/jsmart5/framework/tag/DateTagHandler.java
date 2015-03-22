@@ -19,234 +19,280 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
+import com.jsmart5.framework.tag.css.Bootstrap;
+import com.jsmart5.framework.tag.css.JSmart5;
+import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Input;
+import com.jsmart5.framework.tag.html.Label;
+import com.jsmart5.framework.tag.html.Set;
 import com.jsmart5.framework.tag.html.Tag;
-
+import com.jsmart5.framework.tag.type.Mode;
+import com.jsmart5.framework.tag.type.Size;
+import com.jsmart5.framework.tag.type.Type;
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class DateTagHandler extends TagHandler {
-
-	private boolean opened;
-
-	private String format;
 	
-	private String label;
+	private String viewMode;
 	
-	private boolean changeMonth;
+	private boolean hideIcon;
 
-	private boolean changeYear;
+	private String defaultDate;
 	
-	private boolean showButton;
+	private boolean showWeeks;
 
-	private boolean showWeek;
+	private String locale;
+	
+	private String linkWith;
 
-	private Integer months;
-
-	private boolean fullMonth;
-
-	private Integer size;
+	private String size;
 
 	private String value;
 
 	private boolean readOnly;
 
-	private Integer tabIndex;
+	private boolean autoFocus;
 
+	private Integer tabIndex;
+	
+	private String placeHolder;
+
+	private String label;
+	
+	private String leftAddOn;
+	
+	private String rightAddOn;
+	
 	private boolean disabled;
+
+	private TagHandler childAddOn;
+	
+	private FormatTagHandler format;
 
 	@Override
 	public void validateTag() throws JspException {
-		if (months != null && (months <= 0 || months > 4)) {
-			throw new JspException("Invalid months value for date tag. Value must be greater than 0 and less or equal to 4");
+		if (size != null && !Size.validateSmallLarge(size)) {
+			throw InvalidAttributeException.fromPossibleValues("date", "size", Size.getSmallLargeValues());
+		}
+		if (viewMode != null && !Mode.validate(viewMode)) {
+			throw InvalidAttributeException.fromPossibleValues("date", "viewMode", Mode.getValues());
 		}
 	}
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
-//		if (label != null && opened) {
-//			throw new JspException("Attribute label and opened cannot coexist for date tag");
-//		}
-//
-//		// Just to call nested tags
-//		JspFragment body = getJspBody();
-//		if (body != null) {
-//			body.invoke(null);
-//		}
-//
-//		StringBuilder builder = new StringBuilder();
-//		StringBuilder optionsBuilder = new StringBuilder();
-//		Locale locale = getRequest().getLocale();
-//
-//		String name = getTagName(J_FRMT, value) + (readOnly ? EL_PARAM_READ_ONLY : "");
-//
-//		String dateFormat = format != null ? format.replace("yy", "yyyy").replace("MM", "MMMM") : "dd/MM/yyyy";
-//		
-//		// Hidden input to carry format content
-//		builder.append(INPUT_TAG + "id=\"" + id + "_date_format\" name=\"" + name + "\" value=\"" + dateFormat + "\" type=\"hidden\" />");
-//
-//		if (label != null) {
-//			builder.append(OPEN_DIV_TAG);
-//			appendClass(builder, CSS_INPUT_GROUP);
-//			builder.append(">");
-//			builder.append(OPEN_SPAN_TAG);
-//			appendClass(builder, CSS_INPUT_LABEL);
-//			builder.append(">");
-//
-//			String labelVal = (String) getTagValue(label);
-//			if (labelVal != null) {
-//				builder.append(labelVal);
-//			}
-//			builder.append(CLOSE_SPAN_TAG);
-//		}
-//
-//		// Input to carry date content
-//		builder.append(INPUT_TAG + "name=\"" + name.replace(J_FRMT, J_DATE) + "\" ");
-//
-//		Object val = getTagValue(value);
-//		if (val != null) {
-//			if (val instanceof Date) {
-//				builder.append("value=\"" + new SimpleDateFormat(dateFormat, locale).format(val) + "\" ");
-//
-//			} else if (val instanceof DateTime) {
-//				builder.append("value=\"" + ((DateTime) val).toString(DateTimeFormat.forPattern(dateFormat).withLocale(locale)) + "\" ");
-//			}
-//		}
-//
-//		builder.append(ON_BLUR + JSMART_DATE.format("$(this)") + "\" ");
-//		builder.append(ON_FOCUS + JSMART_BACKUP_DATE.format("$(this)") + " return false;\" ");
-//
-//		appendFormValidator(builder);
-//
-//		appendRest(builder);
-//
-//		if (opened) {
-//			builder.append("id=\"" + id + "_date_hidden\" type=\"hidden\" />");
-//			builder.append(OPEN_DIV_TAG);
-//		}
-//
-//		builder.append("id=\"" + id + "\" ");
-//
-//		if (style != null) {
-//			builder.append("style=\"" + style + "\" ");
-//		}
-//		if (styleClass != null) {
-//			builder.append("class=\"" + styleClass + "\" ");
-//		} else {
-//			if (!opened) {
-//				appendClass(builder, CSS_INPUT);
-//			}
-//		}
-//		if (tabIndex != null) {
-//			builder.append("tabindex=\"" + tabIndex + "\" ");
-//		}
-//		if (size != null) {
-//			builder.append("size=\"" + size + "\" ");
-//		}
-//		if (readOnly) {
-//			builder.append("readonly=\"true\" ");
-//		}
-//		if (disabled || isEditRowTagEnabled()) {
-//			builder.append("disabled=\"disabled\" ");
-//			optionsBuilder.append("disabled:" + disabled + ",");
-//		}
-//
-//		// Append theme options to date picker
-//		appendThemeOption(optionsBuilder);
-//
-//		if (showButton) {
-//			optionsBuilder.append("showOn:'button',");
-//		}
-//		if (format != null) {
-//			optionsBuilder.append("dateFormat:'" + format + "',");
-//		}
-//		if (changeMonth) {
-//			optionsBuilder.append("changeMonth:" + changeMonth + ",");
-//		}
-//		if (changeYear) {
-//			optionsBuilder.append("changeYear:" + changeYear + ",");
-//		}
-//		if (months != null) {
-//			optionsBuilder.append("numberOfMonths:" + months + ",");
-//		}
-//		if (fullMonth) {
-//			optionsBuilder.append("showOtherMonths:true,selectOtherMonths:true,");
-//		}
-//		if (showWeek) {
-//			optionsBuilder.append("showWeek:" + showWeek + ",");
-//		}
-//
-//		StringBuilder scriptBuilder = new StringBuilder(String.format(REGIONAL_SCRIPT, locale.getLanguage()));
-//		scriptBuilder.append(String.format(DATE_SCRIPT, id, optionsBuilder));
-//
-//		// TODO
-////		appendScript(scriptBuilder);
-//
-//		builder.append("date=\"" + scriptBuilder + "\" ");
-//
-//		appendEvent(builder);
-//
-//		if (opened) {
-//			printOutput(builder.append(">" + CLOSE_DIV_TAG));
-//		} else {			
-//			builder.append("/>");
-//
-//			if (label != null) {
-//				builder.append(CLOSE_DIV_TAG);
-//			}
-//			printOutput(builder);
-//		}
-		return null;
+		// Just to call nested tags
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}
+		
+		setRandomId("date");
+
+		JspTag parent = getParent();
+
+		Div inputGroup = null;
+
+		Div formGroup = new Div();
+		formGroup.addAttribute("class", Bootstrap.FORM_GROUP)
+			.addAttribute("class", JSmart5.DATE_FORM_GROUP);
+		
+		if (parent instanceof FormTagHandler) {
+			String size = ((FormTagHandler) parent).getSize();
+
+			if (Size.LARGE.equalsIgnoreCase(size)) {
+				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
+
+			} else if (Size.SMALL.equalsIgnoreCase(size)) {
+				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
+			}
+		}
+		
+		if (label != null) {
+			Label labelTag = new Label();
+			labelTag.addAttribute("for", id)
+					.addAttribute("class", Bootstrap.LABEL_CONTROL)
+					.addText(getTagValue(label));
+			formGroup.addTag(labelTag);
+		}
+		
+		if (leftAddOn != null || rightAddOn != null || !hideIcon) {
+			inputGroup = new Div();
+			
+			// Need to pass the wrap id to avoid opening date when addOn button is clicked
+			inputGroup.addAttribute("id", id + "-wrap")
+				.addAttribute("class", Bootstrap.INPUT_GROUP)
+				.addAttribute("class", Bootstrap.DATE);
+
+			if (Size.SMALL.equalsIgnoreCase(size)) {
+				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
+			} else if (Size.LARGE.equalsIgnoreCase(size)) {
+				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
+			}
+
+			if (formGroup != null) {
+				formGroup.addTag(inputGroup);
+			}
+		}
+		
+		if (leftAddOn != null) {
+			if (childAddOn != null && leftAddOn.equalsIgnoreCase(childAddOn.getId())) {
+				inputGroup.addTag(childAddOn.executeTag());
+			} else {
+				Div div = new Div();
+				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+					.addText(getTagValue(leftAddOn));
+				inputGroup.addTag(div);
+			}
+		}
+
+		Input hidden = new Input();
+		hidden.addAttribute("id", id + (inputGroup != null ? "-wrap-date" : "-date"))
+			.addAttribute("name", getTagName(J_DATE, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+			.addAttribute("type", Type.HIDDEN.name().toLowerCase());
+
+		Input input = new Input();
+		input.addAttribute("type", Type.TEXT.name().toLowerCase())
+			 .addAttribute("date", "date")
+			 .addAttribute("style", style)
+			 .addAttribute("class", Bootstrap.FORM_CONTROL)
+			 .addAttribute("tabindex", tabIndex)
+			 .addAttribute("readonly", readOnly ? readOnly : null)
+			 .addAttribute("disabled", disabled ? "disabled" : null)
+			 .addAttribute("placeholder", getTagValue(placeHolder))
+			 .addAttribute("datatype", Type.TEXT.name().toLowerCase())
+			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
+
+		appendRefId(input, id);
+
+		if (Size.SMALL.equalsIgnoreCase(size)) {
+			input.addAttribute("class", Bootstrap.INPUT_SMALL);
+		} else if (Size.LARGE.equalsIgnoreCase(size)) {
+			input.addAttribute("class", Bootstrap.INPUT_LARGE);
+		}
+
+		// Add the style class at last
+		input.addAttribute("class", styleClass);
+		
+		Object dateValue = getTagValue(value);
+		if (dateValue == null) {
+			dateValue = getTagValue(defaultDate);
+		}
+		input.addAttribute("value", dateValue);
+		hidden.addAttribute("value", dateValue);
+
+		appendValidator(input);
+		appendRest(input);
+		appendEvent(input);
+
+		if (inputGroup != null) {
+			inputGroup.addTag(input);
+		} else if (formGroup != null) {
+			formGroup.addTag(input);
+		}
+
+		if (!hideIcon) {
+			Div div = new Div();
+			div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON);
+
+			IconTagHandler icon = new IconTagHandler();
+			if (Mode.TIMEONLY.equalsIgnoreCase(viewMode)) {
+				icon.setName("glyphicon-time");
+			} else {
+				icon.setName("glyphicon-calendar");
+			}
+			div.addTag(icon.executeTag());
+
+			inputGroup.addTag(div);
+		}
+
+		if (rightAddOn != null) {
+			if (childAddOn != null && rightAddOn.equalsIgnoreCase(childAddOn.getId())) {
+				inputGroup.addTag(childAddOn.executeTag());
+			} else {
+				Div div = new Div();
+				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+					.addText(getTagValue(rightAddOn));
+				inputGroup.addTag(div);
+			}
+		}
+
+		appendAjax(id);
+		appendBind(id);
+		
+		// Need to pass the wrap id to avoid opening date when addOn button is clicked
+		appendDateScript(inputGroup != null ? id + "-wrap" : id);
+
+		appendTooltip(formGroup);
+		appendPopOver(formGroup);
+
+		Set set = new Set();
+		set.addTag(formGroup).addTag(hidden);
+		return set;
 	}
 
-	public void setOpened(boolean opened) {
-		this.opened = opened;
+	private void appendDateScript(String id) {
+		com.jsmart5.framework.json.Date jsonDate = new com.jsmart5.framework.json.Date();
+		jsonDate.setId(id);		
+		jsonDate.setLinkDate(linkWith);
+		jsonDate.setLocale(locale);
+		jsonDate.setShowWeeks(showWeeks);
+
+		if (format != null) {
+			jsonDate.setFormat(format.getRegex());
+		}
+		if (viewMode != null) {
+			if (Mode.TIMEONLY.equalsIgnoreCase(viewMode)) {
+				jsonDate.setFormat("LT");
+			} else {
+				jsonDate.setViewMode(viewMode.toLowerCase());
+			}
+		}
+		StringBuilder script = new StringBuilder(JSMART_DATE.format(getJsonValue(jsonDate)));
+		appendScript(script);
 	}
 
-	public void setFormat(String format) {
+	void setChildAddOn(TagHandler childAddOn) {
+		this.childAddOn = childAddOn;
+	}
+
+	void setFormat(FormatTagHandler format) {
 		this.format = format;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public void setViewMode(String viewMode) {
+		this.viewMode = viewMode;
 	}
 
-	public void setChangeMonth(boolean changeMonth) {
-		this.changeMonth = changeMonth;
+	public void setShowWeeks(boolean showWeeks) {
+		this.showWeeks = showWeeks;
 	}
 
-	public void setChangeYear(boolean changeYear) {
-		this.changeYear = changeYear;
+	public void setHideIcon(boolean hideIcon) {
+		this.hideIcon = hideIcon;
 	}
 
-	public void setMonths(Integer months) {
-		this.months = months;
+	public void setDefaultDate(String defaultDate) {
+		this.defaultDate = defaultDate;
 	}
 
-	public void setFullMonth(boolean fullMonth) {
-		this.fullMonth = fullMonth;
+	public void setLocale(String locale) {
+		this.locale = locale;
 	}
 
-	public void setShowWeek(boolean showWeek) {
-		this.showWeek = showWeek;
+	public void setLinkWith(String linkWith) {
+		this.linkWith = linkWith;
 	}
 
-	public void setShowButton(boolean showButton) {
-		this.showButton = showButton;
-	}
-
-	public void setSize(Integer size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 
@@ -258,8 +304,28 @@ public final class DateTagHandler extends TagHandler {
 		this.readOnly = readOnly;
 	}
 
+	public void setAutoFocus(boolean autoFocus) {
+		this.autoFocus = autoFocus;
+	}
+
 	public void setTabIndex(Integer tabIndex) {
 		this.tabIndex = tabIndex;
+	}
+
+	public void setPlaceHolder(String placeHolder) {
+		this.placeHolder = placeHolder;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setLeftAddOn(String leftAddOn) {
+		this.leftAddOn = leftAddOn;
+	}
+
+	public void setRightAddOn(String rightAddOn) {
+		this.rightAddOn = rightAddOn;
 	}
 
 	public void setDisabled(boolean disabled) {

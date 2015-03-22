@@ -29,7 +29,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import com.jsmart5.framework.config.Constants;
+import com.jsmart5.framework.manager.ExpressionHandler;
+
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
 
 public final class OutputFilter implements Filter {
@@ -53,7 +54,7 @@ public final class OutputFilter implements Filter {
         boolean foundRegex = false;
         String html = responseWrapper.toString();
 
-        Matcher outputMatcher = Constants.EL_PATTERN.matcher(html);
+        Matcher outputMatcher = ExpressionHandler.EL_PATTERN.matcher(html);
 	    while (outputMatcher.find()) {
 	    	foundRegex = true;
 	    	String expression = outputMatcher.group();

@@ -18,24 +18,26 @@
 
 package com.jsmart5.framework.adapter;
 
-import com.jsmart5.framework.annotation.SmartBean;
-import com.jsmart5.framework.util.SmartUtils;
-
-/**
- * This class represents the carousel item to be presented on carousel component.
- * <br>
- * It is used to provide information from {@link SmartBean} to create the carousel
- * of images and or links mapped inside carousel tag on returned page.
- */
-public final class SmartCarouselItem {
+public final class ImageAdapter {
 
 	private String lib;
-
+	
 	private String name;
+	
+	private String alt;
 
-	private String caption;
+	private String width;
 
-	private String link;
+	private String height;
+	
+	public ImageAdapter(String name) {
+		this(name, null);
+	}
+	
+	public ImageAdapter(String name, String lib) {
+		this.name = name;
+		this.lib = lib;
+	}
 
 	public String getLib() {
 		return lib;
@@ -53,20 +55,28 @@ public final class SmartCarouselItem {
 		this.name = name;
 	}
 
-	public String getCaption() {
-		return caption;
+	public String getAlt() {
+		return alt;
 	}
 
-	public void setCaption(String caption) {
-		this.caption = caption;
+	public void setAlt(String alt) {
+		this.alt = alt;
 	}
 
-	public String getLink() {
-		return link;
+	public String getWidth() {
+		return width;
 	}
 
-	public void setLink(String link) {
-		this.link = SmartUtils.decodePath(link);
+	public void setWidth(String width) {
+		this.width = width;
+	}
+
+	public String getHeight() {
+		return height;
+	}
+
+	public void setHeight(String height) {
+		this.height = height;
 	}
 
 }

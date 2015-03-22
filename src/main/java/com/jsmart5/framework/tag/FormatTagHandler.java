@@ -34,7 +34,6 @@ import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Type;
 
-
 public final class FormatTagHandler extends TagHandler {
 	
 	private String type;
@@ -43,7 +42,9 @@ public final class FormatTagHandler extends TagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (!Type.validateFormat(type)) {
+		JspTag parent = getParent();
+
+		if (!(parent instanceof DateTagHandler) && !Type.validateFormat(type)) {
 			throw InvalidAttributeException.fromPossibleValues("format", "type", Type.getFormatValues());
 		}
 	}
@@ -51,12 +52,14 @@ public final class FormatTagHandler extends TagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof OutputTagHandler) {
 
+		if (parent instanceof OutputTagHandler) {
 			((OutputTagHandler) parent).setFormat(this);
-			return false;
+
+		} else if (parent instanceof DateTagHandler) {
+			((DateTagHandler) parent).setFormat(this);
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -85,6 +88,10 @@ public final class FormatTagHandler extends TagHandler {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	String getRegex() {
+		return regex;
 	}
 
 	public void setRegex(String regex) {

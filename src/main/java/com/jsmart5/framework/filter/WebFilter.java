@@ -306,11 +306,11 @@ public final class WebFilter implements Filter {
 					String resourcePath = resource.replace("*", "");
 
 					if (file.getRelativePath().startsWith(resourcePath)) {
-						initDirResources(context.getRealPath(SEPARATOR), file.getRelativePath());
+						initDirResources(context.getRealPath(PATH_SEPARATOR), file.getRelativePath());
 
 						int count = 0;
 	                	BufferedInputStream bis = new BufferedInputStream(file.openInputStream());
-	                	String realFilePath = new File(context.getRealPath(SEPARATOR)).getPath() + SEPARATOR + file.getRelativePath();
+	                	String realFilePath = new File(context.getRealPath(PATH_SEPARATOR)).getPath() + PATH_SEPARATOR + file.getRelativePath();
 
 	                    FileOutputStream fos = new FileOutputStream(realFilePath);
 	                    BufferedOutputStream bos = new BufferedOutputStream(fos, STREAM_BUFFER);
@@ -332,11 +332,11 @@ public final class WebFilter implements Filter {
     }
 
 	private void initDirResources(String currentPath, String relativePath) {
-		if (relativePath.contains(SEPARATOR)) {
-			String[] paths = relativePath.split(SEPARATOR);
+		if (relativePath.contains(PATH_SEPARATOR)) {
+			String[] paths = relativePath.split(PATH_SEPARATOR);
 
 			for (int i = 0; i < paths.length - 1; i++) {
-				currentPath += SEPARATOR + paths[i];
+				currentPath += PATH_SEPARATOR + paths[i];
 
 				File dir = new File(currentPath);
 				if (!dir.exists()) {

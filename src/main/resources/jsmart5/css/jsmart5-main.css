@@ -23,7 +23,72 @@
 	margin-top: 0px;
 }
 
-.js5-recaptcha-thumbnail {
-	width: 308px !important;
+.js5-recaptcha-image-group {
+	width: 376px !important;
 	height: 66px !important;
+	background: #f9f9f9;
+}
+
+.js5-recaptcha-image {
+	float: left;
+}
+
+.js5-recaptcha-logo {
+	margin: 5px 0px 0px 26px;
+	width: 58px;
+	user-select: none;
+}
+
+.js5-recaptcha-logo-img {
+	background: url(https://www.gstatic.com/recaptcha/api2/logo_48.png);
+	background-repeat: no-repeat;
+	background-size: 32px;
+	height: 32px;
+	margin: 0 13px 0 13px;
+	width: 32px;
+}
+
+.js5-recaptcha-logo-text {
+	color: #9b9b9b;
+	font-family: Roboto;
+	font-size: 10px;
+	font-weight: 400;
+	line-height: 10px;
+	margin-top: 5px;
+	text-align: center;
+}
+
+.js5-carousel-inner {
+	height: inherit;
+}
+
+.js5-carousel-caption {
+	bottom: auto;
+	color: inherit !important; 
+	text-shadow: none;
+	text-align: left;
+}
+
+.js5-carousel-control {
+	background: none !important;
+	opacity: 0.5;
+	color: #444;
+}
+
+.js5-carousel-control:hover, .js5-carousel-control:focus {
+	color: #444;
+	opacity: 0.9;
+}
+
+.js5-carousel-indicator {
+	border: 1px solid #444 !important;
+	opacity: 0.5;
+}
+
+.js5-carousel-indicator .active, .js5-carousel-indicator-active {
+	background-color: #444 !important;
+}
+
+.js5-date-form-group {
+	position: relative;
 }

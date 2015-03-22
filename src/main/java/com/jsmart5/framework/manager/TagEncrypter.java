@@ -55,28 +55,28 @@ final class TagEncrypter {
 		}
 	}
 
-	static String complexEncrypt(String prefix, String value) {
+	static String complexEncrypt(String value) {
 		try {
 			if (encryptTagEnabled) {
 	            byte[] encode = encryptCipher.doFinal(value.getBytes("UTF8"));
-	            return prefix + new String(Base64.encodeBase64(encode, true, true)).trim();
+	            return new String(Base64.encodeBase64(encode, true, true)).trim();
 			}
         } catch (Exception ex) {
         	LOGGER.log(Level.INFO, "Failure to encrypt tag: " + value + " " + ex.getMessage());
         }
-		return prefix + value;
+		return value;
 	}
 
-	static String complexDecrypt(String prefix, String value) {
+	static String complexDecrypt(String value) {
 		try {
 			if (encryptTagEnabled) {
-				byte[] decoded = Base64.decodeBase64(value.replaceFirst(prefix, ""));
+				byte[] decoded = Base64.decodeBase64(value);
 	        	return new String(decryptCipher.doFinal(decoded), "UTF8");
 			}
 		} catch (Exception ex) {
 			LOGGER.log(Level.INFO, "Failure to decrypt tag: " + value + " " + ex.getMessage());
         }
-		return value.replaceFirst(prefix, "");
+		return value;
 	}
 
 }

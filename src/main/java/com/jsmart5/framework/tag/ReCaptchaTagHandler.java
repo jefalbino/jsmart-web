@@ -35,7 +35,6 @@ import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Label;
 import com.jsmart5.framework.tag.html.Script;
-import com.jsmart5.framework.tag.html.Set;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Size;
@@ -64,7 +63,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
 	private String size;
 	
 	private String align = Align.RIGHT.name();
-
+	
 	@Override
 	public void validateTag() throws JspException {
 		if (version != null && !version.equals(ReCaptchaHandler.RECAPTCHA_V1) && !version.equals(ReCaptchaHandler.RECAPTCHA_V2)) {
@@ -86,7 +85,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
 
 		JspTag parent = getParent();
 		if (!(parent instanceof FormTagHandler)) {
-			throw ConstraintTagException.fromConstraint("recaptcha", "Tag must be placed inside form tag");
+			throw ConstraintTagException.fromConstraint("recaptcha", "Tag must be placed inside [form] tag");
 		}
 
 		// Just to call nested tags
@@ -99,19 +98,24 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		
 		// ReCaptcha V2
 		if (version.equals(ReCaptchaHandler.RECAPTCHA_V2)) {
-			Set set = new Set();
+			Div formGroup = new Div();
+			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
+
 			Div div = new Div();
 			div.addAttribute("id", id);
+			formGroup.addTag(div);
 			
 			Input input = new Input();
 			input.addAttribute("name", getTagName(J_CAPTCHA, fakeTagName(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME)))
 				 .addAttribute("type", Type.HIDDEN.name().toLowerCase());
+			formGroup.addTag(input);
 
 			Script script = new Script();
 			script.addAttribute("type", "text/javascript")
 				.addAttribute("src", String.format(ReCaptchaHandler.RECAPTCHA_CHALLENGE_V2_URL, "onloadReCaptcha", locale != null ? locale : ""))
 				.addAttribute("async", "async")
 				.addAttribute("defer", "defer");
+			formGroup.addTag(script);
 
 			Script callback = new Script();
 			callback.addAttribute("type", "text/javascript")
@@ -120,10 +124,9 @@ public final class ReCaptchaTagHandler extends TagHandler {
 				.addText("'sitekey': '" + siteKey + "'")
 				.addText("});").addText("};");
 
-			((FormTagHandler) parent).addBeforeTag(callback);
-			
-			set.addTag(div).addTag(input).addTag(script);
-			return set;
+			((FormTagHandler) parent).addBeforeFormTag(callback);
+
+			return formGroup;
 		}
 		
 		// Custom ReCaptcha V1
@@ -134,13 +137,32 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		Div formImage = new Div();
 		formImage.addAttribute("class", Bootstrap.FORM_GROUP)
 			.addAttribute("align", align);
+		
+		Div recaptchaImageGroup = new Div();
+		recaptchaImageGroup.addAttribute("class", Bootstrap.THUMBNAIL)
+			.addAttribute("class", JSmart5.RECAPTCHA_IMAGE_GROUP);
 
 		Div recaptchaImage = new Div();
 		recaptchaImage.addAttribute("id", "recaptcha_image")
-			.addAttribute("class", Bootstrap.THUMBNAIL)
-			.addAttribute("class", JSmart5.RECAPTCHA_THUMBNAIL);
+			.addAttribute("class", JSmart5.RECAPTCHA_IMAGE);
 
-		formImage.addTag(recaptchaImage);
+		Div recaptchaLogo = new Div();
+		recaptchaLogo.addAttribute("class", JSmart5.RECAPTCHA_LOGO)
+			.addAttribute("role", "presentation");
+		
+		Div recaptchaLogoImg = new Div();
+		recaptchaLogoImg.addAttribute("class", JSmart5.RECAPTCHA_LOGO_IMAGE);
+		
+		Div recaptchaLogoText = new Div();
+		recaptchaLogoText.addAttribute("class", JSmart5.RECAPTCHA_LOGO_TEXT)
+			.addText("reCAPTCHA");
+		
+		recaptchaLogo.addTag(recaptchaLogoImg)
+			.addTag(recaptchaLogoText);
+		recaptchaImageGroup.addTag(recaptchaImage)
+			.addTag(recaptchaLogo);
+
+		formImage.addTag(recaptchaImageGroup);
 
 		Div formGroup = new Div();
 		formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
@@ -234,7 +256,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		}
 		options.addText("};");
 		
-		((FormTagHandler) parent).addBeforeTag(options);
+		((FormTagHandler) parent).addBeforeFormTag(options);
 
 		Script challenge = new Script();
 		challenge.addAttribute("type", "text/javascript")

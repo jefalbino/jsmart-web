@@ -145,6 +145,14 @@ public final class Bootstrap {
 	
 	public static final String THUMBNAIL = "thumbnail";
 	
+	public static final String ITEM = "item";
+	
+	public static final String LEFT = "left";
+	
+	public static final String RIGHT = "right";
+	
+	public static final String DATE = "date";
+	
 	
 	public static final String IMAGE_RESPONSIVE = "img-responsive";
 	
@@ -301,6 +309,22 @@ public final class Bootstrap {
 
 	public static final String ALERT_DANGER = "alert-danger";
 
+	
+	public static final String CAROUSEL = "carousel";
+	
+	public static final String CAROUSEL_CAPTION = "carousel-caption";
+	
+	public static final String CAROUSEL_INDICATORS = "carousel-indicators";
+	
+	public static final String CAROUSEL_INNER = "carousel-inner";
+	
+	public static final String CAROUSEL_CONTROL = "carousel-control";
+	
+	public static final String SLIDE = "slide";
+	
+	public static final String ANCHOR_JS_LINK = "anchorjs-link";
+	
+	public static final String ANCHOR_JS_ICON = "anchorjs-icon";
 
 	private Bootstrap() {
 		// DO NOTHING

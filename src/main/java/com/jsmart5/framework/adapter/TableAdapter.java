@@ -28,7 +28,7 @@ import com.jsmart5.framework.tag.TableAdapterHandler;
  *
  * @param <T> the type of the element being loaded inside the {@link List} of elements.
  */
-public abstract class SmartTableAdapter<T> extends TableAdapterHandler<T> {
+public abstract class TableAdapter<T> extends TableAdapterHandler<T> {
 
 	/**
 	 * This enumerator represents the sort order triggered per column by table component

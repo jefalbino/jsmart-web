@@ -50,6 +50,8 @@ public enum SmartImage {
 	 */
 	public static String getImage(String library, String name) {
 		if (library != null) {
+			library = library.replaceAll("\\.", "/");
+
 			if (!library.startsWith("/")) {
 				library = "/" + library;
 			}

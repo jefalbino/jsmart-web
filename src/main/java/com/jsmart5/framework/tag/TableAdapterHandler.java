@@ -21,7 +21,7 @@ package com.jsmart5.framework.tag;
 import java.util.List;
 import java.util.Map;
 
-import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
+import com.jsmart5.framework.adapter.TableAdapter.SortOrder;
 
 public abstract class TableAdapterHandler<T> {
 

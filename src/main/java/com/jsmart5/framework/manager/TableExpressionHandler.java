@@ -24,7 +24,7 @@ import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
+import com.jsmart5.framework.adapter.TableAdapter.SortOrder;
 
 public abstract class TableExpressionHandler extends TagHandler {
 

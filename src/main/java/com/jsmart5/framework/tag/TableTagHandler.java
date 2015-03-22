@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.adapter.SmartTableAdapter.SortOrder;
+import com.jsmart5.framework.adapter.TableAdapter.SortOrder;
 import com.jsmart5.framework.manager.TableExpressionHandler;
 import com.jsmart5.framework.tag.html.Tag;
 

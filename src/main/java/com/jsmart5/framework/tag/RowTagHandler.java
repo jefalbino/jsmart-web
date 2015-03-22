@@ -60,7 +60,7 @@ public final class RowTagHandler extends TagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !look.startsWith(Constants.START_EL) && !Look.validateBasic(look)) {
+		if (look != null && !Look.validateBasic(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("row", "look", Look.getBasicValues());
 		}
 	}
