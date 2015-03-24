@@ -527,38 +527,32 @@ public enum ExpressionHandler {
 
 	public Object getExpressionValue(Object expr) {
 		if (expr != null) {
-			Matcher matcher = EL_PATTERN.matcher(expr.toString());
+			String evalExpr = expr.toString();
+
+			Matcher matcher = EL_PATTERN.matcher(evalExpr);
 			if (!matcher.find()) {
 				return expr;
 			}
 
-			String subExpr = matcher.group();
-			String formatValues = expr.toString();
-			List<Object> resultList = new ArrayList<Object>(2);
+			boolean hasMoreGroup = false;
+			StringBuffer exprBuffer = new StringBuffer();
 
-			resultList.add(evaluateExpression(subExpr));
-			formatValues = formatValues.replace(subExpr, "%s");
+			Object result = evaluateExpression(evalExpr.substring(matcher.start() + 2, matcher.end() - 1));
+			matcher.appendReplacement(exprBuffer, result != null ? Matcher.quoteReplacement(result.toString()) : "null");
 
 			while (matcher.find()) {
-				subExpr = matcher.group();
-				resultList.add(evaluateExpression(subExpr));
-				formatValues = formatValues.replace(subExpr, "%s");
+				hasMoreGroup = true;
+				Object object = evaluateExpression(evalExpr.substring(matcher.start() + 2, matcher.end() - 1));
+				matcher.appendReplacement(exprBuffer, object != null ? Matcher.quoteReplacement(object.toString()) : "null");
 			}
 
-			if (formatValues.equals("%s")) {
-				return resultList.get(0);
+			if (hasMoreGroup || result instanceof String) {
+				return matcher.appendTail(exprBuffer).toString();
 			} else {
-				return String.format(formatValues, resultList.toArray());
+				return result;
 			}
 		}
 		return null;
-	}
-
-	private boolean isReadOnlyParameter(String jParam) {
-		if (jParam != null) {
-			return jParam.endsWith(Constants.EL_PARAM_READ_ONLY);
-		}
-		return false;
 	}
 
 	private Object evaluateExpression(String expr) {
@@ -566,38 +560,39 @@ public enum ExpressionHandler {
 			return expr;
 		}
 
-		Matcher matcher = EL_PATTERN.matcher(expr);
-		if (matcher.find()) {
+		String jspExpr = String.format(JSP_EL, expr);
 
-			String evaluate = matcher.group(1);
-			String jspExpr = String.format(JSP_EL, evaluate);
+		ELContext context = SmartContext.getPageContext().getELContext();
+		ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, jspExpr, Object.class);
+		Object obj = valueExpr.getValue(context);
 
-			ELContext context = SmartContext.getPageContext().getELContext();
-			ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, jspExpr, Object.class);
-			Object obj = valueExpr.getValue(context);
-
-			if (obj instanceof String) {
-				String[] objs = obj.toString().split(EL_SEPARATOR, 2);
-				if (objs.length == 2 && SmartText.containsResource(objs[0])) {
-					return SmartText.getString(objs[0], objs[1]);
-				}
+		if (obj instanceof String) {
+			String[] objs = obj.toString().split(EL_SEPARATOR, 2);
+			if (objs.length == 2 && SmartText.containsResource(objs[0])) {
+				return SmartText.getString(objs[0], objs[1]);
 			}
-
-			if (obj != null) {
-				return obj;
-			}
-
-			String[] exprs = evaluate.split(EL_SEPARATOR, 2);
-			if (exprs.length == 2 && SmartText.containsResource(exprs[0])) {
-				return SmartText.getString(exprs[0], exprs[1]);
-			}
-			return null;
 		}
-		return expr;
+
+		if (obj != null) {
+			return obj;
+		}
+
+		String[] exprs = expr.split(EL_SEPARATOR, 2);
+		if (exprs.length == 2 && SmartText.containsResource(exprs[0])) {
+			return SmartText.getString(exprs[0], exprs[1]);
+		}
+		return null;
 	}
 
 	private Object getExpressionBean(String name) {
 		return SmartContext.getAttribute(name);
+	}
+
+	private boolean isReadOnlyParameter(String jParam) {
+		if (jParam != null) {
+			return jParam.endsWith(Constants.EL_PARAM_READ_ONLY);
+		}
+		return false;
 	}
 
 	private Object escapeValue(String value) {
