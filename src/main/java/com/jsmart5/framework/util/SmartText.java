@@ -99,6 +99,11 @@ public enum SmartText {
 	
 	public static String getString(final String res, final String key, final Object ... params) {
 		String string = getString(res, key);
+		string = formatString(string, params);
+		return string;
+	}
+
+	public static String formatString(String string, final Object ... params) {
 		if (string != null && params != null && params.length > 0) {
 
 			if (BRACKETS.matcher(string).find()) {
