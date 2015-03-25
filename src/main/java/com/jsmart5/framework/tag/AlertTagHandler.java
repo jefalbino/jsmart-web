@@ -117,22 +117,21 @@ public final class AlertTagHandler extends TagHandler {
 		// At last add the custom style
 		div.addAttribute("class", styleClass);
 
+		if (firstAlert.getTitleIcon() != null) {
+			header = new HeaderTagHandler();
+			header.setParent(this);
+
+			IconTagHandler iconTag = new IconTagHandler();
+			iconTag.setName(firstAlert.getTitleIcon());
+			header.addIconTag(iconTag);
+		}
+
 		if (firstAlert.getTitle() != null) {
 			if (header == null) {
 				header = new HeaderTagHandler();
 				header.setParent(this);
 			}
 			header.setTitle(firstAlert.getTitle()); 
-		}
-
-		if (firstAlert.getTitleIcon() != null) {
-			if (header == null) {
-				header = new HeaderTagHandler();
-				header.setParent(this);
-			}
-			IconTagHandler iconTag = new IconTagHandler();
-			iconTag.setName(firstAlert.getTitleIcon());
-			header.addIconTag(iconTag);
 		}
 
 		if (header != null) {
