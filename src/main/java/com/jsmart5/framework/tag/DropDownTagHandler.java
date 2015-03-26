@@ -30,6 +30,7 @@ import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Align;
 
 public final class DropDownTagHandler extends TagHandler {
 
@@ -71,20 +72,36 @@ public final class DropDownTagHandler extends TagHandler {
 		
 		appendRefId(dropDown, id);
 		appendEvent(dropDown);
-		
+
 		A a = new A();
+
+		for (IconTagHandler iconTag : iconTags) {
+			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+				a.addTag(iconTag.executeTag());
+				a.addText(" ");
+			}
+		}		
+		
 		a.addAttribute("href", "#")
 			.addAttribute("data-toggle", "dropdown")
 			.addAttribute("aria-expanded", "false")
 			.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
 			.addText(getTagValue(label));
 		
+		for (IconTagHandler iconTag : iconTags) {
+			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+				a.addText(" ");
+				a.addTag(iconTag.executeTag());
+			}
+		}
+
 		Span caret = new Span();
 		caret.addAttribute("class", Bootstrap.CARET);
+		a.addText(" ");
 		a.addTag(caret);
 
 		dropDown.addTag(a);
-		
+
 		if (dropMenu != null) {
 			Tag ul = dropMenu.executeTag();
 			ul.addAttribute("class", disabled ? Bootstrap.DISABLED : null);

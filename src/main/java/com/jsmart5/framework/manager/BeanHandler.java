@@ -1119,18 +1119,24 @@ public enum BeanHandler {
 				String lineScan = null;
 				while ((lineScan = fileScanner.findWithinHorizon(HANDLER_EL_PATTERN, 0)) != null) {
 
+					boolean hasInclude = false;
 					Matcher matcher = INCLUDE_PATTERN.matcher(lineScan);
-					if (matcher.find()) {
+
+					while (matcher.find()) {
+						hasInclude = true;
 						lineScan = matcher.group(1);
 						includes.add(lineScan.contains("/") ? lineScan.substring(lineScan.lastIndexOf("/")) : lineScan);
+					}
+
+					if (hasInclude) {
 						continue;
 					}
 
 					matcher = EL_PATTERN.matcher(lineScan);
-					if (matcher.find()) {
+					while (matcher.find()) {
 		            	for (String name : matcher.group(1).split(EL_SEPARATOR)) {
-		            		if (smartBeans.containsKey(name)) {
-		            			jspPageBean.addBeanName(name);
+		            		if (smartBeans.containsKey(name.trim())) {
+		            			jspPageBean.addBeanName(name.trim());
 		            		}
 		            	}
 					}
