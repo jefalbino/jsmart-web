@@ -1004,7 +1004,9 @@ public enum BeanHandler {
 	    		if (res.endsWith(".jsp") || res.endsWith(".jspf") || res.endsWith(".html")) {
 	    			String[] bars = res.split(PATH_SEPARATOR);
 	    			if (res.endsWith(".jspf")) {
-	    				forwardPaths.put(PATH_SEPARATOR + bars[bars.length -1], res);
+
+	    				// Save the entire resource path to capture it later when reading JSP include tags
+	    				forwardPaths.put(res, res);
 	    			} else {
 	    				forwardPaths.put(PATH_SEPARATOR + bars[bars.length -1].replace(".jsp", "").replace(".html", ""), res);
 	    			}
@@ -1124,8 +1126,7 @@ public enum BeanHandler {
 
 					while (matcher.find()) {
 						hasInclude = true;
-						lineScan = matcher.group(1);
-						includes.add(lineScan.contains("/") ? lineScan.substring(lineScan.lastIndexOf("/")) : lineScan);
+						includes.add(matcher.group(1));
 					}
 
 					if (hasInclude) {
@@ -1147,6 +1148,8 @@ public enum BeanHandler {
 
 			// Read include page resources
 			for (String include : includes) {
+				String includeOwner = getForwardPath(path);
+				include = includeOwner.substring(0, includeOwner.lastIndexOf(PATH_SEPARATOR) + 1) + include;
 				readJspPageResource(context, include, jspPageBean);
 			}
 		}

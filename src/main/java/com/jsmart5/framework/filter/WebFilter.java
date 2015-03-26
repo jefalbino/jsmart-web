@@ -58,7 +58,6 @@ import com.jsmart5.framework.json.Headers;
 import com.jsmart5.framework.json.Resources;
 import com.jsmart5.framework.manager.SmartContext;
 import com.jsmart5.framework.tag.html.Head;
-import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.DocScript;
 
 import static com.jsmart5.framework.config.Config.*;
@@ -80,8 +79,6 @@ public final class WebFilter implements Filter {
 	private static final Pattern START_HEAD_PATTERN = Pattern.compile("<head.*?>");
 
 	private static final Pattern CLOSE_BODY_PATTERN = Pattern.compile("</body.*?>");
-
-	private static final Pattern FORM_PATTERN = Pattern.compile("<form.*?>");
 
 	private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
 
@@ -125,6 +122,9 @@ public final class WebFilter implements Filter {
 
         // Finalize request scoped beans
         HANDLER.finalizeBeans(httpRequest);
+        
+        // Add Ajax headers to control redirect and reset
+        addAjaxHeaders(httpRequest, responseWrapper);
 
         // Include head data to html
         String html = null;
@@ -181,8 +181,28 @@ public final class WebFilter implements Filter {
 		}
 	}
 
-	private String getCompleteHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper responseWrapper) {
-		String html = responseWrapper.toString();
+	private void addAjaxHeaders(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
+
+		// Case redirect via ajax, place tag with path to be handled by java script
+    	String ajaxPath = (String) httpRequest.getAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR);
+		if (ajaxPath != null) {
+			response.addHeader("Redirect-Ajax", ajaxPath);
+		}
+
+		// Case session reset, place tag to force java script reset the page
+	    HttpSession session = httpRequest.getSession();
+	    synchronized (session) {
+
+			if (session.getAttribute(SESSION_RESET_ATTR) != null) {
+				if (ajaxPath == null && SmartContext.isAjaxRequest()) {
+					response.addHeader("Reset-Ajax", "Session");
+				}
+	        }
+	    }
+	}
+
+	private String getCompleteHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
+		String html = response.toString();
         Matcher htmlMatcher = HTML_PATTERN.matcher(html);
 
 		// Check if it is a valid html
@@ -200,51 +220,15 @@ public final class WebFilter implements Filter {
 		    	head.addText(headerStyles);
 		    	html = html.replaceFirst(htmlMatch, htmlMatch + head.getHtml());
 		    }
-
-			// Case redirect via ajax, place tag with path to be handled by java script
-	    	String ajaxPath = (String) httpRequest.getAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR);
-			if (ajaxPath != null) {
-
-				Matcher formMatcher = FORM_PATTERN.matcher(html);
-				if (formMatcher.find()) {
-					String formMatch = formMatcher.group();
-
-					Input input = new Input();
-					input.addAttribute("id", REQUEST_REDIRECT_PATH).addAttribute("type", "hidden").addAttribute("value", ajaxPath);
-
-					html = html.replace(formMatch, formMatch + input.getHtml());
-				}
-			}
-
-			// Case session reset, place tag to force java script reset the page
-		    HttpSession session = httpRequest.getSession();
-		    synchronized (session) {
-
-				if (session.getAttribute(SESSION_RESET_ATTR) != null) {
-					if (ajaxPath == null && SmartContext.isAjaxRequest()) {
-
-						Matcher formMatcher = FORM_PATTERN.matcher(html);
-						if (formMatcher.find()) {
-							String formMatch = formMatcher.group();
-
-							Input input = new Input();
-							input.addAttribute("id", SESSION_RESET_ATTR).addAttribute("type", "hidden");
-							
-							html = html.replaceFirst(formMatch, formMatch + input.getHtml());
-						}
-					}
-		        }
+		    
+		    Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
+		    if (!bodyMatcher.find()) {
+		    	throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
 		    }
 
-		    Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
-			if (bodyMatcher.find()) {
-				DocScript script = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
-
-				String bodyMatch = bodyMatcher.group();
-				html = html.replace(bodyMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + bodyMatch);
-			} else {
-				throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
-			}
+		    String bodyMatch = bodyMatcher.group();
+			DocScript script = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
+			html = html.replace(bodyMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + bodyMatch);
         }
 		return html;
 	}
