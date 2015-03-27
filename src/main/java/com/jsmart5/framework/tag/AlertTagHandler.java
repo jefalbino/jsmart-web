@@ -31,7 +31,6 @@ import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Button;
 import com.jsmart5.framework.tag.html.Div;
-import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.P;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
@@ -62,7 +61,8 @@ public final class AlertTagHandler extends TagHandler {
 		}
 
 		Div wrap = new Div();
-		wrap.addAttribute("id", id + "-wrap");
+		wrap.addAttribute("id", id + "-wrap")
+			.addAttribute("role", "alert-wrap");
 
 		if (onHide != null) {
 			appendScript(getBindFunction(id, "close.bs.alert", new StringBuilder(onHide)));
@@ -161,12 +161,7 @@ public final class AlertTagHandler extends TagHandler {
 		}
 
 		if (SmartContext.isAjaxRequest()) {
-			Input input = new Input();
-			input.addAttribute("type", "hidden")
-				.addAttribute("value", id + "-wrap")
-				.addAttribute("alert-show", "true")
-				.addAttribute("readonly", "true");
-			printOutput(input.getHtml());
+			wrap.addAttribute("alert-show", "true");
 		}
 
 		wrap.addTag(div);

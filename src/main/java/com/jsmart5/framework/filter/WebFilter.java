@@ -79,6 +79,8 @@ public final class WebFilter implements Filter {
 	private static final Pattern START_HEAD_PATTERN = Pattern.compile("<head.*?>");
 
 	private static final Pattern CLOSE_BODY_PATTERN = Pattern.compile("</body.*?>");
+	
+	private static final Pattern SCRIPT_BODY_PATTERN = Pattern.compile("<body.*?>.\\s*(<script.*?>).\\s*</body.*?>");
 
 	private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
 
@@ -220,15 +222,22 @@ public final class WebFilter implements Filter {
 		    	head.addText(headerStyles);
 		    	html = html.replaceFirst(htmlMatch, htmlMatch + head.getHtml());
 		    }
-		    
+
+		    DocScript script = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
+
+		    Matcher scriptMatcher = SCRIPT_BODY_PATTERN.matcher(html);
+		    if (scriptMatcher.find()) {
+		    	String scriptMatch = scriptMatcher.group(1);
+		    	return html.replace(scriptMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + scriptMatch);
+		    }
+
 		    Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
 		    if (!bodyMatcher.find()) {
 		    	throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
 		    }
 
 		    String bodyMatch = bodyMatcher.group();
-			DocScript script = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
-			html = html.replace(bodyMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + bodyMatch);
+			return html.replace(bodyMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + bodyMatch);
         }
 		return html;
 	}

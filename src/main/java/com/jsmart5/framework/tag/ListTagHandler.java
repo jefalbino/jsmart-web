@@ -87,7 +87,7 @@ public final class ListTagHandler extends TagHandler {
 
 		// Need to indicate that it is a list parent tag for deep inner tags
 		// so the ajax and bind actions can be set by this class
-		pushIteratorTagParent();
+		pushDelegateTagParent();
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
@@ -172,7 +172,7 @@ public final class ListTagHandler extends TagHandler {
 
 		// Needs to pop the iterator action so this class set the 
 		// ajax and bind actions carried via RefAction
-		popIteratorTagParent();
+		popDelegateTagParent();
 
 		if (selectValue != null) {
 			appendScript(getAjaxFunction());

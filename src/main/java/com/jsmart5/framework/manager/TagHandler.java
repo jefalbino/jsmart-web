@@ -69,7 +69,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 	
 	protected static final Gson GSON = new Gson();
 
-	protected static final String ITERATOR_TAG_PARENT = "iterator_tag_parent";
+	protected static final String DELEGATE_TAG_PARENT = "delegate_tag_parent";
 	
 	protected static final Pattern J_TAG_PATTERN = Pattern.compile("^(j0\\d{3}_)(.*)");
 
@@ -540,24 +540,24 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void pushIteratorTagParent() {
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
+	protected void pushDelegateTagParent() {
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
 		if (actionStack == null) {
 			actionStack = new Stack<RefAction>();
 			actionStack.push(new RefAction());
-			addMappedValue(ITERATOR_TAG_PARENT, actionStack);
+			addMappedValue(DELEGATE_TAG_PARENT, actionStack);
 		} else {
 			actionStack.push(new RefAction());
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void popIteratorTagParent() {
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
+	protected void popDelegateTagParent() {
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
 		
 		RefAction refAction = actionStack.pop();
 		if (actionStack.empty()) {
-			removeMappedValue(ITERATOR_TAG_PARENT);
+			removeMappedValue(DELEGATE_TAG_PARENT);
 		}
 
 		Map<String, EventAction> refs = refAction.getRefs();
@@ -575,7 +575,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 						for (Ajax jsonAjax : refAjaxs.get(event)) {
 							StringBuilder builder = new StringBuilder();
 							builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-							builder = getDelegateFunction(id, "*[tag-iterator=\"" + refId + "\"]", event.toLowerCase(), builder);
+							builder = getDelegateFunction(id, "*[role-delegate=\"" + refId + "\"]", event.toLowerCase(), builder);
 							appendScript(builder);
 						}
 					}
@@ -587,7 +587,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 						for (Bind jsonBind : refBinds.get(event)) {
 							StringBuilder builder = new StringBuilder();
 							builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
-							builder = getDelegateFunction(id, "*[tag-iterator=\"" + refId + "\"]", event.toLowerCase(), builder);
+							builder = getDelegateFunction(id, "*[role-delegate=\"" + refId + "\"]", event.toLowerCase(), builder);
 							appendScript(builder);
 						}
 					}
@@ -596,10 +596,26 @@ public abstract class TagHandler extends SimpleTagSupport {
 		}
 	}
 
+	private boolean isDelegate() {
+		return getMappedValue(DELEGATE_TAG_PARENT) != null;
+	}
+
 	protected void appendRefId(Tag tag, String id) {
-		if (getMappedValue(ITERATOR_TAG_PARENT) != null && (!ajaxTags.isEmpty() || !bindTags.isEmpty())) {
-			tag.addAttribute("tag-iterator", id);
-			
+
+		if (ajaxTags.isEmpty() && bindTags.isEmpty()) {
+			tag.addAttribute("id", id);
+			return;
+		}
+
+		boolean isDelegate = isDelegate();
+		if (isDelegate || SmartContext.isAjaxRequest()) {
+
+			if (isDelegate) {
+				tag.addAttribute("role-delegate", id);
+			} else {
+				tag.addAttribute("id", id);
+			}
+
 			// Place the arguments and parameters to this tag which is holding ajax tags
 			for (AjaxTagHandler ajaxTag : ajaxTags) {
 				for (String param : ajaxTag.params.keySet()) {

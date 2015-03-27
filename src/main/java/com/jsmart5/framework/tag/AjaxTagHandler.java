@@ -88,7 +88,7 @@ public final class AjaxTagHandler extends TagHandler {
 		return null;
 	}
 	
-	private Ajax getJsonAjax(String id, boolean hasIterator) {
+	private Ajax getJsonAjax(String id, boolean hasDelegate) {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
 		jsonAjax.setTimeout(timeout);
@@ -103,7 +103,7 @@ public final class AjaxTagHandler extends TagHandler {
 				argName = getTagName(J_SBMT_ARGS, action);
 			}
 
-			if (!hasIterator) {
+			if (!hasDelegate) {
 				for (Object arg : args) {
 					jsonAjax.addArg(new Param(argName, arg));
 				}
@@ -113,7 +113,7 @@ public final class AjaxTagHandler extends TagHandler {
 			} else {
 				
 				// Do not place parameter value on json ajax because it depends on each tag
-				// being iterate via parent tag
+				// being delegate via parent tag
 				if (argName != null) {
 					jsonAjax.addArg(new Param(argName, null));
 				}
@@ -148,7 +148,7 @@ public final class AjaxTagHandler extends TagHandler {
 		// It means that the ajax is inside some iterator tag, so the
 		// ajax actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
 		
 		Ajax jsonAjax = getJsonAjax(id, actionStack != null);
 
@@ -169,7 +169,7 @@ public final class AjaxTagHandler extends TagHandler {
 		// It means that the ajax is inside some iterator tag, so the
 		// ajax actions will be set by iterator tag and the event bind
 		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(ITERATOR_TAG_PARENT);
+		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
 		
 		Ajax jsonAjax = getJsonAjax(id, actionStack != null);
 

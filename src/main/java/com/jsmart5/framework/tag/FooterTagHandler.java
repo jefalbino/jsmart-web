@@ -82,7 +82,7 @@ public final class FooterTagHandler extends TagHandler {
 			.addText(getTagValue(title))
 			.addText(sw.toString());
 		
-		if (parent instanceof TagHandler && getMappedValue(ITERATOR_TAG_PARENT) == null) {
+		if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
 			appendAjax(parent.getId());
 			appendBind(parent.getId());
 		} else {

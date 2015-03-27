@@ -21,7 +21,6 @@ var Jsmart5 = (function() {
 	var tagInit = "j0";
 	var modalOpen = 'open()';
 	var modalHide = 'close()';
-	var alertShow = 'alert-show';
 	var refreshIcon = 'refresh-icon';
 	var validateTextStyle = 'js5-validate-text';
 	var validateGroupStyle = 'js5-validate-group';
@@ -151,13 +150,13 @@ var Jsmart5 = (function() {
 				var options = getAjaxOptions(map);
 				var closestForm = el.closest('form');
 				var elParam = getElementParam(el, false);
-				var itParam = getIterateParam(el, map);
+				var dlgParam = getDelegateParam(el, map);
 
 				if (map.method == 'post') {
 					var postParam = getAjaxParams(map);
 
-					for (var i = 0; i < itParam.length; i++) {
-						postParam.push({name: itParam[i].name, value: itParam[i].value});
+					for (var i = 0; i < dlgParam.length; i++) {
+						postParam.push({name: dlgParam[i].name, value: dlgParam[i].value});
 					}
 
 					if (closestForm && closestForm.length > 0) {
@@ -838,15 +837,15 @@ var Jsmart5 = (function() {
 		return params;
 	}
 
-	function getIterateParam(el, map) {
-		var itParams = [];
+	function getDelegateParam(el, map) {
+		var dlgParam = [];
 		
 		if (map.params) {
 			for (var i = 0; i < map.params.length; i++) {
 				if (map.params[i].value === undefined) {
 					var name = $.trim(map.params[i].name);
 					var value = el.attr(name);
-					itParams.push({name: name, value: value});
+					dlgParam.push({name: name, value: value});
 				}
 			}
 		}
@@ -860,14 +859,13 @@ var Jsmart5 = (function() {
 
 						var values = $.parseJSON(value.replace(/\'/g, '"'));
 						for (var j = 0; j < values.length; j++) {
-							itParams.push({name: name, value: values[j]});
+							dlgParam.push({name: name, value: values[j]});
 						}
 					}
 				}
 			}
 		}
-		
-		return itParams;
+		return dlgParam;
 	}
 
 	function getElementParam(el, rest) {
@@ -1022,8 +1020,11 @@ var Jsmart5 = (function() {
 	}
 
 	function doAlertCheck(data) {
-		$(data).find('input[' + alertShow + ']').each(function() {
-			doUpdate($(this).val(), data);
+		$('div[role="alert-wrap"]').hide();
+
+		$(data).find('div[alert-show]').each(function() {
+			doUpdate($(this).attr('id'), data);
+			$(this).show();
 		});
 	}
 
