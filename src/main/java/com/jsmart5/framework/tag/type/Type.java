@@ -124,8 +124,8 @@ public enum Type {
 		String[] values = new String[4];
 		values[0] = RESPONSIVE.name().toLowerCase();
 		values[1] = ROUND.name().toLowerCase();
-		values[0] = CIRCLE.name().toLowerCase();
-		values[1] = THUMBNAIL.name().toLowerCase();
+		values[2] = CIRCLE.name().toLowerCase();
+		values[3] = THUMBNAIL.name().toLowerCase();
 		return values;
 	}
 

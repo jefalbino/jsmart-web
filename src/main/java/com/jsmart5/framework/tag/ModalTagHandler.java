@@ -37,7 +37,7 @@ import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class ModalTagHandler extends TagHandler {
 
-	private boolean opened;
+	private String opened;
 
 	private String size;
 
@@ -134,7 +134,8 @@ public final class ModalTagHandler extends TagHandler {
 			appendScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
 		}
 
-		if (opened) {
+		Boolean booleanVal = (Boolean) getTagValue(opened);
+		if (booleanVal != null && booleanVal) {
 			appendScript(new StringBuilder(JSMART_MODAL.format(id)));
 		}
 		return modal;
@@ -148,7 +149,7 @@ public final class ModalTagHandler extends TagHandler {
 		this.footer = footer;
 	}
 
-	public void setOpened(boolean opened) {
+	public void setOpened(String opened) {
 		this.opened = opened;
 	}
 
