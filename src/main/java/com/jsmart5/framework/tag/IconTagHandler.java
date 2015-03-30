@@ -43,9 +43,33 @@ public final class IconTagHandler extends TagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
 
-			((TagHandler) parent).addIconTag(this);
+		if (parent instanceof ButtonTagHandler) {
+			((ButtonTagHandler) parent).addIconTag(this);
+			return false;
+
+		} else if (parent instanceof LinkTagHandler) {
+			((LinkTagHandler) parent).addIconTag(this);
+			return false;
+
+		} else if (parent instanceof DropDownTagHandler) {
+			((DropDownTagHandler) parent).addIconTag(this);
+			return false;
+
+		} else if (parent instanceof DropActionTagHandler) {
+			((DropActionTagHandler) parent).addIconTag(this);
+			return false;
+
+		} else if (parent instanceof HeaderTagHandler) {
+			((HeaderTagHandler) parent).addIconTag(this);
+			return false;
+
+		} else if (parent instanceof OutputTagHandler) {
+			((OutputTagHandler) parent).addIconTag(this);
+			return false;
+
+		} else if (parent instanceof TabPaneTagHandler) {
+			((TabPaneTagHandler) parent).addIconTag(this);
 			return false;
 		}
 		return true;

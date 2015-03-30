@@ -175,6 +175,7 @@ public final class OutputTagHandler extends TagHandler {
 		for (IconTagHandler iconTag : iconTags) {
 			if (Align.LEFT.name().equalsIgnoreCase(iconTag.getSide())) {
 				tag.addTag(iconTag.executeTag());
+				tag.addText(" ");
 			}
 		}
 
@@ -197,6 +198,7 @@ public final class OutputTagHandler extends TagHandler {
 
 		for (IconTagHandler iconTag : iconTags) {
 			if (Align.RIGHT.name().equalsIgnoreCase(iconTag.getSide())) {
+				tag.addText(" ");
 				tag.addTag(iconTag.executeTag());
 			}
 		}

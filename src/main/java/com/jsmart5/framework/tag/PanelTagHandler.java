@@ -31,7 +31,6 @@ import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
-import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Look;
 
 public final class PanelTagHandler extends TagHandler {
@@ -97,12 +96,6 @@ public final class PanelTagHandler extends TagHandler {
 			Div head = new Div();
 			head.addAttribute("class", Bootstrap.PANEL_HEADING);
 
-			for (IconTagHandler iconTag : iconTags) {
-				if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-					head.addTag(iconTag.executeTag());
-				}
-			}
-
 			if (parentId != null) {
 				A a = new A();
 				a.addAttribute("data-toggle", "collapse")
@@ -115,17 +108,9 @@ public final class PanelTagHandler extends TagHandler {
 					a.addTag(header.executeTag());
 				}
 				head.addTag(a);
-
 			} else {
 				head.addTag(header.executeTag());
 			}
-			
-			for (IconTagHandler iconTag : iconTags) {
-				if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-					head.addTag(iconTag.executeTag());
-				}
-			}
-
 			panel.addTag(head);
 		}
 
