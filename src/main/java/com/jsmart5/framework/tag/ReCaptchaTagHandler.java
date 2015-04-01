@@ -101,6 +101,24 @@ public final class ReCaptchaTagHandler extends TagHandler {
 			Div formGroup = new Div();
 			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 
+			if (parent instanceof FormTagHandler) {
+				String size = ((FormTagHandler) parent).getSize();
+
+				if (Size.LARGE.equalsIgnoreCase(size)) {
+					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
+
+				} else if (Size.SMALL.equalsIgnoreCase(size)) {
+					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
+				}
+			}
+
+			Label labelTag = new Label();
+			labelTag.addAttribute("for", ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)
+					.addAttribute("class", Bootstrap.LABEL_CONTROL)
+					.addAttribute("class", "recaptcha_only_if_image")
+					.addText(getTagValue(label));
+			formGroup.addTag(labelTag);
+
 			Div div = new Div();
 			div.addAttribute("id", id);
 			formGroup.addTag(div);

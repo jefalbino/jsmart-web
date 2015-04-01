@@ -42,7 +42,7 @@ public final class ValidateTagHandler extends TagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !Look.validateValidate(look)) {
+		if (look != null && !Look.validateValidate(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("validate", "look", Look.getValidateValues());
 		}
 	}

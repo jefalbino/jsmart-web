@@ -40,7 +40,7 @@ public final class LabelTagHandler extends TagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !Look.validateLook(look)) {
+		if (look != null && !Look.validateLook(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("label", "look", Look.getLookValues());
 		}
 	}
@@ -63,21 +63,21 @@ public final class LabelTagHandler extends TagHandler {
 		
 		appendRefId(span, id);
 
-		String lookVal = Bootstrap.LABEL_DEFAULT;
+		String lookVal = (String) getTagValue(look);
 
-		if (Look.PRIMARY.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.LABEL_PRIMARY;
-		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.LABEL_SUCCESS;
-		} else if (Look.INFO.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.LABEL_INFO;
-		} else if (Look.WARNING.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.LABEL_WARNING;
-		} else if (Look.DANGER.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.LABEL_DANGER;
+		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+			span.addAttribute("class", Bootstrap.LABEL_PRIMARY);
+		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+			span.addAttribute("class", Bootstrap.LABEL_SUCCESS);
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+			span.addAttribute("class", Bootstrap.LABEL_INFO);
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+			span.addAttribute("class", Bootstrap.LABEL_WARNING);
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+			span.addAttribute("class", Bootstrap.LABEL_DANGER);
+		} else {
+			span.addAttribute("class", Bootstrap.LABEL_DEFAULT);
 		}
-		
-		span.addAttribute("class", lookVal);
 
 		// Add the style class at last
 		span.addAttribute("class", styleClass);

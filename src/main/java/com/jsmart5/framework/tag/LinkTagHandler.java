@@ -80,7 +80,7 @@ public final class LinkTagHandler extends TagHandler {
 		if (size != null && !Size.validate(size)) {
 			throw InvalidAttributeException.fromPossibleValues("link", "size", Size.getValues());
 		}
-		if (look != null && !Look.validateButton(look)) {
+		if (look != null && !Look.validateButton(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("link", "look", Look.getButtonValues());
 		}
 	}
@@ -126,23 +126,23 @@ public final class LinkTagHandler extends TagHandler {
 			.addAttribute("tabindex", tabIndex)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
 		
-		String lookVal = Bootstrap.BUTTON_LINK;
+		String lookVal = (String) getTagValue(look);
 		
-		if (Look.PRIMARY.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_PRIMARY;
-		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_SUCCESS;
-		} else if (Look.INFO.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_INFO;
-		} else if (Look.WARNING.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_WARNING;
-		} else if (Look.DANGER.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_DANGER;
-		} else if (Look.DEFAULT.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_DEFAULT;
+		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+			link.addAttribute("class", Bootstrap.BUTTON_PRIMARY);
+		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+			link.addAttribute("class", Bootstrap.BUTTON_SUCCESS);
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+			link.addAttribute("class", Bootstrap.BUTTON_INFO);
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+			link.addAttribute("class", Bootstrap.BUTTON_WARNING);
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+			link.addAttribute("class", Bootstrap.BUTTON_DANGER);
+		} else if (Look.DEFAULT.equalsIgnoreCase(lookVal)) {
+			link.addAttribute("class", Bootstrap.BUTTON_DEFAULT);
+		} else {
+			link.addAttribute("class", Bootstrap.BUTTON_LINK);
 		}
-
-		link.addAttribute("class", lookVal);
 		
 		appendRefId(link, id);
 

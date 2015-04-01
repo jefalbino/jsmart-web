@@ -710,7 +710,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 				.addAttribute("vldt-max-l", validatorTag.getMaxLength())
 				.addAttribute("vldt-regex", validatorTag.getRegex())
 				.addAttribute("vldt-text", getTagValue(validatorTag.getText()))
-				.addAttribute("vldt-look", validatorTag.getLook());
+				.addAttribute("vldt-look", getTagValue(validatorTag.getLook()));
 		}
 	}
 	

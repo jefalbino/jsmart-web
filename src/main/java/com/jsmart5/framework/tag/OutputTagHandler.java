@@ -65,7 +65,7 @@ public final class OutputTagHandler extends TagHandler {
 		if (transform != null && !Case.validate(transform)) {
 			throw InvalidAttributeException.fromPossibleValues("output", "transform", Case.getValues());
 		}
-		if (look != null && !Look.validateText(look)) {
+		if (look != null && !Look.validateText(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("output", "look", Look.getTextValues());
 		}
 	}
@@ -146,17 +146,19 @@ public final class OutputTagHandler extends TagHandler {
 			tag.addAttribute("class", Bootstrap.TEXT_JUSTIFY);
 		}
 		
-		if (Look.PRIMARY.equalsIgnoreCase(look)) {
+		String lookVal = (String) getTagValue(look);
+		
+		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.TEXT_PRIMARY);
-		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.TEXT_SUCCESS);
-		} else if (Look.INFO.equalsIgnoreCase(look)) {
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.TEXT_INFO);
-		} else if (Look.WARNING.equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.TEXT_WARNING);
-		} else if (Look.DANGER.equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.TEXT_DANGER);
-		} else if (Look.MUTED.equalsIgnoreCase(look)) {
+		} else if (Look.MUTED.equalsIgnoreCase(lookVal)) {
 			tag.addAttribute("class", Bootstrap.TEXT_MUTED);
 		}
 

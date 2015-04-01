@@ -102,7 +102,7 @@ public final class ButtonTagHandler extends TagHandler {
 		if (size != null && !Size.validate(size)) {
 			throw InvalidAttributeException.fromPossibleValues("button", "size", Size.getValues());
 		}
-		if (look != null && !Look.validateButton(look)) {
+		if (look != null && !Look.validateButton(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("button", "look", Look.getButtonValues());
 		}
 	}
@@ -156,23 +156,23 @@ public final class ButtonTagHandler extends TagHandler {
 
 		appendRefId(button, id);
 
-		String lookVal = Bootstrap.BUTTON_DEFAULT;
+		String lookVal = (String) getTagValue(look);
 		
-		if (Look.PRIMARY.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_PRIMARY;
-		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_SUCCESS;
-		} else if (Look.INFO.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_INFO;
-		} else if (Look.WARNING.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_WARNING;
-		} else if (Look.DANGER.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_DANGER;
-		} else if (Look.LINK.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.BUTTON_LINK;
+		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+			button.addAttribute("class", Bootstrap.BUTTON_PRIMARY);
+		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+			button.addAttribute("class", Bootstrap.BUTTON_SUCCESS);
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+			button.addAttribute("class", Bootstrap.BUTTON_INFO);
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+			button.addAttribute("class", Bootstrap.BUTTON_WARNING);
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+			button.addAttribute("class", Bootstrap.BUTTON_DANGER);
+		} else if (Look.LINK.equalsIgnoreCase(lookVal)) {
+			button.addAttribute("class", Bootstrap.BUTTON_LINK);
+		} else {
+			button.addAttribute("class", Bootstrap.BUTTON_DEFAULT);
 		}
-
-		button.addAttribute("class", lookVal);
 			
 		if (Size.XSMALL.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_XSMALL);
@@ -220,7 +220,7 @@ public final class ButtonTagHandler extends TagHandler {
 				Button dropDown = new Button();
 				dropDown.addAttribute("type", "button")
 					.addAttribute("class", Bootstrap.BUTTON)
-					.addAttribute("class", lookVal)
+					.addAttribute("class", lookVal != null ? lookVal : Bootstrap.BUTTON_DEFAULT)
 					.addAttribute("role", "button")
 					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
 					.addAttribute("class", disabled ? Bootstrap.DISABLED : null)

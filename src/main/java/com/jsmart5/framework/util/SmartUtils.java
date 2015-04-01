@@ -32,6 +32,10 @@ public final class SmartUtils {
 	private static final Random random = new SecureRandom();
 
 	private static final Base32 base32 = new Base32();
+	
+	private SmartUtils() {
+		// DO NOTHING
+	}
 
 	public static String decodePath(String path) {
 		if (path != null && !path.startsWith("/")) {

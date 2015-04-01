@@ -41,7 +41,7 @@ public final class OutputListTagHandler extends TagHandler {
 
 	@Override
 	public void validateTag() throws JspException {
-		if (look != null && !Look.validateText(look)) {
+		if (look != null && !Look.validateText(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("outputlist", "look", Look.getTextValues());
 		}
 	}
@@ -54,24 +54,23 @@ public final class OutputListTagHandler extends TagHandler {
 		ul.addAttribute("id", id)
 			.addAttribute("style", style);
 		
-		String lookVal = null;
+		String lookVal = (String) getTagValue(look);
 
-		if (Look.PRIMARY.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.TEXT_PRIMARY;
-		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.TEXT_SUCCESS;
-		} else if (Look.INFO.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.TEXT_INFO;
-		} else if (Look.WARNING.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.TEXT_WARNING;
-		} else if (Look.DANGER.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.TEXT_DANGER;
-		} else if (Look.MUTED.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.TEXT_MUTED;
+		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+			ul.addAttribute("class", Bootstrap.TEXT_PRIMARY);
+		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+			ul.addAttribute("class", Bootstrap.TEXT_SUCCESS);
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+			ul.addAttribute("class", Bootstrap.TEXT_INFO);
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+			ul.addAttribute("class", Bootstrap.TEXT_WARNING);
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+			ul.addAttribute("class", Bootstrap.TEXT_DANGER);
+		} else if (Look.MUTED.equalsIgnoreCase(lookVal)) {
+			ul.addAttribute("class", Bootstrap.TEXT_MUTED);
 		}
 
-		ul.addAttribute("class", lookVal)
-			.addAttribute("class", inline ? Bootstrap.LIST_INLINE : null);
+		ul.addAttribute("class", inline ? Bootstrap.LIST_INLINE : null);
 
 		// Add the style class at last
 		ul.addAttribute("class", styleClass);

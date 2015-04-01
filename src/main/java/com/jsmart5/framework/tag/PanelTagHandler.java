@@ -42,7 +42,7 @@ public final class PanelTagHandler extends TagHandler {
 	private FooterTagHandler footer;
 
 	public void validateTag() throws JspException {
-		if (look != null && !Look.validateLook(look)) {
+		if (look != null && !Look.validateLook(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("panel", "look", Look.getLookValues());
 		}
 	}
@@ -71,21 +71,21 @@ public final class PanelTagHandler extends TagHandler {
 			.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.PANEL);
 
-		String lookVal = Bootstrap.PANEL_DEFAULT;
+		String lookVal = (String) getTagValue(look);
 		
-		if (Look.PRIMARY.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.PANEL_PRIMARY;
-		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.PANEL_SUCCESS;
-		} else if (Look.INFO.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.PANEL_INFO;
-		} else if (Look.WARNING.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.PANEL_WARNING;
-		} else if (Look.DANGER.equalsIgnoreCase(look)) {
-			lookVal = Bootstrap.PANEL_DANGER;
+		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+			panel.addAttribute("class", Bootstrap.PANEL_PRIMARY);
+		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+			panel.addAttribute("class", Bootstrap.PANEL_SUCCESS);
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+			panel.addAttribute("class", Bootstrap.PANEL_INFO);
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+			panel.addAttribute("class", Bootstrap.PANEL_WARNING);
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+			panel.addAttribute("class", Bootstrap.PANEL_DANGER);
+		} else {
+			panel.addAttribute("class", Bootstrap.PANEL_DEFAULT);
 		}
-
-		panel.addAttribute("class", lookVal);
 		
 		// Add the style class at last
 		panel.addAttribute("class", styleClass);

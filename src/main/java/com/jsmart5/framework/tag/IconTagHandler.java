@@ -80,7 +80,7 @@ public final class IconTagHandler extends TagHandler {
 		if (side != null && !Align.validateLeftRight(side)) {
 			throw InvalidAttributeException.fromPossibleValues("icon", "side", Align.getLeftRightValues());
 		}
-		if (look != null && !Look.validateLook(look)) {
+		if (look != null && !Look.validateLook(look) && !isEL(look)) {
 			throw InvalidAttributeException.fromPossibleValues("icon", "look", Look.getLookValues());
 		}
 	}
@@ -103,15 +103,17 @@ public final class IconTagHandler extends TagHandler {
 		
 		appendRefId(span, id);
 		
-		if (Look.PRIMARY.equalsIgnoreCase(look)) {
+		String lookVal = (String) getTagValue(look);
+
+		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
 			span.addAttribute("class", Bootstrap.TEXT_PRIMARY);
-		} else if (Look.SUCCESS.equalsIgnoreCase(look)) {
+		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
 			span.addAttribute("class", Bootstrap.TEXT_SUCCESS);
-		} else if (Look.INFO.equalsIgnoreCase(look)) {
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
 			span.addAttribute("class", Bootstrap.TEXT_INFO);
-		} else if (Look.WARNING.equalsIgnoreCase(look)) {
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
 			span.addAttribute("class", Bootstrap.TEXT_WARNING);
-		} else if (Look.DANGER.equalsIgnoreCase(look)) {
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
 			span.addAttribute("class", Bootstrap.TEXT_DANGER);
 		}
 		
