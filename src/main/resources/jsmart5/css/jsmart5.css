@@ -67,12 +67,16 @@
 	color: inherit !important; 
 	text-shadow: none;
 	text-align: left;
+	right: 10%;
+  	left: 10%;
+  	padding-top: 5px;
 }
 
 .js5-carousel-control {
 	background: none !important;
 	opacity: 0.5;
 	color: #444;
+	width: 10%;
 }
 
 .js5-carousel-control:hover, .js5-carousel-control:focus {
