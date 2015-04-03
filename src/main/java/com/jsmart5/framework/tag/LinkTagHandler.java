@@ -155,12 +155,14 @@ public final class LinkTagHandler extends TagHandler {
 
 		String outcomeVal = SmartUtils.decodePath((String) getTagValue(outcome)); 
 		if (outcomeVal != null) {
-			url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal) + urlParams.substring(0, urlParams.length() -1);
+			url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal) 
+					+ urlParams.substring(0, urlParams.length() -1);
 		}
 
 		String href = "#";
 		if (action == null && !url.isEmpty()) {
-			href = (!url.startsWith("http") && !url.startsWith("mailto") ? getRequest().getContextPath() + "/" : "") + url;
+			href = (!url.startsWith("http") && !url.startsWith("mailto") && !url.startsWith("#") ? 
+						getRequest().getContextPath() + "/" : "") + url;
 			link.addAttribute("href", href);
 		}
 
