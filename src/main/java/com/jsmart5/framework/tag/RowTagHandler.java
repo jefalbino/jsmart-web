@@ -38,20 +38,19 @@ public final class RowTagHandler extends TagHandler {
 	private String look;
 
 	private boolean disabled;
-	
-	private String selectValue;
-	
+
+	private boolean selectable;
+
 	private Integer selectIndex;
-	
+
 	private Integer scrollIndex;
-	
+
 	private HeaderTagHandler header;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof ListTagHandler) {
-
 			((ListTagHandler) parent).addRow(this);
 		}
 		return false;
@@ -78,7 +77,7 @@ public final class RowTagHandler extends TagHandler {
 		}
 
 		Tag tag = null;
-		if (selectValue != null) {
+		if (selectable) {
 			tag = new A();
 			tag.addAttribute("style", "cursor: pointer;");
 		} else {
@@ -128,8 +127,8 @@ public final class RowTagHandler extends TagHandler {
 		this.header = header;
 	}
 	
-	void setSelectValue(String selectValue) {
-		this.selectValue = selectValue;
+	void setSelectable(boolean selectable) {
+		this.selectable = selectable;
 	}
 	
 	void setScrollIndex(Integer scrollIndex) {

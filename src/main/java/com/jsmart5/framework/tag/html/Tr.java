@@ -16,13 +16,11 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.adapter;
+package com.jsmart5.framework.tag.html;
 
-import java.util.List;
-import java.util.Map;
+public class Tr extends Tag {
 
-public abstract class TableAdapter<T> {
-
-	public abstract List<T> load(final int index, final int size, final String sortBy, final int sortOrder, final Map<String, String> filterBy);
-
+	public Tr() {
+		super("tr");
+	}
 }

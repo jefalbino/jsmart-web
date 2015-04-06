@@ -33,6 +33,8 @@ import com.jsmart5.framework.tag.type.Output;
 
 public final class LoadTagHandler extends TagHandler {
 
+	private String icon;
+
 	private String label;
 
 	private String type;
@@ -74,18 +76,23 @@ public final class LoadTagHandler extends TagHandler {
 
 		header.addAttribute("style", style)
 			.addAttribute("class", styleClass);
-		
+
 		appendRefId(header, id);
 
 		Span span = new Span();
 		span.addAttribute("refresh-icon", "")
 			.addAttribute("class", Bootstrap.GLYPHICON)
-			.addAttribute("class", Bootstrap.GLYPHICON_REFRESH)
 			.addAttribute("class", Bootstrap.GLYPHICON_ANIMATE)
 			.addAttribute("aria-hidden", "true");
 
+		if (icon != null) {
+			span.addAttribute("class", getTagValue(icon));
+		} else {
+			span.addAttribute("class", Bootstrap.GLYPHICON_REFRESH);
+		}
+
 		header.addTag(span);
-		
+
 		if (label != null) { 
 			header.addText(" ")
 				.addText(getTagValue(label));
@@ -95,6 +102,10 @@ public final class LoadTagHandler extends TagHandler {
 		appendBind(id);
 
 		return header;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 	public void setLabel(String label) {

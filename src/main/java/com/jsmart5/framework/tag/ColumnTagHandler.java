@@ -19,6 +19,7 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -26,28 +27,23 @@ import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.html.Td;
 
 public final class ColumnTagHandler extends TagHandler {
-
-	private Integer rowspan;
-
-	private String header;
-
-	private boolean selectable = true;
 
 	private String sortBy;
 
 	private String filterBy;
 
+	private HeaderTagHandler header;
+
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof TableTagHandler) {
-
 			((TableTagHandler) parent).addColumn(this);
-			return false;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -57,35 +53,27 @@ public final class ColumnTagHandler extends TagHandler {
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
+
+		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
 		if (body != null) {
-			body.invoke(outputWriter);
+			body.invoke(sw);
 		}
-		return null;
+
+		Td td = new Td();
+		td.addAttribute("id", id)
+			.addAttribute("style", style)
+			.addAttribute("class", styleClass)
+			.addText(sw.toString());
+		return td;
 	}
 
-	Integer getRowspan() {
-		return rowspan;
-	}
-
-	public void setRowspan(Integer rowspan) {
-		this.rowspan = rowspan;
-	}
-
-	String getHeader() {
+	HeaderTagHandler getHeader() {
 		return header;
 	}
 
-	public void setHeader(String header) {
+	void setHeader(HeaderTagHandler header) {
 		this.header = header;
-	}
-
-	boolean isSelectable() {
-		return selectable;
-	}
-
-	public void setSelectable(boolean selectable) {
-		this.selectable = selectable;
 	}
 
 	String getSortBy() {

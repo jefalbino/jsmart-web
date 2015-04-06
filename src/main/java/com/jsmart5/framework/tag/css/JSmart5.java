@@ -43,6 +43,8 @@ public final class JSmart5 {
 	public static final String CAROUSEL_INDICATOR = "js5-carousel-indicator";
 	
 	public static final String DATE_FORM_GROUP = "js5-date-form-group";
+
+	public static final String TABLE_SCROLL = "js5-table-scroll";
 	
 	private JSmart5() {
 		// DO NOTHING

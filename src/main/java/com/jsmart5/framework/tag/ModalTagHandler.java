@@ -134,8 +134,8 @@ public final class ModalTagHandler extends TagHandler {
 			appendScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
 		}
 
-		Boolean booleanVal = (Boolean) getTagValue(opened);
-		if (booleanVal != null && booleanVal) {
+		Object openedVal = getTagValue(opened);
+		if (openedVal != null && Boolean.parseBoolean(openedVal.toString())) {
 			appendScript(new StringBuilder(JSMART_MODAL.format(id)));
 		}
 		return modal;

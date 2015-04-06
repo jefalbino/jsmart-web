@@ -229,34 +229,34 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private List<String> getCompleteValues() throws JspException {
-		HttpServletRequest request = getRequest();
-		String tagParamName = getTagName(J_COMPLETE, "@{" + id + "}");
-
-		if (request.getParameter(tagParamName) != null) {
-
-			List<String> listValues = new ArrayList<String>();
-			String completeValue = request.getParameter(tagParamName);
-
-			Object tagValue = getTagValue(complete);
-			
-			Collection<Object> values = null;
-
-			if (tagValue instanceof Collection) {
-				values = (Collection<Object>) tagValue;
-
-			} else if (tagValue != null) {
-	 	 		throw new JspException("The value of attribute named 'complete' for autocomplete tag must be instance of an Collection or SmartAutoCompleteAdapter!");
-	 	 	}
-
-			if (values != null) {
-				for (Object value : values) {
-					if (value != null) {
-						listValues.add(value.toString());
-					}
-				}
-			}
-			return listValues;
-		}
+//		HttpServletRequest request = getRequest();
+//		String tagParamName = getTagName(J_COMPLETE, "@{" + id + "}");
+//
+//		if (request.getParameter(tagParamName) != null) {
+//
+//			List<String> listValues = new ArrayList<String>();
+//			String completeValue = request.getParameter(tagParamName);
+//
+//			Object tagValue = getTagValue(complete);
+//			
+//			Collection<Object> values = null;
+//
+//			if (tagValue instanceof Collection) {
+//				values = (Collection<Object>) tagValue;
+//
+//			} else if (tagValue != null) {
+//	 	 		throw new JspException("The value of attribute named 'complete' for autocomplete tag must be instance of an Collection or SmartAutoCompleteAdapter!");
+//	 	 	}
+//
+//			if (values != null) {
+//				for (Object value : values) {
+//					if (value != null) {
+//						listValues.add(value.toString());
+//					}
+//				}
+//			}
+//			return listValues;
+//		}
 		return null;
 	}
 

@@ -326,6 +326,19 @@ public final class Bootstrap {
 	
 	public static final String ANCHOR_JS_ICON = "anchorjs-icon";
 
+	
+	public static final String TABLE = "table";
+
+	public static final String TABLE_STRIPED = "table-striped";
+	
+	public static final String TABLE_BORDERED = "table-bordered";
+
+	public static final String TABLE_HOVER = "table-hover";
+
+	public static final String TABLE_CONDENSED = "table-condensed";
+	
+	public static final String TABLE_RESPONSIVE = "table-responsive";
+
 	private Bootstrap() {
 		// DO NOTHING
 	}

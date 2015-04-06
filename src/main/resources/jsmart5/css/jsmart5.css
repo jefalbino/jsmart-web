@@ -13,6 +13,10 @@
     to { transform: scale(1) rotate(360deg);}
 }
 
+@-moz-document url-prefix() {
+  fieldset { display: table-cell; }
+}
+
 .js5-validate-text, .js5-validate-group {
 	display: block;
 	margin-top: -10px;
@@ -95,4 +99,23 @@
 
 .js5-date-form-group {
 	position: relative;
+}
+
+.js5-table-scroll {
+	
+}
+
+.js5-table-scroll tr {
+	width: 100%;
+	display: inline-table;
+}
+
+.js5-table-scroll td, .js5-table-scroll th {
+	text-align: left;
+}
+
+.js5-table-scroll tbody{
+	width: 100%;
+	overflow: auto;
+	position: absolute;
 }

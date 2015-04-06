@@ -134,7 +134,7 @@ public final class ListTagHandler extends TagHandler {
 			String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
 
 			if (scrollParam != null) {
-				jsonScroll =  GSON.fromJson(scrollParam, Scroll.class);
+				jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
 			}
 			object = getListContent(getTagValue(values), jsonScroll);
 
@@ -144,7 +144,7 @@ public final class ListTagHandler extends TagHandler {
 			String scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
 
 			if (scrollParam != null) {
-				jsonScroll =  GSON.fromJson(scrollParam, Scroll.class);
+				jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
 			}
 		}
 
@@ -153,15 +153,15 @@ public final class ListTagHandler extends TagHandler {
 
 			int scrollIndex = jsonScroll != null ? jsonScroll.getIndex() : 0;
 			int selectIndex = scrollIndex;
-			
+
 			while (iterator.hasNext()) {
 				request.setAttribute(var, iterator.next());
 				for (RowTagHandler row : rows) {
 					if (selectValue != null) {
-	 					row.setSelectValue(selectValue);
-	 					row.setScrollIndex(scrollIndex);
+	 					row.setSelectable(true);
 	 					row.setSelectIndex(selectIndex);
 					}
+					row.setScrollIndex(scrollIndex);
  					setEvents(row);
  					ul.addTag(row.executeTag());
  				}
@@ -196,7 +196,6 @@ public final class ListTagHandler extends TagHandler {
 			}
 			
 			ListAdapter<Object> listAdapter = (ListAdapter<Object>) object;
-
 			return listAdapter.load(index, scrollSize);
 
 		} else if (object instanceof List) {

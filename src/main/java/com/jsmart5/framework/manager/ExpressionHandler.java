@@ -43,6 +43,7 @@ import org.joda.time.DateTime;
 
 import com.google.gson.Gson;
 import com.jsmart5.framework.adapter.ListAdapter;
+import com.jsmart5.framework.adapter.TableAdapter;
 
 import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.filter.WebFilter;
@@ -92,12 +93,6 @@ public enum ExpressionHandler {
 	
 			} else if (jTag.equals(TagHandler.J_SEL)) {
 				setSelectionValue(expr, jParam);
-	
-			} else if (jTag.equals(TagHandler.J_TBL_SEL)) {
-				setTableSelectionValue(expr, jParam);
-	
-			} else if (jTag.equals(TagHandler.J_TBL_EDT)) {
-				setTableEditionValue(expr, jParam);
 	
 			} else if (jTag.equals(TagHandler.J_FILE)) {
 				setExpressionFilePart(expr, jParam);
@@ -189,13 +184,21 @@ public enum ExpressionHandler {
 
 				if (object instanceof ListAdapter) {
 					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
-
 					jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
 
 					list = ((ListAdapter) object).load(jsonScroll.getIndex(), jsonScroll.getSize());
 
 					// Save the loaded content on request to avoid calling load twice when loading the page
 					request.setAttribute(REQUEST_LIST_ADAPTER, list);
+
+				} else if (object instanceof TableAdapter) {
+					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
+					jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
+
+					list = ((TableAdapter) object).load(jsonScroll.getIndex(), jsonScroll.getSize(), null, 0, null); // TODO
+					
+					// Save the loaded content on request to avoid calling load twice when loading the page
+					request.setAttribute(REQUEST_TABLE_ADAPTER, list);
 
 				} else if (object instanceof List<?>) {
 					list = (List<Object>) object;
@@ -216,146 +219,6 @@ public enum ExpressionHandler {
 				}
 			}
 		}
-	}
-
-	/*
-	 * It receives a json structure
-	 * {"edit": "", "index": "", "varname": "", "values": [{"name": "", "value": ""}, ...], "first": "", "size": "", "sort": {"name": "", "order": ""}, "filters": [{"name": "", "field": "", "value": ""}, ...]}
-	 */
-	@SuppressWarnings("all")
-	private void setTableEditionValue(String expr, String param) throws ServletException, IOException {
-//		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
-//			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
-//
-//			// Get json value to retrieve object value from collection or adapter
-//			JsonObject jsonAction = GSON.toJsonTree(SmartContext.getRequest().getParameter(param)).getAsJsonObject();
-//
-//			Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_TBL_EDT, getActionEdit(jsonAction)));
-//
-//			Long first = getActionFirst(jsonAction);
-//			Long size = getActionSize(jsonAction);
-//			Integer index = getActionIndex(jsonAction);
-//
-//			Object value = null;
-//			
-//			if (object instanceof TableAdapterHandler) {
-//				List<Object> list = null;
-//				Set<Object> objs = getExpressionBeans(expr);
-//				TableAdapterHandler adapter = (TableAdapterHandler<Object>) object;
-//
-//				for (Object obj : objs) {
-//					if (obj.getClass().getAnnotation(SmartBean.class).scope() == ScopeType.REQUEST_SCOPE) {
-//						list = adapter.loadData(first, size.intValue(), getActionSortBy(jsonAction), 
-//								getActionSortOrder(jsonAction), getActionFilters(jsonAction));
-//					} else {
-//						list = adapter.getLoaded();
-//					}
-//					break;
-//				}
-//
-//				if (list != null && !list.isEmpty()) {
-//					value = list.get(index);
-//				}
-//
-//	 	 	} else if (object instanceof Collection) {
-//	 	 		Collection collection = (Collection) object;
-//
-//	 	 		if (collection != null && !collection.isEmpty()) {
-//	 	 			Object[] collectionArray = collection.toArray();
-//	 	 			value = collectionArray[index];
-//				}
-//	 	 	}
-//
-//			if (value != null) {
-//				String var = getActionVar(jsonAction);
-//				SmartContext.getRequest().setAttribute(var, value);
-//
-//				Map<String, String> editValues = getActionEditValues(jsonAction);
-//				// SmartContext.addParameters(editValues);
-//
-//				for (String editParam : editValues.keySet()) {
-//					String editExpr = extractExpression(editParam);
-//					if (editExpr != null) {
-//						String jTag = editParam.substring(0, TagHandler.J_TAG_LENGTH);
-//						handleRequestExpression(jTag, editExpr, editParam);
-//					}
-//				}
-//
-//				ELContext context = SmartContext.getPageContext().getELContext();
-//				MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, expr, null, new Class<?>[]{value.getClass()});
-//				methodExpr.invoke(context, new Object[]{value});
-//
-//				SmartContext.getRequest().removeAttribute(var);
-//			}
-//		}
-	}
-
-	/*
-	 * It receives a json structure
-	 * {"action": "", "type": "SINGLE/MULTI", "indexes": [], "first": "", "size": "", "sort": {"name": "", "order": ""}, "filters": [{"name": "", "field": "", "value": ""}, ...]}
-	 */
-	@SuppressWarnings("all")
-	private void setTableSelectionValue(String expr, String param) throws ServletException {
-//		if (expr != null && expr.startsWith(Constants.START_EL) && expr.endsWith(Constants.END_EL)) {
-//			expr = expr.replace(Constants.START_EL, Constants.JSP_EL);
-//
-//			// Get json value to retrieve object value from collection or adapter
-//			JsonObject jsonAction = GSON.toJsonTree(SmartContext.getRequest().getParameter(param)).getAsJsonObject();
-//
-//			Object object = getExpressionValue(TagEncrypter.complexDecrypt(TagHandler.J_TBL_SEL, getActionSelect(jsonAction)));
-//
-//			Long first = getActionFirst(jsonAction);
-//			Long size = getActionSize(jsonAction);
-//			SELECT_TYPE selectType = getActionType(jsonAction);
-//			Integer[] indexes = getActionIndexes(jsonAction);
-//
-//			List values = new ArrayList(indexes.length);
-//
-//			if (object instanceof TableAdapterHandler) {
-//				List<Object> list = null;
-//				Set<Object> objs = getExpressionBeans(expr);
-//				TableAdapterHandler adapter = (TableAdapterHandler<Object>) object;
-//
-//				for (Object obj : objs) {
-//					if (obj.getClass().getAnnotation(SmartBean.class).scope() == ScopeType.REQUEST_SCOPE) {
-//						list = adapter.loadData(first, size.intValue(), getActionSortBy(jsonAction), 
-//								getActionSortOrder(jsonAction), getActionFilters(jsonAction));
-//					} else {
-//						list = ((TableAdapterHandler<Object>) object).getLoaded();
-//					}
-//					break;
-//				}
-//
-//				if (list != null && !list.isEmpty()) {
-//					for (int i = 0; i < indexes.length; i++) {
-//						values.add(list.get(indexes[i]));
-//					}
-//				}
-//
-//	 	 	} else if (object instanceof Collection) {
-//	 	 		Collection collection = (Collection) object;
-//
-//	 	 		if (collection != null && !collection.isEmpty()) {
-//	 	 			Object[] collectionArray = collection.toArray();
-//
-//	 	 			for (int i = 0; i < indexes.length; i++) {
-//	 	 				values.add(collectionArray[indexes[i]]);
-//	 	 			}
-//				}
-//	 	 	}
-//
-//			// SmartContext.setSelectIndexes(indexes);
-//			ELContext context = SmartContext.getPageContext().getELContext();
-//
-//			if (selectType == SELECT_TYPE.MULTI) {
-//				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, List.class);
-//				valueExpr.setValue(context, values);
-//
-//			} else if (!values.isEmpty()) {				
-//				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, expr, values.get(0).getClass());
-//				valueExpr.setValue(context, values.get(0));
-//			}
-//		}
 	}
 
 	void setExpressionValue(String expr, String jParam) {

@@ -44,7 +44,7 @@ public final class FooterTagHandler extends TagHandler {
 		} else if (parent instanceof PanelTagHandler) {
 			((PanelTagHandler) parent).setFooter(this);
 			return false;
-		} 
+		}
 		return true;
 	}
 
@@ -63,12 +63,11 @@ public final class FooterTagHandler extends TagHandler {
 		if (body != null) {
 			body.invoke(sw);
 		}
-		
+
 		setRandomId("footer");
 
-		Div footer = new Div();
-		footer.addAttribute("style", style);
-		
+		Tag footer = new Div();
+
 		appendRefId(footer, id);
 
 		if (parent instanceof ModalTagHandler) {
@@ -78,7 +77,8 @@ public final class FooterTagHandler extends TagHandler {
 			footer.addAttribute("class", Bootstrap.PANEL_FOOTER);
 		}
 
-		footer.addAttribute("class", styleClass)
+		footer.addAttribute("style", style)
+			.addAttribute("class", styleClass)
 			.addText(getTagValue(title))
 			.addText(sw.toString());
 		

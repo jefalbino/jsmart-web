@@ -101,17 +101,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 
 	protected static final String J_CAPTCHA = J_TAG_INIT + "012_";
 
-	
-	protected static final String J_TBL = J_TAG_INIT + "015_";
-
-	protected static final String J_TBL_SEL = J_TAG_INIT + "016_";
-
-	protected static final String J_TBL_EDT = J_TAG_INIT + "017_";
-
-	protected static final String J_COMPLETE = J_TAG_INIT + "020_";
-
 	protected static final String EL_PARAM_READ_ONLY = Constants.EL_PARAM_READ_ONLY;
-
 
 	protected final Map<String, Object> params;
 	

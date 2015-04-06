@@ -24,6 +24,8 @@ public final class Constants {
 	
 	public static final String REQUEST_LIST_ADAPTER = "jsmart5_request_list_adapter";
 
+	public static final String REQUEST_TABLE_ADAPTER = "jsmart5_request_table_adapter";
+
 	public static final String REQUEST_PAGE_SCRIPT_ATTR = "jsmart5_page_script_attr";
 
 	public static final String REQUEST_REDIRECT_PATH = "jsmart5_redirect_ajax_path";

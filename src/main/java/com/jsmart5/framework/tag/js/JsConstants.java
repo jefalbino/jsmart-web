@@ -30,29 +30,19 @@ public enum JsConstants {
 	JSMART_TABPANE("Jsmart5.tabpane", "($(this),%s);"),
 	JSMART_CAROUSEL("Jsmart5.carousel", "('%s');"),
 	JSMART_DATE("Jsmart5.date", "(%s);"),
+	JSMART_TABLE("Jsmart5.table", "($(this),%s);"),
+	JSMART_TABLESCROLL("Jsmart5.tablescroll", "(%s);"),
 
+	JSMART_LOAD("Jsmart5.load", "('%s');"),
 
 	JSMART_REST("Jsmart5.rest", "(%s,%s,%s);"),
-	JSMART_TABLE("Jsmart5.table", "(%s,'%s',%s);"),
-	JSMART_TABLE_SELECT("Jsmart5.tableSelect", "(%s,'%s',%s);"),
-	JSMART_TABLE_EDIT("Jsmart5.tableEdit", "(%s,'%s',%s);"),
-	JSMART_TABLE_EDIT_START("Jsmart5.tableEditStart", "('%s',%s,%s,%s);"),
-	JSMART_TABLE_EDIT_CANCEL("Jsmart5.tableEditCancel", "('%s',%s,%s,%s);"),
-	JSMART_TABLE_ROW_EXPAND("Jsmart5.tableRowExpand", "('%s');"),
-	JSMART_TABLE_SCROLL("Jsmart5.tableScroll", "('%s');"),
 	JSMART_SWITCH("Jsmart5.xswitch", "('%s',%s,%s);"),
 	JSMART_SWITCH_RESET("Jsmart5.resetSwitch", "('%s');"),
 	JSMART_BALLOON("Jsmart5.balloon", "('%s','%s',%s,%s,'%s');"),
 	JSMART_PROGRESS("Jsmart5.progress", "('%s');"),
 	JSMART_RANGE("Jsmart5.range", "('%s');"),
-
-	JSMART_LOAD("Jsmart5.load", "('%s');"),
 	JSMART_TREE("Jsmart5.tree", "('%s');"),
-
-	JSMART_BUTTON_RESTARRAY("Jsmart5.buttonRestArray", "('%s','%s');"),
-
-	JSMART_AUTOCOMPLETE_RESET("Jsmart5.resetAutocomplete", "('%s');"),
-	JSMART_AUTOCOMPLETE("Jsmart5.autocomplete", "(%s,'%s',event);");
+	JSMART_BUTTON_RESTARRAY("Jsmart5.buttonRestArray", "('%s','%s');");
 
 	private String name;
 

@@ -128,6 +128,14 @@ var Jsmart5 = (function() {
 		
 		date: function (map) {
 			doDate(map);
+		},
+		
+		table: function (tr, map) {
+			doTable(tr, map);
+		},
+
+		tablescroll: function (map) {
+			doTableScroll(map);
 		}
 	};
 
@@ -420,6 +428,154 @@ var Jsmart5 = (function() {
 									ul.append(newUl.find('a'));
 								} else {
 									ul.append(newUl.find('li'));
+								}
+							}
+						}
+					}
+				};
+
+				var options = getAjaxOptions(map);
+				options.data = postParam;
+
+				if (closestForm && closestForm.length > 0) {
+					$(closestForm).ajaxSubmit(options);
+				} else {
+					$.ajax(options);
+				}
+			}
+		});
+	}
+	
+	function doTable(tr, map) {
+		if (tr && tr.length > 0) {
+
+			var refreshTr = tr.find('span[' + refreshIcon + ']');
+			if (refreshTr && refreshTr.length > 0) {
+				return;
+			}
+
+			var postParam = getAjaxParams(map);
+			var options = getAjaxOptions(map);
+			var closestForm = $(tr).closest('form');
+			
+			var jsonParam = {};
+			jsonParam.size = tr.closest('tbody').attr('scroll-size');
+			jsonParam.index = tr.attr('scroll-index');
+
+			for (var i = 0; i < postParam.length; i++) {
+				// Look for J_SEL_VAL parameter to send the index clicked
+				if (postParam[i].name.indexOf(tagInit + '006_') >= 0) {
+					postParam[i].value = tr.attr('table-index');
+				}
+				
+				// Look for J_SCROLL parameter to send scroll values
+				if (postParam[i].name.indexOf(tagInit + '010_') >= 0) {
+					postParam[i].value = JSON.stringify(jsonParam);
+				}
+			}
+
+			if (closestForm && closestForm.length > 0) {
+				if (!doValidate($(closestForm).attr('id'))) {
+					return;
+				}
+			} else {
+				postParam = $.param(postParam);			
+			}
+			options.data = postParam;
+
+			if (closestForm && closestForm.length > 0) {
+				$(closestForm).ajaxSubmit(options);
+			} else {
+				$.ajax(options);
+			}
+		}
+	}
+
+	function doTableScroll(map) {
+		var table = $(getId(map.id));
+		var tableH = table.find('thead').outerHeight();
+		tableH += table.find('tbody').outerHeight();
+
+		var tableCaption = table.find('caption');
+		if (tableCaption && tableCaption.length > 0) {
+			tableH += tableCaption.outerHeight();
+		}
+		table.height(tableH);
+
+		table.find('tbody').scroll(function(e) {
+			var tbody = $(this);
+			if (tbody.scrollTop() + tbody.outerHeight() >= tbody[0].scrollHeight) {
+
+				var scrollActive = tbody.attr('scroll-active');
+				if (scrollActive && scrollActive.length > 0) {
+					return;
+				}
+				
+				// Set scroll as active to avoid multiple requests
+				tbody.attr('scroll-active', 'true');
+				
+				var postParam = getAjaxParams(map);
+				var closestForm = $(tbody).closest('form');
+
+				var lastChild = tbody.find('tr:last-child');
+
+				var jsonParam = {};
+				jsonParam.size = tbody.attr('scroll-size');
+				jsonParam.index = parseInt(lastChild.attr('table-index')) + 1;
+				
+				for (var i = 0; i < postParam.length; i++) {
+					// Look for J_SCROLL parameter to send scroll values
+					if (postParam[i].name.indexOf(tagInit + '010_') >= 0) {
+						postParam[i].value = JSON.stringify(jsonParam);
+						break;
+					}
+				}
+
+				if (closestForm && closestForm.length > 0) {
+					if (!doValidate($(closestForm).attr('id'))) {
+						return;
+					}
+				} else {
+					postParam = $.param(postParam);			
+				}
+
+				var refreshClone = null
+				var hiddenRefresh = tbody.find('span[' + refreshIcon + ']').closest('tr');
+
+				// Append loading icon on list if it was configured
+				if (hiddenRefresh && hiddenRefresh.length > 0) {
+
+					refreshClone = hiddenRefresh.clone();
+					refreshClone.find('td').css({'display': 'block'});
+					tbody.append(refreshClone);
+				}
+				
+				// Remove scroll-active and refreshing icon
+				map.complete = function() {
+					if (refreshClone) {
+						refreshClone.remove();
+					}
+					tbody.removeAttr('scroll-active');
+				};
+
+				// Function to append to table body
+				map.success = function(data) {
+					var newTable = $(data).find(getId(table.attr('id')));
+
+					if (newTable && newTable.length > 0) {
+
+						var lastChild = newTable.find('tbody tr:last-child');
+
+						if (lastChild && lastChild.length > 0) {
+							var lastIndex = lastChild.attr('table-index')
+
+							// Case the returned table has last index different than current
+							if (lastIndex && (jsonParam.index - 1) != lastIndex) {
+								
+								if (refreshClone) {
+									tbody.append(newTable.find('tbody tr').not(':first'));
+								} else {
+									tbody.append(newTable.find('tbody tr'));
 								}
 							}
 						}
