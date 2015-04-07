@@ -105,6 +105,12 @@
 	
 }
 
+.js5-table-scroll tbody {
+	width: 100%;
+	overflow-y: scroll;
+	position: absolute;
+}
+
 .js5-table-scroll tr {
 	width: 100%;
 	display: inline-table;
@@ -114,14 +120,12 @@
 	text-align: left;
 }
 
-.js5-table-scroll tbody {
-	width: 100%;
-	overflow: auto;
-	position: absolute;
+.js5-table-header-filter-by, .js5-table-header-sort-by {
+	float: left;
 }
 
-.js5-table-header-col, .js5-table-header-sort-by {
-	float: left;
+.js5-table-header-filter-by {
+	font-weight: normal;
 }
 
 .js5-table-header-sort-by {

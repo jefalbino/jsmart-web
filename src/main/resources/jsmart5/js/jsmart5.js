@@ -519,14 +519,11 @@ var Jsmart5 = (function() {
 
 	function doTableScroll(map) {
 		var table = $(getId(map.id));
-		var tableH = table.find('thead').outerHeight();
-		tableH += table.find('tbody').outerHeight();
 
-		var tableCaption = table.find('caption');
-		if (tableCaption && tableCaption.length > 0) {
-			tableH += tableCaption.outerHeight();
-		}
-		table.height(tableH);
+		var thead = table.find('thead tr');
+		table.find('tbody tr:last').find('td').each(function(index) {
+			thead.children().eq(index).css({'width': $(this).width()});
+		});
 
 		table.find('tbody').scroll(function(e) {
 			var tbody = $(this);

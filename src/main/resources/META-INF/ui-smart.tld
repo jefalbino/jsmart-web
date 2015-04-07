@@ -1734,10 +1734,6 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>selectLook</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>scrollSize</name>
             <required>false</required>
         </attribute>

@@ -49,7 +49,6 @@ import com.jsmart5.framework.tag.html.Td;
 import com.jsmart5.framework.tag.html.Th;
 import com.jsmart5.framework.tag.html.Tr;
 import com.jsmart5.framework.tag.type.Event;
-import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.tag.type.Type;
 
@@ -62,8 +61,6 @@ public final class TableTagHandler extends TagHandler {
 	private String values;
 
 	private String selectValue;
-	
-	private String selectLook;
 
 	private String caption;
 
@@ -89,8 +86,6 @@ public final class TableTagHandler extends TagHandler {
 
 	private final List<ColumnTagHandler> columns;
 
-	private boolean headerScript;
-
 	public TableTagHandler() {
 		columns = new ArrayList<ColumnTagHandler>();
 	}
@@ -105,9 +100,6 @@ public final class TableTagHandler extends TagHandler {
 		}
 		if (size != null && !Size.validateSmallLarge(size)) {
 			throw InvalidAttributeException.fromPossibleValues("table", "size", Size.getSmallLargeValues());
-		}
-		if (selectLook != null && !Look.validateBasic(selectLook) && !isEL(selectLook)) {
-			throw InvalidAttributeException.fromPossibleValues("table", "selectLook", Look.getBasicValues());
 		}
 	}
 
@@ -127,7 +119,7 @@ public final class TableTagHandler extends TagHandler {
 
 		setRandomId("table");
 
-		HttpServletRequest request = getRequest();
+		HttpServletRequest request = getRequest();		
 
 		Div div = new Div();
 		div.addAttribute("class", Bootstrap.TABLE_RESPONSIVE);
@@ -139,13 +131,7 @@ public final class TableTagHandler extends TagHandler {
 			.addAttribute("class", bordered ? Bootstrap.TABLE_BORDERED : null)
 			.addAttribute("class", striped ? Bootstrap.TABLE_STRIPED : null)
 			.addAttribute("class", selectValue != null ? Bootstrap.TABLE_HOVER : null)
-			.addAttribute("class", scrollSize != null ? JSmart5.TABLE_SCROLL : null)
-			.addAttribute("style", maxHeight != null ? "height: " + maxHeight + ";" : null);
-
-		if (selectValue != null) {
-			Object lookVal = getTagValue(selectLook);
-			table.addAttribute("select-look", lookVal != null ? lookVal : Bootstrap.ACTIVE);
-		}
+			.addAttribute("class", scrollSize != null ? JSmart5.TABLE_SCROLL : null);
 
 		if (Size.SMALL.equalsIgnoreCase(size)) {
 			table.addAttribute("class", Bootstrap.TABLE_CONDENSED);
@@ -160,10 +146,12 @@ public final class TableTagHandler extends TagHandler {
 
 		THead thead = new THead();
 		TBody tbody = new TBody();
-		tbody.addAttribute("style", maxHeight != null ? "max-height: " + maxHeight + ";" : null);
-		
-		if (scrollSize != null) {
-			tbody.addAttribute("scroll-size", scrollSize);
+		tbody.addAttribute("scroll-size", scrollSize);
+
+		if (maxHeight != null) {
+			tbody.addAttribute("style", "height: " + maxHeight + ";")
+				.addAttribute("style", "max-height: " + maxHeight + ";");
+			table.addAttribute("style", "margin-bottom: " + maxHeight + ";");
 		}
 
 		if (loadTag != null) {
@@ -180,6 +168,7 @@ public final class TableTagHandler extends TagHandler {
 
 		// Get the scroll parameters case requested by scroll table
 		Scroll scroll = null;
+		boolean hasFilterOrSort = hasFilterOrSort();
 		
 		Object object = request.getAttribute(Constants.REQUEST_TABLE_ADAPTER);
 		if (object == null) {
@@ -189,7 +178,7 @@ public final class TableTagHandler extends TagHandler {
 			if (scrollParam != null) {
 				scroll = GSON.fromJson(scrollParam, Scroll.class);
 			}
-			object = getTableContent(getTagValue(values), scroll);
+			object = getTableContent(getTagValue(values), scroll, hasFilterOrSort);
 
 		} else {
 			// It means that the select on table was performed and the content was 
@@ -245,7 +234,7 @@ public final class TableTagHandler extends TagHandler {
 		if (scrollSize != null) {
 			appendScript(getScrollFunction());
 		}
-		if (headerScript) {
+		if (hasFilterOrSort) {
 			appendScript(getHeaderFunction());
 		}
 
@@ -264,7 +253,7 @@ public final class TableTagHandler extends TagHandler {
 
 			if (column.getFilterBy() != null) {
 				Div div = new Div();
-				div.addAttribute("class", JSmart5.TABLE_HEADER_COLUMN);
+				div.addAttribute("class", JSmart5.TABLE_HEADER_FILTER_BY);
 
 				Input input = new Input();
 				input.addAttribute("class", Bootstrap.FORM_CONTROL)
@@ -276,12 +265,11 @@ public final class TableTagHandler extends TagHandler {
 
 				div.addTag(input);
 				th.addTag(div);
-				headerScript = true;
 
 			} else {
 				if (column.getSortBy() != null) {
 					Div div = new Div();
-					div.addAttribute("class", JSmart5.TABLE_HEADER_SORT_ONLY)
+					div.addAttribute("class", JSmart5.TABLE_HEADER_SORT_BY)
 						.addText(getTagValue(column.getLabel()));
 					th.addTag(div);
 
@@ -311,7 +299,6 @@ public final class TableTagHandler extends TagHandler {
 				div.addTag(bottomTag);
 
 				th.addTag(div);
-				headerScript = true;
 			}
 			tr.addTag(th);
 		}
@@ -319,7 +306,7 @@ public final class TableTagHandler extends TagHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<?> getTableContent(Object object, Scroll scroll) throws JspException {
+	private List<?> getTableContent(Object object, Scroll scroll, Boolean hasFilterOrSort) throws JspException {
 		int index = scroll != null ? scroll.getIndex() : 0;
 
 		if (object instanceof TableAdapter) {
@@ -342,6 +329,12 @@ public final class TableTagHandler extends TagHandler {
 			return tableAdapter.load(index, scrollSize, sort, order, filters);
 
 		} else if (object instanceof List) {
+			if (hasFilterOrSort) {
+				throw InvalidAttributeException.fromConflict("table", "values",
+						"Attribute [values] with static List cannot be used along with columns " +
+						"using [filterBy] or [sortBy] attributes. Please use TableAdapter instead.");
+			}
+
 			List<Object> list = (List<Object>) object;
 			Object[] array = list.toArray();
 
@@ -420,6 +413,18 @@ public final class TableTagHandler extends TagHandler {
 		return builder;
 	}
 
+	private boolean hasFilterOrSort() {
+		boolean headerScript = false;
+
+		for (ColumnTagHandler column : columns) {
+			if (column.getFilterBy() != null || column.getSortBy() != null) {
+				headerScript = true;
+				break;
+			}
+		}
+		return headerScript;
+	}
+
 	void addColumn(ColumnTagHandler column) {
 		this.columns.add(column);
 	}
@@ -434,10 +439,6 @@ public final class TableTagHandler extends TagHandler {
 
 	public void setSelectValue(String selectValue) {
 		this.selectValue = selectValue;
-	}
-
-	public void setSelectLook(String selectLook) {
-		this.selectLook = selectLook;
 	}
 
 	public void setCaption(String caption) {
