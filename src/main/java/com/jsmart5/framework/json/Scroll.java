@@ -18,11 +18,19 @@
 
 package com.jsmart5.framework.json;
 
+import java.util.Map;
+
 public class Scroll {
 
 	private Integer index;
 	
 	private Integer size;
+
+	private String sort;
+
+	private Integer order;
+
+	private Map<String, String> filters;
 
 	public Integer getIndex() {
 		return index;
@@ -39,4 +47,29 @@ public class Scroll {
 	public void setSize(Integer size) {
 		this.size = size;
 	}
+
+	public String getSort() {
+		return sort;
+	}
+
+	public void setSort(String sort) {
+		this.sort = sort;
+	}
+
+	public Integer getOrder() {
+		return order == null ? 0 : order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+
+	public Map<String, String> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(Map<String, String> filters) {
+		this.filters = filters;
+	}
+
 }

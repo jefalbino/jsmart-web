@@ -31,11 +31,11 @@ import com.jsmart5.framework.tag.html.Td;
 
 public final class ColumnTagHandler extends TagHandler {
 
+	private String label;
+
 	private String sortBy;
 
 	private String filterBy;
-
-	private HeaderTagHandler header;
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
@@ -68,12 +68,12 @@ public final class ColumnTagHandler extends TagHandler {
 		return td;
 	}
 
-	HeaderTagHandler getHeader() {
-		return header;
+	String getLabel() {
+		return label;
 	}
 
-	void setHeader(HeaderTagHandler header) {
-		this.header = header;
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	String getSortBy() {

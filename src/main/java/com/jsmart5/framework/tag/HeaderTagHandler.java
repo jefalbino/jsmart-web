@@ -28,7 +28,6 @@ import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.Tag;
-import com.jsmart5.framework.tag.html.Th;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Output;
 
@@ -48,10 +47,6 @@ public final class HeaderTagHandler extends TagHandler {
 
 		} else if (parent instanceof RowTagHandler) {
 			((RowTagHandler) parent).setHeader(this);
-			return false;
-
-		} else if (parent instanceof ColumnTagHandler) {
-			((ColumnTagHandler) parent).setHeader(this);
 			return false;
 
 		} else if (parent instanceof PanelTagHandler) {
@@ -99,10 +94,6 @@ public final class HeaderTagHandler extends TagHandler {
 			}
 			header.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_HEADING);
 
-		} else if (parent instanceof ColumnTagHandler) {
-			// Case parent is column tag, ignore the header type anyway
-			header = new Th();
-
 		} else if (parent instanceof PanelTagHandler) {
 			if (header == null) {
 				header = new Tag(Output.H3.name().toLowerCase());
@@ -119,7 +110,6 @@ public final class HeaderTagHandler extends TagHandler {
 			if (header == null) {
 				header = new Tag(Output.H4.name().toLowerCase());
 			}
-
 		} else if (header == null) {
 			header = new Tag(Output.H3.name().toLowerCase());
 		}

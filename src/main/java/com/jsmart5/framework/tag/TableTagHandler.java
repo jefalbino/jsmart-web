@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -39,15 +40,18 @@ import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.css.JSmart5;
 import com.jsmart5.framework.tag.html.Caption;
 import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.TBody;
 import com.jsmart5.framework.tag.html.THead;
 import com.jsmart5.framework.tag.html.Table;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Td;
+import com.jsmart5.framework.tag.html.Th;
 import com.jsmart5.framework.tag.html.Tr;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Size;
+import com.jsmart5.framework.tag.type.Type;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -84,6 +88,8 @@ public final class TableTagHandler extends TagHandler {
 	private String onComplete;
 
 	private final List<ColumnTagHandler> columns;
+
+	private boolean headerScript;
 
 	public TableTagHandler() {
 		columns = new ArrayList<ColumnTagHandler>();
@@ -173,7 +179,7 @@ public final class TableTagHandler extends TagHandler {
 		}
 
 		// Get the scroll parameters case requested by scroll table
-		Scroll jsonScroll = null;
+		Scroll scroll = null;
 		
 		Object object = request.getAttribute(Constants.REQUEST_TABLE_ADAPTER);
 		if (object == null) {
@@ -181,9 +187,9 @@ public final class TableTagHandler extends TagHandler {
 			String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
 
 			if (scrollParam != null) {
-				jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
+				scroll = GSON.fromJson(scrollParam, Scroll.class);
 			}
-			object = getTableContent(getTagValue(values), jsonScroll);
+			object = getTableContent(getTagValue(values), scroll);
 
 		} else {
 			// It means that the select on table was performed and the content was 
@@ -191,14 +197,14 @@ public final class TableTagHandler extends TagHandler {
 			String scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
 
 			if (scrollParam != null) {
-				jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
+				scroll = GSON.fromJson(scrollParam, Scroll.class);
 			}
 		}
 
 		if (object instanceof List<?>) {
 			Iterator<Object> iterator = ((List<Object>) object).iterator();
 
-			int scrollIndex = jsonScroll != null ? jsonScroll.getIndex() : 0;
+			int scrollIndex = scroll != null ? scroll.getIndex() : 0;
 			int selectIndex = scrollIndex;
 
 			while (iterator.hasNext()) {
@@ -227,15 +233,7 @@ public final class TableTagHandler extends TagHandler {
 		}
 
 		// Call after reading the column inner tag headers
-		if (!columns.isEmpty()) {
-			Tr tr = new Tr();
-			thead.addTag(tr);
-			for (ColumnTagHandler column : columns) {
-				if (column.getHeader() != null) {
-					tr.addTag(column.getHeader().executeTag());
-				}
-			}
-		}
+		thead.addTag(addHeaderColumns());
 
 		// Needs to pop the iterator action so this class set the 
 		// ajax and bind actions carried via RefAction
@@ -247,6 +245,9 @@ public final class TableTagHandler extends TagHandler {
 		if (scrollSize != null) {
 			appendScript(getScrollFunction());
 		}
+		if (headerScript) {
+			appendScript(getHeaderFunction());
+		}
 
 		div.addTag(table);
 		table.addTag(thead)
@@ -254,19 +255,91 @@ public final class TableTagHandler extends TagHandler {
 
 		return div;
 	}
+	
+	private Tag addHeaderColumns() throws JspException, IOException {
+		Tr tr = new Tr();
+
+		for (ColumnTagHandler column : columns) {
+			Th th = new Th();
+
+			if (column.getFilterBy() != null) {
+				Div div = new Div();
+				div.addAttribute("class", JSmart5.TABLE_HEADER_COLUMN);
+
+				Input input = new Input();
+				input.addAttribute("class", Bootstrap.FORM_CONTROL)
+					.addAttribute("class", Bootstrap.INPUT_SMALL)
+					.addAttribute("placeholder", getTagValue(column.getLabel()))
+					.addAttribute("type", Type.TEXT.name().toLowerCase())
+					.addAttribute("datatype", Type.TEXT.name().toLowerCase())
+					.addAttribute("filter-by", column.getFilterBy());
+
+				div.addTag(input);
+				th.addTag(div);
+				headerScript = true;
+
+			} else {
+				if (column.getSortBy() != null) {
+					Div div = new Div();
+					div.addAttribute("class", JSmart5.TABLE_HEADER_SORT_ONLY)
+						.addText(getTagValue(column.getLabel()));
+					th.addTag(div);
+
+				} else {
+					th.addText(getTagValue(column.getLabel()));
+				}
+			}
+
+			if (column.getSortBy() != null) {
+				Div div = new Div();
+				div.addAttribute("class", column.getFilterBy() != null ? 
+						JSmart5.TABLE_FILTER_SORT_BY : JSmart5.TABLE_SORT_BY);
+
+				IconTagHandler topIcon = new IconTagHandler();
+				topIcon.setName("glyphicon-triangle-top");
+				Tag topTag = topIcon.executeTag();
+				topTag.addAttribute("sort-by", column.getSortBy())
+					.addAttribute("sort-order", "1");
+
+				IconTagHandler bottomIcon = new IconTagHandler();
+				bottomIcon.setName("glyphicon-triangle-bottom");
+				Tag bottomTag = bottomIcon.executeTag();
+				bottomTag.addAttribute("sort-by", column.getSortBy())
+					.addAttribute("sort-order", "-1");
+
+				div.addTag(topTag);
+				div.addTag(bottomTag);
+
+				th.addTag(div);
+				headerScript = true;
+			}
+			tr.addTag(th);
+		}
+		return tr;
+	}
 
 	@SuppressWarnings("unchecked")
-	private List<?> getTableContent(Object object, Scroll jsonScroll) throws JspException {
-		int index = jsonScroll != null ? jsonScroll.getIndex() : 0;
+	private List<?> getTableContent(Object object, Scroll scroll) throws JspException {
+		int index = scroll != null ? scroll.getIndex() : 0;
 
 		if (object instanceof TableAdapter) {
 			if (scrollSize == null) {
 				throw InvalidAttributeException.fromConflict("table", "scrollSize",
 						"Attribute [scrollSize] must be specified to use TableAdapter");
 			}
+			
+			String sort = null;
+			Integer order = 0;
+			Map<String, String> filters = null;
+
+			if (scroll != null) {
+				sort = scroll.getSort();
+				order = scroll.getOrder();
+				filters = scroll.getFilters();
+			}
 
 			TableAdapter<Object> tableAdapter = (TableAdapter<Object>) object;
-			return tableAdapter.load(index, scrollSize, null, 0, null); // TODO
+			return tableAdapter.load(index, scrollSize, sort, order, filters);
 
 		} else if (object instanceof List) {
 			List<Object> list = (List<Object>) object;
@@ -331,6 +404,19 @@ public final class TableTagHandler extends TagHandler {
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_TABLESCROLL.format(getJsonValue(jsonAjax)));
+		return builder;
+	}
+
+	private StringBuilder getHeaderFunction() {
+		Ajax jsonAjax = new Ajax();
+		jsonAjax.setId(id);
+		jsonAjax.setMethod("post");
+		jsonAjax.setTag("tableheader");
+
+		jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_TABLEHEADER.format(getJsonValue(jsonAjax)));
 		return builder;
 	}
 

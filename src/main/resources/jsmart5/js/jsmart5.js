@@ -86,15 +86,15 @@ var Jsmart5 = (function() {
 			doBind(map);
 		},
 
-		rest: function (el, timeout) {
+		rest: function(el, timeout) {
 			doRest(el, timeout);
 		},
 		
-		buttonRestArray: function (id, op) {
+		buttonRestArray: function(id, op) {
 			doRestArray(id, op);
 		},
 			
-		validate: function (id) {
+		validate: function(id) {
 			return doValidate(id);
 		},
 		
@@ -106,19 +106,19 @@ var Jsmart5 = (function() {
 			openModal(id);
 		},
 
-		list: function (li, map) {
+		list: function(li, map) {
 			doList(li, map);
 		},
 		
-		listscroll: function (map) {
+		listscroll: function(map) {
 			doListScroll(map);
 		},
 		
-		tab: function (map) {
+		tab: function(map) {
 			doTab(map);
 		},
 		
-		tabpane: function (li, map) {
+		tabpane: function(li, map) {
 			doTabPane(li, map);
 		},
 		
@@ -126,16 +126,20 @@ var Jsmart5 = (function() {
 			doCarousel(id);
 		},
 		
-		date: function (map) {
+		date: function(map) {
 			doDate(map);
 		},
-		
-		table: function (tr, map) {
+
+		table: function(tr, map) {
 			doTable(tr, map);
 		},
 
-		tablescroll: function (map) {
+		tablescroll: function(map) {
 			doTableScroll(map);
+		},
+
+		tableheader: function(map) {
+			doTableHeader(map);
 		}
 	};
 
@@ -454,13 +458,35 @@ var Jsmart5 = (function() {
 				return;
 			}
 
+			var headTr = tr.find('th');
+			if (headTr && headTr.length > 0) {
+				return;
+			}
+
 			var postParam = getAjaxParams(map);
 			var options = getAjaxOptions(map);
 			var closestForm = $(tr).closest('form');
 			
+			// Table adapter parameters
 			var jsonParam = {};
+			var thead = tr.closest('table').find('thead tr');
+
 			jsonParam.size = tr.closest('tbody').attr('scroll-size');
 			jsonParam.index = tr.attr('scroll-index');
+			
+			var sortSpan = thead.find('span[sort-active]');
+			if (sortSpan && sortSpan.length > 0) {
+				jsonParam.sort = sortSpan.attr('sort-by');
+				jsonParam.order = sortSpan.attr('sort-order');
+			} else {
+				jsonParam.sort = null;
+				jsonParam.order = 0;
+			}
+
+			jsonParam.filters = {};
+			thead.find('input').each(function() {
+				jsonParam.filters[$(this).attr('filter-by')] = $(this).val();
+			});
 
 			for (var i = 0; i < postParam.length; i++) {
 				// Look for J_SEL_VAL parameter to send the index clicked
@@ -506,92 +532,194 @@ var Jsmart5 = (function() {
 			var tbody = $(this);
 			if (tbody.scrollTop() + tbody.outerHeight() >= tbody[0].scrollHeight) {
 
-				var scrollActive = tbody.attr('scroll-active');
-				if (scrollActive && scrollActive.length > 0) {
-					return;
-				}
-				
-				// Set scroll as active to avoid multiple requests
-				tbody.attr('scroll-active', 'true');
-				
-				var postParam = getAjaxParams(map);
-				var closestForm = $(tbody).closest('form');
-
-				var lastChild = tbody.find('tr:last-child');
-
+				// Table adapter parameters
 				var jsonParam = {};
-				jsonParam.size = tbody.attr('scroll-size');
-				jsonParam.index = parseInt(lastChild.attr('table-index')) + 1;
-				
-				for (var i = 0; i < postParam.length; i++) {
-					// Look for J_SCROLL parameter to send scroll values
-					if (postParam[i].name.indexOf(tagInit + '010_') >= 0) {
-						postParam[i].value = JSON.stringify(jsonParam);
-						break;
-					}
-				}
+				var thead = tbody.closest('table').find('thead tr');
+				var sortSpan = thead.find('span[sort-active]');
 
-				if (closestForm && closestForm.length > 0) {
-					if (!doValidate($(closestForm).attr('id'))) {
-						return;
-					}
+				if (sortSpan && sortSpan.length > 0) {
+					jsonParam.sort = sortSpan.attr('sort-by');
+					jsonParam.order = sortSpan.attr('sort-order');
 				} else {
-					postParam = $.param(postParam);			
+					jsonParam.sort = null;
+					jsonParam.order = 0;
 				}
 
-				var refreshClone = null
-				var hiddenRefresh = tbody.find('span[' + refreshIcon + ']').closest('tr');
+				jsonParam.filters = {};
+				thead.find('input').each(function() {
+					jsonParam.filters[$(this).attr('filter-by')] = $(this).val();
+				});
 
-				// Append loading icon on list if it was configured
-				if (hiddenRefresh && hiddenRefresh.length > 0) {
-
-					refreshClone = hiddenRefresh.clone();
-					refreshClone.find('td').css({'display': 'block'});
-					tbody.append(refreshClone);
-				}
-				
-				// Remove scroll-active and refreshing icon
-				map.complete = function() {
-					if (refreshClone) {
-						refreshClone.remove();
-					}
-					tbody.removeAttr('scroll-active');
-				};
-
-				// Function to append to table body
-				map.success = function(data) {
-					var newTable = $(data).find(getId(table.attr('id')));
-
-					if (newTable && newTable.length > 0) {
-
-						var lastChild = newTable.find('tbody tr:last-child');
-
-						if (lastChild && lastChild.length > 0) {
-							var lastIndex = lastChild.attr('table-index')
-
-							// Case the returned table has last index different than current
-							if (lastIndex && (jsonParam.index - 1) != lastIndex) {
-								
-								if (refreshClone) {
-									tbody.append(newTable.find('tbody tr').not(':first'));
-								} else {
-									tbody.append(newTable.find('tbody tr'));
-								}
-							}
-						}
-					}
-				};
-
-				var options = getAjaxOptions(map);
-				options.data = postParam;
-
-				if (closestForm && closestForm.length > 0) {
-					$(closestForm).ajaxSubmit(options);
-				} else {
-					$.ajax(options);
-				}
+				doTableAjax(tbody, map, false, jsonParam);
 			}
 		});
+	}
+
+	function doTableHeader(map) {
+		// For sorting
+		$(document).on('click', getId(map.id) + ' span', function(e) {
+
+			var sortActive = $(this).attr('sort-active');
+			if (sortActive && sortActive.length > 0) {
+				return;
+			}
+
+			$(this).closest('tr').find('span').removeAttr('sort-active');
+			$(this).attr('sort-active', 'true');
+
+			// Table adapter parameters
+			var jsonParam = {};
+			jsonParam.sort = $(this).attr('sort-by');
+			jsonParam.order = $(this).attr('sort-order');
+			jsonParam.filters = {};
+
+			// Get all filters
+			$(this).closest('tr').find('input').each(function() {
+				jsonParam.filters[$(this).attr('filter-by')] = $(this).val();
+			});
+
+			var tbody = $(this).closest('table').find('tbody');
+			
+			doTableAjax(tbody, map, true, jsonParam);
+		});
+
+		// For filters
+		$(document).on('keyup', getId(map.id) + ' input', function(e) {
+			var input = $(this);
+			var thead = input.closest('tr');
+			var tbody = input.closest('table').find('tbody');
+
+			thead.find('input').each(function() {
+				var timeoutId = $(this).attr('filter-timeout');
+
+				if (timeoutId && timeoutId.length > 0) {
+					clearTimeout(timeoutId);
+					$(this).removeAttr('filter-timeout');
+				}
+			});
+
+			// Timeout to avoid sending ajax per key typed
+			var timeoutId = setTimeout(function() {
+				
+				// Table adapter parameters
+				var jsonParam = {};
+				var sortSpan = thead.find('span[sort-active]');
+
+				if (sortSpan && sortSpan.length > 0) {
+					jsonParam.sort = sortSpan.attr('sort-by');
+					jsonParam.order = sortSpan.attr('sort-order');
+				} else {
+					jsonParam.sort = null;
+					jsonParam.order = 0;
+				}
+
+				jsonParam.filters = {};
+				thead.find('input').each(function() {
+					jsonParam.filters[$(this).attr('filter-by')] = $(this).val();
+				});
+
+				doTableAjax(tbody, map, true, jsonParam);
+			}, 2000);
+			
+			input.attr('filter-timeout', timeoutId);
+		});
+	}
+	
+	function doTableAjax(tbody, map, reset, jsonParam) {
+
+		var scrollActive = tbody.attr('scroll-active');
+		if (scrollActive && scrollActive.length > 0) {
+			return;
+		}
+
+		// Set scroll as active to avoid multiple requests
+		tbody.attr('scroll-active', 'true');
+		
+		var postParam = getAjaxParams(map);
+		var closestForm = $(tbody).closest('form');
+
+		// Set the jsonParam values as size and index
+		jsonParam.size = tbody.attr('scroll-size');
+
+		if (reset) {
+			jsonParam.index = 0;
+		} else {
+			var lastChild = tbody.find('tr:last-child');		
+			jsonParam.index = parseInt(lastChild.attr('table-index')) + 1;
+		}
+
+		for (var i = 0; i < postParam.length; i++) {
+			// Look for J_SCROLL parameter to send scroll values
+			if (postParam[i].name.indexOf(tagInit + '010_') >= 0) {
+				postParam[i].value = JSON.stringify(jsonParam);
+				break;
+			}
+		}
+
+		if (closestForm && closestForm.length > 0) {
+			if (!doValidate($(closestForm).attr('id'))) {
+				return;
+			}
+		} else {
+			postParam = $.param(postParam);			
+		}
+
+		var refreshClone = null
+		var hiddenRefresh = tbody.find('span[' + refreshIcon + ']').closest('tr');
+
+		// Append loading icon on list if it was configured
+		if (hiddenRefresh && hiddenRefresh.length > 0) {
+
+			refreshClone = hiddenRefresh.clone();
+			refreshClone.find('td').css({'display': 'block'});
+			tbody.append(refreshClone);
+		}
+		
+		// Remove scroll-active and refreshing icon
+		map.complete = function() {
+			if (refreshClone) {
+				refreshClone.remove();
+			}
+			tbody.removeAttr('scroll-active');
+		};
+
+		// Function to append to table body
+		map.success = function(data) {
+			var newTable = $(data).find(getId(map.id));
+			if (newTable && newTable.length > 0) {
+
+				// Case reset replace the tbody content
+				if (reset) {
+					tbody.empty().append(newTable.find('tbody tr'));
+					return;
+				}
+
+				// Case not reset it will append the result on tbody
+				var lastChild = newTable.find('tbody tr:last-child');
+
+				if (lastChild && lastChild.length > 0) {
+					var lastIndex = lastChild.attr('table-index')
+
+					// Case the returned table has last index different than current
+					if (lastIndex && (jsonParam.index - 1) != lastIndex) {
+						if (refreshClone) {
+							tbody.append(newTable.find('tbody tr').not(':first'));
+						} else {
+							tbody.append(newTable.find('tbody tr'));
+						}
+					}
+				}
+			}
+		};
+
+		var options = getAjaxOptions(map);
+		options.data = postParam;
+
+		if (closestForm && closestForm.length > 0) {
+			$(closestForm).ajaxSubmit(options);
+		} else {
+			$.ajax(options);
+		}
 	}
 
 	function doTab(map) {

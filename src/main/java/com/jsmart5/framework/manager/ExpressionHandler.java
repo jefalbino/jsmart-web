@@ -176,7 +176,7 @@ public enum ExpressionHandler {
 
 				Object object = null;
 				List<Object> list = null;
-				Scroll jsonScroll = null;
+				Scroll scroll = null;
 
 				if (valuesMatcher.find()) {
 					object = getExpressionValue(TagEncrypter.complexDecrypt(valuesMatcher.group(2)));
@@ -184,18 +184,19 @@ public enum ExpressionHandler {
 
 				if (object instanceof ListAdapter) {
 					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
-					jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
+					scroll = GSON.fromJson(scrollParam, Scroll.class);
 
-					list = ((ListAdapter) object).load(jsonScroll.getIndex(), jsonScroll.getSize());
+					list = ((ListAdapter) object).load(scroll.getIndex(), scroll.getSize());
 
 					// Save the loaded content on request to avoid calling load twice when loading the page
 					request.setAttribute(REQUEST_LIST_ADAPTER, list);
 
 				} else if (object instanceof TableAdapter) {
 					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
-					jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
+					scroll = GSON.fromJson(scrollParam, Scroll.class);
 
-					list = ((TableAdapter) object).load(jsonScroll.getIndex(), jsonScroll.getSize(), null, 0, null); // TODO
+					list = ((TableAdapter) object).load(scroll.getIndex(), scroll.getSize(), 
+							scroll.getSort(), scroll.getOrder(), scroll.getFilters());
 					
 					// Save the loaded content on request to avoid calling load twice when loading the page
 					request.setAttribute(REQUEST_TABLE_ADAPTER, list);
@@ -212,8 +213,8 @@ public enum ExpressionHandler {
 
 					// Case scroll list with adapter need to calculate the difference between
 					// the first index of the loaded content with the clicked list item index 
-					if (jsonScroll != null) {
-						index -= jsonScroll.getIndex();
+					if (scroll != null) {
+						index -= scroll.getIndex();
 					}
 					valueExpr.setValue(context, list.get(index));
 				}

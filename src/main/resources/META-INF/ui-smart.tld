@@ -1852,6 +1852,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>label</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
             <name>sortBy</name>
             <required>false</required>
         </attribute>

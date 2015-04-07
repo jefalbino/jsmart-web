@@ -32,6 +32,7 @@ public enum JsConstants {
 	JSMART_DATE("Jsmart5.date", "(%s);"),
 	JSMART_TABLE("Jsmart5.table", "($(this),%s);"),
 	JSMART_TABLESCROLL("Jsmart5.tablescroll", "(%s);"),
+	JSMART_TABLEHEADER("Jsmart5.tableheader", "(%s);"),
 
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
 

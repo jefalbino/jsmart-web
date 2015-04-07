@@ -126,7 +126,7 @@ public final class ListTagHandler extends TagHandler {
 		appendEvent(ul);
 
 		// Get the scroll parameters case requested by scroll list
-		Scroll jsonScroll = null;
+		Scroll scroll = null;
 
 		Object object = request.getAttribute(Constants.REQUEST_LIST_ADAPTER);
 		if (object == null) {
@@ -134,9 +134,9 @@ public final class ListTagHandler extends TagHandler {
 			String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
 
 			if (scrollParam != null) {
-				jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
+				scroll = GSON.fromJson(scrollParam, Scroll.class);
 			}
-			object = getListContent(getTagValue(values), jsonScroll);
+			object = getListContent(getTagValue(values), scroll);
 
 		} else {
 			// It means that the select on list was performed and the content was 
@@ -144,14 +144,14 @@ public final class ListTagHandler extends TagHandler {
 			String scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
 
 			if (scrollParam != null) {
-				jsonScroll = GSON.fromJson(scrollParam, Scroll.class);
+				scroll = GSON.fromJson(scrollParam, Scroll.class);
 			}
 		}
 
 		if (object instanceof List<?>) {
 			Iterator<Object> iterator = ((List<Object>) object).iterator();
 
-			int scrollIndex = jsonScroll != null ? jsonScroll.getIndex() : 0;
+			int scrollIndex = scroll != null ? scroll.getIndex() : 0;
 			int selectIndex = scrollIndex;
 
 			while (iterator.hasNext()) {
@@ -186,8 +186,8 @@ public final class ListTagHandler extends TagHandler {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<?> getListContent(Object object, Scroll jsonScroll) throws JspException {
-		int index = jsonScroll != null ? jsonScroll.getIndex() : 0;
+	private List<?> getListContent(Object object, Scroll scroll) throws JspException {
+		int index = scroll != null ? scroll.getIndex() : 0;
 
 		if (object instanceof ListAdapter) {
 			if (scrollSize == null) {

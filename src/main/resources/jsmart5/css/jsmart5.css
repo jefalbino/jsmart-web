@@ -114,8 +114,48 @@
 	text-align: left;
 }
 
-.js5-table-scroll tbody{
+.js5-table-scroll tbody {
 	width: 100%;
 	overflow: auto;
 	position: absolute;
+}
+
+.js5-table-header-col, .js5-table-header-sort-by {
+	float: left;
+}
+
+.js5-table-header-sort-by {
+	line-height: 20px;
+}
+
+.js5-table-filter-sort-by, .js5-table-sort-by {
+	height: 30px;
+  	float: left;
+  	width: 15px;
+  	margin-left: 8px;
+}
+
+.js5-table-sort-by {
+	height: 20px;
+}
+
+.js5-table-filter-sort-by span, .js5-table-sort-by span {
+	cursor: pointer;
+	font-size: 12px;
+}
+
+.js5-table-filter-sort-by span:first-child {
+	top: 1px;
+}
+
+.js5-table-filter-sort-by span:last-child {
+	top: 4px;
+}
+
+.js5-table-sort-by span:first-child {
+	top: -4px;
+}
+
+.js5-table-sort-by span:last-child {
+	top: -1px;
 }

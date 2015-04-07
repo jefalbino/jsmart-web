@@ -46,6 +46,14 @@ public final class JSmart5 {
 
 	public static final String TABLE_SCROLL = "js5-table-scroll";
 	
+	public static final String TABLE_HEADER_COLUMN = "js5-table-header-col";
+
+	public static final String TABLE_HEADER_SORT_ONLY = "js5-table-header-sort-by";
+
+	public static final String TABLE_FILTER_SORT_BY = "js5-table-filter-sort-by";
+
+	public static final String TABLE_SORT_BY = "js5-table-sort-by";
+	
 	private JSmart5() {
 		// DO NOTHING
 	}
