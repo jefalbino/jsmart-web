@@ -95,10 +95,6 @@ public final class ListTagHandler extends TagHandler {
 			body.invoke(null);
 		}
 
-		if (id == null) {
-			id = getRandomId();
-		}
-
 		HttpServletRequest request = getRequest();
 
 		Ul ul = new Ul();
@@ -157,10 +153,8 @@ public final class ListTagHandler extends TagHandler {
 			while (iterator.hasNext()) {
 				request.setAttribute(var, iterator.next());
 				for (RowTagHandler row : rows) {
-					if (selectValue != null) {
-	 					row.setSelectable(true);
-	 					row.setSelectIndex(selectIndex);
-					}
+					row.setSelectable(selectValue != null);
+					row.setSelectIndex(selectIndex);
 					row.setScrollIndex(scrollIndex);
  					setEvents(row);
  					ul.addTag(row.executeTag());

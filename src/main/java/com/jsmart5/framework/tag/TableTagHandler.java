@@ -117,8 +117,6 @@ public final class TableTagHandler extends TagHandler {
 			body.invoke(null);
 		}
 
-		setRandomId("table");
-
 		HttpServletRequest request = getRequest();		
 
 		Div div = new Div();

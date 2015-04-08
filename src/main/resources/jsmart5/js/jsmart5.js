@@ -429,9 +429,17 @@ var Jsmart5 = (function() {
 							// Case the returned ul has last index different than current
 							if (lastIndex && (jsonParam.index - 1) != lastIndex) {
 								if (ul.find('a').length > 0) {
-									ul.append(newUl.find('a'));
+									if (refreshClone) {
+										ul.append(newUl.find('a').not(':first'));
+									} else {
+										ul.append(newUl.find('a'));
+									}
 								} else {
-									ul.append(newUl.find('li'));
+									if (refreshClone) {
+										ul.append(newUl.find('li').not(':first'));
+									} else {
+										ul.append(newUl.find('li'));
+									}
 								}
 							}
 						}
