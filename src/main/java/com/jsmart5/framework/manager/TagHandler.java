@@ -181,13 +181,15 @@ public abstract class TagHandler extends SimpleTagSupport {
 	public final void doTag() throws JspException, IOException {
 		// long start = System.currentTimeMillis();
 		try {
-			validateTag();
-			clearTagParameters();
-
-			if (beforeTag()) {
-				Tag tag = executeTag();
-				if (tag != null) {
-					printOutput(tag.getHtml());
+			if (checkTagExecution()) {
+				validateTag();
+				clearTagParameters();
+	
+				if (beforeTag()) {
+					Tag tag = executeTag();
+					if (tag != null) {
+						printOutput(tag.getHtml());
+					}
 				}
 			}
 		} catch (Exception ex) {
@@ -205,6 +207,23 @@ public abstract class TagHandler extends SimpleTagSupport {
 	public abstract void validateTag() throws JspException;
 
 	public abstract Tag executeTag() throws JspException, IOException;
+
+	// Only execute this tag if it is not Ajax request or if this tag id is present on update component request
+	private boolean checkTagExecution() {
+		if (id == null) {
+			return true;
+		}
+		HttpServletRequest request = getRequest();
+
+		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+			String updateVals = request.getHeader("Update-Ajax");
+			if (updateVals == null) {
+				return true;
+			}
+			return updateVals.contains(id);
+		}
+		return true;
+	}
 
 	public void addParam(String key, Object value) throws JspException {
 		if (params.containsKey(key)) {

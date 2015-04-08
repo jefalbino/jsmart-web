@@ -135,8 +135,8 @@ public final class WebServlet extends HttpServlet {
     		responsePath = redirectPath;
     	}
 
-    	// Case is ajax post action and submit method returned a path, let JavaScript redirect page
-		if (responsePath != null && SmartContext.isAjaxRequest()) {
+    	// Case is Ajax post action and submit method returned a path, let JavaScript redirect page
+		if (responsePath != null && "XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
 			redirectAjax = true;
 		}
 
@@ -144,8 +144,8 @@ public final class WebServlet extends HttpServlet {
 			responsePath = path;
 		} else {
 
-			// Case is ajax post action, let JavaScript redirect page
-			if (SmartContext.isAjaxRequest()) {
+			// Case is Ajax post action, let JavaScript redirect page
+			if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
 				if (redirectAjax) {
 					request.setAttribute(Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR, 
 							(responsePath.startsWith("/") ? request.getContextPath() : "") + responsePath);
@@ -183,8 +183,8 @@ public final class WebServlet extends HttpServlet {
     		return;
     	}
 
-    	// Case is ajax post action, let JavaScript redirect page
-		if (SmartContext.isAjaxRequest()) {
+    	// Case is Ajax post action, let JavaScript redirect page
+		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
 			request.setAttribute(Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR, 
 					(path.startsWith("/") ? request.getContextPath() : "") + path);
 		}
