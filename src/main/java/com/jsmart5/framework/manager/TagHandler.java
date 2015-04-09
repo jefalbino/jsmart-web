@@ -209,7 +209,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 	public abstract Tag executeTag() throws JspException, IOException;
 
 	// Only execute this tag if it is not Ajax request or if this tag id is present on update component request
-	private boolean checkTagExecution() {
+	protected boolean checkTagExecution() {
 		if (id == null) {
 			return true;
 		}

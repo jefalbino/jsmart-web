@@ -149,7 +149,6 @@ public final class SelectTagHandler extends TagHandler {
 
 		Select select = new Select();
 		select.addAttribute("id", id)
-			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("name", getTagName((multiple ? J_ARRAY : J_TAG), selectValues))
 			 .addAttribute("tabindex", tabIndex)
@@ -161,9 +160,15 @@ public final class SelectTagHandler extends TagHandler {
 		} else if (Size.LARGE.equalsIgnoreCase(size)) {
 			select.addAttribute("class", Bootstrap.INPUT_LARGE);
 		}
-		
+
 		// Add the style class at last
-		select.addAttribute("class", styleClass);
+		if (inputGroup != null) {
+			inputGroup.addAttribute("style", style)
+				.addAttribute("class", styleClass);
+		} else {
+			select.addAttribute("style", style)
+				.addAttribute("class", styleClass);
+		}
 
 		appendValidator(select);
 		appendRest(select);

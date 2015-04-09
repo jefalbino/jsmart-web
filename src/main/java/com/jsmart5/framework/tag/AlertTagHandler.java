@@ -47,6 +47,11 @@ public final class AlertTagHandler extends TagHandler {
 	private HeaderTagHandler header;
 
 	@Override
+	protected boolean checkTagExecution() {
+		return true;
+	}
+
+	@Override
 	public void validateTag() throws JspException {
 		// DO NOTHING
 	}

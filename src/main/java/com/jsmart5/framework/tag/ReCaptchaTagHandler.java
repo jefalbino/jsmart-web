@@ -98,56 +98,14 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		
 		// ReCaptcha V2
 		if (version.equals(ReCaptchaHandler.RECAPTCHA_V2)) {
-			Div formGroup = new Div();
-			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
-
-			if (parent instanceof FormTagHandler) {
-				String size = ((FormTagHandler) parent).getSize();
-
-				if (Size.LARGE.equalsIgnoreCase(size)) {
-					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
-
-				} else if (Size.SMALL.equalsIgnoreCase(size)) {
-					formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
-				}
-			}
-
-			Label labelTag = new Label();
-			labelTag.addAttribute("for", ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)
-					.addAttribute("class", Bootstrap.LABEL_CONTROL)
-					.addAttribute("class", "recaptcha_only_if_image")
-					.addText(getTagValue(label));
-			formGroup.addTag(labelTag);
-
-			Div div = new Div();
-			div.addAttribute("id", id);
-			formGroup.addTag(div);
-			
-			Input input = new Input();
-			input.addAttribute("name", getTagName(J_CAPTCHA, fakeTagName(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME)))
-				 .addAttribute("type", Type.HIDDEN.name().toLowerCase());
-			formGroup.addTag(input);
-
-			Script script = new Script();
-			script.addAttribute("type", "text/javascript")
-				.addAttribute("src", String.format(ReCaptchaHandler.RECAPTCHA_CHALLENGE_V2_URL, "onloadReCaptcha", locale != null ? locale : ""))
-				.addAttribute("async", "async")
-				.addAttribute("defer", "defer");
-			formGroup.addTag(script);
-
-			Script callback = new Script();
-			callback.addAttribute("type", "text/javascript")
-				.addText("var onloadReCaptcha = function() {")
-				.addText("grecaptcha.render('" + id + "', {")
-				.addText("'sitekey': '" + siteKey + "'")
-				.addText("});").addText("};");
-
-			((FormTagHandler) parent).addBeforeFormTag(callback);
-
-			return formGroup;
+			return executeRecaptchaV2(parent);
 		}
-		
-		// Custom ReCaptcha V1
+
+		// ReCaptcha V1
+		return executeRecaptchaV1(parent);
+	}
+
+	private Tag executeRecaptchaV1(JspTag parent) throws JspException, IOException {
 		Div div = new Div();
 		div.addAttribute("id", id)
 			.addAttribute("style", "display: none;");
@@ -225,7 +183,6 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		Input input = new Input();
 		input.addAttribute("name", getTagName(J_CAPTCHA, fakeTagName(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)))
 			 .addAttribute("type", Type.TEXT.name().toLowerCase())
-			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
@@ -242,7 +199,8 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		}
 		
 		// Add the style class at last
-		input.addAttribute("class", styleClass);
+		inputGroup.addAttribute("style", style)
+			.addAttribute("class", styleClass);
 		
 		appendValidator(input);
 		appendRest(input);
@@ -286,7 +244,57 @@ public final class ReCaptchaTagHandler extends TagHandler {
 
 		return div;
 	}
-	
+
+	private Tag executeRecaptchaV2(JspTag parent) throws JspException, IOException {
+		Div formGroup = new Div();
+		formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
+
+		if (parent instanceof FormTagHandler) {
+			String size = ((FormTagHandler) parent).getSize();
+
+			if (Size.LARGE.equalsIgnoreCase(size)) {
+				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
+
+			} else if (Size.SMALL.equalsIgnoreCase(size)) {
+				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
+			}
+		}
+
+		Label labelTag = new Label();
+		labelTag.addAttribute("for", ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)
+				.addAttribute("class", Bootstrap.LABEL_CONTROL)
+				.addAttribute("class", "recaptcha_only_if_image")
+				.addText(getTagValue(label));
+		formGroup.addTag(labelTag);
+
+		Div div = new Div();
+		div.addAttribute("id", id);
+		formGroup.addTag(div);
+		
+		Input input = new Input();
+		input.addAttribute("name", getTagName(J_CAPTCHA, fakeTagName(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME)))
+			 .addAttribute("type", Type.HIDDEN.name().toLowerCase());
+		formGroup.addTag(input);
+
+		Script script = new Script();
+		script.addAttribute("type", "text/javascript")
+			.addAttribute("src", String.format(ReCaptchaHandler.RECAPTCHA_CHALLENGE_V2_URL, "onloadReCaptcha", locale != null ? locale : ""))
+			.addAttribute("async", "async")
+			.addAttribute("defer", "defer");
+		formGroup.addTag(script);
+
+		Script callback = new Script();
+		callback.addAttribute("type", "text/javascript")
+			.addText("var onloadReCaptcha = function() {")
+			.addText("grecaptcha.render('" + id + "', {")
+			.addText("'sitekey': '" + siteKey + "'")
+			.addText("});").addText("};");
+
+		((FormTagHandler) parent).addBeforeFormTag(callback);
+
+		return formGroup;
+	}
+
 	private A getAddOnButton(final String icon, final String script, final String style) throws JspException, IOException {
 		A a = new A();
 		a.addAttribute("class", Bootstrap.BUTTON)

@@ -141,7 +141,6 @@ public final class UploadTagHandler extends TagHandler {
 		Input input = new Input();
 		input.addAttribute("name", name.replace(J_FILE, J_PART))
 			 .addAttribute("type", Type.FILE.name().toLowerCase())
-			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
@@ -161,7 +160,13 @@ public final class UploadTagHandler extends TagHandler {
 		}
 
 		// Add the style class at last
-		input.addAttribute("class", styleClass);
+		if (inputGroup != null) {
+			inputGroup.addAttribute("style", style)
+				.addAttribute("class", styleClass);
+		} else {
+			input.addAttribute("style", style)
+				.addAttribute("class", styleClass);
+		}
 		
 		appendValidator(input);
 		appendRest(input);

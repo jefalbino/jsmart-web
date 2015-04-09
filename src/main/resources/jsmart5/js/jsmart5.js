@@ -1161,6 +1161,8 @@ var Jsmart5 = (function() {
 						for (var j = 0; j < values.length; j++) {
 							dlgParam.push({name: name, value: values[j]});
 						}
+					} else {
+						dlgParam.push({name: name, value: null});
 					}
 				}
 			}
