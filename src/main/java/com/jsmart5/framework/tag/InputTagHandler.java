@@ -163,7 +163,8 @@ public final class InputTagHandler extends TagHandler {
 		}
 
 		Input input = new Input();
-		input.addAttribute("type", type != null ? type : Type.TEXT.name().toLowerCase())
+		input.addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+			 .addAttribute("type", type != null ? type : Type.TEXT.name().toLowerCase())
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("maxlength", length)
@@ -174,10 +175,6 @@ public final class InputTagHandler extends TagHandler {
 			 .addAttribute("pattern", pattern)
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
 			 .addAttribute("data-mask", mask);
-
-		if (value != null) {
-			input.addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""));
-		}
 		
 		appendRefId(input, id);
 		
@@ -202,12 +199,10 @@ public final class InputTagHandler extends TagHandler {
 				.addAttribute("class", styleClass);
 		}
 
-		if (value != null) {
-			if (!Type.PASSWORD.equalsIgnoreCase(type)) {
-				input.addAttribute("value", getTagValue(value));
-			} else {
-				setTagValue(value, null);
-			}
+		if (!Type.PASSWORD.equalsIgnoreCase(type)) {
+			input.addAttribute("value", getTagValue(value));
+		} else {
+			setTagValue(value, null);
 		}
 
 		appendValidator(input);
