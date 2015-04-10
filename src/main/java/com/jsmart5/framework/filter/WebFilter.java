@@ -80,7 +80,7 @@ public final class WebFilter implements Filter {
 
 	private static final Pattern CLOSE_BODY_PATTERN = Pattern.compile("</body.*?>");
 
-	private static final Pattern SCRIPT_BODY_PATTERN = Pattern.compile("<body.*?>.*(<script.*?>)", Pattern.DOTALL);
+	private static final Pattern SCRIPT_BODY_PATTERN = Pattern.compile("<body.*?>\\s*(<script.*?>)", Pattern.DOTALL);
 
 	private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
 
