@@ -122,6 +122,7 @@
 
 .js5-table-header-filter-by, .js5-table-header-sort-by {
 	float: left;
+	width: calc(100% - 30px);
 }
 
 .js5-table-header-filter-by {

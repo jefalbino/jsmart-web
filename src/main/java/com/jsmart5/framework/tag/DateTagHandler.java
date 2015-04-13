@@ -162,7 +162,6 @@ public final class DateTagHandler extends TagHandler {
 		Input input = new Input();
 		input.addAttribute("type", Type.TEXT.name().toLowerCase())
 			 .addAttribute("date", "date")
-			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
@@ -180,8 +179,14 @@ public final class DateTagHandler extends TagHandler {
 		}
 
 		// Add the style class at last
-		input.addAttribute("class", styleClass);
-		
+		if (inputGroup != null) {
+			inputGroup.addAttribute("style", style)
+				.addAttribute("class", styleClass);
+		} else {
+			input.addAttribute("style", style)
+				.addAttribute("class", styleClass);
+		}
+
 		Object dateValue = getTagValue(value);
 		if (dateValue == null) {
 			dateValue = getTagValue(defaultDate);

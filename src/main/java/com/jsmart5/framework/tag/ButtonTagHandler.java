@@ -157,22 +157,7 @@ public final class ButtonTagHandler extends TagHandler {
 		appendRefId(button, id);
 
 		String lookVal = (String) getTagValue(look);
-		
-		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
-			button.addAttribute("class", Bootstrap.BUTTON_PRIMARY);
-		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
-			button.addAttribute("class", Bootstrap.BUTTON_SUCCESS);
-		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
-			button.addAttribute("class", Bootstrap.BUTTON_INFO);
-		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
-			button.addAttribute("class", Bootstrap.BUTTON_WARNING);
-		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
-			button.addAttribute("class", Bootstrap.BUTTON_DANGER);
-		} else if (Look.LINK.equalsIgnoreCase(lookVal)) {
-			button.addAttribute("class", Bootstrap.BUTTON_LINK);
-		} else {
-			button.addAttribute("class", Bootstrap.BUTTON_DEFAULT);
-		}
+		button.addAttribute("class", getButtonLook(lookVal));
 			
 		if (Size.XSMALL.equalsIgnoreCase(size)) {
 			button.addAttribute("class", Bootstrap.BUTTON_XSMALL);
@@ -220,7 +205,7 @@ public final class ButtonTagHandler extends TagHandler {
 				Button dropDown = new Button();
 				dropDown.addAttribute("type", "button")
 					.addAttribute("class", Bootstrap.BUTTON)
-					.addAttribute("class", lookVal != null ? lookVal : Bootstrap.BUTTON_DEFAULT)
+					.addAttribute("class", getButtonLook(lookVal))
 					.addAttribute("role", "button")
 					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
 					.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
@@ -279,6 +264,25 @@ public final class ButtonTagHandler extends TagHandler {
 		}
 
 		return buttonGroup != null ? buttonGroup : button;
+	}
+
+	private String getButtonLook(String lookVal) {
+		String buttonLook = Bootstrap.BUTTON_DEFAULT;
+
+		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+			buttonLook = Bootstrap.BUTTON_PRIMARY;
+		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+			buttonLook = Bootstrap.BUTTON_SUCCESS;
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+			buttonLook = Bootstrap.BUTTON_INFO;
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+			buttonLook = Bootstrap.BUTTON_WARNING;
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+			buttonLook = Bootstrap.BUTTON_DANGER;
+		} else if (Look.LINK.equalsIgnoreCase(lookVal)) {
+			buttonLook = Bootstrap.BUTTON_LINK;
+		}
+		return buttonLook;
 	}
 	
 	@SuppressWarnings("unchecked")

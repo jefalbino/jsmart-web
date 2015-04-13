@@ -120,11 +120,13 @@ public final class TableTagHandler extends TagHandler {
 		HttpServletRequest request = getRequest();		
 
 		Div div = new Div();
-		div.addAttribute("class", Bootstrap.TABLE_RESPONSIVE);
+		div.addAttribute("class", Bootstrap.TABLE_RESPONSIVE)
+			.addAttribute("style", style)
+			.addAttribute("class", styleClass);
 
 		Table table = new Table();
 		table.addAttribute("id", id)
-			.addAttribute("style", style)
+			.addAttribute("style", "width: inherit;")
 			.addAttribute("class", Bootstrap.TABLE)
 			.addAttribute("class", bordered ? Bootstrap.TABLE_BORDERED : null)
 			.addAttribute("class", striped ? Bootstrap.TABLE_STRIPED : null)
@@ -134,7 +136,6 @@ public final class TableTagHandler extends TagHandler {
 		if (Size.SMALL.equalsIgnoreCase(size)) {
 			table.addAttribute("class", Bootstrap.TABLE_CONDENSED);
 		}
-		table.addAttribute("class", styleClass);
 
 		if (caption != null) {
 			Caption captionTag = new Caption();
@@ -144,7 +145,8 @@ public final class TableTagHandler extends TagHandler {
 
 		THead thead = new THead();
 		TBody tbody = new TBody();
-		tbody.addAttribute("scroll-size", scrollSize);
+		tbody.addAttribute("scroll-size", scrollSize)
+			.addAttribute("style", "width: inherit;");
 
 		if (maxHeight != null) {
 			tbody.addAttribute("style", "height: " + maxHeight + ";")

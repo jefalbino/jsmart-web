@@ -74,13 +74,13 @@ public final class WebFilter implements Filter {
 
 	private static final Logger LOGGER = Logger.getLogger(WebFilter.class.getPackage().getName());
 
-	private static final Pattern HTML_PATTERN = Pattern.compile("<html.*?>");
+	private static final Pattern HTML_PATTERN = Pattern.compile("(<html.*?>)");
 
-	private static final Pattern START_HEAD_PATTERN = Pattern.compile("<head.*?>");
+	private static final Pattern START_HEAD_PATTERN = Pattern.compile("(<head.*?>)");
 
-	private static final Pattern CLOSE_BODY_PATTERN = Pattern.compile("</body.*?>");
+	private static final Pattern CLOSE_BODY_PATTERN = Pattern.compile("(</body.*?>)");
 
-	private static final Pattern SCRIPT_BODY_PATTERN = Pattern.compile("<body.*?>\\s*(<script.*?>)", Pattern.DOTALL);
+	private static final Pattern SCRIPT_BODY_PATTERN = Pattern.compile("(<body.*?>\\s*)(<script.*?>)", Pattern.DOTALL);
 
 	private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
 
@@ -213,14 +213,12 @@ public final class WebFilter implements Filter {
 			// Try to place the css as the first link in the head tag
         	Matcher startHeadMatcher = START_HEAD_PATTERN.matcher(html);
 		    if (startHeadMatcher.find()) {
-		    	String startHeadMatch = startHeadMatcher.group();
-		    	html = html.replaceFirst(startHeadMatch, startHeadMatch + headerStyles);
+		    	html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(headerStyles.toString()));
 
 		    } else {
-		    	String htmlMatch = htmlMatcher.group();
 		    	Head head = new Head();
 		    	head.addText(headerStyles);
-		    	html = html.replaceFirst(htmlMatch, htmlMatch + head.getHtml());
+		    	html = htmlMatcher.replaceFirst("$1" + Matcher.quoteReplacement(head.getHtml().toString()));
 		    }
 
 		    DocScript script = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
@@ -228,8 +226,8 @@ public final class WebFilter implements Filter {
 		    // Place the scripts before the last script tag inside body
 		    Matcher scriptMatcher = SCRIPT_BODY_PATTERN.matcher(html);
 		    if (scriptMatcher.find()) {
-		    	String scriptMatch = scriptMatcher.group(1);
-		    	return html.replace(scriptMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + scriptMatch);
+		    	String scripts = Matcher.quoteReplacement(headerScripts.toString() + (script != null ? script.getHtml() : ""));
+		    	return scriptMatcher.replaceFirst("$1" + scripts + "$2");
 		    }
 
 		    // Place the scripts before the end body tag
@@ -238,8 +236,8 @@ public final class WebFilter implements Filter {
 		    	throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
 		    }
 
-		    String bodyMatch = bodyMatcher.group();
-			return html.replace(bodyMatch, headerScripts.toString() + (script != null ? script.getHtml() : "") + bodyMatch);
+		    String scripts = Matcher.quoteReplacement(headerScripts.toString() + (script != null ? script.getHtml() : ""));
+			return bodyMatcher.replaceFirst(scripts + "$1");
         }
 		return html;
 	}
