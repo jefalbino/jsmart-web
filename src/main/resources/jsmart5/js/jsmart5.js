@@ -1075,6 +1075,7 @@ var Jsmart5 = (function() {
 			type: map.method, 
 			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
 			beforeSend: function (xhr, settings) {
+				appendLoadIcon(map);
 				doHeaders(map, xhr, settings);
 				doExecute(map.before, xhr, settings);
 			},
@@ -1104,6 +1105,7 @@ var Jsmart5 = (function() {
 				showOnConsole(xhr.responseText);
 			},
 			complete: function (xhr, status) {
+				removeLoadIcon(map);
 				doExecute(map.complete, xhr, status);
 			},
 			async: true
@@ -1336,6 +1338,42 @@ var Jsmart5 = (function() {
 			doUpdate($(this).attr('id'), data);
 			$(this).show();
 		});
+	}
+
+	function appendLoadIcon(map) {
+		if (map.tag && (map.tag == 'button' || map.tag == 'link' || map.tag == 'ajax')) {
+			var el = $(getId(map.id));
+
+			var hiddenRefresh = el.find('span[' + refreshIcon + ']');
+			if (hiddenRefresh && hiddenRefresh.length > 0) {
+
+				var leftIcon = el.find('span.glyphicon[side="left"]:first');
+				if (leftIcon && leftIcon.length > 0) {
+					leftIcon.hide();
+				}
+
+				var refreshClone = hiddenRefresh.clone();
+				refreshClone.css({'margin-right': '4px'});
+				el.prepend(refreshClone.show());
+			}
+		}
+	}
+
+	function removeLoadIcon(map) {
+		if (map.tag && (map.tag == 'button' || map.tag == 'link' || map.tag == 'ajax')) {
+			var el = $(getId(map.id));
+			
+			var refreshClone = el.find('span[' + refreshIcon + ']:first');
+			if (refreshClone && refreshClone.length > 0) {
+				
+				refreshClone.remove();
+
+				var leftIcon = el.find('span.glyphicon[side="left"]:first');
+				if (leftIcon && leftIcon.length > 0) {
+					leftIcon.show();
+				}
+			}
+		}
 	}
 
 	/******************************************************

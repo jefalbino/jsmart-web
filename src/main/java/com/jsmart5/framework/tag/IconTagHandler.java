@@ -36,7 +36,7 @@ public final class IconTagHandler extends TagHandler {
 
 	private String name;
 
-	private String side = Align.LEFT.name();
+	private String side = Align.LEFT.name().toLowerCase();
 	
 	private String look;
 
@@ -99,7 +99,8 @@ public final class IconTagHandler extends TagHandler {
 		span.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.GLYPHICON)
 			.addAttribute("class", getTagValue(name))
-			.addAttribute("aria-hidden", "true");
+			.addAttribute("aria-hidden", "true")
+			.addAttribute("side", side);
 		
 		appendRefId(span, id);
 		

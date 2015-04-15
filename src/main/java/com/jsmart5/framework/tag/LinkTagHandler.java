@@ -231,6 +231,12 @@ public final class LinkTagHandler extends TagHandler {
 		if (action != null) {
 			appendScript(getFunction(url));
 		}
+		
+		if (loadTag != null) {
+			Tag tag = loadTag.executeTag();
+			tag.addAttribute("style", "display: none;");
+			link.addTag(tag);
+		}
 
 		if (dropMenu != null) {
 			Tag ul = dropMenu.executeTag();

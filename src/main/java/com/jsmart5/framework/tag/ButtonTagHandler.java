@@ -197,6 +197,12 @@ public final class ButtonTagHandler extends TagHandler {
 			buttonGroup.addTag(button);
 		}
 
+		if (loadTag != null) {
+			Tag tag = loadTag.executeTag();
+			tag.addAttribute("style", "display: none;");
+			button.addTag(tag);
+		}
+
 		if (dropMenu != null) {
 			Span caret = new Span();
 			caret.addAttribute("class", Bootstrap.CARET);
