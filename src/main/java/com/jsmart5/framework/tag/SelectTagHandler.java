@@ -192,7 +192,7 @@ public final class SelectTagHandler extends TagHandler {
 		}
 
 		if (ajax) {
-			appendScript(getFunction());
+			appendDocScript(getFunction());
 		}
 
 		for (OptionTagHandler option : options) {

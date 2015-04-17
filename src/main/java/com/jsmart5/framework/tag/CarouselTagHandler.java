@@ -192,15 +192,15 @@ public final class CarouselTagHandler extends TagHandler {
 		div.addTag(left).addTag(right);
 
 		if (onSlide != null) {
-			appendScript(getBindFunction(id, "slide.bs.carousel", new StringBuilder(onSlide)));
+			appendDocScript(getBindFunction(id, "slide.bs.carousel", new StringBuilder(onSlide)));
 		}
 
 		if (noSlideImage) {
 			StringBuilder script = new StringBuilder(JSMART_CAROUSEL.format(id));
-			appendScript(getBindFunction(id, "slid.bs.carousel", script));
+			appendDocScript(getBindFunction(id, "slid.bs.carousel", script));
 			
 			// This will be executed at document ready
-			appendScript(script);
+			appendDocScript(script);
 		}
 		return div;
 	}

@@ -169,11 +169,11 @@ public final class ListTagHandler extends TagHandler {
 		popDelegateTagParent();
 
 		if (selectValue != null) {
-			appendScript(getAjaxFunction());
+			appendDocScript(getAjaxFunction());
 		}
 		
 		if (scrollSize != null) {
-			appendScript(getScrollFunction());
+			appendDocScript(getScrollFunction());
 		}
 
 		return ul;

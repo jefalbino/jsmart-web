@@ -157,7 +157,8 @@ var Jsmart5 = (function() {
 
 		} else {
 			if (map.method) {
-				if (map.tag && (map.tag == 'select' || map.tag == 'link' || map.tag == 'button' || map.tag == 'dropaction')) {
+				if (map.tag && (map.tag == 'select' || map.tag == 'link' || map.tag == 'button' 
+						|| map.tag == 'dropaction' || map.tag == 'function')) {
 					el = $(getId(map.id));
 				}
 

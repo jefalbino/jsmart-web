@@ -151,7 +151,7 @@ public final class DropMenuTagHandler extends TagHandler {
 				ul.addTag(dividerLi);
 			}
 			
-			appendScript(getFunction(dropAction));
+			appendDocScript(getFunction(dropAction));
 		}
 
 		return ul;

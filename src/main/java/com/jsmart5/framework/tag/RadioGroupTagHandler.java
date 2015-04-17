@@ -105,7 +105,7 @@ public final class RadioGroupTagHandler extends TagHandler {
 		appendDelegateBind(id, "input");
 		
 		if (ajax) {
-			appendScript(getFunction());
+			appendDocScript(getFunction());
 		}
 
 		return div;

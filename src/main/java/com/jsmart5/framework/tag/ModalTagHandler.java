@@ -128,15 +128,15 @@ public final class ModalTagHandler extends TagHandler {
 		}
 		
 		if (onShow != null) {
-			appendScript(getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
+			appendDocScript(getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
 		}
 		if (onHide != null) {
-			appendScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
+			appendDocScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
 		}
 
 		Object openedVal = getTagValue(opened);
 		if (openedVal != null && Boolean.parseBoolean(openedVal.toString())) {
-			appendScript(new StringBuilder(JSMART_MODAL.format(id)));
+			appendDocScript(new StringBuilder(JSMART_MODAL.format(id)));
 		}
 		return modal;
 	}

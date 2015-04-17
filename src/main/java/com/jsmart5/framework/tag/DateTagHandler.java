@@ -262,7 +262,7 @@ public final class DateTagHandler extends TagHandler {
 			}
 		}
 		StringBuilder script = new StringBuilder(JSMART_DATE.format(getJsonValue(jsonDate)));
-		appendScript(script);
+		appendDocScript(script);
 	}
 
 	void setChildAddOn(TagHandler childAddOn) {

@@ -18,50 +18,47 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.js.JsConstants.*;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Param;
 import com.jsmart5.framework.manager.TagHandler;
-import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Tag;
-import com.jsmart5.framework.tag.type.Event;
-import com.jsmart5.framework.tag.util.RefAction;
+import com.jsmart5.framework.tag.type.Type;
 
-public final class CheckGroupTagHandler extends TagHandler {
+import static com.jsmart5.framework.tag.js.JsConstants.*;
 
-	protected final List<CheckTagHandler> checks;
+public final class FunctionTagHandler extends TagHandler {
 
-	private String align;
+	private String name;
 
-	private String selectValues;
+	private String action;
 
-	private boolean inline;
+	private Integer timeout;
 
 	private String update;
-	
+
 	private String beforeSend;
-	
+
 	private String onError;
-	
+
 	private String onSuccess;
 
 	private String onComplete;
 
-	public CheckGroupTagHandler() {
-		checks = new ArrayList<CheckTagHandler>();
-	}
-
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (timeout != null && timeout < 0) {
+			throw InvalidAttributeException.fromConstraint("function", "timeout", "greater or equal to 0"); 
+		}
+		if (action != null && action.trim().contains(" ")) {
+			throw InvalidAttributeException.fromConflict("function", "action", "Value cannot contain space characters");
+		}
 	}
 
 	@Override
@@ -73,51 +70,51 @@ public final class CheckGroupTagHandler extends TagHandler {
 			body.invoke(null);
 		}
 
-		setRandomId("checkgroup");
-		
-		Div div = new Div();
-		div.addAttribute("align", align)
-			.addAttribute("checkgroup", "")
-			.addAttribute("inline", inline ? inline : null);
-		
-		appendRefId(div, id);
-		
-		appendTooltip(div);
-		appendPopOver(div);
+		Input input = new Input();
+		input.addAttribute("id", id)
+			.addAttribute("type", Type.HIDDEN.name().toLowerCase())
+			.addAttribute("disabled", "disabled")
+			.addAttribute("readonly", true);
 
- 		long checkIndex = 0;
-		for (CheckTagHandler check : checks) {
-
-			check.setCheckIndex(checkIndex++);
-			check.setStyle(style);
-			check.setStyleClass(styleClass);
-			check.setInline(inline);
-			check.setValidatorTag(validatorTag);
-			check.setRest(rest);
-			check.setName(selectValues);
-			check.setType(CheckTagHandler.CHECKBOX);
-			setEvents(check);
-
-			div.addTag(check.executeTag());
-		}
-		
-		appendDelegateAjax(id, "input");
-		appendDelegateBind(id, "input");
-
-		if (ajax) {
-			appendDocScript(getFunction());
+		if (!args.isEmpty()) {
+			String actionName = getTagName(J_SBMT_ARGS, action);
+			input.addUniqueAttribute(actionName, getJsonHtmlValue(args));
 		}
 
-		return div;
+		for (String param : params.keySet()) {
+			input.addUniqueAttribute(param, params.get(param));
+		}
+
+		Ajax jsonAjax = getJsonAjax(id);
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+
+		appendScript(getFunction(name, builder));
+
+		return input;
 	}
 
-	@SuppressWarnings("unchecked")
-	private StringBuilder getFunction() {
+	private Ajax getJsonAjax(String id) {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
-		jsonAjax.setTag("checkgroup");
+		jsonAjax.setTimeout(timeout);
+		jsonAjax.setTag("function");
 
+		if (action != null) {
+			jsonAjax.setMethod("post");
+			jsonAjax.setAction(getTagName(J_SBMT, action));
+
+			if (!args.isEmpty()) {
+				String name = getTagName(J_SBMT_ARGS, action);
+				jsonAjax.addArg(new Param(name, null));
+			}
+
+			for (String name : params.keySet()) {						
+				jsonAjax.addParam(new Param(name, null));
+			}
+		} else if (update != null) {
+			jsonAjax.setMethod("get");
+		}
 		if (update != null) {
 			jsonAjax.setUpdate(update.trim());
 		}
@@ -133,37 +130,19 @@ public final class CheckGroupTagHandler extends TagHandler {
 		if (onComplete != null) {
 			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
 		}
-
-		// It means that the ajax is inside some iterator tag, so the
-		// ajax actions will be set by iterator tag and the event bind
-		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
-		if (actionStack != null) {
-			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
-
-		} else {
-			StringBuilder builder = new StringBuilder();
-			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-			return getDelegateFunction(id, "input", Event.CLICK.name(), builder);
-		}
-
-		return null;
+		return jsonAjax;
 	}
 
-	void addCheck(CheckTagHandler check) {
-		this.checks.add(check);
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setAlign(String align) {
-		this.align = align;
+	public void setAction(String action) {
+		this.action = action;
 	}
 
-	public void setSelectValues(String selectValues) {
-		this.selectValues = selectValues;
-	}
-
-	public void setInline(boolean inline) {
-		this.inline = inline;
+	public void setTimeout(Integer timeout) {
+		this.timeout = timeout;
 	}
 
 	public void setUpdate(String update) {

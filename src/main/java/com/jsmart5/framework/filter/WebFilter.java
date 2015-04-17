@@ -59,6 +59,7 @@ import com.jsmart5.framework.json.Resources;
 import com.jsmart5.framework.manager.SmartContext;
 import com.jsmart5.framework.tag.html.Head;
 import com.jsmart5.framework.tag.html.DocScript;
+import com.jsmart5.framework.tag.html.Script;
 
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.config.Constants.*;
@@ -205,41 +206,57 @@ public final class WebFilter implements Filter {
 
 	private String getCompleteHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
 		String html = response.toString();
+
+		// Ajax request do not use scripts returned on html body 
+		if ("XMLHttpRequest".equals(httpRequest.getHeader("X-Requested-With"))) {
+			return html;
+		}
+
         Matcher htmlMatcher = HTML_PATTERN.matcher(html);
 
-		// Check if it is a valid html
-        if (htmlMatcher.find()) {
-
-			// Try to place the css as the first link in the head tag
-        	Matcher startHeadMatcher = START_HEAD_PATTERN.matcher(html);
-		    if (startHeadMatcher.find()) {
-		    	html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(headerStyles.toString()));
-
-		    } else {
-		    	Head head = new Head();
-		    	head.addText(headerStyles);
-		    	html = htmlMatcher.replaceFirst("$1" + Matcher.quoteReplacement(head.getHtml().toString()));
-		    }
-
-		    DocScript script = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
-
-		    // Place the scripts before the last script tag inside body
-		    Matcher scriptMatcher = SCRIPT_BODY_PATTERN.matcher(html);
-		    if (scriptMatcher.find()) {
-		    	String scripts = Matcher.quoteReplacement(headerScripts.toString() + (script != null ? script.getHtml() : ""));
-		    	return scriptMatcher.replaceFirst("$1" + scripts + "$2");
-		    }
-
-		    // Place the scripts before the end body tag
-		    Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
-		    if (!bodyMatcher.find()) {
-		    	throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
-		    }
-
-		    String scripts = Matcher.quoteReplacement(headerScripts.toString() + (script != null ? script.getHtml() : ""));
-			return bodyMatcher.replaceFirst(scripts + "$1");
+		// Check if it is a valid html, if not just return the html
+        if (!htmlMatcher.find()) {
+        	return html;
         }
-		return html;
+
+		// Try to place the css as the first link in the head tag
+    	Matcher startHeadMatcher = START_HEAD_PATTERN.matcher(html);
+	    if (startHeadMatcher.find()) {
+	    	html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(headerStyles.toString()));
+
+	    } else {
+	    	Head head = new Head();
+	    	head.addText(headerStyles);
+	    	html = htmlMatcher.replaceFirst("$1" + Matcher.quoteReplacement(head.getHtml().toString()));
+	    }
+
+	    // Stand alone functions mapped via function tag
+	    Script funcScript = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
+	    
+	    // General document scripts executed on page ready
+	    DocScript docScript = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_DOC_SCRIPT_ATTR);
+
+	    StringBuilder scriptBuilder = new StringBuilder(headerScripts);
+	    if (funcScript != null) {
+	    	scriptBuilder.append(funcScript.getHtml());
+	    }
+	    if (docScript != null) {
+	    	scriptBuilder.append(docScript.getHtml());
+	    }
+
+	    // Place the scripts before the last script tag inside body
+	    Matcher scriptMatcher = SCRIPT_BODY_PATTERN.matcher(html);
+	    if (scriptMatcher.find()) {
+	    	return scriptMatcher.replaceFirst("$1" + Matcher.quoteReplacement(scriptBuilder.toString()) + "$2");
+	    }
+
+	    // Place the scripts before the end body tag
+	    Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
+	    if (!bodyMatcher.find()) {
+	    	throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
+	    }
+
+		return bodyMatcher.replaceFirst(Matcher.quoteReplacement(scriptBuilder.toString()) + "$1");
 	}
 
 	private void initHeaders() {

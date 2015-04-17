@@ -107,7 +107,7 @@ public final class CheckboxTagHandler extends TagHandler {
 		}
 
 		if (ajax) {
-			appendScript(getAjaxFunction());
+			appendDocScript(getAjaxFunction());
 		}
 
 		appendAjax(id);

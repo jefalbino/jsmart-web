@@ -237,17 +237,17 @@ public final class TabTagHandler extends TagHandler {
 		if (input != null) {
 			input.addAttribute("value", tabVal);
 
-			appendScript(getTabFunction());			
+			appendDocScript(getTabFunction());			
 			if (ajax) {
-				appendScript(getTabPaneFunction());
+				appendDocScript(getTabPaneFunction());
 			}
 		}
 
 		if (onShow != null) {
-			appendScript(getBindFunction(id, "show.bs.tab", new StringBuilder(onShow)));
+			appendDocScript(getBindFunction(id, "show.bs.tab", new StringBuilder(onShow)));
 		}
 		if (onHide != null) {
-			appendScript(getBindFunction(id, "hide.bs.tab", new StringBuilder(onHide)));
+			appendDocScript(getBindFunction(id, "hide.bs.tab", new StringBuilder(onHide)));
 		}
 
 		return tab;

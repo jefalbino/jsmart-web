@@ -46,9 +46,9 @@ public final class AjaxTagHandler extends TagHandler {
 	private String update;
 
 	private String beforeSend;
-	
+
 	private String onError;
-	
+
 	private String onSuccess;
 
 	private String onComplete;
@@ -62,10 +62,10 @@ public final class AjaxTagHandler extends TagHandler {
 			throw InvalidAttributeException.fromConstraint("ajax", "timeout", "greater or equal to 0"); 
 		}
 		if (action != null && action.trim().contains(" ")) {
-			throw InvalidAttributeException.fromConflict("ajax", "action", "Value cannot contains space characters");
+			throw InvalidAttributeException.fromConflict("ajax", "action", "Value cannot contain space characters");
 		}
 	}
-	
+
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
@@ -187,7 +187,7 @@ public final class AjaxTagHandler extends TagHandler {
 	public void setEvent(String event) {
 		this.event = event;
 	}
-	
+
 	public String getAction() {
 		return action;
 	}

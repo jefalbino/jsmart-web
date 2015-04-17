@@ -229,13 +229,13 @@ public final class TableTagHandler extends TagHandler {
 		popDelegateTagParent();
 
 		if (selectValue != null) {
-			appendScript(getAjaxFunction());
+			appendDocScript(getAjaxFunction());
 		}
 		if (scrollSize != null) {
-			appendScript(getScrollFunction());
+			appendDocScript(getScrollFunction());
 		}
 		if (hasFilterOrSort) {
-			appendScript(getHeaderFunction());
+			appendDocScript(getHeaderFunction());
 		}
 
 		div.addTag(table);

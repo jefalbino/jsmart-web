@@ -618,6 +618,48 @@
     </tag>
 
 	<tag>
+        <name>function</name>
+        <tag-class>com.jsmart5.framework.tag.FunctionTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>action</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>update</name>
+            <required>false</required>
+        </attribute>
+         <attribute>
+            <name>timeout</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>beforeSend</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onError</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onSuccess</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onComplete</name>
+            <required>false</required>
+        </attribute>
+    </tag>
+
+	<tag>
 		<name>restarray</name>
 		<tag-class>com.jsmart5.framework.tag.RestArrayTagHandler</tag-class>
 		<body-content>scriptless</body-content>

@@ -38,10 +38,10 @@ public final class ArgTagHandler extends TagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof AjaxTagHandler) {
+		if (parent instanceof TagHandler) {
 
 			Object obj = getTagValue(value);
-			((AjaxTagHandler) parent).addArg(obj);
+			((TagHandler) parent).addArg(obj);
 		}
 		return false;
 	}

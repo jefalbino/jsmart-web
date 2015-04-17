@@ -229,7 +229,7 @@ public final class LinkTagHandler extends TagHandler {
 		link.addAttribute("class", styleClass);
 		
 		if (action != null) {
-			appendScript(getFunction(url));
+			appendDocScript(getFunction(url));
 		}
 		
 		if (loadTag != null) {

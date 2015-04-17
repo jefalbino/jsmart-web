@@ -247,7 +247,7 @@ public final class ButtonTagHandler extends TagHandler {
 		}
 
 		if (ajax) {		
-			appendScript(getFunction(id, action, params));
+			appendDocScript(getFunction(id, action, params));
 		} else if (action != null) {
 			button.addAttribute("name", getTagName(J_SBMT, action));
 		}

@@ -51,6 +51,7 @@ import com.jsmart5.framework.tag.PopOverTagHandler;
 import com.jsmart5.framework.tag.TooltipTagHandler;
 import com.jsmart5.framework.tag.ValidateTagHandler;
 import com.jsmart5.framework.tag.html.DocScript;
+import com.jsmart5.framework.tag.html.Script;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.util.EventAction;
 import com.jsmart5.framework.tag.util.RefAction;
@@ -517,6 +518,14 @@ public abstract class TagHandler extends SimpleTagSupport {
 		return GSON.toJson(object).replace("\"", "'");
 	}
 
+	protected StringBuilder getFunction(String name, StringBuilder script) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("function").append(" ").append(name).append("()").append("{");
+		builder.append(script);
+		builder.append("};");
+		return builder;
+	}
+
 	protected StringBuilder getBindFunction(String id, String event, StringBuilder script) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("$(document).on('").append(event.toLowerCase()).append("','#").append(id).append("',function(e){");
@@ -537,12 +546,26 @@ public abstract class TagHandler extends SimpleTagSupport {
 	protected void appendScript(StringBuilder builder) {
 		if (builder != null) {
 			HttpServletRequest httpRequest = getRequest();
-			DocScript script = (DocScript) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);
+			Script script = (Script) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);
+	
+			if (script == null) {
+				script = new Script();
+				script.addAttribute("type", "text/javascript");
+				httpRequest.setAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR, script);
+			}
+			script.addText(builder.toString());
+		}
+	}
+
+	protected void appendDocScript(StringBuilder builder) {
+		if (builder != null) {
+			HttpServletRequest httpRequest = getRequest();
+			DocScript script = (DocScript) httpRequest.getAttribute(Constants.REQUEST_PAGE_DOC_SCRIPT_ATTR);
 	
 			if (script == null) {
 				script = new DocScript();
 				script.addAttribute("type", "text/javascript");
-				httpRequest.setAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR, script);
+				httpRequest.setAttribute(Constants.REQUEST_PAGE_DOC_SCRIPT_ATTR, script);
 			}
 			script.addText(builder.toString());
 		}
@@ -585,7 +608,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 							StringBuilder builder = new StringBuilder();
 							builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 							builder = getDelegateFunction(id, "*[role-delegate=\"" + refId + "\"]", event.toLowerCase(), builder);
-							appendScript(builder);
+							appendDocScript(builder);
 						}
 					}
 				}
@@ -597,7 +620,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 							StringBuilder builder = new StringBuilder();
 							builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
 							builder = getDelegateFunction(id, "*[role-delegate=\"" + refId + "\"]", event.toLowerCase(), builder);
-							appendScript(builder);
+							appendDocScript(builder);
 						}
 					}
 				}
@@ -671,7 +694,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 	protected void appendAjax(TagHandler tagHandler, String id) {
 		if (!tagHandler.ajaxTags.isEmpty()) {
 			for (AjaxTagHandler ajax : tagHandler.ajaxTags) {
-				appendScript(ajax.getBindFunction(id));
+				appendDocScript(ajax.getBindFunction(id));
 			}
 		}
 	}
@@ -683,7 +706,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 	protected void appendDelegateAjax(TagHandler tagHandler, String id, String child) {
 		if (!tagHandler.ajaxTags.isEmpty()) {
 			for (AjaxTagHandler ajax : tagHandler.ajaxTags) {
-				appendScript(ajax.getDelegateFunction(id, child));
+				appendDocScript(ajax.getDelegateFunction(id, child));
 			}
 		}
 	}
@@ -695,7 +718,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 	protected void appendBind(TagHandler tagHandler, String id) {
 		if (!tagHandler.bindTags.isEmpty()) {
 			for (BindTagHandler bind : tagHandler.bindTags) {
-				appendScript(bind.getBindFunction(id));
+				appendDocScript(bind.getBindFunction(id));
 			}
 		}
 	}
@@ -707,7 +730,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 	protected void appendDelegateBind(TagHandler tagHandler, String id, String child) {
 		if (!tagHandler.bindTags.isEmpty()) {
 			for (BindTagHandler bind : tagHandler.bindTags) {
-				appendScript(bind.getDelegateFunction(id, child));
+				appendDocScript(bind.getDelegateFunction(id, child));
 			}
 		}
 	}

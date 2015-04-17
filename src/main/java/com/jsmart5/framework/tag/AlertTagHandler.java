@@ -70,7 +70,7 @@ public final class AlertTagHandler extends TagHandler {
 			.addAttribute("role", "alert-wrap");
 
 		if (onHide != null) {
-			appendScript(getBindFunction(id, "close.bs.alert", new StringBuilder(onHide)));
+			appendDocScript(getBindFunction(id, "close.bs.alert", new StringBuilder(onHide)));
 		}
 
 		List<SmartAlert> alerts = getAlerts(id);

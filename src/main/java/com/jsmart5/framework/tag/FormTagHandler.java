@@ -111,7 +111,7 @@ public final class FormTagHandler extends TagHandler {
 		}
 
 		appendBind(id);
-		appendScript(getFunction());
+		appendDocScript(getFunction());
 		
 		Set set = new Set();
 		for (Tag tag : beforeForm) {
