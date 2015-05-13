@@ -2786,13 +2786,25 @@
     <tag>
         <name>tooltip</name>
         <tag-class>com.jsmart5.framework.tag.TooltipTagHandler</tag-class>
-        <body-content>empty</body-content>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+        </attribute>
         <attribute>
             <name>title</name>
             <required>false</required>
         </attribute>
         <attribute>
+            <name>event</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>side</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>selector</name>
             <required>false</required>
         </attribute>
     </tag>
@@ -2800,7 +2812,11 @@
     <tag>
         <name>popover</name>
         <tag-class>com.jsmart5.framework.tag.PopOverTagHandler</tag-class>
-        <body-content>empty</body-content>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+        </attribute>
         <attribute>
             <name>title</name>
             <required>false</required>
@@ -2810,7 +2826,15 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>event</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>side</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>selector</name>
             <required>false</required>
         </attribute>
     </tag>
@@ -3560,14 +3584,32 @@
             <required>false</required>
         </attribute>
     </tag>
+    
+    <tag>
+        <name>progressgroup</name>
+        <tag-class>com.jsmart5.framework.tag.ProgressGroupTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+	</tag>
 
 	<tag>
-        <name>progress</name>
-        <tag-class>com.jsmart5.framework.tag.ProgressTagHandler</tag-class>
+        <name>progressbar</name>
+        <tag-class>com.jsmart5.framework.tag.ProgressBarTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>id</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>style</name>
@@ -3579,10 +3621,6 @@
         </attribute>
         <attribute>
             <name>rest</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>disabled</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3598,11 +3636,19 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>label</name>
+            <name>striped</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>showPercentage</name>
+            <name>animated</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>look</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>withLabel</name>
             <required>false</required>
         </attribute>
         <attribute>

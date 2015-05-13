@@ -34,11 +34,37 @@ var Jsmart5 = (function() {
 	});
 	
 	function initPopOvers() {
-		$('[data-toggle="popover"]').popover();
+		$('[data-toggle="popover"]').each(function() {
+			var templateId = $(this).attr('template-id');
+
+			if (templateId && templateId.length > 0) {
+				$(this).popover({
+					html: true, 
+					content: function() {
+						return $('#' + templateId).html();
+					}
+				});
+			} else {
+				$(this).popover();
+			}
+		});
 	}
 	
 	function initTooltips() {
-		$('[data-toggle="tooltip"]').tooltip();
+		$('[data-toggle="tooltip"]').each(function() {
+			var templateId = $(this).attr('template-id');
+
+			if (templateId && templateId.length > 0) {
+				$(this).tooltip({
+					html: true, 
+					title: function() {
+						return $('#' + templateId).html();
+					}
+				});
+			} else {
+				$(this).tooltip();
+			}
+		});
 	}
 	
 	function initCheckboxes() {

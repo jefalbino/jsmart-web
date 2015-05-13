@@ -23,24 +23,18 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
+import com.jsmart5.framework.tag.css.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.Look;
 
-import static com.jsmart5.framework.tag.js.JsConstants.*;
-
-public final class ProgressTagHandler extends TagHandler {
-
-	private static final String PROGRESS_FRAME = "_progress_frame";
-
-	private static final String PROGRESS_PERCENT = "_progress_percent";
-
-	private static final String PROGRESS_INPUT = "_progress_input";
+public final class ProgressBarTagHandler extends TagHandler {
 
 	private static final Integer DEFAULT_MAX = 100;
 
 	private static final Integer DEFAULT_MIN = 0;
-
-	private boolean disabled;
 
 	private String value;
 
@@ -48,37 +42,95 @@ public final class ProgressTagHandler extends TagHandler {
 
 	private Integer minValue = DEFAULT_MIN;
 
-    private String label;
-
     private Integer interval;
 
     private String onInterval;
 
-    private boolean showPercentage = true;
-
     private String onComplete;
+    
+    private boolean withLabel;
+
+    private boolean striped;
+
+    private boolean animated;
+    
+    private String look;
 
 	@Override
 	public void validateTag() throws JspException {
 		if (maxValue != null && maxValue <= 0) {
-			throw new JspException("Attribute maxValue must be greater than zero for progress tag");
+			throw InvalidAttributeException.fromConstraint("progressbar", "maxValue", "greater than 0");
 		}
 		if (minValue != null && minValue < 0) {
-			throw new JspException("Attribute minValue must be greater or equal to zero for progress tag");
+			throw InvalidAttributeException.fromConstraint("progressbar", "minValue", "greater or equal to 0");
 		}
 		if (maxValue != null && minValue != null && minValue >= maxValue) {
-			throw new JspException("Attribute minValue must be less than maxValue attribute for progress tag");
+			throw InvalidAttributeException.fromConstraint("progressbar", "minValue", "less than [maxValue] attribute value");
 		}
 		if (interval != null && interval < 0) {
-			throw new JspException("Attribute interval must be greater than zero for progress tag");
+			throw InvalidAttributeException.fromConstraint("progressbar", "interval", "greater than 0");
 		}
 		if (onInterval != null && interval == null) {
-			throw new JspException("Attribute interval must be specified case onInterval attribute is specified for progress tag");
+			throw InvalidAttributeException.fromConflict("progressbar", "interval", "Attribute must be specified case [onInterval] attribute is used");
+		}
+		if (look != null && !Look.validateButton(look) && !isEL(look)) {
+			throw InvalidAttributeException.fromPossibleValues("progressbar", "look", Look.getBasicValues());
 		}
 	}
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
+
+		JspTag parent = getParent();
+
+		setRandomId("progressbar");
+
+		Div progress = null;
+
+		if (!(parent instanceof ProgressGroupTagHandler)) {
+			progress = new Div();
+			progress.addAttribute("class", Bootstrap.PROGRESS);
+		}
+
+		Object tagVal = getTagValue(value);
+
+		Div progressBar = new Div();
+		progressBar.addAttribute("id", id)
+			.addAttribute("class", Bootstrap.PROGRESS_BAR)
+			.addAttribute("role", "progressbar")
+			.addAttribute("aria-valuenow", tagVal)
+			.addAttribute("aria-valuemin", minValue)
+			.addAttribute("aria-valuemax", maxValue)
+			.addAttribute("style", "width:" + tagVal + "%;")
+			.addAttribute("style", "min-width: 2em;"); // TODO
+
+		String lookVal = (String) getTagValue(look);
+		progressBar.addAttribute("class", getProgressBarLook(lookVal));
+
+		if (striped || animated) {
+			progressBar.addAttribute("class", Bootstrap.PROGRESS_BAR_STRIPED);
+		}
+		if (animated) {
+			progressBar.addAttribute("class", Bootstrap.ACTIVE);
+		}
+		
+		if (progress != null) {
+			progress.addAttribute("class", styleClass)
+				.addAttribute("style", style);
+		} else {
+			progressBar.addAttribute("class", styleClass)
+				.addAttribute("style", style);
+		}
+		
+		if (withLabel) {
+			progressBar.addText("60%");
+		}
+
+		if (progress != null) {
+			progress.addTag(progressBar);
+		}
+		
+		return progress != null ? progress.addTag(progressBar) : progressBar;
 //
 //		// Container to hold progress
 //		StringBuilder builder = new StringBuilder(OPEN_DIV_TAG);
@@ -191,11 +243,21 @@ public final class ProgressTagHandler extends TagHandler {
 //		printOutput(builder);
 //
 //		appendScriptDeprecated(new StringBuilder(JSMART_PROGRESS.format(id)));
-		return null;
 	}
 
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
+	private String getProgressBarLook(String lookVal) {
+		String progressBarLook = null;
+
+		if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+			progressBarLook = Bootstrap.PROGRESS_BAR_SUCCESS;
+		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+			progressBarLook = Bootstrap.PROGRESS_BAR_INFO;
+		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+			progressBarLook = Bootstrap.PROGRESS_BAR_WARNING;
+		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+			progressBarLook = Bootstrap.PROGRESS_BAR_DANGER;
+		}
+		return progressBarLook;
 	}
 
 	public void setValue(String value) {
@@ -210,10 +272,6 @@ public final class ProgressTagHandler extends TagHandler {
 		this.minValue = minValue;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
 	public void setInterval(Integer interval) {
 		this.interval = interval;
 	}
@@ -222,12 +280,24 @@ public final class ProgressTagHandler extends TagHandler {
 		this.onInterval = onInterval;
 	}
 
-	public void setShowPercentage(boolean showPercentage) {
-		this.showPercentage = showPercentage;
-	}
-
 	public void setOnComplete(String onComplete) {
 		this.onComplete = onComplete;
+	}
+
+	public void setWithLabel(boolean withLabel) {
+		this.withLabel = withLabel;
+	}
+
+	public void setStriped(boolean striped) {
+		this.striped = striped;
+	}
+
+	public void setAnimated(boolean animated) {
+		this.animated = animated;
+	}
+
+	public void setLook(String look) {
+		this.look = look;
 	}
 
 }

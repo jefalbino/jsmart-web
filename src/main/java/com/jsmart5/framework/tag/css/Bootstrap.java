@@ -339,6 +339,22 @@ public final class Bootstrap {
 	
 	public static final String TABLE_RESPONSIVE = "table-responsive";
 
+
+	public static final String PROGRESS = "progress";
+
+	public static final String PROGRESS_BAR = "progress-bar";
+
+	public static final String PROGRESS_BAR_SUCCESS = "progress-bar-success";
+	
+	public static final String PROGRESS_BAR_INFO = "progress-bar-info";
+	
+	public static final String PROGRESS_BAR_WARNING = "progress-bar-warning";
+	
+	public static final String PROGRESS_BAR_DANGER = "progress-bar-danger";
+	
+	public static final String PROGRESS_BAR_STRIPED = "progress-bar-striped";
+
+
 	private Bootstrap() {
 		// DO NOTHING
 	}

@@ -191,6 +191,12 @@ public abstract class TagHandler extends SimpleTagSupport {
 					if (tag != null) {
 						printOutput(tag.getHtml());
 					}
+					if (tooltipTag != null) {
+						tooltipTag.printTemplate(this);
+					}
+					if (popOverTag != null) {
+						popOverTag.printTemplate(this);
+					}
 				}
 			}
 		} catch (Exception ex) {
@@ -431,7 +437,11 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 
 	protected void printOutput(StringBuilder builder) throws IOException {
-		printOutput(builder.toString());
+		printOutput(this, builder);
+	}
+	
+	protected void printOutput(TagHandler tag, StringBuilder builder) throws IOException {
+		tag.printOutput(builder.toString());
 	}
 	
 	protected void printOutput(String string) throws IOException {
@@ -752,7 +762,10 @@ public abstract class TagHandler extends SimpleTagSupport {
 				.addAttribute("data-toggle", "popover")
 				.addAttribute("title", getTagValue(popOverTag.getTitle()))
 				.addAttribute("data-placement", popOverTag.getSide())
-				.addAttribute("data-content", getTagValue(popOverTag.getContent()));
+				.addAttribute("data-content", getTagValue(popOverTag.getContent()))
+				.addAttribute("data-selector", popOverTag.getSelector())
+				.addAttribute("template-id", popOverTag.getId())
+				.addAttribute("data-trigger", popOverTag.getEvent());
 		}
 	}
 	
@@ -761,7 +774,10 @@ public abstract class TagHandler extends SimpleTagSupport {
 			tag.addAttribute("data-container", "body")
 				.addAttribute("data-toggle", "tooltip")
 				.addAttribute("title", getTagValue(tooltipTag.getTitle()))
-				.addAttribute("data-placement", tooltipTag.getSide());	
+				.addAttribute("data-placement", tooltipTag.getSide())
+				.addAttribute("data-selector", tooltipTag.getSelector())
+				.addAttribute("template-id", tooltipTag.getId())
+				.addAttribute("data-trigger", tooltipTag.getEvent());
 		}
 	}
 
