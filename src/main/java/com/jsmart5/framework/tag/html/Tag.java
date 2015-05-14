@@ -66,7 +66,9 @@ public class Tag {
 	}
 
 	public Tag addTag(Tag tag) {
-		this.objects.add(tag);
+		if (tag != null) {
+			this.objects.add(tag);
+		}
 		return this;
 	}
 	

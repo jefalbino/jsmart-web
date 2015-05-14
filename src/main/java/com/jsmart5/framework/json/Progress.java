@@ -16,32 +16,57 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.tag.html;
+package com.jsmart5.framework.json;
 
-import java.util.ArrayList;
-import java.util.List;
+public final class Progress {
 
-public class Set extends Tag {
-
-	private List<Tag> tags;
-
-	public Set() {
-		super("");
-		this.tags = new ArrayList<Tag>();
-	}
-
-	public Set addTag(Tag tag) {
-		if (tag != null) {
-			this.tags.add(tag);
-		}
-		return this;
-	}
+	private String id;
 	
-	public StringBuilder getHtml() {
-		StringBuilder builder = new StringBuilder();
-		for (Tag tag : tags) {
-			builder.append(tag.getHtml());
-		}
-		return builder;
+	private String method;
+
+	private Boolean request;
+
+	private Integer interval;
+
+	private String onInterval;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	public Boolean getRequest() {
+		return request;
+	}
+
+	public void setRequest(Boolean request) {
+		this.request = request;
+	}
+
+	public Integer getInterval() {
+		return interval;
+	}
+
+	public void setInterval(Integer interval) {
+		this.interval = interval;
+	}
+
+	public String getOnInterval() {
+		return onInterval;
+	}
+
+	public void setOnInterval(String onInterval) {
+		this.onInterval = onInterval;
 	}
 }

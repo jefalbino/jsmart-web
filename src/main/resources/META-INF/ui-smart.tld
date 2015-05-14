@@ -3606,7 +3606,7 @@
 	<tag>
         <name>progressbar</name>
         <tag-class>com.jsmart5.framework.tag.ProgressBarTagHandler</tag-class>
-        <body-content>empty</body-content>
+        <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
             <required>false</required>
@@ -3636,6 +3636,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>minWidth</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>striped</name>
             <required>false</required>
         </attribute>
@@ -3652,19 +3656,15 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>ajax</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>interval</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>onInterval</name>
+            <name>ajax</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>onComplete</name>
+            <name>onInterval</name>
             <required>false</required>
         </attribute>
         <attribute>

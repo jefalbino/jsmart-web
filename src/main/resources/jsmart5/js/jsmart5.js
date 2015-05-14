@@ -168,6 +168,10 @@ var Jsmart5 = (function() {
 
 		tableheader: function(map) {
 			doTableHeader(map);
+		},
+		
+		progressbar: function(map) {
+			doProgressBar(map);
 		}
 	};
 
@@ -871,6 +875,65 @@ var Jsmart5 = (function() {
 				inputDate.data('DateTimePicker').minDate(event.date);
 			});
 		}
+	}
+	
+	function doProgressBar(map) {
+		var div = $(getId(map.id));
+		var input = $('input[progress-id="' + map.id + '"]');
+
+		var intervalId = setInterval(function() {
+
+			// If request is true, need to get data from bean
+			if (map.request == true) {
+				var options = getAjaxOptions(map);
+				options.async = false;
+
+				options.success = function(data) {
+					var newInput = $(data).find('input[progress-id="' + map.id + '"]');
+					if (newInput && newInput.length > 0) {
+						input.val(newInput.val());
+						div.attr('aria-valuenow', newInput.val());
+					}
+				}
+				$.ajax(options);
+			}
+
+			var value = parseInt(div.attr('aria-valuenow'));
+			var minValue = parseInt(div.attr('aria-valuemin'));
+			var maxValue = parseInt(div.attr('aria-valuemax'));
+
+			var callback = window[map.onInterval];
+
+			if (typeof callback === 'function') {
+				value = callback(div, value, minValue, maxValue);
+
+				if (value && value === parseInt(value)) {
+
+					// Keep the constraints valid
+					if (value < minValue) {
+						value = minValue;
+					}
+					if (value > maxValue) {
+						value = maxValue;
+					}
+					div.attr('aria-valuenow', value);
+					input.val(value);
+				}
+			}
+
+			// Get the value back case it is changed by callback
+			value = parseInt(div.attr('aria-valuenow'));
+
+			var percent = ((100 * (value - minValue) / (maxValue - minValue)) | 0);
+			div.css({'width': percent + '%'});
+			div.text(percent + '%');
+
+			if (value >= maxValue) {
+				clearInterval(div.attr('interval-id'));
+			}
+		}, map.interval);
+
+		div.attr('interval-id', intervalId);
 	}
 
 	/******************************************************
