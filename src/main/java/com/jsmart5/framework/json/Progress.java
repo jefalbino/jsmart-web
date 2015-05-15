@@ -24,11 +24,13 @@ public final class Progress {
 	
 	private String method;
 
-	private Boolean request;
+	private boolean request;
 
 	private Integer interval;
 
 	private String onInterval;
+
+	private int[] relation;
 
 	public String getId() {
 		return id;
@@ -46,11 +48,11 @@ public final class Progress {
 		this.method = method;
 	}
 
-	public Boolean getRequest() {
+	public boolean isRequest() {
 		return request;
 	}
 
-	public void setRequest(Boolean request) {
+	public void setRequest(boolean request) {
 		this.request = request;
 	}
 
@@ -69,4 +71,13 @@ public final class Progress {
 	public void setOnInterval(String onInterval) {
 		this.onInterval = onInterval;
 	}
+
+	public int[] getRelation() {
+		return relation;
+	}
+
+	public void setRelation(int[] relation) {
+		this.relation = relation;
+	}
+
 }

@@ -44,9 +44,15 @@ public final class ProgressBarTagHandler extends TagHandler {
 
 	private String value;
 
+	private Integer intValue;
+
 	private String maxValue;
 
+	private Integer intMaxValue;
+
 	private String minValue;
+
+	private Integer intMinValue;
 
     private Integer interval;
 
@@ -62,6 +68,8 @@ public final class ProgressBarTagHandler extends TagHandler {
 
     private String minWidth;
 
+    private Integer relation;
+
 	@Override
 	public void validateTag() throws JspException {
 		if (interval != null && interval < 0) {
@@ -76,9 +84,21 @@ public final class ProgressBarTagHandler extends TagHandler {
 	}
 
 	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+
+		if (parent instanceof ProgressGroupTagHandler) {
+			((ProgressGroupTagHandler) parent).addBar(this);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
 	public Tag executeTag() throws JspException, IOException {
 
 		JspTag parent = getParent();
+		ProgressGroupTagHandler group = null; 
 
 		// Just call nested tags
 		JspFragment body = getJspBody();
@@ -93,31 +113,30 @@ public final class ProgressBarTagHandler extends TagHandler {
 		if (!(parent instanceof ProgressGroupTagHandler)) {
 			progress = new Div();
 			progress.addAttribute("class", Bootstrap.PROGRESS);
+			
+			// Initiate integer values because parent will not call it
+			initIntValues(false);
+		} else {
+			// In this case the group parent will call initIntValues before calling executeTag
+			group = (ProgressGroupTagHandler) parent;
 		}
 
-		Integer val = getValue(value, DEFAULT_MIN);
-		Integer minVal = getValue(minValue, DEFAULT_MIN);
-		Integer maxVal = getValue(maxValue, DEFAULT_MAX);
-
-		if (minVal >= maxVal) {
-			throw InvalidAttributeException.fromConstraint("progressbar", "minValue", "less than [maxValue] attribute value");
-		}
-		if (val < minVal) {
-			throw InvalidAttributeException.fromConstraint("progressbar", "value", "greater than [minValue] attribute value");
-		}
-		if (val > maxVal) {
-			throw InvalidAttributeException.fromConstraint("progressbar", "value", "less or equal to [maxValue] attribute value");
+		int percent = ((100 * (intValue - intMinValue) / (intMaxValue - intMinValue)) | 0);
+		
+		if (relation != null) {
+			percent = ((percent * relation / 100) | 0);
 		}
 
-		int percent = ((100 * (val - minVal) / (maxVal - minVal)) | 0);
+		String name = getTagName(J_TAG, value);
 
 		Div bar = new Div();
 		bar.addAttribute("id", id)
+			.addAttribute("name", name)
 			.addAttribute("class", Bootstrap.PROGRESS_BAR)
 			.addAttribute("role", "progressbar")
-			.addAttribute("aria-valuenow", val)
-			.addAttribute("aria-valuemin", minVal)
-			.addAttribute("aria-valuemax", maxVal)
+			.addAttribute("aria-valuenow", intValue)
+			.addAttribute("aria-valuemin", intMinValue)
+			.addAttribute("aria-valuemax", intMaxValue)
 			.addAttribute("style", "width:" + percent + "%;");
 
 		if (minWidth != null) {
@@ -150,14 +169,17 @@ public final class ProgressBarTagHandler extends TagHandler {
 		// Hidden input must be included to be captured on request parameters
 		Input hidden = null;
 
-		if (isEL(value) || rest != null) {
-			String name = getTagName(J_TAG, value);
+		if ((isEL(value) || rest != null) && (group == null || !group.containsBarValue(value))) {
+
+			// Control to avoid duplicated hidden input tags per value on group
+			if (group != null) {
+				group.addBarValue(value);
+			}
 
 			hidden = new Input();
-			hidden.addAttribute("progress-id", id)
-				.addAttribute("type", "hidden")
+			hidden.addAttribute("type", "hidden")
 				.addAttribute("name", name)
-				.addAttribute("value", val);
+				.addAttribute("value", intValue);
 			
 			appendRest(hidden);
 		}
@@ -178,6 +200,23 @@ public final class ProgressBarTagHandler extends TagHandler {
 			Set set = new Set();
 			return set.addTag(bar).addTag(hidden);
 		}
+	}
+
+	Integer initIntValues(boolean onGroup) throws JspException {
+		intMinValue = getValue(minValue, DEFAULT_MIN);
+		intValue = getValue(value, intMinValue);
+		intMaxValue = getValue(maxValue, DEFAULT_MAX);
+		
+		if (!onGroup && intMinValue >= intMaxValue) {
+			throw InvalidAttributeException.fromConstraint("progressbar", "minValue", "less than [maxValue] attribute value");
+		}
+		if (!onGroup && intValue < intMinValue) {
+			throw InvalidAttributeException.fromConstraint("progressbar", "value", "greater or equal to [minValue] attribute value");
+		}
+		if (!onGroup && intValue > intMaxValue) {
+			throw InvalidAttributeException.fromConstraint("progressbar", "value", "less or equal to [maxValue] attribute value");
+		}
+		return Math.abs(intMaxValue - intMinValue);
 	}
 
 	private StringBuilder getIntervalScript() {
@@ -215,6 +254,10 @@ public final class ProgressBarTagHandler extends TagHandler {
 			progressBarLook = Bootstrap.PROGRESS_BAR_DANGER;
 		}
 		return progressBarLook;
+	}
+
+	void setRelation(Integer relation) {
+		this.relation = relation;
 	}
 
 	public void setValue(String value) {
@@ -256,4 +299,5 @@ public final class ProgressBarTagHandler extends TagHandler {
 	public void setMinWidth(String minWidth) {
 		this.minWidth = minWidth;
 	}
+
 }

@@ -31,6 +31,7 @@ public enum JsConstants {
 	JSMART_CAROUSEL("Jsmart5.carousel", "('%s');"),
 	JSMART_DATE("Jsmart5.date", "(%s);"),
 	JSMART_PROGRESSBAR("Jsmart5.progressbar", "(%s);"),
+	JSMART_PROGRESSGROUP("Jsmart5.progressgroup", "(%s);"),
 	JSMART_TABLE("Jsmart5.table", "($(this),%s);"),
 	JSMART_TABLESCROLL("Jsmart5.tablescroll", "(%s);"),
 	JSMART_TABLEHEADER("Jsmart5.tableheader", "(%s);"),

@@ -170,6 +170,10 @@ var Jsmart5 = (function() {
 			doTableHeader(map);
 		},
 		
+		progressgroup: function(map) {
+			doProgressGroup(map);
+		},
+		
 		progressbar: function(map) {
 			doProgressBar(map);
 		}
@@ -876,64 +880,113 @@ var Jsmart5 = (function() {
 			});
 		}
 	}
+
+	function doProgressGroup(map) {
+		var div = $(getId(map.id));
+		var bars = div.find('div[role="progressbar"]');
+
+		if (bars && bars.length > 0) {
+			var index = 0;
+
+			var intervalId = setInterval(function() {
+				var bar = $(bars[index]);
+				
+				if (handleProgressBar(bar, map, map.relation[index])) {
+
+					if (index == bars.length -1) {
+						clearInterval(div.attr('interval-id'));
+					} else {
+						index++;
+					}
+				}
+			}, map.interval);
+
+			div.attr('interval-id', intervalId);
+		}
+	}
 	
 	function doProgressBar(map) {
-		var div = $(getId(map.id));
-		var input = $('input[progress-id="' + map.id + '"]');
-
+		var bar = $(getId(map.id));
 		var intervalId = setInterval(function() {
 
-			// If request is true, need to get data from bean
-			if (map.request == true) {
-				var options = getAjaxOptions(map);
-				options.async = false;
-
-				options.success = function(data) {
-					var newInput = $(data).find('input[progress-id="' + map.id + '"]');
-					if (newInput && newInput.length > 0) {
-						input.val(newInput.val());
-						div.attr('aria-valuenow', newInput.val());
-					}
-				}
-				$.ajax(options);
-			}
-
-			var value = parseInt(div.attr('aria-valuenow'));
-			var minValue = parseInt(div.attr('aria-valuemin'));
-			var maxValue = parseInt(div.attr('aria-valuemax'));
-
-			var callback = window[map.onInterval];
-
-			if (typeof callback === 'function') {
-				value = callback(div, value, minValue, maxValue);
-
-				if (value && value === parseInt(value)) {
-
-					// Keep the constraints valid
-					if (value < minValue) {
-						value = minValue;
-					}
-					if (value > maxValue) {
-						value = maxValue;
-					}
-					div.attr('aria-valuenow', value);
-					input.val(value);
-				}
-			}
-
-			// Get the value back case it is changed by callback
-			value = parseInt(div.attr('aria-valuenow'));
-
-			var percent = ((100 * (value - minValue) / (maxValue - minValue)) | 0);
-			div.css({'width': percent + '%'});
-			div.text(percent + '%');
-
-			if (value >= maxValue) {
-				clearInterval(div.attr('interval-id'));
+			if (handleProgressBar(bar, map)) {
+				clearInterval(bar.attr('interval-id'));
 			}
 		}, map.interval);
 
-		div.attr('interval-id', intervalId);
+		bar.attr('interval-id', intervalId);
+	}
+	
+	function handleProgressBar(bar, map, relation) {
+		var input = null;
+		var name = bar.attr('name');
+
+		if (name && name.length > 0) {
+			input = $('input[name="' + name + '"]');
+		}
+
+		// If request is true, need to get data from bean
+		if (map.request == true) {
+			var options = getAjaxOptions(map);
+			options.async = false;
+
+			options.success = function(data) {
+				var newInput = $(data).find('input[name="' + bar.attr('name') + '"]');
+
+				if (newInput && newInput.length > 0) {
+
+					// Input must exist in this case
+					input.val(newInput.val());
+					bar.attr('aria-valuenow', newInput.val());
+				}
+			}
+			$.ajax(options);
+		}
+
+		var value = parseInt(bar.attr('aria-valuenow'));
+		var minValue = parseInt(bar.attr('aria-valuemin'));
+		var maxValue = parseInt(bar.attr('aria-valuemax'));
+
+		var callback = window[map.onInterval];
+
+		if (typeof callback === 'function') {
+			value = callback(bar, value, minValue, maxValue);
+
+			if (value && value === parseInt(value)) {
+
+				// Keep the constraints valid
+				if (value < minValue) {
+					value = minValue;
+				}
+				if (value > maxValue) {
+					value = maxValue;
+				}
+				bar.attr('aria-valuenow', value);
+				
+				if (input && input.length > 0) {
+					input.val(value);
+				}
+			}
+		}
+
+		// Get the value back case it is changed by callback
+		value = parseInt(bar.attr('aria-valuenow'));
+
+		var percent = ((100 * (value - minValue) / (maxValue - minValue)) | 0);
+
+		// Calculate the percentage related to its relation
+		if (relation) {
+			percent = ((percent * relation / 100) | 0);
+		}
+
+		bar.css({'width': percent + '%'});
+		
+		// Check if progress bar is using label before updating it
+		if (bar.text().indexOf('%') >= 0) {
+			bar.text(percent + '%');
+		}
+
+		return value >= maxValue;
 	}
 
 	/******************************************************
