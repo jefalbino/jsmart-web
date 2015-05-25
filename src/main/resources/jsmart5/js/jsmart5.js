@@ -444,7 +444,6 @@ var Jsmart5 = (function() {
 	
 					// Append loading icon on list if it was configured
 					if (hiddenRefresh && hiddenRefresh.length > 0) {
-	
 						refreshClone = hiddenRefresh.clone();
 						refreshClone.css({'display': 'block'});
 						ul.append(refreshClone);
@@ -1003,43 +1002,43 @@ var Jsmart5 = (function() {
 		var ul = $('ul[auto-list-id="' + map.id + '"]');
 		var ulRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
 
-		var left = input.position().left + parseInt(input.css('marginLeft').replace('px', ''));
-        var top = input.position().top + input.outerHeight(true) + 5;
-        var width = input.outerWidth();
-
-        var leftRefresh = input.outerWidth() - inputRefresh.outerWidth() - 10;
-        var topRefresh = input.position().top + ((input.height()) / 2);
-
-        var inputGroup = input.closest('div.input-group');
-        if (inputGroup && inputGroup.length > 0) {
-            left = inputGroup.position().left + parseInt(inputGroup.css('marginLeft').replace('px', ''));
-            top = inputGroup.position().top + inputGroup.outerHeight(true) + 5;
-            width = inputGroup.outerWidth();
-
-            leftRefresh += inputGroup.find('div.input-group-addon:first').outerWidth();
-        }
-
 		var timer = input.attr('timeout-id');
-		if (timer && timer.length > 0) {
-			clearTimeout(timer);
-		}
+                if (timer && timer.length > 0) {
+                        clearTimeout(timer);
+                }
 
-		var value = input.val();
+                var value = input.val();
 
-		// If space or length less than minLength just return
-		if (evt.keyCode == 32 || $.trim(value).length < input.attr('min-length')) {
-			return;
-		}
+                // If space or length less than minLength just return
+                if (evt.keyCode == 32 || $.trim(value).length < input.attr('min-length')) {
+                        return;
+                }
+
+		var leftUl = input.position().left + parseInt(input.css('marginLeft').replace('px', ''));
+	        var topUl = input.position().top + input.outerHeight(true) + 5;
+        	var widthUl = input.outerWidth();
+
+	        var leftRefresh = input.outerWidth() - inputRefresh.outerWidth() - 10;
+        	var topRefresh = input.position().top + ((input.height()) / 2);
+
+	        var inputGroup = input.closest('div.input-group');
+        	if (inputGroup && inputGroup.length > 0) {
+	            leftUl = inputGroup.position().left + parseInt(inputGroup.css('marginLeft').replace('px', ''));
+        	    topUl = inputGroup.position().top + inputGroup.outerHeight(true) + 5;
+	            widthUl = inputGroup.outerWidth();
+
+        	    leftRefresh += inputGroup.find('div.input-group-addon:first').outerWidth();
+	        }
 
 		timer = setTimeout(function() {
 
-		    inputRefresh.css({'left': leftRefresh, 'top': topRefresh});
-            inputRefresh.show();
+		        inputRefresh.css({'left': leftRefresh, 'top': topRefresh});
+        		inputRefresh.show();
 
 			var postParam = getAjaxParams(map);
 			var closestForm = input.closest('form');
 
-			// Push the input content
+			// Push the input content so we send the value to be auto completed
 			postParam.push({name: input.attr('name'), value: input.val()});
 
 			if (closestForm && closestForm.length > 0) {
@@ -1053,18 +1052,18 @@ var Jsmart5 = (function() {
 			map.successHandler = function(data) {
 
 				ul.css({'position': 'absolute',
-					      'left': left,
-					      'top': top,
-					      'width': width,
-					      'z-index': 10
-						});
+			 	        'left': leftUl,
+					'top': topUl,
+					'width': widthUl,
+					'z-index': 10
+					});
 
-                // Empty list but include the load if it was present
-                ul.empty();
-                if (ulRefresh && ulRefresh.length > 0) {
-                    ul.append(ulRefresh);
-                }
-                ul.append($(data).find('ul[auto-list-id="' + map.id + '"] a'));
+	                	// Empty list but include the load if it was present
+	        	        ul.empty();
+        	        	if (ulRefresh && ulRefresh.length > 0) {
+	        	            ul.append(ulRefresh);
+        	        	}
+	                	ul.append($(data).find('ul[auto-list-id="' + map.id + '"] a'));
 
 				// Only the first click is bound
 				$(window).one('click', function() {
@@ -1097,96 +1096,98 @@ var Jsmart5 = (function() {
 
 	function doAutoCompleteScroll(map) {
 		$('ul[auto-list-id="' + map.id + '"]').scroll(function(e) {
-            var ul = $(this);
-            if (ul.scrollTop() + ul.outerHeight() >= ul[0].scrollHeight) {
+			var ul = $(this);
+			if (ul.scrollTop() + ul.outerHeight() >= ul[0].scrollHeight) {
 
-                // Timeout is used because scroll is called more than one time
-                setTimeout(function() {
+		                // Timeout is used because scroll is called more than one time
+                		setTimeout(function() {
 
-                    var scrollActive = ul.attr('scroll-active');
-                    if (scrollActive && scrollActive.length > 0) {
-                        return;
-                    }
+					var scrollActive = ul.attr('scroll-active');
+					if (scrollActive && scrollActive.length > 0) {
+		                        	return;
+                		    	}
 
-                    // Set scroll as active to avoid multiple requests
-                    ul.attr('scroll-active', 'true');
+					// Set scroll as active to avoid multiple requests
+					ul.attr('scroll-active', 'true');
 
-                    var postParam = getAjaxParams(map);
-                    var closestForm = $(ul).closest('form');
+					var postParam = getAjaxParams(map);
+					var closestForm = $(ul).closest('form');
 
-                    var lastChild = ul.find('a:last-child');
+					// Push the input content so we send the value to be auto completed
+					var input = $(getId(map.id));
+					postParam.push({name: input.attr('name'), value: input.val()});
 
-                    var jsonParam = {};
-                    jsonParam.size = ul.attr('scroll-size');
-                    jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
+					var lastChild = ul.find('a:last-child');
 
-                    for (var i = 0; i < postParam.length; i++) {
-                        // Look for J_SCROLL parameter to send scroll values
-                        if (postParam[i].name.indexOf(tagInit + tagJScroll) >= 0) {
-                            postParam[i].value = JSON.stringify(jsonParam);
-                            break;
-                        }
-                    }
+					var jsonParam = {};
+					jsonParam.size = ul.attr('scroll-size');
+					jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
 
-                    if (closestForm && closestForm.length > 0) {
-                        if (!doValidate($(closestForm).attr('id'))) {
-                            return;
-                        }
-                    } else {
-                        postParam = $.param(postParam);
-                    }
+					for (var i = 0; i < postParam.length; i++) {
+						// Look for J_SCROLL parameter to send scroll values
+						if (postParam[i].name.indexOf(tagInit + tagJScroll) >= 0) {
+							postParam[i].value = JSON.stringify(jsonParam);
+							break;
+						}
+					}
 
-                    var refreshClone = null
-                    var hiddenRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
+					if (closestForm && closestForm.length > 0) {
+						if (!doValidate($(closestForm).attr('id'))) {
+							return;
+						}
+					} else {
+						postParam = $.param(postParam);
+					}
 
-                    // Append loading icon on list if it was configured
-                    if (hiddenRefresh && hiddenRefresh.length > 0) {
+					var refreshClone = null
+					var hiddenRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
 
-                        refreshClone = hiddenRefresh.clone();
-                        refreshClone.css({'display': 'block'});
-                        ul.append(refreshClone);
-                    }
+					// Append loading icon on list if it was configured
+					if (hiddenRefresh && hiddenRefresh.length > 0) {
+						refreshClone = hiddenRefresh.clone();
+						refreshClone.css({'display': 'block'});
+						ul.append(refreshClone);
+					}
 
-                    // Remove scroll-active and refreshing icon
-                    map.complete = function() {
-                        if (refreshClone) {
-                            refreshClone.remove();
-                        }
-                        ul.removeAttr('scroll-active');
-                    };
+					// Remove scroll-active and refreshing icon
+					map.complete = function() {
+						if (refreshClone) {
+							refreshClone.remove();
+						}
+						ul.removeAttr('scroll-active');
+					};
 
-                    // Function to append to list
-                    map.successHandler = function(data) {
-                        var newUl = $(data).find('ul[auto-list-id="' + map.id + '"]');
+					// Function to append to list
+					map.successHandler = function(data) {
+						var newUl = $(data).find('ul[auto-list-id="' + map.id + '"]');
 
-                        if (newUl && newUl.length > 0) {
+		                	        if (newUl && newUl.length > 0) {
+							var lastChild = newUl.find('a:last-child');
 
-                            var lastChild = newUl.find('a:last-child');
+							if (lastChild && lastChild.length > 0) {
+								var lastIndex = lastChild.attr('list-index')
 
-                            if (lastChild && lastChild.length > 0) {
-                                var lastIndex = lastChild.attr('list-index')
+								// Case the returned ul has last index different than current
+				                                if (lastIndex && (jsonParam.index - 1) != lastIndex) {
+                	        					if (ul.find('a').length > 0) {
+										ul.append(newUl.find('a'));
+                                	    				}
+                                				}
+                            				}
+	                        		}
+					};
 
-                                // Case the returned ul has last index different than current
-                                if (lastIndex && (jsonParam.index - 1) != lastIndex) {
-                                    if (ul.find('a').length > 0) {
-                                        ul.append(newUl.find('a'));
-                                    }
-                                }
-                            }
-                        }
-                    };
+					var options = getAjaxOptions(map);
+					options.data = postParam;
 
-                    var options = getAjaxOptions(map);
-                    options.data = postParam;
-
-                    if (closestForm && closestForm.length > 0) {
-                        $(closestForm).ajaxSubmit(options);
-                    } else {
-                        $.ajax(options);
-                    }
-                }, 50);
-            }
-        });
+					if (closestForm && closestForm.length > 0) {
+						$(closestForm).ajaxSubmit(options);
+					} else {
+						$.ajax(options);
+					}
+				}, 50);
+			}
+		});
 	}
 
 	/******************************************************
