@@ -998,100 +998,100 @@ var Jsmart5 = (function() {
 	function doAutoComplete(map, evt) {
 		var input = $(getId(map.id));
 		var inputRefresh = $('span[auto-refresh-id="' + map.id + '"]');
-
+		
 		var ul = $('ul[auto-list-id="' + map.id + '"]');
 		var ulRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
-
+		
 		var timer = input.attr('timeout-id');
-                if (timer && timer.length > 0) {
-                        clearTimeout(timer);
-                }
+		if (timer && timer.length > 0) {
+		    clearTimeout(timer);
+		}
 
-                var value = input.val();
-
-                // If space or length less than minLength just return
-                if (evt.keyCode == 32 || $.trim(value).length < input.attr('min-length')) {
-                        return;
-                }
+		var value = input.val();
+		
+		// If space or length less than minLength just return
+		if (evt.keyCode == 32 || $.trim(value).length < input.attr('min-length')) {
+		    return;
+		}
 
 		var leftUl = input.position().left + parseInt(input.css('marginLeft').replace('px', ''));
-	        var topUl = input.position().top + input.outerHeight(true) + 5;
-        	var widthUl = input.outerWidth();
+		var topUl = input.position().top + input.outerHeight(true) + 5;
+		var widthUl = input.outerWidth();
 
-	        var leftRefresh = input.outerWidth() - inputRefresh.outerWidth() - 10;
-        	var topRefresh = input.position().top + ((input.height()) / 2);
+		var leftRefresh = input.outerWidth() - inputRefresh.outerWidth() - 10;
+		var topRefresh = input.position().top + ((input.height()) / 2);
 
-	        var inputGroup = input.closest('div.input-group');
-        	if (inputGroup && inputGroup.length > 0) {
-	            leftUl = inputGroup.position().left + parseInt(inputGroup.css('marginLeft').replace('px', ''));
-        	    topUl = inputGroup.position().top + inputGroup.outerHeight(true) + 5;
-	            widthUl = inputGroup.outerWidth();
-
-        	    leftRefresh += inputGroup.find('div.input-group-addon:first').outerWidth();
-	        }
+		var inputGroup = input.closest('div.input-group');
+		if (inputGroup && inputGroup.length > 0) {
+		    leftUl = inputGroup.position().left + parseInt(inputGroup.css('marginLeft').replace('px', ''));
+		    topUl = inputGroup.position().top + inputGroup.outerHeight(true) + 5;
+		    widthUl = inputGroup.outerWidth();
+		
+		    leftRefresh += inputGroup.find('div.input-group-addon:first').outerWidth();
+		}
 
 		timer = setTimeout(function() {
-
-		        inputRefresh.css({'left': leftRefresh, 'top': topRefresh});
-        		inputRefresh.show();
-
-			var postParam = getAjaxParams(map);
-			var closestForm = input.closest('form');
-
-			// Push the input content so we send the value to be auto completed
-			postParam.push({name: input.attr('name'), value: input.val()});
-
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
-					return;
-				}
-			} else {
-				postParam = $.param(postParam);			
-			}
+		
+		    inputRefresh.css({'left': leftRefresh, 'top': topRefresh});
+		    inputRefresh.show();
+		
+		    var postParam = getAjaxParams(map);
+		    var closestForm = input.closest('form');
+		
+		    // Push the input content so we send the value to be auto completed
+		    postParam.push({name: input.attr('name'), value: input.val()});
+		
+		    if (closestForm && closestForm.length > 0) {
+		        if (!doValidate($(closestForm).attr('id'))) {
+		            return;
+		        }
+		    } else {
+		        postParam = $.param(postParam);
+		    }
 
 			map.successHandler = function(data) {
+			
+			    ul.css({'position': 'absolute',
+			            'left': leftUl,
+			            'top': topUl,
+			            'width': widthUl,
+			            'z-index': 10
+			        });
 
-				ul.css({'position': 'absolute',
-			 	        'left': leftUl,
-					'top': topUl,
-					'width': widthUl,
-					'z-index': 10
-					});
-
-	                	// Empty list but include the load if it was present
-	        	        ul.empty();
-        	        	if (ulRefresh && ulRefresh.length > 0) {
-	        	            ul.append(ulRefresh);
-        	        	}
-	                	ul.append($(data).find('ul[auto-list-id="' + map.id + '"] a'));
-
+				// Empty list but include the load if it was present
+				ul.empty();
+				if (ulRefresh && ulRefresh.length > 0) {
+				    ul.append(ulRefresh);
+				}
+				ul.append($(data).find('ul[auto-list-id="' + map.id + '"] a'));
+				
 				// Only the first click is bound
 				$(window).one('click', function() {
-					ul.hide();
+				    ul.hide();
 				});
 				
 				// Only the first click is bound
 				ul.one('click', 'a', function() {
-					input.val($(this).attr('to-string'));
+				    input.val($(this).attr('to-string'));
 				});
 				ul.show();
 			}
-
+			
 			map.completeHandler = function(xhr, status) {
 			    inputRefresh.hide();
 			}
 
-			var options = getAjaxOptions(map);
-			options.data = postParam;
-
-			if (closestForm && closestForm.length > 0) {
-				$(closestForm).ajaxSubmit(options);
-			} else {
-				$.ajax(options);
-			}
+		    var options = getAjaxOptions(map);
+		    options.data = postParam;
+		
+		    if (closestForm && closestForm.length > 0) {
+		        $(closestForm).ajaxSubmit(options);
+		    } else {
+		        $.ajax(options);
+		    }
 		}, 1000);
 
-		input.attr('timeout-id', timer);
+	    input.attr('timeout-id', timer);
 	}
 
 	function doAutoCompleteScroll(map) {
@@ -1099,13 +1099,13 @@ var Jsmart5 = (function() {
 			var ul = $(this);
 			if (ul.scrollTop() + ul.outerHeight() >= ul[0].scrollHeight) {
 
-		                // Timeout is used because scroll is called more than one time
-                		setTimeout(function() {
+                // Timeout is used because scroll is called more than one time
+                setTimeout(function() {
 
 					var scrollActive = ul.attr('scroll-active');
 					if (scrollActive && scrollActive.length > 0) {
-		                        	return;
-                		    	}
+                        return;
+                    }
 
 					// Set scroll as active to avoid multiple requests
 					ul.attr('scroll-active', 'true');
@@ -1161,20 +1161,20 @@ var Jsmart5 = (function() {
 					map.successHandler = function(data) {
 						var newUl = $(data).find('ul[auto-list-id="' + map.id + '"]');
 
-		                	        if (newUl && newUl.length > 0) {
+                        if (newUl && newUl.length > 0) {
 							var lastChild = newUl.find('a:last-child');
 
 							if (lastChild && lastChild.length > 0) {
 								var lastIndex = lastChild.attr('list-index')
 
 								// Case the returned ul has last index different than current
-				                                if (lastIndex && (jsonParam.index - 1) != lastIndex) {
-                	        					if (ul.find('a').length > 0) {
+                                if (lastIndex && (jsonParam.index - 1) != lastIndex) {
+                                    if (ul.find('a').length > 0) {
 										ul.append(newUl.find('a'));
-                                	    				}
-                                				}
-                            				}
-	                        		}
+                                    }
+                                }
+                            }
+                        }
 					};
 
 					var options = getAjaxOptions(map);
