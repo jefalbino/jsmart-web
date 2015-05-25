@@ -48,9 +48,9 @@ public final class ModalTagHandler extends TagHandler {
 	private String onShow;
 
 	private String onHide;
-	
+
 	private HeaderTagHandler header;
-		
+
 	private FooterTagHandler footer;
 
 	@Override

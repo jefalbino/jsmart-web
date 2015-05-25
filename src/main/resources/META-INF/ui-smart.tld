@@ -2952,7 +2952,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>viewMode</name>
+            <name>dateMode</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3920,6 +3920,18 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>var</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>values</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
             <name>rest</name>
             <required>false</required>
         </attribute>
@@ -3928,19 +3940,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>value</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>label</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>complete</name>
-            <required>true</required>
-        </attribute>
-        <attribute>
-            <name>multiple</name>
+            <name>length</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3948,7 +3948,11 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>onValueSelect</name>
+            <name>size</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>readOnly</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3956,7 +3960,39 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>maxResults</name>
+            <name>label</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>leftAddOn</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>rightAddOn</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>autoFocus</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>tabIndex</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>mask</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>scrollSize</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>maxHeight</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>update</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3973,14 +4009,6 @@
         </attribute>
         <attribute>
             <name>onComplete</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>tabIndex</name>
-            <required>false</required>
-        </attribute>
-		<attribute>
-			<name>autoFocus</name>
             <required>false</required>
         </attribute>
         <attribute>

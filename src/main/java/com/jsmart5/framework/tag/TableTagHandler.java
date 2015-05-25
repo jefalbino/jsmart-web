@@ -30,7 +30,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.adapter.TableAdapter;
-import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Param;
@@ -169,26 +168,22 @@ public final class TableTagHandler extends TagHandler {
 		// Get the scroll parameters case requested by scroll table
 		Scroll scroll = null;
 		boolean hasFilterOrSort = hasFilterOrSort();
-		
-		Object object = request.getAttribute(Constants.REQUEST_TABLE_ADAPTER);
-		if (object == null) {
-			// It means that a scroll maybe happened
-			String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
 
-			if (scrollParam != null) {
-				scroll = GSON.fromJson(scrollParam, Scroll.class);
-			}
-			object = getTableContent(getTagValue(values), scroll, hasFilterOrSort);
+        // It means that a scroll maybe happened
+        String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
+        if (scrollParam != null) {
+            scroll = GSON.fromJson(scrollParam, Scroll.class);
 
 		} else {
-			// It means that the select on table was performed and the content was 
-			// loaded via adapter
-			String scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
+			// It means that the select on table was performed
+			scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
 
 			if (scrollParam != null) {
 				scroll = GSON.fromJson(scrollParam, Scroll.class);
 			}
 		}
+
+        Object object = getTableContent(getTagValue(values), scroll, hasFilterOrSort);
 
 		if (object instanceof List<?>) {
 			Iterator<Object> iterator = ((List<Object>) object).iterator();

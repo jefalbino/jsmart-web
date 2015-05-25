@@ -53,6 +53,8 @@ public final class JSmart5 {
 	public static final String TABLE_FILTER_SORT_BY = "js5-table-filter-sort-by";
 
 	public static final String TABLE_SORT_BY = "js5-table-sort-by";
+
+    public static final String AUTO_COMPLETE_REFRESH = "js5-auto-complete-refresh";
 	
 	private JSmart5() {
 		// DO NOTHING

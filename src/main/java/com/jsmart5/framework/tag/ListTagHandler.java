@@ -29,7 +29,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 import com.jsmart5.framework.adapter.ListAdapter;
-import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Param;
@@ -104,6 +103,13 @@ public final class ListTagHandler extends TagHandler {
 			.addAttribute("class", Bootstrap.LIST_GROUP)
 			.addAttribute("class", styleClass);
 
+        if (scrollSize != null) {
+            ul.addAttribute("style", "overflow: auto;")
+                    .addAttribute("scroll-size", scrollSize);
+        }
+
+        appendEvent(ul);
+
 		if (loadTag != null) {
 			Li li = new Li();
 			li.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
@@ -114,35 +120,24 @@ public final class ListTagHandler extends TagHandler {
 			ul.addTag(li);
 		}
 
-		if (scrollSize != null) {
-			ul.addAttribute("style", "overflow: auto;")
-				.addAttribute("scroll-size", scrollSize);
-		}
-
-		appendEvent(ul);
-
 		// Get the scroll parameters case requested by scroll list
 		Scroll scroll = null;
 
-		Object object = request.getAttribute(Constants.REQUEST_LIST_ADAPTER);
-		if (object == null) {
-			// It means that a scroll maybe happened
-			String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
+        // It means that a scroll maybe happened
+        String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
+        if (scrollParam != null) {
+            scroll = GSON.fromJson(scrollParam, Scroll.class);
 
-			if (scrollParam != null) {
-				scroll = GSON.fromJson(scrollParam, Scroll.class);
-			}
-			object = getListContent(getTagValue(values), scroll);
+        } else {
+            // It means that the select on list was performed
+            scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
 
-		} else {
-			// It means that the select on list was performed and the content was 
-			// loaded via adapter
-			String scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
+            if (scrollParam != null) {
+                scroll = GSON.fromJson(scrollParam, Scroll.class);
+            }
+        }
 
-			if (scrollParam != null) {
-				scroll = GSON.fromJson(scrollParam, Scroll.class);
-			}
-		}
+        Object object = getListContent(getTagValue(values), scroll);
 
 		if (object instanceof List<?>) {
 			Iterator<Object> iterator = ((List<Object>) object).iterator();
@@ -171,11 +166,9 @@ public final class ListTagHandler extends TagHandler {
 		if (selectValue != null) {
 			appendDocScript(getAjaxFunction());
 		}
-		
 		if (scrollSize != null) {
 			appendDocScript(getScrollFunction());
 		}
-
 		return ul;
 	}
 	

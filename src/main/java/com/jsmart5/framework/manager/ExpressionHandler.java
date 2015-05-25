@@ -188,18 +188,12 @@ public enum ExpressionHandler {
 
 					list = ((ListAdapter) object).load(scroll.getIndex(), scroll.getSize());
 
-					// Save the loaded content on request to avoid calling load twice when loading the page
-					request.setAttribute(REQUEST_LIST_ADAPTER, list);
-
 				} else if (object instanceof TableAdapter) {
 					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
 					scroll = GSON.fromJson(scrollParam, Scroll.class);
 
 					list = ((TableAdapter) object).load(scroll.getIndex(), scroll.getSize(), 
 							scroll.getSort(), scroll.getOrder(), scroll.getFilters());
-					
-					// Save the loaded content on request to avoid calling load twice when loading the page
-					request.setAttribute(REQUEST_TABLE_ADAPTER, list);
 
 				} else if (object instanceof List<?>) {
 					list = (List<Object>) object;

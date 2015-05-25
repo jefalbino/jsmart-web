@@ -164,3 +164,9 @@
 .js5-table-sort-by span:last-child {
 	top: -1px;
 }
+
+.js5-auto-complete-refresh {
+    display: none;
+    position: absolute;
+    z-index: 10;
+}

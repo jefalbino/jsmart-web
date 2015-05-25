@@ -377,10 +377,14 @@ public enum BeanHandler {
 		executeInjection(bean, null);
 	}
 
+    private String getClassName(String name) {
+        return name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toLowerCase());
+    }
+
 	private String getClassName(SmartBean smartBean, Class<?> beanClass) {
 		if (smartBean.name().isEmpty()) {
 			String beanName = beanClass.getSimpleName();
-			return beanName.replaceFirst(beanName.substring(0, 1), beanName.substring(0, 1).toLowerCase());
+			return getClassName(beanName);
 		}
 		return smartBean.name();
 	}
@@ -388,7 +392,7 @@ public enum BeanHandler {
 	private String getClassName(AuthenticateBean authBean, Class<?> authClass) {
 		if (authBean.name().isEmpty()) {
 			String beanName = authClass.getSimpleName();
-			return beanName.replaceFirst(beanName.substring(0, 1), beanName.substring(0, 1).toLowerCase());
+            return getClassName(beanName);
 		}
 		return authBean.name();
 	}
@@ -396,7 +400,7 @@ public enum BeanHandler {
 	private String getClassName(com.jsmart5.framework.annotation.SmartServlet servlet, Class<?> servletClass) {
 		if (servlet.name() == null || servlet.name().isEmpty()) {
 			String servletName = servletClass.getSimpleName();
-			return servletName.replaceFirst(servletName.substring(0, 1), servletName.substring(0, 1).toLowerCase());
+            return getClassName(servletName);
 		}
 		return servlet.name();
 	}
@@ -404,7 +408,7 @@ public enum BeanHandler {
 	private String getClassName(SmartFilter filter, Class<?> filterClass) {
 		if (filter.name() == null || filter.name().isEmpty()) {
 			String filterName = filterClass.getSimpleName();
-			return filterName.replaceFirst(filterName.substring(0, 1), filterName.substring(0, 1).toLowerCase());
+            return getClassName(filterName);
 		}
 		return filter.name();
 	}
@@ -450,12 +454,12 @@ public enum BeanHandler {
 					if (initialContext != null && jndiMapping.containsKey(field.getType())) {
 						field.setAccessible(true);
 						field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
-						continue;
-					}
+                        continue;
+                    }
 
-					if (springContext != null) {
-						if (springContext.containsBean(field.getName())) {
-							field.setAccessible(true);
+                    if (springContext != null) {
+						if (springContext.containsBean(getClassName(field.getType().getSimpleName()))) {
+                            field.setAccessible(true);
 							field.set(bean, springContext.getBean(field.getType()));
 
 						} else if (field.isAnnotationPresent(Value.class)) {
@@ -642,12 +646,12 @@ public enum BeanHandler {
 							if (initialContext != null && jndiMapping.containsKey(field.getType())) {
 								field.setAccessible(true);
 								field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
-								continue;
-							}
+                                continue;
+                            }
 
-							if (springContext != null) {
-								if (springContext.containsBean(field.getName())) {
-									field.setAccessible(true);
+                            if (springContext != null) {
+								if (springContext.containsBean(getClassName(field.getType().getSimpleName()))) {
+                                    field.setAccessible(true);
 									field.set(bean, springContext.getBean(field.getType()));
 
 								} else if (field.isAnnotationPresent(Value.class)) {

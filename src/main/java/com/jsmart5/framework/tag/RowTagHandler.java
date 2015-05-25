@@ -52,7 +52,9 @@ public final class RowTagHandler extends TagHandler {
 		JspTag parent = getParent();
 		if (parent instanceof ListTagHandler) {
 			((ListTagHandler) parent).addRow(this);
-		}
+		} else if (parent instanceof AutoCompleteTagHandler) {
+            ((AutoCompleteTagHandler) parent).addRow(this);
+        }
 		return false;
 	}
 

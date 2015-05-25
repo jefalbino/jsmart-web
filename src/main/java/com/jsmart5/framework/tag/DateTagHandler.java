@@ -40,7 +40,7 @@ import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class DateTagHandler extends TagHandler {
 	
-	private String viewMode;
+	private String dateMode;
 	
 	private boolean hideIcon;
 
@@ -81,8 +81,8 @@ public final class DateTagHandler extends TagHandler {
 		if (size != null && !Size.validateSmallLarge(size)) {
 			throw InvalidAttributeException.fromPossibleValues("date", "size", Size.getSmallLargeValues());
 		}
-		if (viewMode != null && !Mode.validate(viewMode)) {
-			throw InvalidAttributeException.fromPossibleValues("date", "viewMode", Mode.getValues());
+		if (dateMode != null && !Mode.validate(dateMode)) {
+			throw InvalidAttributeException.fromPossibleValues("date", "dateMode", Mode.getValues());
 		}
 	}
 
@@ -209,7 +209,7 @@ public final class DateTagHandler extends TagHandler {
 			div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON);
 
 			IconTagHandler icon = new IconTagHandler();
-			if (Mode.TIMEONLY.equalsIgnoreCase(viewMode)) {
+			if (Mode.TIMEONLY.equalsIgnoreCase(dateMode)) {
 				icon.setName("glyphicon-time");
 			} else {
 				icon.setName("glyphicon-calendar");
@@ -254,11 +254,11 @@ public final class DateTagHandler extends TagHandler {
 		if (format != null) {
 			jsonDate.setFormat(format.getRegex());
 		}
-		if (viewMode != null) {
-			if (Mode.TIMEONLY.equalsIgnoreCase(viewMode)) {
+		if (dateMode != null) {
+			if (Mode.TIMEONLY.equalsIgnoreCase(dateMode)) {
 				jsonDate.setFormat("LT");
 			} else {
-				jsonDate.setViewMode(viewMode.toLowerCase());
+				jsonDate.setViewMode(dateMode.toLowerCase());
 			}
 		}
 		StringBuilder script = new StringBuilder(JSMART_DATE.format(getJsonValue(jsonDate)));
@@ -273,8 +273,8 @@ public final class DateTagHandler extends TagHandler {
 		this.format = format;
 	}
 
-	public void setViewMode(String viewMode) {
-		this.viewMode = viewMode;
+	public void setDateMode(String dateMode) {
+		this.dateMode = dateMode;
 	}
 
 	public void setShowWeeks(boolean showWeeks) {

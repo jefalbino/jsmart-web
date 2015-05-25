@@ -21,10 +21,6 @@ package com.jsmart5.framework.config;
 public final class Constants {
 	
 	public static final String REQUEST_USER_ACCESS = "jsmart5_request_user_access";
-	
-	public static final String REQUEST_LIST_ADAPTER = "jsmart5_request_list_adapter";
-
-	public static final String REQUEST_TABLE_ADAPTER = "jsmart5_request_table_adapter";
 
 	public static final String REQUEST_PAGE_DOC_SCRIPT_ATTR = "jsmart5_page_doc_script_attr";
 

@@ -35,6 +35,8 @@ public enum JsConstants {
 	JSMART_TABLE("Jsmart5.table", "($(this),%s);"),
 	JSMART_TABLESCROLL("Jsmart5.tablescroll", "(%s);"),
 	JSMART_TABLEHEADER("Jsmart5.tableheader", "(%s);"),
+	JSMART_AUTOCOMPLETE("Jsmart5.autocplt", "(%s,e);"),
+	JSMART_AUTOCPLTSCROLL("Jsmart5.autocpltscroll", "(%s);"),
 
 	JSMART_LOAD("Jsmart5.load", "('%s');"),
 

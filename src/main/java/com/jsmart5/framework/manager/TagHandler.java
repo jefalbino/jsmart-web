@@ -101,6 +101,8 @@ public abstract class TagHandler extends SimpleTagSupport {
 	protected static final String J_DATE = J_TAG_INIT + "011_";
 
 	protected static final String J_CAPTCHA = J_TAG_INIT + "012_";
+	
+	protected static final String J_AUTOCPLT = J_TAG_INIT + "013_";
 
 	protected static final String EL_PARAM_READ_ONLY = Constants.EL_PARAM_READ_ONLY;
 
@@ -216,19 +218,20 @@ public abstract class TagHandler extends SimpleTagSupport {
 	public abstract Tag executeTag() throws JspException, IOException;
 
 	// Only execute this tag if it is not Ajax request or if this tag id is present on update component request
+    // TODO: Problem to update inner tags inside modal, alert, tab, panel, authorize. Ex: button not appearing inside alert after update
 	protected boolean checkTagExecution() {
-		if (id == null) {
-			return true;
-		}
-		HttpServletRequest request = getRequest();
-
-		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-			String updateVals = request.getHeader("Update-Ajax");
-			if (updateVals == null) {
-				return true;
-			}
-			return updateVals.contains(id);
-		}
+//		if (id == null) {
+//			return true;
+//		}
+//		HttpServletRequest request = getRequest();
+//
+//		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+//			String updateVals = request.getHeader("Update-Ajax");
+//			if (updateVals == null) {
+//				return true;
+//			}
+//			return updateVals.contains(id);
+//		}
 		return true;
 	}
 

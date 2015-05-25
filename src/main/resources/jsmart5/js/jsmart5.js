@@ -176,6 +176,14 @@ var Jsmart5 = (function() {
 		
 		progressbar: function(map) {
 			doProgressBar(map);
+		},
+		
+		autocplt: function(map, evt) {
+			doAutoComplete(map, evt);
+		},
+
+		autocpltscroll: function(map) {
+			doAutoCompleteScroll(map);
 		}
 	};
 
@@ -451,7 +459,7 @@ var Jsmart5 = (function() {
 					};
 	
 					// Function to append to list
-					map.success = function(data) {
+					map.successHandler = function(data) {
 						var newUl = $(data).find(getId(ul.attr('id')));
 	
 						if (newUl && newUl.length > 0) {
@@ -469,11 +477,7 @@ var Jsmart5 = (function() {
 								// Case the returned ul has last index different than current
 								if (lastIndex && (jsonParam.index - 1) != lastIndex) {
 									if (ul.find('a').length > 0) {
-										if (refreshClone) {
-											ul.append(newUl.find('a').not(':first'));
-										} else {
-											ul.append(newUl.find('a'));
-										}
+										ul.append(newUl.find('a'));
 									} else {
 										if (refreshClone) {
 											ul.append(newUl.find('li').not(':first'));
@@ -734,7 +738,7 @@ var Jsmart5 = (function() {
 		};
 
 		// Function to append to table body
-		map.success = function(data) {
+		map.successHandler = function(data) {
 			var newTable = $(data).find(getId(map.id));
 			if (newTable && newTable.length > 0) {
 
@@ -927,9 +931,11 @@ var Jsmart5 = (function() {
 
 		// If request is true, need to get data from bean
 		if (map.request == true) {
+
 			var options = getAjaxOptions(map);
 			options.async = false;
 
+			// Do not use map.successHandler here, otherwise it will refresh the page continuesly
 			options.success = function(data) {
 				var newInput = $(data).find('input[name="' + bar.attr('name') + '"]');
 
@@ -940,6 +946,7 @@ var Jsmart5 = (function() {
 					bar.attr('aria-valuenow', newInput.val());
 				}
 			}
+
 			$.ajax(options);
 		}
 
@@ -987,6 +994,199 @@ var Jsmart5 = (function() {
 		}
 
 		return value >= maxValue;
+	}
+
+	function doAutoComplete(map, evt) {
+		var input = $(getId(map.id));
+		var inputRefresh = $('span[auto-refresh-id="' + map.id + '"]');
+
+		var ul = $('ul[auto-list-id="' + map.id + '"]');
+		var ulRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
+
+		var left = input.position().left + parseInt(input.css('marginLeft').replace('px', ''));
+        var top = input.position().top + input.outerHeight(true) + 5;
+        var width = input.outerWidth();
+
+        var leftRefresh = input.outerWidth() - inputRefresh.outerWidth() - 10;
+        var topRefresh = input.position().top + ((input.height()) / 2);
+
+        var inputGroup = input.closest('div.input-group');
+        if (inputGroup && inputGroup.length > 0) {
+            left = inputGroup.position().left + parseInt(inputGroup.css('marginLeft').replace('px', ''));
+            top = inputGroup.position().top + inputGroup.outerHeight(true) + 5;
+            width = inputGroup.outerWidth();
+
+            leftRefresh += inputGroup.find('div.input-group-addon:first').outerWidth();
+        }
+
+		var timer = input.attr('timeout-id');
+		if (timer && timer.length > 0) {
+			clearTimeout(timer);
+		}
+
+		var value = input.val();
+
+		// If space or length less than minLength just return
+		if (evt.keyCode == 32 || $.trim(value).length < input.attr('min-length')) {
+			return;
+		}
+
+		timer = setTimeout(function() {
+
+		    inputRefresh.css({'left': leftRefresh, 'top': topRefresh});
+            inputRefresh.show();
+
+			var postParam = getAjaxParams(map);
+			var closestForm = input.closest('form');
+
+			// Push the input content
+			postParam.push({name: input.attr('name'), value: input.val()});
+
+			if (closestForm && closestForm.length > 0) {
+				if (!doValidate($(closestForm).attr('id'))) {
+					return;
+				}
+			} else {
+				postParam = $.param(postParam);			
+			}
+
+			map.successHandler = function(data) {
+
+				ul.css({'position': 'absolute',
+					      'left': left,
+					      'top': top,
+					      'width': width,
+					      'z-index': 10
+						});
+
+                // Empty list but include the load if it was present
+                ul.empty();
+                if (ulRefresh && ulRefresh.length > 0) {
+                    ul.append(ulRefresh);
+                }
+                ul.append($(data).find('ul[auto-list-id="' + map.id + '"] a'));
+
+				// Only the first click is bound
+				$(window).one('click', function() {
+					ul.hide();
+				});
+				
+				// Only the first click is bound
+				ul.one('click', 'a', function() {
+					input.val($(this).attr('to-string'));
+				});
+				ul.show();
+			}
+
+			map.completeHandler = function(xhr, status) {
+			    inputRefresh.hide();
+			}
+
+			var options = getAjaxOptions(map);
+			options.data = postParam;
+
+			if (closestForm && closestForm.length > 0) {
+				$(closestForm).ajaxSubmit(options);
+			} else {
+				$.ajax(options);
+			}
+		}, 1000);
+
+		input.attr('timeout-id', timer);
+	}
+
+	function doAutoCompleteScroll(map) {
+		$('ul[auto-list-id="' + map.id + '"]').scroll(function(e) {
+            var ul = $(this);
+            if (ul.scrollTop() + ul.outerHeight() >= ul[0].scrollHeight) {
+
+                // Timeout is used because scroll is called more than one time
+                setTimeout(function() {
+
+                    var scrollActive = ul.attr('scroll-active');
+                    if (scrollActive && scrollActive.length > 0) {
+                        return;
+                    }
+
+                    // Set scroll as active to avoid multiple requests
+                    ul.attr('scroll-active', 'true');
+
+                    var postParam = getAjaxParams(map);
+                    var closestForm = $(ul).closest('form');
+
+                    var lastChild = ul.find('a:last-child');
+
+                    var jsonParam = {};
+                    jsonParam.size = ul.attr('scroll-size');
+                    jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
+
+                    for (var i = 0; i < postParam.length; i++) {
+                        // Look for J_SCROLL parameter to send scroll values
+                        if (postParam[i].name.indexOf(tagInit + tagJScroll) >= 0) {
+                            postParam[i].value = JSON.stringify(jsonParam);
+                            break;
+                        }
+                    }
+
+                    if (closestForm && closestForm.length > 0) {
+                        if (!doValidate($(closestForm).attr('id'))) {
+                            return;
+                        }
+                    } else {
+                        postParam = $.param(postParam);
+                    }
+
+                    var refreshClone = null
+                    var hiddenRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
+
+                    // Append loading icon on list if it was configured
+                    if (hiddenRefresh && hiddenRefresh.length > 0) {
+
+                        refreshClone = hiddenRefresh.clone();
+                        refreshClone.css({'display': 'block'});
+                        ul.append(refreshClone);
+                    }
+
+                    // Remove scroll-active and refreshing icon
+                    map.complete = function() {
+                        if (refreshClone) {
+                            refreshClone.remove();
+                        }
+                        ul.removeAttr('scroll-active');
+                    };
+
+                    // Function to append to list
+                    map.successHandler = function(data) {
+                        var newUl = $(data).find('ul[auto-list-id="' + map.id + '"]');
+
+                        if (newUl && newUl.length > 0) {
+
+                            var lastChild = newUl.find('a:last-child');
+
+                            if (lastChild && lastChild.length > 0) {
+                                var lastIndex = lastChild.attr('list-index')
+
+                                // Case the returned ul has last index different than current
+                                if (lastIndex && (jsonParam.index - 1) != lastIndex) {
+                                    if (ul.find('a').length > 0) {
+                                        ul.append(newUl.find('a'));
+                                    }
+                                }
+                            }
+                        }
+                    };
+
+                    var options = getAjaxOptions(map);
+                    options.data = postParam;
+
+                    if (closestForm && closestForm.length > 0) {
+                        $(closestForm).ajaxSubmit(options);
+                    } else {
+                        $.ajax(options);
+                    }
+                }, 50);
+            }
+        });
 	}
 
 	/******************************************************
@@ -1232,6 +1432,7 @@ var Jsmart5 = (function() {
 					if (map.url && map.url.length > 0) {
 						$(location).attr('href', map.url);
 					} else {
+						doExecute(map.successHandler, data, xhr, status);
 						doUpdate(map.update, data);
 						doExecute(map.success, data, xhr, status);
 						doAlertCheck(data);
@@ -1244,11 +1445,13 @@ var Jsmart5 = (function() {
 				}
 			},
 			error: function (xhr, status, error) {
+			    doExecute(map.errorHandler, xhr, status, error);
 				doExecute(map.error, xhr, status, error);
 				showOnConsole(xhr.responseText);
 			},
 			complete: function (xhr, status) {
 				removeLoadIcon(map);
+				doExecute(map.completeHandler, xhr, status);
 				doExecute(map.complete, xhr, status);
 			},
 			async: true

@@ -34,11 +34,11 @@ import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Look;
 
 public final class PanelTagHandler extends TagHandler {
-	
+
 	private String look;
-	
+
 	private HeaderTagHandler header;
-	
+
 	private FooterTagHandler footer;
 
 	public void validateTag() throws JspException {
