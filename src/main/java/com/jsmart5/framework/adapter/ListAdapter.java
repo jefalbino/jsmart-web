@@ -22,6 +22,6 @@ import java.util.List;
 
 public abstract class ListAdapter<T> {
 
-	public abstract List<T> load(final int index, final int size);
+	public abstract List<T> load(final int index, final int size, final String last);
 
 }

@@ -186,7 +186,7 @@ public enum ExpressionHandler {
 					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
 					scroll = GSON.fromJson(scrollParam, Scroll.class);
 
-					list = ((ListAdapter) object).load(scroll.getIndex(), scroll.getSize());
+					list = ((ListAdapter) object).load(scroll.getIndex(), scroll.getSize(), scroll.getLast());
 
 				} else if (object instanceof TableAdapter) {
 					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);

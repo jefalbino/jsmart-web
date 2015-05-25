@@ -349,6 +349,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
     @SuppressWarnings("unchecked")
     private List<?> getListContent(Object object, Scroll scroll) throws JspException {
         int index = scroll != null ? scroll.getIndex() : 0;
+        String last = scroll != null ? scroll.getLast() : null;
 
         if (object instanceof ListAdapter) {
             if (scrollSize == null) {
@@ -357,7 +358,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
             }
 
             ListAdapter<Object> adapter = (ListAdapter<Object>) object;
-            return adapter.load(index, scrollSize);
+            return adapter.load(index, scrollSize, last);
 
         } else if (object instanceof List) {
             List<Object> list = (List<Object>) object;

@@ -30,6 +30,8 @@ public class Scroll {
 
 	private Integer order;
 
+    private String last;
+
 	private Map<String, String> filters;
 
 	public Integer getIndex() {
@@ -64,7 +66,15 @@ public class Scroll {
 		this.order = order;
 	}
 
-	public Map<String, String> getFilters() {
+    public String getLast() {
+        return last;
+    }
+
+    public void setLast(String last) {
+        this.last = last;
+    }
+
+    public Map<String, String> getFilters() {
 		return filters;
 	}
 

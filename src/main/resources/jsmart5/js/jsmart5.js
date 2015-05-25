@@ -422,6 +422,7 @@ var Jsmart5 = (function() {
 					var jsonParam = {};
 					jsonParam.size = ul.attr('scroll-size');
 					jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
+					jsonParam.last = lastChild.attr('to-string');
 	
 					for (var i = 0; i < postParam.length; i++) {
 						// Look for J_SCROLL parameter to send scroll values
@@ -1122,6 +1123,7 @@ var Jsmart5 = (function() {
 					var jsonParam = {};
 					jsonParam.size = ul.attr('scroll-size');
 					jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
+					jsonParam.last = lastChild.attr('to-string');
 
 					for (var i = 0; i < postParam.length; i++) {
 						// Look for J_SCROLL parameter to send scroll values

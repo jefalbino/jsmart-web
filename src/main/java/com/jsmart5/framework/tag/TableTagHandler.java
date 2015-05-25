@@ -192,10 +192,15 @@ public final class TableTagHandler extends TagHandler {
 			int selectIndex = scrollIndex;
 
 			while (iterator.hasNext()) {
-				request.setAttribute(var, iterator.next());
+                Object obj = iterator.next();
+                if (obj == null) {
+                    continue;
+                }
+				request.setAttribute(var, obj);
 
 				Tr tr = new Tr();
 				tr.addAttribute("scroll-index", scrollIndex);
+                tr.addAttribute("to-string", obj.toString());
 
 				if (selectValue != null) {
 					tr.addAttribute("style", "cursor: pointer;")

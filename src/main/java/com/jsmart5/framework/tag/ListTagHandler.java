@@ -146,13 +146,21 @@ public final class ListTagHandler extends TagHandler {
 			int selectIndex = scrollIndex;
 
 			while (iterator.hasNext()) {
-				request.setAttribute(var, iterator.next());
+                Object obj = iterator.next();
+                if (obj == null) {
+                    continue;
+                }
+				request.setAttribute(var, obj);
+
 				for (RowTagHandler row : rows) {
 					row.setSelectable(selectValue != null);
 					row.setSelectIndex(selectIndex);
 					row.setScrollIndex(scrollIndex);
  					setEvents(row);
- 					ul.addTag(row.executeTag());
+
+                    Tag rowTag = row.executeTag();
+                    rowTag.addAttribute("to-string", obj.toString());
+ 					ul.addTag(rowTag);
  				}
 				selectIndex++;
 				request.removeAttribute(var);
@@ -175,6 +183,7 @@ public final class ListTagHandler extends TagHandler {
 	@SuppressWarnings("unchecked")
 	private List<?> getListContent(Object object, Scroll scroll) throws JspException {
 		int index = scroll != null ? scroll.getIndex() : 0;
+        String last = scroll != null ? scroll.getLast() : null;
 
 		if (object instanceof ListAdapter) {
 			if (scrollSize == null) {
@@ -183,7 +192,7 @@ public final class ListTagHandler extends TagHandler {
 			}
 			
 			ListAdapter<Object> listAdapter = (ListAdapter<Object>) object;
-			return listAdapter.load(index, scrollSize);
+			return listAdapter.load(index, scrollSize, last);
 
 		} else if (object instanceof List) {
 			List<Object> list = (List<Object>) object;
