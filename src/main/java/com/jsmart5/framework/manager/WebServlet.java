@@ -160,12 +160,16 @@ public final class WebServlet extends HttpServlet {
 
     private boolean doAsync(String path, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
-            SmartAsyncListener bean = (SmartAsyncListener) HANDLER.instantiateAsyncBean(path);
-            if (bean != null) {
-                AsyncContext asyncContext = request.startAsync();
-                bean.asyncContextCreated(asyncContext);
-                asyncContext.addListener(new WebAsyncListener(bean));
-                return true;
+            // Only proceed if the AsyncContext was not started to avoid looping whe dispatch is called
+            if (!request.isAsyncStarted()) {
+                SmartAsyncListener bean = (SmartAsyncListener) HANDLER.instantiateAsyncBean(path);
+
+                if (bean != null) {
+                    AsyncContext asyncContext = request.startAsync();
+                    bean.asyncContextCreated(asyncContext);
+                    asyncContext.addListener(new WebAsyncListener(path, bean));
+                    return true;
+                }
             }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "AsyncBean on path [" + path + "] could not be instantiated: " + ex.getMessage());
@@ -225,33 +229,44 @@ public final class WebServlet extends HttpServlet {
 
     private class WebAsyncListener implements AsyncListener {
 
-        private final SmartAsyncListener bean;
+        private String path;
 
-        public WebAsyncListener(final SmartAsyncListener bean) {
+        private SmartAsyncListener bean;
+
+        public WebAsyncListener(final String path, final SmartAsyncListener bean) {
+            this.path = path;
             this.bean = bean;
         }
 
         @Override
         public void onComplete(AsyncEvent event) throws IOException {
-            bean.asyncContextDestroyed(event.getAsyncContext());
-            HANDLER.finalizeAsyncBean(bean);
+            finalizeAsyncContext(event);
         }
 
         @Override
         public void onTimeout(AsyncEvent event) throws IOException {
-            bean.asyncContextDestroyed(event.getAsyncContext());
-            HANDLER.finalizeAsyncBean(bean);
+            finalizeAsyncContext(event);
         }
 
         @Override
         public void onError(AsyncEvent event) throws IOException {
-            bean.asyncContextDestroyed(event.getAsyncContext());
-            HANDLER.finalizeAsyncBean(bean);
+            finalizeAsyncContext(event);
         }
 
         @Override
         public void onStartAsync(AsyncEvent event) throws IOException {
-            // AsyncContext was already started
+            try {
+                bean = (SmartAsyncListener) HANDLER.instantiateAsyncBean(path);
+                bean.asyncContextCreated(event.getAsyncContext());
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "AsyncBean on path [" + path + "] could not be instantiated: " + ex.getMessage());
+            }
+        }
+
+        private void finalizeAsyncContext(AsyncEvent event) throws IOException {
+            AsyncContext asyncContext = event.getAsyncContext();
+            bean.asyncContextDestroyed(asyncContext);
+            HANDLER.finalizeAsyncBean(bean, (HttpServletRequest) asyncContext.getRequest());
         }
     }
 }

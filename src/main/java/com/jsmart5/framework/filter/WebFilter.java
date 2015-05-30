@@ -115,7 +115,6 @@ public final class WebFilter implements Filter {
 		WebFilterResponseWrapper responseWrapper = new WebFilterResponseWrapper(httpResponse);
 
         Throwable throwable = null;
-
         try {
         	filterChain.doFilter(request, responseWrapper);
         } catch (Throwable thrown) {
@@ -125,27 +124,33 @@ public final class WebFilter implements Filter {
 
         // Finalize request scoped beans
         HANDLER.finalizeBeans(httpRequest);
-        
-        // Add Ajax headers to control redirect and reset
-        addAjaxHeaders(httpRequest, responseWrapper);
-
-        // Include head data to html
-        String html = null;
-        responseWrapper.flushBuffer();
-
-        try {
-        	html = getCompleteHtml(httpRequest, responseWrapper);
-
-        } finally {
-        	// Remove session reset attribute
-        	HttpSession session = httpRequest.getSession();
-        	synchronized (session) {
-            	session.removeAttribute(SESSION_RESET_ATTR);
-        	}
-        }
 
         // Close bean context based on current thread instance
         SmartContext.closeCurrentInstance();
+
+        // Case async process was started it cannot proceed because we need
+        // the original response opened and the AsyncContext will not provide HTML via framework
+        if (httpRequest.isAsyncStarted()) {
+
+            // Close current outputStream on responseWrapper
+            responseWrapper.close();
+
+            // Case internal server error
+            if (throwable != null) {
+                if (throwable instanceof IOException) {
+                    throw new IOException(throwable);
+                }
+                throw new ServletException(throwable);
+            }
+            return;
+        }
+
+        // Add Ajax headers to control redirect and reset
+        addAjaxHeaders(httpRequest, responseWrapper);
+
+        // Generate HTML after flushing the response buffer
+        responseWrapper.flushBuffer();
+        String html = getCompleteHtml(httpRequest, responseWrapper);
 
         // Close current outputStream on responseWrapper
         responseWrapper.close();
@@ -200,6 +205,7 @@ public final class WebFilter implements Filter {
 				if (ajaxPath == null && SmartContext.isAjaxRequest()) {
 					response.addHeader("Reset-Ajax", "Session");
 				}
+                session.removeAttribute(SESSION_RESET_ATTR);
 	        }
 	    }
 	}

@@ -136,8 +136,8 @@ public final class ContainerListener implements ServletContextListener {
 	        FilterRegistration.Dynamic errorFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("ErrorFilter", errorFilter);
 
 	        errorFilterReg.setAsyncSupported(true);
-	        errorFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "/*");
+	        errorFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD,
+                    DispatcherType.ERROR, DispatcherType.INCLUDE), true, "/*");
 
 	        // EncodeFilter -> @WebFilter(urlPatterns = {"/*"})
 	        Filter encodeFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.EncodeFilter"));
@@ -145,7 +145,7 @@ public final class ContainerListener implements ServletContextListener {
 
 	        encodeFilterReg.setAsyncSupported(true);
 	        encodeFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "/*");
+	        		DispatcherType.INCLUDE), true, "/*");
 
 	        // CacheFilter -> @WebFilter(urlPatterns = {"/*"})
 	        Filter cacheFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.CacheFilter"));
@@ -153,7 +153,7 @@ public final class ContainerListener implements ServletContextListener {
 
 	        cacheFilterReg.setAsyncSupported(true);
 	        cacheFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "/*");
+	        		DispatcherType.INCLUDE), true, "/*");
 
 	        // Add custom filters defined by client
 	        for (String filterName : sortCustomFilters()) {
@@ -170,7 +170,8 @@ public final class ContainerListener implements ServletContextListener {
      	        }
 
      	        customFilterReg.setAsyncSupported(smartFilter.asyncSupported());
-     	        customFilterReg.addMappingForUrlPatterns(EnumSet.copyOf(Arrays.asList(smartFilter.dispatcherTypes())), true, smartFilter.urlPatterns());
+     	        customFilterReg.addMappingForUrlPatterns(EnumSet.copyOf(Arrays.asList(smartFilter.dispatcherTypes())), true,
+                        smartFilter.urlPatterns());
 	        }
 
 	        // WebFilter -> @WebFilter(servletNames = {"WebServlet"})
@@ -179,7 +180,7 @@ public final class ContainerListener implements ServletContextListener {
 
 	        webFilterReg.setAsyncSupported(true);
 	        webFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "WebServlet");
+	        		DispatcherType.INCLUDE), true, "WebServlet");
 
 	        // OutputFilter -> @WebFilter(servletNames = {"WebServlet"})
 	        Filter outputFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.OutputFilter"));
@@ -187,13 +188,19 @@ public final class ContainerListener implements ServletContextListener {
 
 	        outputFilterReg.setAsyncSupported(true);
 	        outputFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "WebServlet");
+	        		DispatcherType.INCLUDE), true, "WebServlet");
 
+            // AsyncFilter -> @WebFilter(servletNames = {"WebServlet"})
+            // Filter used case AsyncContext is dispatched internally by AsyncBean implementation
+            Filter asyncFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.AsyncFilter"));
+            FilterRegistration.Dynamic asyncFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("AsyncFilter", asyncFilter);
+
+            asyncFilterReg.setAsyncSupported(true);
+            asyncFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.ASYNC), true, "WebServlet");
 
 	        // SessionControl - > @WebListener
 	        EventListener smartSessionListener = servletContext.createListener((Class<? extends EventListener>) Class.forName("com.jsmart5.framework.manager.SessionControl"));
 	        servletContext.addListener(smartSessionListener);
-
 
 	        // Custom SmartServlet -> Custom Servlets created by application
 	        for (String servletName : HANDLER.smartServlets.keySet()) {

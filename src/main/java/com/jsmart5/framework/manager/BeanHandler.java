@@ -480,9 +480,9 @@ public enum BeanHandler {
 		}
 	}
 
-    void finalizeAsyncBean(Object bean) {
+    void finalizeAsyncBean(Object bean, HttpServletRequest request) {
         if (bean != null) {
-            finalizeInjection(bean, null);
+            finalizeInjection(bean, request);
             bean = null;
         }
     }
