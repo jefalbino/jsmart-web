@@ -36,13 +36,13 @@ public interface SmartSessionListener {
 	 * 
 	 * @param session {@link HttpSession} object
 	 */
-	public void sessionCreated(HttpSession session);
+	public void sessionCreated(final HttpSession session);
 
 	/**
 	 * It indicates that the session of specific client has been destroyed.
 	 * 
 	 * @param session {@link HttpSession} object
 	 */
-	public void sessionDestroyed(HttpSession session);
+	public void sessionDestroyed(final HttpSession session);
 
 }

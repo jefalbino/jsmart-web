@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.jsmart5.framework.config.Constants;
+import com.jsmart5.framework.listener.SmartAsyncListener;
 import com.jsmart5.framework.listener.SmartContextListener;
 import com.jsmart5.framework.util.SmartUtils;
 
@@ -78,7 +78,9 @@ public final class WebServlet extends HttpServlet {
 			return;
 		}
 
-    	sendForward(path, request, response);
+        if (!doAsync(path, request, response)) {
+            sendForward(path, request, response);
+        }
     }
 
     @Override
@@ -153,9 +155,24 @@ public final class WebServlet extends HttpServlet {
 				responsePath = path;
 			}
 		}
-
 		sendRedirect(responsePath, request, response);
 	}
+
+    private boolean doAsync(String path, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        try {
+            SmartAsyncListener bean = (SmartAsyncListener) HANDLER.instantiateAsyncBean(path);
+            if (bean != null) {
+                AsyncContext asyncContext = request.startAsync();
+                bean.asyncContextCreated(asyncContext);
+                asyncContext.addListener(new WebAsyncListener(bean));
+                return true;
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "AsyncBean on path [" + path + "] could not be instantiated: " + ex.getMessage());
+            throw new ServletException(ex);
+        }
+        return false;
+    }
 
 	private void sendForward(String path, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
@@ -201,10 +218,40 @@ public final class WebServlet extends HttpServlet {
 	        request.getRequestDispatcher(url).forward(request, response);
 
 		} else {
-
 			// Use Redirect response internally case page had changed
 			response.sendRedirect((path.startsWith("/") ? request.getContextPath() : "") + path);
 		}
 	}
 
+    private class WebAsyncListener implements AsyncListener {
+
+        private final SmartAsyncListener bean;
+
+        public WebAsyncListener(final SmartAsyncListener bean) {
+            this.bean = bean;
+        }
+
+        @Override
+        public void onComplete(AsyncEvent event) throws IOException {
+            bean.asyncContextDestroyed(event.getAsyncContext());
+            HANDLER.finalizeAsyncBean(bean);
+        }
+
+        @Override
+        public void onTimeout(AsyncEvent event) throws IOException {
+            bean.asyncContextDestroyed(event.getAsyncContext());
+            HANDLER.finalizeAsyncBean(bean);
+        }
+
+        @Override
+        public void onError(AsyncEvent event) throws IOException {
+            bean.asyncContextDestroyed(event.getAsyncContext());
+            HANDLER.finalizeAsyncBean(bean);
+        }
+
+        @Override
+        public void onStartAsync(AsyncEvent event) throws IOException {
+            // AsyncContext was already started
+        }
+    }
 }

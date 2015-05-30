@@ -358,7 +358,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
             }
 
             ListAdapter<Object> adapter = (ListAdapter<Object>) object;
-            return adapter.load(index, scrollSize, last);
+            return adapter.load(index, last, scrollSize);
 
         } else if (object instanceof List) {
             List<Object> list = (List<Object>) object;

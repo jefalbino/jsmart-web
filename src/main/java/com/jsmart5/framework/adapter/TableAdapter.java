@@ -23,6 +23,6 @@ import java.util.Map;
 
 public abstract class TableAdapter<T> {
 
-	public abstract List<T> load(final int index, final int size, final String sort, final int order, final Map<String, String> filters);
+	public abstract List<T> load(final int lastIndex, final int size, final String sort, final int order, final Map<String, String> filters);
 
 }

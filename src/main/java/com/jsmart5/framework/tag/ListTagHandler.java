@@ -192,7 +192,7 @@ public final class ListTagHandler extends TagHandler {
 			}
 			
 			ListAdapter<Object> listAdapter = (ListAdapter<Object>) object;
-			return listAdapter.load(index, scrollSize, last);
+			return listAdapter.load(index, last, scrollSize);
 
 		} else if (object instanceof List) {
 			List<Object> list = (List<Object>) object;

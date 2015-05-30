@@ -446,16 +446,20 @@ var Jsmart5 = (function() {
 					// Append loading icon on list if it was configured
 					if (hiddenRefresh && hiddenRefresh.length > 0) {
 						refreshClone = hiddenRefresh.clone();
-						refreshClone.css({'display': 'block'});
 						ul.append(refreshClone);
+						refreshClone.slideDown('fast');
 					}
 					
 					// Remove scroll-active and refreshing icon
 					map.complete = function() {
 						if (refreshClone) {
-							refreshClone.remove();
+						    refreshClone.slideUp('fast', function() {
+						        refreshClone.remove();
+						        ul.removeAttr('scroll-active');
+						    });
+						} else {
+						    ul.removeAttr('scroll-active');
 						}
-						ul.removeAttr('scroll-active');
 					};
 	
 					// Function to append to list
@@ -723,18 +727,22 @@ var Jsmart5 = (function() {
 
 		// Append loading icon on list if it was configured
 		if (hiddenRefresh && hiddenRefresh.length > 0) {
-
 			refreshClone = hiddenRefresh.clone();
 			refreshClone.find('td').css({'display': 'block'});
 			tbody.append(refreshClone);
+			refreshClone.slideDown('fast');
 		}
-		
+
 		// Remove scroll-active and refreshing icon
 		map.complete = function() {
 			if (refreshClone) {
-				refreshClone.remove();
+			    refreshClone.slideUp('fast', function() {
+			        refreshClone.remove();
+                    tbody.removeAttr('scroll-active');
+			    });
+			} else {
+			    tbody.removeAttr('scroll-active');
 			}
-			tbody.removeAttr('scroll-active');
 		};
 
 		// Function to append to table body
@@ -1147,16 +1155,20 @@ var Jsmart5 = (function() {
 					// Append loading icon on list if it was configured
 					if (hiddenRefresh && hiddenRefresh.length > 0) {
 						refreshClone = hiddenRefresh.clone();
-						refreshClone.css({'display': 'block'});
 						ul.append(refreshClone);
+						refreshClone.slideDown('fast');
 					}
 
 					// Remove scroll-active and refreshing icon
 					map.complete = function() {
 						if (refreshClone) {
-							refreshClone.remove();
+						    refreshClone.slideUp('fast', function() {
+						        refreshClone.remove();
+						        ul.removeAttr('scroll-active');
+						    });
+						} else {
+						    ul.removeAttr('scroll-active');
 						}
-						ul.removeAttr('scroll-active');
 					};
 
 					// Function to append to list

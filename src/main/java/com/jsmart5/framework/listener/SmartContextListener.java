@@ -36,13 +36,13 @@ public interface SmartContextListener {
 	 * 
 	 * @param context {@link ServletContext} object to the application.
 	 */
-	public void contextInitialized(ServletContext context);
+	public void contextInitialized(final ServletContext context);
 
 	/**
 	 * It indicates that the context of application has been destroyed.
 	 * 
 	 * @param context {@link ServletContext} object to the application.
 	 */
-	public void contextDestroyed(ServletContext context);
+	public void contextDestroyed(final ServletContext context);
 
 }

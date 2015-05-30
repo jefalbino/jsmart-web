@@ -48,29 +48,20 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 
+import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.jsmart5.framework.annotation.*;
+import com.jsmart5.framework.listener.SmartAsyncListener;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
-import com.jsmart5.framework.annotation.AuthenticateBean;
-import com.jsmart5.framework.annotation.AuthenticateField;
-import com.jsmart5.framework.annotation.AuthorizeAccess;
-import com.jsmart5.framework.annotation.ExecuteAccess;
-import com.jsmart5.framework.annotation.PostPreset;
-import com.jsmart5.framework.annotation.PostSubmit;
-import com.jsmart5.framework.annotation.PreSubmit;
-import com.jsmart5.framework.annotation.ScopeType;
-import com.jsmart5.framework.annotation.SmartBean;
-import com.jsmart5.framework.annotation.SmartFilter;
-import com.jsmart5.framework.annotation.SmartListener;
-import com.jsmart5.framework.annotation.Unescape;
-import com.jsmart5.framework.annotation.UrlParam;
 import com.jsmart5.framework.config.UrlPattern;
 import com.jsmart5.framework.listener.SmartContextListener;
 import com.jsmart5.framework.listener.SmartSessionListener;
@@ -97,6 +88,8 @@ public enum BeanHandler {
 	Map<String, Class<?>> smartBeans;
 
 	Map<String, Class<?>> authBeans;
+
+    Map<String, Class<?>> asyncBeans;
 
 	Map<String, Class<?>> smartServlets;
 
@@ -133,6 +126,7 @@ public enum BeanHandler {
         	finalizeBeans(context);
         	authBeans.clear();
         	smartBeans.clear();
+            asyncBeans.clear();
         	smartServlets.clear();
         	smartFilters.clear();
         	contextListeners.clear();
@@ -373,6 +367,16 @@ public enum BeanHandler {
 		return bean;
 	}
 
+    Object instantiateAsyncBean(String path) throws Exception {
+        Object bean = null;
+        if (asyncBeans.containsKey(path)) {
+            Class<?> clazz = asyncBeans.get(path);
+            bean = clazz.newInstance();
+            executeInjection(bean);
+        }
+        return bean;
+    }
+
 	void executeInjection(Object bean) {
 		executeInjection(bean, null);
 	}
@@ -382,7 +386,7 @@ public enum BeanHandler {
     }
 
 	private String getClassName(SmartBean smartBean, Class<?> beanClass) {
-		if (smartBean.name().isEmpty()) {
+		if (smartBean.name().trim().isEmpty()) {
 			String beanName = beanClass.getSimpleName();
 			return getClassName(beanName);
 		}
@@ -390,7 +394,7 @@ public enum BeanHandler {
 	}
 
 	private String getClassName(AuthenticateBean authBean, Class<?> authClass) {
-		if (authBean.name().isEmpty()) {
+		if (authBean.name().trim().isEmpty()) {
 			String beanName = authClass.getSimpleName();
             return getClassName(beanName);
 		}
@@ -398,7 +402,7 @@ public enum BeanHandler {
 	}
 
 	private String getClassName(com.jsmart5.framework.annotation.SmartServlet servlet, Class<?> servletClass) {
-		if (servlet.name() == null || servlet.name().isEmpty()) {
+		if (servlet.name() == null || servlet.name().trim().isEmpty()) {
 			String servletName = servletClass.getSimpleName();
             return getClassName(servletName);
 		}
@@ -406,7 +410,7 @@ public enum BeanHandler {
 	}
 
 	private String getClassName(SmartFilter filter, Class<?> filterClass) {
-		if (filter.name() == null || filter.name().isEmpty()) {
+		if (filter.name() == null || filter.name().trim().isEmpty()) {
 			String filterName = filterClass.getSimpleName();
             return getClassName(filterName);
 		}
@@ -475,6 +479,13 @@ public enum BeanHandler {
 			LOGGER.log(Level.INFO, "Injection on smart bean " + bean + " failure: " + ex.getMessage());
 		}
 	}
+
+    void finalizeAsyncBean(Object bean) {
+        if (bean != null) {
+            finalizeInjection(bean, null);
+            bean = null;
+        }
+    }
 
 	void finalizeBeans(ServletContext servletContext) {
 		List<String> names = Collections.list(servletContext.getAttributeNames());
@@ -867,6 +878,7 @@ public enum BeanHandler {
 
 		smartBeans = new HashMap<String, Class<?>>();
 		authBeans = new HashMap<String, Class<?>>();
+        asyncBeans = new HashMap<String, Class<?>>();
 		smartServlets = new HashMap<String, Class<?>>();
 		smartFilters = new HashMap<String, Class<?>>();
 		contextListeners = new HashSet<SmartContextListener>();
@@ -887,7 +899,8 @@ public enum BeanHandler {
 
 			if ((bean.scope() == ScopeType.PAGE_SCOPE || bean.scope() == ScopeType.SESSION_SCOPE)
 					&& !Serializable.class.isAssignableFrom(clazz)) {
-				throw new RuntimeException("Mapped SmartBean class [" + clazz + "] with scope [" + bean.scope() + "] must implement java.io.Serializable interface");
+				throw new RuntimeException("Mapped SmartBean class [" + clazz + "] with scope [" + bean.scope() + "] " +
+                        "must implement java.io.Serializable interface");
 			}
 
 			setBeanFields(clazz);
@@ -904,7 +917,8 @@ public enum BeanHandler {
 				LOGGER.log(Level.INFO, "Mapping AuthenticateBean class: " + clazz);
 
 				if (!Serializable.class.isAssignableFrom(clazz)) {
-					throw new RuntimeException("Mapped AuthenticateBean class [" + clazz + "] must implement java.io.Serializable interface");
+					throw new RuntimeException("Mapped AuthenticateBean class [" + clazz + "] must implement " +
+                            "java.io.Serializable interface");
 				}
 
 				setBeanFields(clazz);
@@ -917,10 +931,31 @@ public enum BeanHandler {
 			}
 		}
 
-		annotations = reflections.getTypesAnnotatedWith(com.jsmart5.framework.annotation.SmartServlet.class);
+        annotations = reflections.getTypesAnnotatedWith(AsyncBean.class);
+        for (Class<?> clazz : annotations) {
+            AsyncBean asyncBean = clazz.getAnnotation(AsyncBean.class);
+            LOGGER.log(Level.INFO, "Mapping AsyncBean class: " + clazz);
+
+            if (!SmartAsyncListener.class.isAssignableFrom(clazz)) {
+                throw new RuntimeException("Mapped AsyncBean class [" + clazz + "] must implement " +
+                        "com.jsmart5.framework.listener.SmartAsyncListener interface");
+            }
+
+            setBeanFields(clazz);
+            setBeanMethods(clazz);
+            asyncBeans.put(asyncBean.asyncPath(), clazz);
+        }
+
+		annotations = reflections.getTypesAnnotatedWith(SmartServlet.class);
 		for (Class<?> clazz : annotations) {
-			com.jsmart5.framework.annotation.SmartServlet servlet = clazz.getAnnotation(com.jsmart5.framework.annotation.SmartServlet.class);
+			SmartServlet servlet = clazz.getAnnotation(SmartServlet.class);
 			LOGGER.log(Level.INFO, "Mapping SmartServlet class: " + clazz);
+
+            if (!HttpServlet.class.isAssignableFrom(clazz)) {
+                throw new RuntimeException("Mapped SmartServlet class [" + clazz + "] must extends " +
+                        "javax.servlet.http.HttpServlet class");
+            }
+
 			setBeanFields(clazz);
 			setBeanMethods(clazz);
 			smartServlets.put(getClassName(servlet, clazz), clazz);
@@ -930,6 +965,12 @@ public enum BeanHandler {
 		for (Class<?> clazz : annotations) {
 			SmartFilter filter = clazz.getAnnotation(SmartFilter.class);
 			LOGGER.log(Level.INFO, "Mapping SmartFilter class: " + clazz);
+
+            if (!Filter.class.isAssignableFrom(clazz)) {
+                throw new RuntimeException("Mapped SmartFilter class [" + clazz + "] must implement " +
+                        "javax.servlet.Filter interface");
+            }
+
 			setBeanFields(clazz);
 			setBeanMethods(clazz);
 			smartFilters.put(getClassName(filter, clazz), clazz);
@@ -950,7 +991,12 @@ public enum BeanHandler {
 					setBeanFields(clazz);
 					setBeanMethods(clazz);
 					sessionListeners.add((SmartSessionListener) listenerObj);
-				}
+
+				} else {
+                    throw new RuntimeException("Mapped SmartListener class [" + clazz + "] must implement " +
+                            "com.jsmart5.framework.listener.SmartContextListener or " +
+                            "com.jsmart5.framework.listener.SmartSessionListener interface");
+                }
 			} catch (Exception ex) {
 				LOGGER.log(Level.INFO, "SmartListener class [" + clazz.getName() + "] could not be instantiated!");
 			}
@@ -962,6 +1008,9 @@ public enum BeanHandler {
 		if (authBeans.isEmpty()) {
 			LOGGER.log(Level.INFO, "AuthenticateBean was not mapped!");
 		}
+        if (asyncBeans.isEmpty()) {
+            LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");
+        }
 		if (smartServlets.isEmpty()) {
 			LOGGER.log(Level.INFO, "SmartServlets were not mapped!");
 		}
