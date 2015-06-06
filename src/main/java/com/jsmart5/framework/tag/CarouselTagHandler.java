@@ -108,7 +108,7 @@ public final class CarouselTagHandler extends TagHandler {
 			li.addAttribute("data-target", "#" + id)
 				.addAttribute("data-slide-to", i);
 			
-			if (slides.get(i).getImage() == null) {
+			if (slides.get(i).getImageName() == null) {
 				li.addAttribute("class", JSmart5.CAROUSEL_INDICATOR);
 			}
 
@@ -148,7 +148,7 @@ public final class CarouselTagHandler extends TagHandler {
 			}
 			inner.addTag(slide.executeTag());
 
-			noSlideImage |= slide.getImage() == null;
+			noSlideImage |= slide.getImageName() == null;
 		}
 		div.addTag(inner);
 		

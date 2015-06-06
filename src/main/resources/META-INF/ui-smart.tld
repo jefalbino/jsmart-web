@@ -3257,6 +3257,26 @@
             <name>active</name>
             <required>false</required>
         </attribute>
+        <attribute>
+            <name>imageLib</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>imageName</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>imageAlt</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>imageWidth</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>imageHeight</name>
+            <required>false</required>
+        </attribute>
 	</tag>
 
 	<tag>

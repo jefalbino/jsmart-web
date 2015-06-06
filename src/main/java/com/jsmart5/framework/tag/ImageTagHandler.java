@@ -53,17 +53,6 @@ public final class ImageTagHandler extends TagHandler {
 	private String type;
 
 	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-
-		if (parent instanceof SlideTagHandler) {
-			((SlideTagHandler) parent).setImage(this);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
 	public void validateTag() throws JspException {
 		if (type != null && !Type.validateImage(type)) {
 			throw InvalidAttributeException.fromPossibleValues("image", "type", Type.getImageValues());

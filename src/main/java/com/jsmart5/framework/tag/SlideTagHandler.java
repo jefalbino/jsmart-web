@@ -39,9 +39,17 @@ public final class SlideTagHandler extends TagHandler {
 	
 	private String label;
 
+    private String imageLib;
+
+    private String imageName;
+
+    private String imageAlt;
+
+    private String imageWidth;
+
+    private String imageHeight;
+
 	private HeaderTagHandler header;
-	
-	private ImageTagHandler image;
 
 	@Override
 	public void validateTag() throws JspException {
@@ -69,8 +77,9 @@ public final class SlideTagHandler extends TagHandler {
 			body.invoke(sw);
 		}
 
-		if (image == null && (parent.getWidth() == null || parent.getHeight() == null)) {
-			throw ConstraintTagException.fromConstraint("carousel", "Tag must have attributes [width] and [height] case [slide] tags does not have [image] inner tag");
+		if (imageName == null && (parent.getWidth() == null || parent.getHeight() == null)) {
+			throw ConstraintTagException.fromConstraint("carousel", "Tag must have attributes [width] and [height] " +
+                    "case [slide] tags does not have [imageName] attribute");
 		}
 
 		Div div = new Div();
@@ -78,10 +87,22 @@ public final class SlideTagHandler extends TagHandler {
 			.addAttribute("style", style)
 			.addAttribute("class", Bootstrap.ITEM)
 			.addAttribute("class", styleClass);
-		
+
 		if (active) {
 			div.addAttribute("class", Bootstrap.ACTIVE);
 		}
+
+        ImageTagHandler image = null;
+
+        if (imageName != null) {
+            image = new ImageTagHandler();
+            image.setParent(this);
+            image.setLib(imageLib);
+            image.setName(imageName);
+            image.setAlt(imageAlt);
+            image.setWidth(imageWidth);
+            image.setHeight(imageHeight);
+        }
 
 		if (image != null) {
 			div.addTag(image.executeTag());
@@ -111,16 +132,32 @@ public final class SlideTagHandler extends TagHandler {
 	void setHeader(HeaderTagHandler header) {
 		this.header = header;
 	}
-	
-	ImageTagHandler getImage() {
-		return image;
-	}
 
-	void setImage(ImageTagHandler image) {
-		this.image = image;
-	}
+    public void setImageLib(String imageLib) {
+        this.imageLib = imageLib;
+    }
 
-	boolean isActive() {
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    String getImageName() {
+        return imageName;
+    }
+
+    public void setImageAlt(String imageAlt) {
+        this.imageAlt = imageAlt;
+    }
+
+    public void setImageWidth(String imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+    public void setImageHeight(String imageHeight) {
+        this.imageHeight = imageHeight;
+    }
+
+    boolean isActive() {
 		return active;
 	}
 

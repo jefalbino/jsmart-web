@@ -67,16 +67,12 @@ public final class SlidesTagHandler extends TagHandler {
 				}
 				
 				if (adapter.getImage() != null) {
-					ImageTagHandler imageTag = new ImageTagHandler();
-					imageTag.setParent(slideTag);
-					imageTag.setLib(adapter.getImage().getLib());
-					imageTag.setName(adapter.getImage().getName());
-					imageTag.setAlt(adapter.getImage().getAlt());
-					imageTag.setWidth(adapter.getImage().getWidth());
-					imageTag.setHeight(adapter.getImage().getHeight());
-					slideTag.setImage(imageTag);
+                    slideTag.setImageLib(adapter.getImage().getLib());
+                    slideTag.setImageName(adapter.getImage().getName());
+					slideTag.setImageAlt(adapter.getImage().getAlt());
+                    slideTag.setImageWidth(adapter.getImage().getWidth());
+                    slideTag.setImageHeight(adapter.getImage().getHeight());
 				}
-
 				((CarouselTagHandler) parent).addSlide(slideTag);
 			}
 		}
