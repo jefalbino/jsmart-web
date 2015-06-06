@@ -65,6 +65,8 @@ public final class TableTagHandler extends TagHandler {
 
 	private Integer scrollSize;
 
+    private String scrollLastId;
+
 	private String maxHeight;
 	
 	private String size;
@@ -207,6 +209,11 @@ public final class TableTagHandler extends TagHandler {
 						.addAttribute("table-index", selectIndex);
 				}
 
+                Object scrollLastIdVal = getTagValue(scrollLastId);
+                if (scrollLastIdVal != null) {
+                    tr.addAttribute("scroll-last-id", scrollLastIdVal);
+                }
+
 				appendEvent(tr);
 				appendAjax(id);
 				appendBind(id);
@@ -308,6 +315,7 @@ public final class TableTagHandler extends TagHandler {
 	@SuppressWarnings("unchecked")
 	private List<?> getTableContent(Object object, Scroll scroll, Boolean hasFilterOrSort) throws JspException {
 		int index = scroll != null ? scroll.getIndex() : 0;
+        Object lastId = scroll != null ? scroll.getLastId() : null;
 
 		if (object instanceof TableAdapter) {
 			if (scrollSize == null) {
@@ -326,7 +334,7 @@ public final class TableTagHandler extends TagHandler {
 			}
 
 			TableAdapter<Object> tableAdapter = (TableAdapter<Object>) object;
-			return tableAdapter.load(index, scrollSize, sort, order, filters);
+			return tableAdapter.load(index, lastId, scrollSize, sort, order, filters);
 
 		} else if (object instanceof List) {
 			if (hasFilterOrSort) {
@@ -449,7 +457,11 @@ public final class TableTagHandler extends TagHandler {
 		this.scrollSize = scrollSize;
 	}
 
-	public void setMaxHeight(String maxHeight) {
+    public void setScrollLastId(String scrollLastId) {
+        this.scrollLastId = scrollLastId;
+    }
+
+    public void setMaxHeight(String maxHeight) {
 		this.maxHeight = maxHeight;
 	}
 

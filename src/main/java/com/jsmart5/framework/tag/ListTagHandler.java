@@ -51,6 +51,8 @@ public final class ListTagHandler extends TagHandler {
 	private String selectValue;
 	
 	private Integer scrollSize;
+
+    private String scrollLastId;
 	
 	private String maxHeight;
 	
@@ -160,6 +162,11 @@ public final class ListTagHandler extends TagHandler {
 
                     Tag rowTag = row.executeTag();
                     rowTag.addAttribute("to-string", obj.toString());
+
+                    Object scrollLastIdVal = getTagValue(scrollLastId);
+                    if (scrollLastIdVal != null) {
+                        rowTag.addAttribute("scroll-last-id", scrollLastIdVal);
+                    }
  					ul.addTag(rowTag);
  				}
 				selectIndex++;
@@ -183,7 +190,7 @@ public final class ListTagHandler extends TagHandler {
 	@SuppressWarnings("unchecked")
 	private List<?> getListContent(Object object, Scroll scroll) throws JspException {
 		int index = scroll != null ? scroll.getIndex() : 0;
-        String last = scroll != null ? scroll.getLast() : null;
+        Object lastId = scroll != null ? scroll.getLastId() : null;
 
 		if (object instanceof ListAdapter) {
 			if (scrollSize == null) {
@@ -192,7 +199,7 @@ public final class ListTagHandler extends TagHandler {
 			}
 			
 			ListAdapter<Object> listAdapter = (ListAdapter<Object>) object;
-			return listAdapter.load(index, last, scrollSize);
+			return listAdapter.load(index, lastId, scrollSize);
 
 		} else if (object instanceof List) {
 			List<Object> list = (List<Object>) object;
@@ -280,7 +287,11 @@ public final class ListTagHandler extends TagHandler {
 		this.scrollSize = scrollSize;
 	}
 
-	public void setMaxHeight(String maxHeight) {
+    public void setScrollLastId(String scrollLastId) {
+        this.scrollLastId = scrollLastId;
+    }
+
+    public void setMaxHeight(String maxHeight) {
 		this.maxHeight = maxHeight;
 	}
 

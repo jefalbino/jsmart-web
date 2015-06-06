@@ -422,7 +422,7 @@ var Jsmart5 = (function() {
 					var jsonParam = {};
 					jsonParam.size = ul.attr('scroll-size');
 					jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
-					jsonParam.last = lastChild.attr('to-string');
+					jsonParam.lastId = lastChild.attr('scroll-last-id');
 	
 					for (var i = 0; i < postParam.length; i++) {
 						// Look for J_SCROLL parameter to send scroll values
@@ -530,6 +530,7 @@ var Jsmart5 = (function() {
 
 			jsonParam.size = tr.closest('tbody').attr('scroll-size');
 			jsonParam.index = tr.attr('scroll-index');
+			jsonParam.lastId = tr.attr('scroll-last-id');
 			
 			var sortSpan = thead.find('span[sort-active]');
 			if (sortSpan && sortSpan.length > 0) {
@@ -1131,7 +1132,7 @@ var Jsmart5 = (function() {
 					var jsonParam = {};
 					jsonParam.size = ul.attr('scroll-size');
 					jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
-					jsonParam.last = lastChild.attr('to-string');
+					jsonParam.lastId = lastChild.attr('scroll-last-id');
 
 					for (var i = 0; i < postParam.length; i++) {
 						// Look for J_SCROLL parameter to send scroll values

@@ -240,17 +240,17 @@ public final class WebServlet extends HttpServlet {
 
         @Override
         public void onComplete(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event);
+            finalizeAsyncContext(event, SmartAsyncListener.Reason.COMPLETE);
         }
 
         @Override
         public void onTimeout(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event);
+            finalizeAsyncContext(event, SmartAsyncListener.Reason.TIMEOUT);
         }
 
         @Override
         public void onError(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event);
+            finalizeAsyncContext(event, SmartAsyncListener.Reason.ERROR);
         }
 
         @Override
@@ -263,9 +263,9 @@ public final class WebServlet extends HttpServlet {
             }
         }
 
-        private void finalizeAsyncContext(AsyncEvent event) throws IOException {
+        private void finalizeAsyncContext(AsyncEvent event, SmartAsyncListener.Reason reason) throws IOException {
             AsyncContext asyncContext = event.getAsyncContext();
-            bean.asyncContextDestroyed(asyncContext);
+            bean.asyncContextDestroyed(asyncContext, reason);
             HANDLER.finalizeAsyncBean(bean, (HttpServletRequest) asyncContext.getRequest());
         }
     }

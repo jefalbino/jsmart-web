@@ -54,6 +54,8 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     private Integer scrollSize;
 
+    private String scrollLastId;
+
     private String maxHeight;
 
     private String size;
@@ -332,6 +334,11 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
 	                    Tag rowTag = row.executeTag();
 	                    rowTag.addAttribute("to-string", obj.toString());
+
+                        Object scrollLastIdVal = getTagValue(scrollLastId);
+                        if (scrollLastIdVal != null) {
+                            rowTag.addAttribute("scroll-last-id", scrollLastIdVal);
+                        }
 	                    ul.addTag(rowTag);
 	                }
 	                selectIndex++;
@@ -349,7 +356,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
     @SuppressWarnings("unchecked")
     private List<?> getListContent(Object object, Scroll scroll) throws JspException {
         int index = scroll != null ? scroll.getIndex() : 0;
-        String last = scroll != null ? scroll.getLast() : null;
+        Object lastId = scroll != null ? scroll.getLastId() : null;
 
         if (object instanceof ListAdapter) {
             if (scrollSize == null) {
@@ -358,7 +365,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
             }
 
             ListAdapter<Object> adapter = (ListAdapter<Object>) object;
-            return adapter.load(index, last, scrollSize);
+            return adapter.load(index, lastId, scrollSize);
 
         } else if (object instanceof List) {
             List<Object> list = (List<Object>) object;
@@ -457,6 +464,10 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     public void setScrollSize(Integer scrollSize) {
         this.scrollSize = scrollSize;
+    }
+
+    public void setScrollLastId(String scrollLastId) {
+        this.scrollLastId = scrollLastId;
     }
 
     public void setMinLength(Integer minLength) {

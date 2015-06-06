@@ -1780,6 +1780,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>scrollLastId</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>maxHeight</name>
             <required>false</required>
         </attribute>
@@ -2481,6 +2485,10 @@
         </attribute>
         <attribute>
             <name>scrollSize</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>scrollLastId</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3985,6 +3993,10 @@
         </attribute>
         <attribute>
             <name>scrollSize</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>scrollLastId</name>
             <required>false</required>
         </attribute>
         <attribute>

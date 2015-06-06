@@ -22,8 +22,12 @@ import javax.servlet.AsyncContext;
 
 public interface SmartAsyncListener {
 
+    public static enum Reason {
+        COMPLETE, TIMEOUT, ERROR
+    }
+
     public void asyncContextCreated(final AsyncContext asyncContext);
 
-    public void asyncContextDestroyed(final AsyncContext asyncContext);
+    public void asyncContextDestroyed(final AsyncContext asyncContext, final Reason reason);
 
 }
