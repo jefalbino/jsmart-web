@@ -112,7 +112,7 @@ public final class InputTagHandler extends TagHandler {
 		Div inputGroup = null;
 		
 		JspTag parent = getParent();
-		if (label != null || parent instanceof FormTagHandler) {
+		if (!Type.HIDDEN.equalsIgnoreCase(type) && (label != null || parent instanceof FormTagHandler)) {
 			formGroup = new Div();
 			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 			
@@ -128,7 +128,7 @@ public final class InputTagHandler extends TagHandler {
 			}
 		}
 
-		if (label != null) {
+		if (!Type.HIDDEN.equalsIgnoreCase(type) && label != null) {
 			Label labelTag = new Label();
 			labelTag.addAttribute("for", id)
 					.addAttribute("class", Bootstrap.LABEL_CONTROL)
@@ -136,7 +136,7 @@ public final class InputTagHandler extends TagHandler {
 			formGroup.addTag(labelTag);
 		}
 
-		if (leftAddOn != null || rightAddOn != null) {
+		if (!Type.HIDDEN.equalsIgnoreCase(type) && (leftAddOn != null || rightAddOn != null)) {
 			inputGroup = new Div();
 			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
@@ -151,7 +151,7 @@ public final class InputTagHandler extends TagHandler {
 			}
 		}
 		
-		if (leftAddOn != null) {
+		if (!Type.HIDDEN.equalsIgnoreCase(type) && leftAddOn != null) {
 			if (childAddOn != null && leftAddOn.equalsIgnoreCase(childAddOn.getId())) {
 				inputGroup.addTag(childAddOn.executeTag());
 			} else {
@@ -205,7 +205,7 @@ public final class InputTagHandler extends TagHandler {
 			setTagValue(value, null);
 		}
 
-		appendValidator(input);
+        appendValidator(input);
 		appendRest(input);
 		appendEvent(input);
 
@@ -215,7 +215,7 @@ public final class InputTagHandler extends TagHandler {
 			formGroup.addTag(input);
 		}
 
-		if (rightAddOn != null) {
+		if (!Type.HIDDEN.equalsIgnoreCase(type) && rightAddOn != null) {
 			if (childAddOn != null && rightAddOn.equalsIgnoreCase(childAddOn.getId())) {
 				inputGroup.addTag(childAddOn.executeTag());
 			} else {
@@ -236,7 +236,8 @@ public final class InputTagHandler extends TagHandler {
 		} else if (inputGroup != null) {
 			appendTooltip(inputGroup);
 			appendPopOver(inputGroup);
-		} else {
+
+		} else if (!Type.HIDDEN.equalsIgnoreCase(type)) {
 			appendTooltip(input);
 			appendPopOver(input);
 		}
