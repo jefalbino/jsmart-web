@@ -55,10 +55,10 @@ import com.jsmart5.framework.tag.html.Script;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.util.EventAction;
 import com.jsmart5.framework.tag.util.RefAction;
-import com.jsmart5.framework.util.SmartAlert;
-import com.jsmart5.framework.util.SmartUtils;
+import com.jsmart5.framework.util.WebAlert;
+import com.jsmart5.framework.util.WebUtils;
 
-import com.jsmart5.framework.util.SmartText;
+import com.jsmart5.framework.util.WebText;
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
 import static com.jsmart5.framework.tag.js.JsConstants.JSMART_AJAX;
@@ -456,23 +456,23 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 
 	protected HttpServletRequest getRequest() {
-		return SmartContext.getRequest();
+		return WebContext.getRequest();
 	}
 
 	protected HttpServletResponse getResponse() {
-		return SmartContext.getResponse();
+		return WebContext.getResponse();
 	}
 
 	protected Object getMappedValue(final String name) {
-		return SmartContext.getMappedValue(name);
+		return WebContext.getMappedValue(name);
 	}
 	
 	protected Object removeMappedValue(final String name) {
-		return SmartContext.removeMappedValue(name);
+		return WebContext.removeMappedValue(name);
 	}
 
 	protected void addMappedValue(final String name, final Object value) {
-		SmartContext.addMappedValue(name, value);
+		WebContext.addMappedValue(name, value);
 	}
 
 	protected String getRequestPath() {
@@ -512,15 +512,15 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 
 	protected String getResourceString(String resource, String key) {
-		return SmartText.getString(resource, key);
+		return WebText.getString(resource, key);
 	}
 
 	protected Collection<String> getUserAuthorizationAccess() {
 		return HANDLER.getUserAuthorizationAccess();
 	}
 
-	protected List<SmartAlert> getAlerts(String id) {
-		return SmartContext.getAlerts(id);
+	protected List<WebAlert> getAlerts(String id) {
+		return WebContext.getAlerts(id);
 	}
 
 	protected String getJsonValue(Object object) {
@@ -653,7 +653,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 		}
 
 		boolean isDelegate = isDelegate();
-		if (isDelegate || SmartContext.isAjaxRequest()) {
+		if (isDelegate || WebContext.isAjaxRequest()) {
 
 			if (isDelegate) {
 				tag.addAttribute("role-delegate", id);
@@ -678,7 +678,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 	}
 
 	protected String getRandomId() {
-		return SmartUtils.randomId();
+		return WebUtils.randomId();
 	}
 
 	protected void setRandomId(String tag) throws JspException {
@@ -696,7 +696,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 			if (!tagHandler.bindTags.isEmpty()) {
 				throw InvalidAttributeException.fromConstraint(tag, "id", "specified because tag contains [bind] tags");
 			}
-			tagHandler.id = SmartUtils.randomId();
+			tagHandler.id = WebUtils.randomId();
 		}
 	}
 

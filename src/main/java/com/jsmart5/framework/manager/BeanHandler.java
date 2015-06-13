@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -57,15 +58,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.jsmart5.framework.annotation.*;
-import com.jsmart5.framework.listener.SmartAsyncListener;
+import com.jsmart5.framework.config.Constants;
+import com.jsmart5.framework.listener.WebAsyncListener;
+import com.jsmart5.framework.listener.WebContextListener;
+import com.jsmart5.framework.listener.WebSessionListener;
+import com.jsmart5.framework.util.WebUtils;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.jsmart5.framework.config.UrlPattern;
-import com.jsmart5.framework.listener.SmartContextListener;
-import com.jsmart5.framework.listener.SmartSessionListener;
-import com.jsmart5.framework.util.SmartUtils;
 
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.config.Constants.*;
@@ -85,7 +87,7 @@ public enum BeanHandler {
 	
 	private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
 
-	Map<String, Class<?>> smartBeans;
+	Map<String, Class<?>> webBeans;
 
 	Map<String, Class<?>> authBeans;
 
@@ -95,9 +97,9 @@ public enum BeanHandler {
 
 	Map<String, Class<?>> smartFilters;
 
-	Set<SmartContextListener> contextListeners;
+	Set<WebContextListener> contextListeners;
 	
-	Set<SmartSessionListener> sessionListeners;
+	Set<WebSessionListener> sessionListeners;
 
 	private Map<String, String> forwardPaths;
 
@@ -105,13 +107,13 @@ public enum BeanHandler {
 
 	private ApplicationContext springContext;
 
-    private Map<Class<?>, String> jndiMapping = new HashMap<Class<?>, String>();
+    private Map<Class<?>, String> jndiMapping = new ConcurrentHashMap<Class<?>, String>();
 
-	private Map<Class<?>, Field[]> mappedBeanFields = new HashMap<Class<?>, Field[]>();
+	private Map<Class<?>, Field[]> mappedBeanFields = new ConcurrentHashMap<Class<?>, Field[]>();
 
-	private Map<Class<?>, Method[]> mappedBeanMethods = new HashMap<Class<?>, Method[]>();
+	private Map<Class<?>, Method[]> mappedBeanMethods = new ConcurrentHashMap<Class<?>, Method[]>();
 
-	private Map<String, JspPageBean> jspPageBeans = new HashMap<String, JspPageBean>();
+	private Map<String, JspPageBean> jspPageBeans = new ConcurrentHashMap<String, JspPageBean>();
 
 	void init(ServletContext context) {
 		checkWebXmlPath(context);
@@ -125,7 +127,7 @@ public enum BeanHandler {
         try {
         	finalizeBeans(context);
         	authBeans.clear();
-        	smartBeans.clear();
+            webBeans.clear();
             asyncBeans.clear();
         	smartServlets.clear();
         	smartFilters.clear();
@@ -238,13 +240,13 @@ public enum BeanHandler {
 				}
 			}
 		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Execute PostPreset on smart bean " + bean + " failure: " + ex.getMessage());
+			LOGGER.log(Level.INFO, "Execute PostPreset on WebBean " + bean + " failure: " + ex.getMessage());
 		}
 	}
 
 	boolean containsUnescapeMethod(String[] names) {
 		if (names != null && names.length > 1) {
-			Class<?> clazz = smartBeans.get(names[0]);
+			Class<?> clazz = webBeans.get(names[0]);
 			if (clazz != null) {
 				for (Method method : getBeanMethods(clazz)) {
 					Matcher matcher = SET_METHOD_PATTERN.matcher(method.getName());
@@ -300,7 +302,7 @@ public enum BeanHandler {
 
 			// Include into session the path with respective page scoped bean names
 			if (!pageScope.getNames().isEmpty()) {
-				HttpSession session = SmartContext.getSession();
+				HttpSession session = WebContext.getSession();
 				synchronized (session) {
 					session.setAttribute(path, pageScope);
 				}
@@ -310,9 +312,9 @@ public enum BeanHandler {
 
 	private Object instantiateBean(String name, Map<String, String> expressions, PageScope pageScope) throws Exception {
 		Object bean = null;
-		ServletContext context = SmartContext.getApplication();
-		HttpSession session = SmartContext.getSession();
-		HttpServletRequest request = SmartContext.getRequest();
+		ServletContext context = WebContext.getApplication();
+		HttpSession session = WebContext.getSession();
+		HttpServletRequest request = WebContext.getRequest();
 
 		if (request.getAttribute(name) != null) {
 			bean = request.getAttribute(name);
@@ -334,26 +336,26 @@ public enum BeanHandler {
 			return bean;
 		}
 
-		if (smartBeans.containsKey(name)) {
-			Class<?> clazz = smartBeans.get(name);
+		if (webBeans.containsKey(name)) {
+			Class<?> clazz = webBeans.get(name);
 			bean = clazz.newInstance();
 
-			SmartBean servletBean = clazz.getAnnotation(SmartBean.class);
-			if (servletBean.scope().equals(ScopeType.REQUEST_SCOPE)) {
+			WebBean webBean = clazz.getAnnotation(WebBean.class);
+			if (webBean.scope().equals(ScopeType.REQUEST_SCOPE)) {
 				request.setAttribute(name, bean);
 
-			} else if (servletBean.scope().equals(ScopeType.PAGE_SCOPE)) {
+			} else if (webBean.scope().equals(ScopeType.PAGE_SCOPE)) {
 				synchronized (session) {
 					pageScope.addName(name);
 					session.setAttribute(name, bean);
 				}
 
-			} else if (servletBean.scope().equals(ScopeType.SESSION_SCOPE)) {
+			} else if (webBean.scope().equals(ScopeType.SESSION_SCOPE)) {
 				synchronized (session) {
 					session.setAttribute(name, bean);
 				}
 
-			} else if (servletBean.scope().equals(ScopeType.APPLICATION_SCOPE)) {
+			} else if (webBean.scope().equals(ScopeType.APPLICATION_SCOPE)) {
 				context.setAttribute(name, bean);
 
 			} else {
@@ -385,12 +387,12 @@ public enum BeanHandler {
         return name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toLowerCase());
     }
 
-	private String getClassName(SmartBean smartBean, Class<?> beanClass) {
-		if (smartBean.name().trim().isEmpty()) {
+	private String getClassName(WebBean webBean, Class<?> beanClass) {
+		if (webBean.name().trim().isEmpty()) {
 			String beanName = beanClass.getSimpleName();
 			return getClassName(beanName);
 		}
-		return smartBean.name();
+		return webBean.name();
 	}
 
 	private String getClassName(AuthenticateBean authBean, Class<?> authClass) {
@@ -419,13 +421,13 @@ public enum BeanHandler {
 
 	private void executeInjection(Object bean, PageScope pageScope) {
 		try {
-			HttpSession session = SmartContext.getSession();
-			HttpServletRequest request = SmartContext.getRequest();
+			HttpSession session = WebContext.getSession();
+			HttpServletRequest request = WebContext.getRequest();
 
 			for (Field field : getBeanFields(bean.getClass())) {
 				if (field.isAnnotationPresent(Inject.class)) {
 
-					SmartBean sb = field.getType().getAnnotation(SmartBean.class);
+					WebBean sb = field.getType().getAnnotation(WebBean.class);
 					if (sb != null) {
 						field.setAccessible(true);
 						field.set(bean, instantiateBean(getClassName(sb, field.getType()), null, pageScope));
@@ -441,9 +443,9 @@ public enum BeanHandler {
 				}
 
 				// Inject URL Parameters
-				if (field.isAnnotationPresent(UrlParam.class)) {
-					UrlParam urlParam = field.getAnnotation(UrlParam.class);
-					String paramValue = request.getParameter(urlParam.name());
+				if (field.isAnnotationPresent(QueryParam.class)) {
+					QueryParam queryParam = field.getAnnotation(QueryParam.class);
+					String paramValue = request.getParameter(queryParam.name());
 
 					if (paramValue != null) {
 						field.setAccessible(true);
@@ -476,7 +478,7 @@ public enum BeanHandler {
 				}
 			}
 		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Injection on smart bean " + bean + " failure: " + ex.getMessage());
+			LOGGER.log(Level.INFO, "Injection on WebBean " + bean + " failure: " + ex.getMessage());
 		}
 	}
 
@@ -493,7 +495,7 @@ public enum BeanHandler {
 			Object bean = servletContext.getAttribute(name);
 			if (bean != null) {
 
-				if (bean.getClass().isAnnotationPresent(SmartBean.class)) {
+				if (bean.getClass().isAnnotationPresent(WebBean.class)) {
 					finalizeBean(bean, servletContext);
 				}
 			}
@@ -505,8 +507,8 @@ public enum BeanHandler {
 			executePreDestroy(bean);
 			finalizeInjection(bean, servletContext);
 	
-			SmartBean smartBean = bean.getClass().getAnnotation(SmartBean.class);
-			servletContext.removeAttribute(getClassName(smartBean, bean.getClass()));
+			WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
+			servletContext.removeAttribute(getClassName(webBean, bean.getClass()));
 			bean = null;
 		}
 	}
@@ -518,7 +520,7 @@ public enum BeanHandler {
 				Object bean = session.getAttribute(name);
 				if (bean != null) {
 
-					if (bean.getClass().isAnnotationPresent(SmartBean.class)) {
+					if (bean.getClass().isAnnotationPresent(WebBean.class)) {
 						finalizeBean(bean, session);
 
 					} else if (bean.getClass().isAnnotationPresent(AuthenticateBean.class)) {
@@ -564,8 +566,8 @@ public enum BeanHandler {
 			executePreDestroy(bean);
 			finalizeInjection(bean, session);
 	
-			SmartBean smartBean = bean.getClass().getAnnotation(SmartBean.class);
-			session.removeAttribute(getClassName(smartBean, bean.getClass()));
+			WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
+			session.removeAttribute(getClassName(webBean, bean.getClass()));
 			bean = null;
 		}
 	}
@@ -574,11 +576,11 @@ public enum BeanHandler {
 		List<String> names = Collections.list(request.getAttributeNames());
 		for (String name : names) {
 
-			if (smartBeans.containsKey(name)) {
-				Object bean = request.getAttribute(name);
+			if (webBeans.containsKey(name)) {
+				Object webBean = request.getAttribute(name);
 
-				if (bean != null && bean.getClass().isAnnotationPresent(SmartBean.class)) {
-					finalizeBean(bean, request);
+				if (webBean != null && webBean.getClass().isAnnotationPresent(WebBean.class)) {
+					finalizeBean(webBean, request);
 				}
 			}
 		}
@@ -589,8 +591,8 @@ public enum BeanHandler {
 			executePreDestroy(bean);
 			finalizeInjection(bean, request);
 
-			SmartBean smartBean = bean.getClass().getAnnotation(SmartBean.class);
-			request.removeAttribute(getClassName(smartBean, bean.getClass()));
+			WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
+			request.removeAttribute(getClassName(webBean, bean.getClass()));
 			bean = null;
 		}
 	}
@@ -600,7 +602,7 @@ public enum BeanHandler {
 			for (Field field : getBeanFields(bean.getClass())) {
 				if (field.isAnnotationPresent(Inject.class)) {
 
-					if (field.getType().isAnnotationPresent(SmartBean.class)) {
+					if (field.getType().isAnnotationPresent(WebBean.class)) {
 						field.setAccessible(true);
 
 						if (servletObject instanceof HttpServletRequest) {
@@ -630,7 +632,7 @@ public enum BeanHandler {
 				}
 			}
 		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Finalize injection on smart bean " + bean + " failure: " + ex.getMessage());
+			LOGGER.log(Level.INFO, "Finalize injection on WebBean " + bean + " failure: " + ex.getMessage());
 		}
 	}
 
@@ -678,7 +680,7 @@ public enum BeanHandler {
 					executePostConstruct(bean);
 					session.setAttribute(name, bean);
 				} catch (Exception ex) {
-					LOGGER.log(Level.INFO, "Injection on authentication smart bean " + bean + " failure: " + ex.getMessage());
+					LOGGER.log(Level.INFO, "Injection on AuthenticationBean " + bean + " failure: " + ex.getMessage());
 				}
 			}
 			return bean;
@@ -696,7 +698,7 @@ public enum BeanHandler {
 				}
 			}
 		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Finalize injection on authentication bean " + bean + " failure: " + ex.getMessage());
+			LOGGER.log(Level.INFO, "Finalize injection on AuthenticationBean " + bean + " failure: " + ex.getMessage());
 		}
 
 		AuthenticateBean authBean = bean.getClass().getAnnotation(AuthenticateBean.class);
@@ -707,13 +709,13 @@ public enum BeanHandler {
 	String checkAuthentication(String path) throws ServletException {
 
 		if (authBeans.isEmpty() && !CONFIG.getContent().getSecureUrls().isEmpty()) {
-			throw new ServletException("Not found authentication bean mapped in your system. Once your system has secure urls, please use @AuthenticateBean!");
+			throw new ServletException("Not found AuthenticationBean mapped in your system. Once your system has secure urls, please use @AuthenticateBean!");
 		}
 
 		boolean authenticated = true;
 		AuthenticateBean authBean = null;
 
-		HttpSession session = SmartContext.getSession();
+		HttpSession session = WebContext.getSession();
 		synchronized (session) {
 
 			for (String name : authBeans.keySet()) {
@@ -734,13 +736,13 @@ public enum BeanHandler {
 									break;
 								}
 							} catch (Exception ex) {
-								throw new ServletException("Authentication field not accessible: " + ex.getMessage(), ex);
+								throw new ServletException("AuthenticationField not accessible: " + ex.getMessage(), ex);
 							}
 						}
 					}
 
 					if (!foundField) {
-						throw new ServletException("None authenticateField found in authenticateBean!");
+						throw new ServletException("None AuthenticateField found in AuthenticateBean!");
 					}
 				}
 
@@ -756,7 +758,7 @@ public enum BeanHandler {
 			if (authenticated) {
 				return path;
 			} else {
-				return SmartUtils.decodePath(authBean.loginPath());
+				return WebUtils.decodePath(authBean.loginPath());
 			}
 		}
 
@@ -767,9 +769,9 @@ public enum BeanHandler {
 		//   - User not authenticated ===>>> ok redirect to path
 		else {
 			if (authenticated) {
-				if (authBean != null && (path.equals(SmartUtils.decodePath(authBean.loginPath())) 
+				if (authBean != null && (path.equals(WebUtils.decodePath(authBean.loginPath()))
 						|| CONFIG.getContent().containsNonSecureUrlOnly(path))) {
-					return SmartUtils.decodePath(authBean.homePath());
+					return WebUtils.decodePath(authBean.homePath());
 				} else {
 					return path;
 				}
@@ -811,13 +813,13 @@ public enum BeanHandler {
 
 	@SuppressWarnings("unchecked")
 	Collection<String> getUserAuthorizationAccess() {
-		HttpServletRequest request = SmartContext.getRequest();
+		HttpServletRequest request = WebContext.getRequest();
 
 		if (request.getAttribute(REQUEST_USER_ACCESS) == null) {
 
 			Collection<String> userAccess = new HashSet<String>();
 
-			HttpSession session = SmartContext.getSession();
+			HttpSession session = WebContext.getSession();
 			synchronized (session) {
 
 				for (String name : authBeans.keySet()) {
@@ -834,7 +836,7 @@ public enum BeanHandler {
 										userAccess.addAll((Collection<String>) object);
 									}
 								} catch (Exception ex) {
-									LOGGER.log(Level.INFO, "Authorize access mapped on smart bean [" + bean + "] could not be cast to Collection<String>: " + ex.getMessage());
+									LOGGER.log(Level.INFO, "AuthorizeAccess mapped on WebBean [" + bean + "] could not be cast to Collection<String>: " + ex.getMessage());
 								}
 								break;
 							}
@@ -876,30 +878,30 @@ public enum BeanHandler {
 
     private void initAnnotatedBeans(ServletContext context) {
 
-		smartBeans = new HashMap<String, Class<?>>();
-		authBeans = new HashMap<String, Class<?>>();
-        asyncBeans = new HashMap<String, Class<?>>();
-		smartServlets = new HashMap<String, Class<?>>();
-		smartFilters = new HashMap<String, Class<?>>();
-		contextListeners = new HashSet<SmartContextListener>();
-		sessionListeners = new HashSet<SmartSessionListener>();
+		webBeans = new ConcurrentHashMap<String, Class<?>>();
+		authBeans = new ConcurrentHashMap<String, Class<?>>();
+        asyncBeans = new ConcurrentHashMap<String, Class<?>>();
+		smartServlets = new ConcurrentHashMap<String, Class<?>>();
+		smartFilters = new ConcurrentHashMap<String, Class<?>>();
+		contextListeners = new HashSet<WebContextListener>();
+		sessionListeners = new HashSet<WebSessionListener>();
 
 		if (CONFIG.getContent().getPackageScan() == null) {
-			LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on jsmart5.xml file! Skipping package scanning.");
+			LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML + " file! Skipping package scanning.");
 			return;
 		}
 
 		Object[] packages = CONFIG.getContent().getPackageScan().split(",");
 		Reflections reflections = new Reflections(packages);
 
-		Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(SmartBean.class);
+		Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebBean.class);
 		for (Class<?> clazz : annotations) {
-			SmartBean bean = clazz.getAnnotation(SmartBean.class);
-			LOGGER.log(Level.INFO, "Mapping SmartBean class: " + clazz);
+			WebBean bean = clazz.getAnnotation(WebBean.class);
+			LOGGER.log(Level.INFO, "Mapping WebBean class: " + clazz);
 
 			if ((bean.scope() == ScopeType.PAGE_SCOPE || bean.scope() == ScopeType.SESSION_SCOPE)
 					&& !Serializable.class.isAssignableFrom(clazz)) {
-				throw new RuntimeException("Mapped SmartBean class [" + clazz + "] with scope [" + bean.scope() + "] " +
+				throw new RuntimeException("Mapped WebBean class [" + clazz + "] with scope [" + bean.scope() + "] " +
                         "must implement java.io.Serializable interface");
 			}
 
@@ -907,7 +909,7 @@ public enum BeanHandler {
 			setBeanMethods(clazz);
 			
 			String className = getClassName(bean, clazz); 
-			smartBeans.put(className, clazz);
+			webBeans.put(className, clazz);
 		}
 
 		annotations = reflections.getTypesAnnotatedWith(AuthenticateBean.class);
@@ -927,7 +929,7 @@ public enum BeanHandler {
 				authBeans.put(className, clazz);
 				continue;
 			} else {
-				LOGGER.log(Level.SEVERE, "Only one AuthenticationBean must be declared! Skipping remained ones.");
+				LOGGER.log(Level.SEVERE, "Only one AuthenticateBean must be declared! Skipping remained ones.");
 			}
 		}
 
@@ -936,9 +938,9 @@ public enum BeanHandler {
             AsyncBean asyncBean = clazz.getAnnotation(AsyncBean.class);
             LOGGER.log(Level.INFO, "Mapping AsyncBean class: " + clazz);
 
-            if (!SmartAsyncListener.class.isAssignableFrom(clazz)) {
+            if (!WebAsyncListener.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("Mapped AsyncBean class [" + clazz + "] must implement " +
-                        "com.jsmart5.framework.listener.SmartAsyncListener interface");
+                        "com.jsmart5.framework.listener.WebAsyncListener interface");
             }
 
             setBeanFields(clazz);
@@ -980,30 +982,30 @@ public enum BeanHandler {
 		for (Class<?> clazz : annotations) {
 			try {
 				Object listenerObj = clazz.newInstance();
-				if (SmartContextListener.class.isInstance(listenerObj)) {
+				if (WebContextListener.class.isInstance(listenerObj)) {
 					LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
 					setBeanFields(clazz);
 					setBeanMethods(clazz);
-					contextListeners.add((SmartContextListener) listenerObj);
+					contextListeners.add((WebContextListener) listenerObj);
 
-				} else if (SmartSessionListener.class.isInstance(listenerObj)) {
+				} else if (WebSessionListener.class.isInstance(listenerObj)) {
 					LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
 					setBeanFields(clazz);
 					setBeanMethods(clazz);
-					sessionListeners.add((SmartSessionListener) listenerObj);
+					sessionListeners.add((WebSessionListener) listenerObj);
 
 				} else {
                     throw new RuntimeException("Mapped SmartListener class [" + clazz + "] must implement " +
-                            "com.jsmart5.framework.listener.SmartContextListener or " +
-                            "com.jsmart5.framework.listener.SmartSessionListener interface");
+                            "com.jsmart5.framework.listener.WebContextListener or " +
+                            "com.jsmart5.framework.listener.WebSessionListener interface");
                 }
 			} catch (Exception ex) {
 				LOGGER.log(Level.INFO, "SmartListener class [" + clazz.getName() + "] could not be instantiated!");
 			}
 		}
 
-		if (smartBeans.isEmpty()) {
-			LOGGER.log(Level.INFO, "SmartBeans were not mapped!");
+		if (webBeans.isEmpty()) {
+			LOGGER.log(Level.INFO, "WebBeans were not mapped!");
 		}
 		if (authBeans.isEmpty()) {
 			LOGGER.log(Level.INFO, "AuthenticateBean was not mapped!");
@@ -1189,7 +1191,7 @@ public enum BeanHandler {
 					matcher = EL_PATTERN.matcher(lineScan);
 					while (matcher.find()) {
 		            	for (String name : matcher.group(1).split(EL_SEPARATOR)) {
-		            		if (smartBeans.containsKey(name.trim())) {
+		            		if (webBeans.containsKey(name.trim())) {
 		            			jspPageBean.addBeanName(name.trim());
 		            		}
 		            	}

@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import com.jsmart5.framework.manager.SmartContext;
+import com.jsmart5.framework.manager.WebContext;
 
 /**
  * This class represents the container of text resources mapped on configuration file
@@ -38,11 +38,11 @@ import com.jsmart5.framework.manager.SmartContext;
  * Each text properties file is mapped as resource in this container according to what
  * was mapped on configuration. 
  */
-public enum SmartText {
+public enum WebText {
 
 	TEXTS();
 
-	private static final Logger LOGGER = Logger.getLogger(SmartText.class.getPackage().getName());
+	private static final Logger LOGGER = Logger.getLogger(WebText.class.getPackage().getName());
 	
 	private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
 
@@ -87,7 +87,7 @@ public enum SmartText {
 	public static String getString(final String res, final String key) {
 		try {
 			if (containsResource(res)) {
-				return ResourceBundle.getBundle(res, SmartContext.getLocale(), TEXTS.control).getString(key);
+				return ResourceBundle.getBundle(res, WebContext.getLocale(), TEXTS.control).getString(key);
 			} else {
 				LOGGER.log(Level.INFO, "Resource " + res + " not found!");
 			}

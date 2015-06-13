@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import com.jsmart5.framework.util.SmartUtils;
+import com.jsmart5.framework.util.WebUtils;
 
 public final class UrlPattern {
 
@@ -40,7 +40,7 @@ public final class UrlPattern {
 	}
 
 	public void setUrl(String url) {
-		this.url = SmartUtils.decodePath(url);
+		this.url = WebUtils.decodePath(url);
 	}
 
 	@XmlAttribute

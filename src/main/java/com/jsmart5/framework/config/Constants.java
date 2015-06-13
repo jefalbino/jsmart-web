@@ -46,13 +46,17 @@ public final class Constants {
 
 	public static final String WEB_INF = "/WEB-INF";
 
+    public static final String INDEX_JSP = "index.jsp";
+
 	public static final String PATH_SEPARATOR = "/";
 	
 	public static final String LIB_FILE_PATH = WEB_INF + PATH_SEPARATOR + "lib";
 
 	public static final String LIB_JAR_FILE_PATTERN = ".*jsmart5.*\\.jar";
 
-	public static final String JSMART5_XML_PATH = WEB_INF + PATH_SEPARATOR + "jsmart5.xml";
+    public static final String WEB_CONFIG_XML = "webConfig.xml";
+
+	public static final String WEB_CONFIG_XML_PATH = WEB_INF + PATH_SEPARATOR + WEB_CONFIG_XML;
 
 	public static final String FILTER_RESOURCES = "jsmart_resources.json";
 

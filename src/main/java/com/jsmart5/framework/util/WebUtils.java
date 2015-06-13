@@ -25,7 +25,7 @@ import java.util.Random;
 
 import org.apache.commons.codec.binary.Base32;
 
-public final class SmartUtils {
+public final class WebUtils {
 
 	private static final int DEFAULT_RANDOM_BYTES = 8;
 
@@ -33,7 +33,7 @@ public final class SmartUtils {
 
 	private static final Base32 base32 = new Base32();
 	
-	private SmartUtils() {
+	private WebUtils() {
 		// DO NOTHING
 	}
 

@@ -28,11 +28,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
-@XmlRootElement(name = "jsmart5")
+@XmlRootElement(name = "web-config")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public final class ConfigContent {
 
 	private UrlPattern[] urlPatterns;
+
+    private String welcomeUrl;
 
 	private SecureMethod[] secureMethods;
 
@@ -76,7 +78,18 @@ public final class ConfigContent {
 		nonSecureUrlsOnly = new ArrayList<String>();
 	}
 
-	@XmlElement(name = "url-pattern")
+    @XmlElement(name = "welcome-url")
+    public String getWelcomeUrl() {
+        return welcomeUrl;
+    }
+
+    public void setWelcomeUrl(String welcomeUrl) {
+        if (welcomeUrl != null && !welcomeUrl.trim().isEmpty()) {
+            this.welcomeUrl = welcomeUrl;
+        }
+    }
+
+    @XmlElement(name = "url-pattern")
 	@XmlElementWrapper(name = "url-patterns")
 	public UrlPattern[] getUrlPatterns() {
 		return urlPatterns;

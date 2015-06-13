@@ -1,6 +1,6 @@
 package com.jsmart5.framework.filter;
 
-import com.jsmart5.framework.manager.SmartContext;
+import com.jsmart5.framework.manager.WebContext;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ public class AsyncFilter implements Filter {
         httpResponse.setCharacterEncoding(ENCODING);
 
         // Initiate bean context based on current thread instance
-        SmartContext.initCurrentInstance(httpRequest, httpResponse);
+        WebContext.initCurrentInstance(httpRequest, httpResponse);
 
         Throwable throwable = null;
         try {
@@ -42,7 +42,7 @@ public class AsyncFilter implements Filter {
         }
 
         // Close bean context based on current thread instance
-        SmartContext.closeCurrentInstance();
+        WebContext.closeCurrentInstance();
 
         // Case internal server error
         if (throwable != null) {

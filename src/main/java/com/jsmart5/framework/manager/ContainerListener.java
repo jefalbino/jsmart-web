@@ -46,19 +46,16 @@ import javax.servlet.annotation.ServletSecurity.TransportGuarantee;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebListener;
 
+import com.jsmart5.framework.config.*;
 import org.springframework.web.context.ContextLoader;
 
 import com.jsmart5.framework.annotation.SmartFilter;
 import com.jsmart5.framework.annotation.SmartServlet;
-import com.jsmart5.framework.config.InitParam;
-import com.jsmart5.framework.config.SecureMethod;
-import com.jsmart5.framework.config.UploadConfig;
-import com.jsmart5.framework.config.UrlPattern;
 
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
-import static com.jsmart5.framework.util.SmartImage.*;
-import static com.jsmart5.framework.util.SmartText.*;
+import static com.jsmart5.framework.util.WebImage.*;
+import static com.jsmart5.framework.util.WebText.*;
 
 @WebListener
 public final class ContainerListener implements ServletContextListener {
@@ -75,7 +72,7 @@ public final class ContainerListener implements ServletContextListener {
 
 			CONFIG.init(servletContext);
 	        if (CONFIG.getContent() == null) {
-	        	throw new RuntimeException("Configuration file jsmart5.xml was not found in WEB-INF resources folder!");
+	        	throw new RuntimeException("Configuration file " + Constants.WEB_CONFIG_XML + " was not found in WEB-INF resources folder!");
 	        }
 
 	        // Configure the necessary parameters in the Servlet context to get Spring to configure the application without needing an XML file
@@ -351,7 +348,8 @@ public final class ContainerListener implements ServletContextListener {
 		List<String> mapping = new ArrayList<String>();
 
 		if (CONFIG.getContent().getUrlPatterns() == null) {
-        	throw new RuntimeException("None [url-pattern] tags were found in configuration file jsmart5.xml for url mapping! At lease one URL pattern must be informed.");
+        	throw new RuntimeException("None [url-pattern] tags were found in configuration file " + Constants.WEB_CONFIG_XML
+                    + " for url mapping! At lease one URL pattern must be informed.");
         }
 
     	for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {

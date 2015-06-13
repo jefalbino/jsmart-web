@@ -18,30 +18,14 @@
 
 package com.jsmart5.framework.annotation;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * The {@link SmartBean} annotation is used on a class that contains the business
- * logic and can be used as a bean object to be mapped on JSP files.
- * <br>
- * The classes annotated with {@link SmartBean} allow dependency injection.
- */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SmartBean {
+@Target(ElementType.FIELD)
+public @interface QueryParam {
 
-	/**
-	 * The name of the bean that can be mapped on JSP files.
-	 * <br>
-	 * Default value is the name of the class in camel case.
-	 */
-	String name() default "";
-
-	/**
-	 * The scope of the bean.
-	 * <br>
-	 * Default value is ScopeType.REQUEST_SCOPE
-	 */
-	ScopeType scope() default ScopeType.REQUEST_SCOPE;
-
+	String name();
 }

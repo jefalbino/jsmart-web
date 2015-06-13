@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.listener.SmartSessionListener;
+import com.jsmart5.framework.listener.WebSessionListener;
 
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
@@ -43,7 +43,7 @@ public final class SessionControl implements HttpSessionListener {
 			}
 
 			// Call registered SmartSessionListeners
-			for (SmartSessionListener sessionListener : HANDLER.sessionListeners) {
+			for (WebSessionListener sessionListener : HANDLER.sessionListeners) {
 				HANDLER.executeInjection(sessionListener);
 				sessionListener.sessionCreated(session);
 			}
@@ -56,7 +56,7 @@ public final class SessionControl implements HttpSessionListener {
 		synchronized (session) {
 
 			// Call registered SmartSessionListeners
-			for (SmartSessionListener sessionListener : HANDLER.sessionListeners) {
+			for (WebSessionListener sessionListener : HANDLER.sessionListeners) {
 				sessionListener.sessionDestroyed(session);
 			}
 			HANDLER.finalizeBeans(session);

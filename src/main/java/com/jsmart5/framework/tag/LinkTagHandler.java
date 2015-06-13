@@ -39,7 +39,7 @@ import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.tag.util.RefAction;
-import com.jsmart5.framework.util.SmartUtils;
+import com.jsmart5.framework.util.WebUtils;
 
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
@@ -153,7 +153,7 @@ public final class LinkTagHandler extends TagHandler {
 
 		String url = "";
 
-		String outcomeVal = SmartUtils.decodePath((String) getTagValue(outcome)); 
+		String outcomeVal = WebUtils.decodePath((String) getTagValue(outcome));
 		if (outcomeVal != null) {
 			url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal) 
 					+ urlParams.substring(0, urlParams.length() -1);

@@ -30,9 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.listener.SmartAsyncListener;
-import com.jsmart5.framework.listener.SmartContextListener;
-import com.jsmart5.framework.util.SmartUtils;
+import com.jsmart5.framework.listener.WebContextListener;
+import com.jsmart5.framework.util.WebUtils;
 
 import static com.jsmart5.framework.manager.BeanHandler.*;
 
@@ -45,10 +44,10 @@ public final class WebServlet extends HttpServlet {
 	@Override
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
-        SmartContext.setServlet(this);
+        WebContext.setServlet(this);
 
         // Call registered SmartContextListeners
-        for (SmartContextListener contextListener : HANDLER.contextListeners) {
+        for (WebContextListener contextListener : HANDLER.contextListeners) {
         	HANDLER.executeInjection(contextListener);
         	contextListener.contextInitialized(servletConfig.getServletContext());
         }
@@ -57,7 +56,7 @@ public final class WebServlet extends HttpServlet {
 	@Override
     public void destroy() {
         // Call registered SmartContextListeners
-        for (SmartContextListener contextListener : HANDLER.contextListeners) {
+        for (WebContextListener contextListener : HANDLER.contextListeners) {
         	contextListener.contextDestroyed(getServletContext());
         }
         super.destroy();
@@ -98,7 +97,7 @@ public final class WebServlet extends HttpServlet {
 		// Check if user is authorized to access the page. Send HTTP 403 response case they did not have
 		Integer httpStatus = HANDLER.checkAuthorization(path);
 		if (httpStatus != null) {
-			LOGGER.log(Level.INFO, "SmartBean access not authorized on page [" + path + "]");
+			LOGGER.log(Level.INFO, "WebBean access not authorized on page [" + path + "]");
 			response.sendError(httpStatus);
 			return;
 		}
@@ -115,7 +114,7 @@ public final class WebServlet extends HttpServlet {
     	}
 
     	// Case user had ordered redirect to specific path in postConstruct method
-    	String redirectPath = SmartContext.getRedirectTo();
+    	String redirectPath = WebContext.getRedirectTo();
     	if (redirectPath != null && !redirectPath.equals(path)) {
     		HANDLER.finalizeBean(path, request.getSession());
     		sendRedirect(redirectPath, request, response);
@@ -127,11 +126,11 @@ public final class WebServlet extends HttpServlet {
 
 		// Check authorization roles on submit expression and after execute it
 		if (responsePath != null) {
-			responsePath = SmartUtils.decodePath(responsePath);
+			responsePath = WebUtils.decodePath(responsePath);
 		}
 
 		// Case user had ordered redirect to specific path in submitted method
-    	redirectPath = SmartContext.getRedirectTo();
+    	redirectPath = WebContext.getRedirectTo();
     	if (redirectPath != null && !redirectPath.equals(path)) {
     		HANDLER.finalizeBean(path, request.getSession());
     		responsePath = redirectPath;
@@ -162,7 +161,7 @@ public final class WebServlet extends HttpServlet {
         try {
             // Only proceed if the AsyncContext was not started to avoid looping whe dispatch is called
             if (!request.isAsyncStarted()) {
-                SmartAsyncListener bean = (SmartAsyncListener) HANDLER.instantiateAsyncBean(path);
+                com.jsmart5.framework.listener.WebAsyncListener bean = (com.jsmart5.framework.listener.WebAsyncListener) HANDLER.instantiateAsyncBean(path);
 
                 if (bean != null) {
                     AsyncContext asyncContext = request.startAsync();
@@ -183,7 +182,7 @@ public final class WebServlet extends HttpServlet {
 		// Check if user is authorized to access the page. Send HTTP 403 response case they did not have
 		Integer httpStatus = HANDLER.checkAuthorization(path);
 		if (httpStatus != null) {
-			LOGGER.log(Level.INFO, "SmartBean access not authorized on page [" + path + "]");
+			LOGGER.log(Level.INFO, "WebBean access not authorized on page [" + path + "]");
 			response.sendError(httpStatus);
 			return;
 		}
@@ -197,7 +196,7 @@ public final class WebServlet extends HttpServlet {
     	}
 
     	// Case user had ordered redirect to specific path in postConstruct method
-    	String redirectPath = SmartContext.getRedirectTo();
+    	String redirectPath = WebContext.getRedirectTo();
     	if (redirectPath != null && !redirectPath.equals(path)) {
     		HANDLER.finalizeBean(path, request.getSession());
     		sendRedirect(redirectPath, request, response);
@@ -231,39 +230,39 @@ public final class WebServlet extends HttpServlet {
 
         private String path;
 
-        private SmartAsyncListener bean;
+        private com.jsmart5.framework.listener.WebAsyncListener bean;
 
-        public WebAsyncListener(final String path, final SmartAsyncListener bean) {
+        public WebAsyncListener(final String path, final com.jsmart5.framework.listener.WebAsyncListener bean) {
             this.path = path;
             this.bean = bean;
         }
 
         @Override
         public void onComplete(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event, SmartAsyncListener.Reason.COMPLETE);
+            finalizeAsyncContext(event, com.jsmart5.framework.listener.WebAsyncListener.Reason.COMPLETE);
         }
 
         @Override
         public void onTimeout(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event, SmartAsyncListener.Reason.TIMEOUT);
+            finalizeAsyncContext(event, com.jsmart5.framework.listener.WebAsyncListener.Reason.TIMEOUT);
         }
 
         @Override
         public void onError(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event, SmartAsyncListener.Reason.ERROR);
+            finalizeAsyncContext(event, com.jsmart5.framework.listener.WebAsyncListener.Reason.ERROR);
         }
 
         @Override
         public void onStartAsync(AsyncEvent event) throws IOException {
             try {
-                bean = (SmartAsyncListener) HANDLER.instantiateAsyncBean(path);
+                bean = (com.jsmart5.framework.listener.WebAsyncListener) HANDLER.instantiateAsyncBean(path);
                 bean.asyncContextCreated(event.getAsyncContext());
             } catch (Exception ex) {
                 LOGGER.log(Level.SEVERE, "AsyncBean on path [" + path + "] could not be instantiated: " + ex.getMessage());
             }
         }
 
-        private void finalizeAsyncContext(AsyncEvent event, SmartAsyncListener.Reason reason) throws IOException {
+        private void finalizeAsyncContext(AsyncEvent event, com.jsmart5.framework.listener.WebAsyncListener.Reason reason) throws IOException {
             AsyncContext asyncContext = event.getAsyncContext();
             bean.asyncContextDestroyed(asyncContext, reason);
             HANDLER.finalizeAsyncBean(bean, (HttpServletRequest) asyncContext.getRequest());

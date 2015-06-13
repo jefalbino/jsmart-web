@@ -49,7 +49,7 @@ import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.filter.WebFilter;
 import com.jsmart5.framework.json.Scroll;
 
-import com.jsmart5.framework.util.SmartText;
+import com.jsmart5.framework.util.WebText;
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.config.Constants.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
@@ -66,7 +66,7 @@ public enum ExpressionHandler {
 
 	Map<String, String> getRequestExpressions() {
 		Map<String, String> expressions = new LinkedHashMap<String, String>();
-		for (String param : SmartContext.getRequest().getParameterMap().keySet()) {
+		for (String param : WebContext.getRequest().getParameterMap().keySet()) {
 			String expr = extractExpression(param);
 			if (expr != null) {
 				expressions.put(param, expr);
@@ -117,7 +117,7 @@ public enum ExpressionHandler {
 			String beanMethod = matcher.group(1);
 			String[] methodSign = beanMethod.split(EL_SEPARATOR);
 			
-			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+			if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
 				Object bean = getExpressionBean(methodSign[0]);
 				beanMethod = String.format(JSP_EL, beanMethod);
 
@@ -130,7 +130,7 @@ public enum ExpressionHandler {
 				if (HANDLER.executePreSubmit(bean, methodSign[methodSign.length -1])) {
 
 					Object[] arguments = null;
-					String[] paramArgs = SmartContext.getRequest().getParameterValues(TagHandler.J_SBMT_ARGS + jParam);
+					String[] paramArgs = WebContext.getRequest().getParameterValues(TagHandler.J_SBMT_ARGS + jParam);
 
 					if (paramArgs != null) {
 						boolean unescape = HANDLER.containsUnescapeMethod(methodSign);
@@ -142,9 +142,9 @@ public enum ExpressionHandler {
 					}
 
 					// Call submit method
-					ELContext context = SmartContext.getPageContext().getELContext();
+					ELContext context = WebContext.getPageContext().getELContext();
 
-					MethodExpression methodExpr = SmartContext.getExpressionFactory().createMethodExpression(context, beanMethod,
+					MethodExpression methodExpr = WebContext.getExpressionFactory().createMethodExpression(context, beanMethod,
 							null, arguments != null ? new Class<?>[arguments.length] : new Class<?>[]{});
 
 					responsePath = (String) methodExpr.invoke(context, arguments);
@@ -165,9 +165,9 @@ public enum ExpressionHandler {
 			String beanMethod = matcher.group(1);
 			String[] methodSign = beanMethod.split(EL_SEPARATOR);
 			
-			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+			if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
 
-				HttpServletRequest request = SmartContext.getRequest();
+				HttpServletRequest request = WebContext.getRequest();
 				beanMethod = String.format(JSP_EL, beanMethod);
 
 				// Get parameter mapped by TagHandler.J_VALUES
@@ -200,8 +200,8 @@ public enum ExpressionHandler {
 				}
 
 				if (list != null && !list.isEmpty()) {
-					ELContext context = SmartContext.getPageContext().getELContext();
-					ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+					ELContext context = WebContext.getPageContext().getELContext();
+					ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 
 					Integer index = Integer.parseInt(request.getParameter(TagHandler.J_SEL_VAL + jParam));
 
@@ -227,13 +227,13 @@ public enum ExpressionHandler {
 			String beanMethod = matcher.group(1);	
 			String[] methodSign = beanMethod.split(EL_SEPARATOR);
 
-			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+			if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
 				beanMethod = String.format(JSP_EL, beanMethod);
 
-				ELContext context = SmartContext.getPageContext().getELContext();
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+				ELContext context = WebContext.getPageContext().getELContext();
+				ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 
-				Object value = SmartContext.getRequest().getParameter(TagHandler.J_TAG + jParam);
+				Object value = WebContext.getRequest().getParameter(TagHandler.J_TAG + jParam);
 
 				if (!HANDLER.containsUnescapeMethod(methodSign)) {
 					value = escapeValue((String) value);
@@ -250,11 +250,11 @@ public enum ExpressionHandler {
 			String beanMethod = matcher.group(1);	
 			String[] methodSign = beanMethod.split(EL_SEPARATOR);
 			
-			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+			if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
 				beanMethod = String.format(JSP_EL, beanMethod);
 				
-				ELContext context = SmartContext.getPageContext().getELContext();
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+				ELContext context = WebContext.getPageContext().getELContext();
+				ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 				valueExpr.setValue(context, value);
 			}
 		}
@@ -271,11 +271,11 @@ public enum ExpressionHandler {
 			String beanMethod = matcher.group(1);	
 			String[] methodSign = beanMethod.split(EL_SEPARATOR);
 			
-			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+			if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
 				beanMethod = String.format(JSP_EL, beanMethod);
 
 				List<Object> list = new ArrayList<Object>();
-				String[] values = SmartContext.getRequest().getParameterValues(TagHandler.J_ARRAY + jParam);
+				String[] values = WebContext.getRequest().getParameterValues(TagHandler.J_ARRAY + jParam);
 
 				boolean unescape = HANDLER.containsUnescapeMethod(methodSign);
 
@@ -290,8 +290,8 @@ public enum ExpressionHandler {
 					list.clear();
 				}
 
-				ELContext context = SmartContext.getPageContext().getELContext();
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+				ELContext context = WebContext.getPageContext().getELContext();
+				ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 				valueExpr.setValue(context, list);
 			}
 		}
@@ -304,13 +304,13 @@ public enum ExpressionHandler {
 			String beanMethod = matcher.group(1);	
 			String[] methodSign = beanMethod.split(EL_SEPARATOR);
 			
-			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+			if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
 				beanMethod = String.format(JSP_EL, beanMethod);
 
-				ELContext context = SmartContext.getPageContext().getELContext();
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+				ELContext context = WebContext.getPageContext().getELContext();
+				ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
 
-				Object value = SmartContext.getRequest().getPart(TagHandler.J_PART + jParam);
+				Object value = WebContext.getRequest().getPart(TagHandler.J_PART + jParam);
 				valueExpr.setValue(context, value);
 			}
 		}
@@ -327,12 +327,12 @@ public enum ExpressionHandler {
 			String beanMethod = matcher.group(1);		
 			String[] methodSign = beanMethod.split(EL_SEPARATOR);
 
-			if (methodSign.length > 0 && SmartContext.containsAttribute(methodSign[0])) {
+			if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
 				beanMethod = String.format(JSP_EL, beanMethod);
 
-				ELContext context = SmartContext.getPageContext().getELContext();
-				ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
-				String value = SmartContext.getRequest().getParameter(TagHandler.J_DATE + jParam);
+				ELContext context = WebContext.getPageContext().getELContext();
+				ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+				String value = WebContext.getRequest().getParameter(TagHandler.J_DATE + jParam);
 
 				if (value != null && !value.trim().isEmpty()) {
 					Throwable throwable = null;
@@ -370,16 +370,16 @@ public enum ExpressionHandler {
 	}
 
 	private void setExpressionCaptcha(String expr, String jParam) throws ServletException {
-		HttpServletRequest request = SmartContext.getRequest();
+		HttpServletRequest request = WebContext.getRequest();
 
 		// Just add the ReCaptcha value to mapped values for further validation
 		if (expr.contains(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)) {
-			SmartContext.addMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME, 
-					request.getParameter(TagHandler.J_CAPTCHA + jParam));
+			WebContext.addMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME,
+                    request.getParameter(TagHandler.J_CAPTCHA + jParam));
 			
 		} else {
-			SmartContext.addMappedValue(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME, 
-					request.getParameter(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME));
+			WebContext.addMappedValue(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME,
+                    request.getParameter(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME));
 		}
 	}
 
@@ -420,14 +420,14 @@ public enum ExpressionHandler {
 
 		String jspExpr = String.format(JSP_EL, expr);
 
-		ELContext context = SmartContext.getPageContext().getELContext();
-		ValueExpression valueExpr = SmartContext.getExpressionFactory().createValueExpression(context, jspExpr, Object.class);
+		ELContext context = WebContext.getPageContext().getELContext();
+		ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, jspExpr, Object.class);
 		Object obj = valueExpr.getValue(context);
 
 		if (obj instanceof String) {
 			String[] objs = obj.toString().split(EL_SEPARATOR, 2);
-			if (objs.length == 2 && SmartText.containsResource(objs[0])) {
-				return SmartText.getString(objs[0], objs[1]);
+			if (objs.length == 2 && WebText.containsResource(objs[0])) {
+				return WebText.getString(objs[0], objs[1]);
 			}
 		}
 
@@ -436,14 +436,14 @@ public enum ExpressionHandler {
 		}
 
 		String[] exprs = expr.split(EL_SEPARATOR, 2);
-		if (exprs.length == 2 && SmartText.containsResource(exprs[0])) {
-			return SmartText.getString(exprs[0], exprs[1]);
+		if (exprs.length == 2 && WebText.containsResource(exprs[0])) {
+			return WebText.getString(exprs[0], exprs[1]);
 		}
 		return null;
 	}
 
 	private Object getExpressionBean(String name) {
-		return SmartContext.getAttribute(name);
+		return WebContext.getAttribute(name);
 	}
 
 	private boolean isReadOnlyParameter(String jParam) {

@@ -40,12 +40,12 @@ public enum Config {
 	private List<String> mappedUrls = new ArrayList<String>();
 
 	public void init(ServletContext context) {
-		try (InputStream is = context.getResourceAsStream(Constants.JSMART5_XML_PATH)) {
+		try (InputStream is = context.getResourceAsStream(Constants.WEB_CONFIG_XML_PATH)) {
 			JAXBContext jaxbContext = JAXBContext.newInstance(ConfigContent.class);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			content = (ConfigContent) unmarshaller.unmarshal(is);
 		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Failure to parse jsmart5.xml: " + ex.getMessage());
+			LOGGER.log(Level.INFO, "Failure to parse " + Constants.WEB_CONFIG_XML + ": " + ex.getMessage());
 		}
 	}
 

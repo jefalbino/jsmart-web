@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.el.ExpressionFactory;
 import javax.servlet.Servlet;
@@ -37,26 +38,26 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 
 import javax.annotation.PostConstruct;
-import com.jsmart5.framework.annotation.SmartBean;
-import com.jsmart5.framework.util.SmartAlert;
-import com.jsmart5.framework.util.SmartAlert.AlertType;
-import com.jsmart5.framework.util.SmartUtils;
+import com.jsmart5.framework.annotation.WebBean;
+import com.jsmart5.framework.util.WebAlert;
+import com.jsmart5.framework.util.WebAlert.AlertType;
+import com.jsmart5.framework.util.WebUtils;
 
 /**
- * This class represents the context of the request being currently processed and it allows {@link SmartBean}
+ * This class represents the context of the request being currently processed and it allows {@link WebBean}
  * to get an instance of {@link ServletContext}, {@link HttpSession}, {@link HttpServletRequest} or 
  * {@link HttpServletResponse}.
  * <br>
  * This class also include methods to add message to client side, check if request is Ajax request or 
  * retrieve attributes from the request, session or application.
  */
-public final class SmartContext implements Serializable {
+public final class WebContext implements Serializable {
 
 	private static final long serialVersionUID = -3910553204750683737L;
 
 	private static final JspFactory JSP_FACTORY = JspFactory.getDefaultFactory();
 
-	private static final Map<Thread, SmartContext> THREADS = new HashMap<Thread, SmartContext>();
+	private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<Thread, WebContext>();
 
 	private static Servlet smartServlet;
 
@@ -72,11 +73,11 @@ public final class SmartContext implements Serializable {
 
 	private PageContext pageContext;
 
-	private Map<String, List<SmartAlert>> alerts = new LinkedHashMap<String, List<SmartAlert>>();
+	private Map<String, List<WebAlert>> alerts = new LinkedHashMap<String, List<WebAlert>>();
 
-	private Map<String, Object> mappedValues = new HashMap<String, Object>();
+	private Map<String, Object> mappedValues = new ConcurrentHashMap<String, Object>();
 
-	private SmartContext(final HttpServletRequest request, final HttpServletResponse response) {
+	private WebContext(final HttpServletRequest request, final HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
 	}
@@ -86,12 +87,12 @@ public final class SmartContext implements Serializable {
 		jspContext = JSP_FACTORY.getJspApplicationContext(servlet.getServletConfig().getServletContext());
 	}
 
-	private static final SmartContext getCurrentInstance() {
+	private static final WebContext getCurrentInstance() {
 		return THREADS.get(Thread.currentThread());
 	}
 
 	public static final void initCurrentInstance(final HttpServletRequest request, final HttpServletResponse response) {
-		THREADS.put(Thread.currentThread(), new SmartContext(request, response));
+		THREADS.put(Thread.currentThread(), new WebContext(request, response));
 	}
 
 	public static final void closeCurrentInstance() {
@@ -115,7 +116,7 @@ public final class SmartContext implements Serializable {
 	}
 
 	static PageContext getPageContext() {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		return context != null ? context.getPage() : null;
 	}
 
@@ -147,7 +148,7 @@ public final class SmartContext implements Serializable {
 	 * @return a instance of {@link HttpSession}.
 	 */
 	public static HttpSession getSession() {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		return context != null ? context.request.getSession() : null;
 	}
 
@@ -158,7 +159,7 @@ public final class SmartContext implements Serializable {
 	 * @return a instance of {@link HttpServletRequest}.
 	 */
 	public static HttpServletRequest getRequest() {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		return context != null ? context.request : null;
 	}
 
@@ -169,12 +170,12 @@ public final class SmartContext implements Serializable {
 	 * @return a instance of {@link HttpServletResponse}
 	 */
 	public static HttpServletResponse getResponse() {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		return context != null ? context.response : null;
 	}
 
 	static String getRedirectTo() {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		return context != null ? context.redirectTo : null;
 	}
 
@@ -187,22 +188,22 @@ public final class SmartContext implements Serializable {
 	 * @param path path mapped on configuration file or general valid URL link.
 	 */
 	public static void redirectTo(final String path) {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		if (context != null) {
-			context.redirectTo = SmartUtils.decodePath(path);
+			context.redirectTo = WebUtils.decodePath(path);
 		}
 	}
 
 	/**
 	 * Calling this method will cause the current {@link HttpSession} to be invalidated after the request
-	 * processing is done. It means that the session will be invalidated after {@link SmartBean} life cycle
+	 * processing is done. It means that the session will be invalidated after {@link WebBean} life cycle
 	 * is completed.
 	 * <br>
 	 * Case there is a need to invalidate the session at the moment of the execution, use {@link HttpSession}
 	 * invalidate method instead.  
 	 */
 	public static void invalidate() {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		if (context != null) {
 			context.invalidate = true;
 		}
@@ -229,17 +230,17 @@ public final class SmartContext implements Serializable {
 		return request != null ? "XMLHttpRequest".equals(request.getHeader("X-Requested-With")) : false;
 	}
 
-	static List<SmartAlert> getAlerts(final String id) {
-		SmartContext context = getCurrentInstance();
+	static List<WebAlert> getAlerts(final String id) {
+		WebContext context = getCurrentInstance();
 		return context != null ? context.alerts.get(id) : null;
 	}
 
-	public static void addAlert(final String id, final SmartAlert alert) {
-		SmartContext context = getCurrentInstance();
+	public static void addAlert(final String id, final WebAlert alert) {
+		WebContext context = getCurrentInstance();
 		if (context != null && id != null && alert != null) {
-			List<SmartAlert> alerts = context.alerts.get(id);
+			List<WebAlert> alerts = context.alerts.get(id);
 			if (alerts == null) {
-				context.alerts.put(id, alerts = new ArrayList<SmartAlert>());
+				context.alerts.put(id, alerts = new ArrayList<WebAlert>());
 			}
 			alerts.add(alert);
 		}
@@ -257,7 +258,7 @@ public final class SmartContext implements Serializable {
 	 * @param message to be presented on the client side.
 	 */
 	public static void addInfo(final String id, final String message) {
-		SmartAlert alert = new SmartAlert(AlertType.INFO);
+		WebAlert alert = new WebAlert(AlertType.INFO);
 		alert.setMessage(message);
 		addAlert(id, alert);
 	}
@@ -274,7 +275,7 @@ public final class SmartContext implements Serializable {
 	 * @param message to be presented on the client side.
 	 */
 	public static void addWarning(final String id, final String message) {
-		SmartAlert alert = new SmartAlert(AlertType.WARNING);
+		WebAlert alert = new WebAlert(AlertType.WARNING);
 		alert.setMessage(message);
 		addAlert(id, alert);
 	}
@@ -291,7 +292,7 @@ public final class SmartContext implements Serializable {
 	 * @param message to be presented on the client side.
 	 */
 	public static void addSuccess(final String id, final String message) {
-		SmartAlert alert = new SmartAlert(AlertType.SUCCESS);
+		WebAlert alert = new WebAlert(AlertType.SUCCESS);
 		alert.setMessage(message);
 		addAlert(id, alert);
 	}
@@ -308,13 +309,13 @@ public final class SmartContext implements Serializable {
 	 * @param message to be presented on the client side.
 	 */
 	public static void addError(final String id, final String message) {
-		SmartAlert alert = new SmartAlert(AlertType.DANGER);
+		WebAlert alert = new WebAlert(AlertType.DANGER);
 		alert.setMessage(message);
 		addAlert(id, alert);
 	}
 	
 	static Object getMappedValue(final String name) {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		if (context != null) {
 			return context.mappedValues.get(name);
 		}
@@ -322,7 +323,7 @@ public final class SmartContext implements Serializable {
 	}
 	
 	static Object removeMappedValue(final String name) {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		if (context != null) {
 			return context.mappedValues.remove(name);
 		}
@@ -330,7 +331,7 @@ public final class SmartContext implements Serializable {
 	}
 
 	static void addMappedValue(final String name, final Object value) {
-		SmartContext context = getCurrentInstance();
+		WebContext context = getCurrentInstance();
 		if (context != null) {
 			context.mappedValues.put(name, value);
 		}

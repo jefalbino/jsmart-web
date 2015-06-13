@@ -19,16 +19,11 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
-import com.jsmart5.framework.util.SmartUtils;
 
 /*
  * TreeItem uses a json structure
@@ -116,7 +111,7 @@ public class TreeItemTagHandler extends TagHandler {
 //
 //		String outcomeVal = null; 
 //		if (outcome != null) {
-//			outcomeVal = SmartUtils.decodePath((String) getTagValue(outcome));
+//			outcomeVal = WebUtils.decodePath((String) getTagValue(outcome));
 //		}
 //
 //		String url = "";

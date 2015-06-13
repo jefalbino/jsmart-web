@@ -25,7 +25,7 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
-import com.jsmart5.framework.manager.SmartContext;
+import com.jsmart5.framework.manager.WebContext;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
@@ -34,9 +34,9 @@ import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.P;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
-import com.jsmart5.framework.util.SmartAlert;
+import com.jsmart5.framework.util.WebAlert;
 
-import static com.jsmart5.framework.util.SmartAlert.*;
+import static com.jsmart5.framework.util.WebAlert.*;
 
 public final class AlertTagHandler extends TagHandler {
 
@@ -68,7 +68,7 @@ public final class AlertTagHandler extends TagHandler {
 			appendDocScript(getBindFunction(id, "close.bs.alert", new StringBuilder(onHide)));
 		}
 
-		List<SmartAlert> alerts = getAlerts(id);
+		List<WebAlert> alerts = getAlerts(id);
 		if (alerts == null || alerts.isEmpty()) {
 			wrap.addAttribute("style", "display: none;");
 			return wrap;
@@ -99,7 +99,7 @@ public final class AlertTagHandler extends TagHandler {
 		}
 
 		// Add type, title and icon for the first fixed alert
-		SmartAlert firstAlert = alerts.get(0);
+		WebAlert firstAlert = alerts.get(0);
 		
 		if (AlertType.INFO.equals(firstAlert.getType())) {
 			div.addAttribute("class", Bootstrap.ALERT_INFO);
@@ -139,7 +139,7 @@ public final class AlertTagHandler extends TagHandler {
 		}
 
 		// Add messages to the alert
-		for (SmartAlert alert : alerts) {
+		for (WebAlert alert : alerts) {
 			P p = new P();
 
 			if (alert.getMessageUrl() != null) {
@@ -160,7 +160,7 @@ public final class AlertTagHandler extends TagHandler {
 			div.addTag(p);
 		}
 
-		if (SmartContext.isAjaxRequest()) {
+		if (WebContext.isAjaxRequest()) {
 			wrap.addAttribute("alert-show", "true");
 		}
 

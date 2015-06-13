@@ -21,12 +21,12 @@ package com.jsmart5.framework.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.jsmart5.framework.listener.SmartContextListener;
-import com.jsmart5.framework.listener.SmartSessionListener;
+import com.jsmart5.framework.listener.WebContextListener;
+import com.jsmart5.framework.listener.WebSessionListener;
 
 /**
- * The {@link SmartListener} annotation is used on classes implementing {@link SmartSessionListener}
- * or {@link SmartContextListener} interfaces.
+ * The {@link SmartListener} annotation is used on classes implementing {@link WebSessionListener}
+ * or {@link WebContextListener} interfaces.
  * <br>
  * The classes annotated with {@link SmartListener} allow dependency injection.
  */

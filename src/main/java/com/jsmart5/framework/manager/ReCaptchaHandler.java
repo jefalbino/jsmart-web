@@ -61,7 +61,7 @@ public final class ReCaptchaHandler {
 	private static boolean checkReCaptcha(final String secretKey, final String responseField, final Integer version) {
 
 		HttpsURLConnection conn = null;
-		final HttpServletRequest request = SmartContext.getRequest();
+		final HttpServletRequest request = WebContext.getRequest();
 
 		try {
 			if (version.equals(RECAPTCHA_V1)) {

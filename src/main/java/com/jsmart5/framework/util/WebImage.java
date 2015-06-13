@@ -31,7 +31,7 @@ import javax.servlet.ServletContext;
  * folder containing the images. The image extensions supported are png, jpg,
  * jpeg, gif, bmp and ico. 
  */
-public enum SmartImage {
+public enum WebImage {
 
 	IMAGES();
 

@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.util;
 
-public final class SmartAlert {
+public final class WebAlert {
 
 	private AlertType type;
 	
@@ -30,7 +30,7 @@ public final class SmartAlert {
 	
 	private String messageUrl;
 	
-	public SmartAlert(AlertType type) {
+	public WebAlert(AlertType type) {
 		this.type = type;
 	}
 

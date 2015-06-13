@@ -1,30 +1,33 @@
 /*
  * JSmart5 - Java Web Development Framework
  * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either
  * version 3.0 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.util;
+package com.jsmart5.framework.listener;
 
-public enum SmartLook {
+import javax.servlet.AsyncContext;
 
-	DEFAULT, PRIMARY, SUCCESS, INFO, WARNING, DANGER, MUTED, LINK, ERROR;
+public interface WebAsyncListener {
 
-	@Override
-	public String toString() {
-		return super.toString().toLowerCase();
-	}
+    public static enum Reason {
+        COMPLETE, TIMEOUT, ERROR
+    }
+
+    public void asyncContextCreated(final AsyncContext asyncContext);
+
+    public void asyncContextDestroyed(final AsyncContext asyncContext, final Reason reason);
 
 }

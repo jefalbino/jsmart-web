@@ -16,16 +16,15 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.annotation;
+package com.jsmart5.framework.util;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public enum WebLook {
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface UrlParam {
+	DEFAULT, PRIMARY, SUCCESS, INFO, WARNING, DANGER, MUTED, LINK, ERROR;
 
-	String name();
+	@Override
+	public String toString() {
+		return super.toString().toLowerCase();
+	}
+
 }

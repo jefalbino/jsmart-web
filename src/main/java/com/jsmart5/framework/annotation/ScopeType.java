@@ -19,7 +19,7 @@
 package com.jsmart5.framework.annotation;
 
 /**
- * {@link ScopeType} enumerator is used as attribute of {@link SmartBean} annotation
+ * {@link ScopeType} enumerator is used as attribute of {@link WebBean} annotation
  * to indicate the scope of the bean on the application.
  */
 public enum ScopeType {

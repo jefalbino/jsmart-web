@@ -18,14 +18,7 @@
 
 package com.jsmart5.framework.filter;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
@@ -48,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.reflections.vfs.Vfs;
 import org.reflections.vfs.Vfs.Dir;
 
@@ -56,7 +50,7 @@ import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import com.jsmart5.framework.config.HtmlCompress;
 import com.jsmart5.framework.json.Headers;
 import com.jsmart5.framework.json.Resources;
-import com.jsmart5.framework.manager.SmartContext;
+import com.jsmart5.framework.manager.WebContext;
 import com.jsmart5.framework.tag.html.Head;
 import com.jsmart5.framework.tag.html.DocScript;
 import com.jsmart5.framework.tag.html.Script;
@@ -109,7 +103,7 @@ public final class WebFilter implements Filter {
 		httpResponse.setCharacterEncoding(ENCODING);
 
 		// Initiate bean context based on current thread instance
-		SmartContext.initCurrentInstance(httpRequest, httpResponse);
+		WebContext.initCurrentInstance(httpRequest, httpResponse);
 
 		// Anonymous subclass to wrap HTTP response to print output
 		WebFilterResponseWrapper responseWrapper = new WebFilterResponseWrapper(httpResponse);
@@ -126,7 +120,7 @@ public final class WebFilter implements Filter {
         HANDLER.finalizeBeans(httpRequest);
 
         // Close bean context based on current thread instance
-        SmartContext.closeCurrentInstance();
+        WebContext.closeCurrentInstance();
 
         // Case async process was started it cannot proceed because we need
         // the original response opened and the AsyncContext will not provide HTML via framework
@@ -202,7 +196,7 @@ public final class WebFilter implements Filter {
 	    synchronized (session) {
 
 			if (session.getAttribute(SESSION_RESET_ATTR) != null) {
-				if (ajaxPath == null && SmartContext.isAjaxRequest()) {
+				if (ajaxPath == null && WebContext.isAjaxRequest()) {
 					response.addHeader("Reset-Ajax", "Session");
 				}
                 session.removeAttribute(SESSION_RESET_ATTR);
@@ -317,27 +311,24 @@ public final class WebFilter implements Filter {
 			while (files.hasNext()) {
 				Vfs.File file = files.next();
 
+                // Copy index.jsp and replace content to redirect to welcome-url case configured
+                if (file.getRelativePath().startsWith(INDEX_JSP)) {
+                    if (CONFIG.getContent().getWelcomeUrl() != null) {
+                        StringWriter writer = new StringWriter();
+                        IOUtils.copy(file.openInputStream(), writer);
+                        String index = writer.toString().replace("{0}", CONFIG.getContent().getWelcomeUrl());
+                        copyFileResource(new ByteArrayInputStream(index.getBytes(ENCODING)), file.getRelativePath(), context);
+                    }
+                }
+
+                // Copy js, css and font resources to specific location
 				for (String resource : jsonResources.getResources()) {
 
 					String resourcePath = resource.replace("*", "");
 
 					if (file.getRelativePath().startsWith(resourcePath)) {
 						initDirResources(context.getRealPath(PATH_SEPARATOR), file.getRelativePath());
-
-						int count = 0;
-	                	BufferedInputStream bis = new BufferedInputStream(file.openInputStream());
-	                	String realFilePath = new File(context.getRealPath(PATH_SEPARATOR)).getPath() + PATH_SEPARATOR + file.getRelativePath();
-
-	                    FileOutputStream fos = new FileOutputStream(realFilePath);
-	                    BufferedOutputStream bos = new BufferedOutputStream(fos, STREAM_BUFFER);
-
-	                    byte data[] = new byte[STREAM_BUFFER];
-	                    while ((count = bis.read(data, 0, STREAM_BUFFER)) != -1) {
-	                    	bos.write(data, 0, count);
-	                    }
-
-	                    bos.close();
-	                    bis.close();
+                        copyFileResource(file.openInputStream(), file.getRelativePath(), context);
 	                    break;
 					}
 				}
@@ -361,6 +352,22 @@ public final class WebFilter implements Filter {
 			}
 		}
 	}
+
+    private void copyFileResource(InputStream is, String relativePath, ServletContext context) throws Exception {
+        int count = 0;
+        BufferedInputStream bis = new BufferedInputStream(is);
+        String realFilePath = new File(context.getRealPath(PATH_SEPARATOR)).getPath() + PATH_SEPARATOR + relativePath;
+
+        FileOutputStream fos = new FileOutputStream(realFilePath);
+        BufferedOutputStream bos = new BufferedOutputStream(fos, STREAM_BUFFER);
+
+        byte data[] = new byte[STREAM_BUFFER];
+        while ((count = bis.read(data, 0, STREAM_BUFFER)) != -1) {
+            bos.write(data, 0, count);
+        }
+        bos.close();
+        bis.close();
+    }
 
 	private class WebFilterResponseWrapper extends HttpServletResponseWrapper {
 
