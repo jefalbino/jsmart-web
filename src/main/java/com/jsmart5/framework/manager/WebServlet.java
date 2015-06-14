@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.listener.WebContextListener;
+import com.jsmart5.framework.listener.WebAsyncListener;
+import com.jsmart5.framework.listener.WebAsyncListener.Reason;
 import com.jsmart5.framework.util.WebUtils;
 
 import static com.jsmart5.framework.manager.BeanHandler.*;
@@ -46,7 +48,7 @@ public final class WebServlet extends HttpServlet {
         super.init(servletConfig);
         WebContext.setServlet(this);
 
-        // Call registered SmartContextListeners
+        // Call registered WebContextListeners
         for (WebContextListener contextListener : HANDLER.contextListeners) {
         	HANDLER.executeInjection(contextListener);
         	contextListener.contextInitialized(servletConfig.getServletContext());
@@ -55,7 +57,7 @@ public final class WebServlet extends HttpServlet {
 
 	@Override
     public void destroy() {
-        // Call registered SmartContextListeners
+        // Call registered WebContextListeners
         for (WebContextListener contextListener : HANDLER.contextListeners) {
         	contextListener.contextDestroyed(getServletContext());
         }
@@ -109,7 +111,7 @@ public final class WebServlet extends HttpServlet {
     	try {
     		HANDLER.instantiateBeans(path, expressions);
     	} catch (Exception ex) {
-    		LOGGER.log(Level.INFO, "SmartBeans on page [" + path + "] could not be instantiated: " + ex.getMessage());
+    		LOGGER.log(Level.INFO, "WebBeans on page [" + path + "] could not be instantiated: " + ex.getMessage());
     		throw new ServletException(ex);
     	}
 
@@ -161,12 +163,12 @@ public final class WebServlet extends HttpServlet {
         try {
             // Only proceed if the AsyncContext was not started to avoid looping whe dispatch is called
             if (!request.isAsyncStarted()) {
-                com.jsmart5.framework.listener.WebAsyncListener bean = (com.jsmart5.framework.listener.WebAsyncListener) HANDLER.instantiateAsyncBean(path);
+                WebAsyncListener bean = (WebAsyncListener) HANDLER.instantiateAsyncBean(path);
 
                 if (bean != null) {
                     AsyncContext asyncContext = request.startAsync();
                     bean.asyncContextCreated(asyncContext);
-                    asyncContext.addListener(new WebAsyncListener(path, bean));
+                    asyncContext.addListener(new WebServletAsyncListener(path, bean));
                     return true;
                 }
             }
@@ -191,7 +193,7 @@ public final class WebServlet extends HttpServlet {
     	try {
     		HANDLER.instantiateBeans(path, null);
     	} catch (Exception ex) {
-    		LOGGER.log(Level.SEVERE, "SmartBeans on page [" + path + "] could not be instantiated: " + ex.getMessage());
+    		LOGGER.log(Level.SEVERE, "WebBeans on page [" + path + "] could not be instantiated: " + ex.getMessage());
     		throw new ServletException(ex);
     	}
 
@@ -210,12 +212,22 @@ public final class WebServlet extends HttpServlet {
 		}
 
         // Use Forward request internally case is the same page
-        request.getRequestDispatcher(HANDLER.getForwardPath(path)).forward(request, response);
+        String url = HANDLER.getForwardPath(path);
+        if (url == null) {
+            LOGGER.log(Level.SEVERE, "Could not find JSP page for path [" + path + "]");
+            return;
+        }
+        request.getRequestDispatcher(url).forward(request, response);
 	}
 
 	private void sendRedirect(String path, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		if (request.getServletPath().equals(path)) {
+
 			String url = HANDLER.getForwardPath(path);
+            if (url == null) {
+                LOGGER.log(Level.SEVERE, "Could not find JSP page for path [" + path + "]");
+                return;
+            }
 
 			// Use Forward request internally case is the same page
 	        request.getRequestDispatcher(url).forward(request, response);
@@ -226,43 +238,43 @@ public final class WebServlet extends HttpServlet {
 		}
 	}
 
-    private class WebAsyncListener implements AsyncListener {
+    private class WebServletAsyncListener implements AsyncListener {
 
         private String path;
 
-        private com.jsmart5.framework.listener.WebAsyncListener bean;
+        private WebAsyncListener bean;
 
-        public WebAsyncListener(final String path, final com.jsmart5.framework.listener.WebAsyncListener bean) {
+        public WebServletAsyncListener(final String path, final WebAsyncListener bean) {
             this.path = path;
             this.bean = bean;
         }
 
         @Override
         public void onComplete(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event, com.jsmart5.framework.listener.WebAsyncListener.Reason.COMPLETE);
+            finalizeAsyncContext(event, Reason.COMPLETE);
         }
 
         @Override
         public void onTimeout(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event, com.jsmart5.framework.listener.WebAsyncListener.Reason.TIMEOUT);
+            finalizeAsyncContext(event, Reason.TIMEOUT);
         }
 
         @Override
         public void onError(AsyncEvent event) throws IOException {
-            finalizeAsyncContext(event, com.jsmart5.framework.listener.WebAsyncListener.Reason.ERROR);
+            finalizeAsyncContext(event, Reason.ERROR);
         }
 
         @Override
         public void onStartAsync(AsyncEvent event) throws IOException {
             try {
-                bean = (com.jsmart5.framework.listener.WebAsyncListener) HANDLER.instantiateAsyncBean(path);
+                bean = (WebAsyncListener) HANDLER.instantiateAsyncBean(path);
                 bean.asyncContextCreated(event.getAsyncContext());
             } catch (Exception ex) {
                 LOGGER.log(Level.SEVERE, "AsyncBean on path [" + path + "] could not be instantiated: " + ex.getMessage());
             }
         }
 
-        private void finalizeAsyncContext(AsyncEvent event, com.jsmart5.framework.listener.WebAsyncListener.Reason reason) throws IOException {
+        private void finalizeAsyncContext(AsyncEvent event, Reason reason) throws IOException {
             AsyncContext asyncContext = event.getAsyncContext();
             bean.asyncContextDestroyed(asyncContext, reason);
             HANDLER.finalizeAsyncBean(bean, (HttpServletRequest) asyncContext.getRequest());
