@@ -20,6 +20,7 @@ package com.jsmart5.framework.tag.type;
 
 public enum Output {
 
+    SPAN,
 	LEGEND,
 	STRONG,
 	MARK,
