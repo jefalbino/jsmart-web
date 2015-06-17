@@ -12,9 +12,9 @@
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>JSmart5</name>
+	<name>JSmart5 Web Framework</name>
 	<description>Java Web Development Framework</description>
-	<url>http://jsmart5.com</url>
+	<url>http://jsmartframework.com</url>
 
 	<licenses>
 		<license>
