@@ -61,7 +61,6 @@ import com.jsmart5.framework.annotation.*;
 import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.listener.WebAsyncListener;
 import com.jsmart5.framework.listener.WebContextListener;
-import com.jsmart5.framework.listener.WebPathListener;
 import com.jsmart5.framework.listener.WebSessionListener;
 import com.jsmart5.framework.util.WebUtils;
 import org.reflections.Reflections;
@@ -76,302 +75,302 @@ import static com.jsmart5.framework.manager.ExpressionHandler.*;
 
 public enum BeanHandler {
 
-	HANDLER();
+    HANDLER();
 
-	private static final Logger LOGGER = Logger.getLogger(BeanHandler.class.getPackage().getName());
-	
-	private static final Pattern INCLUDE_PATTERN = Pattern.compile("<%@*.include.*file=\"(.*)\".*%>");
+    private static final Logger LOGGER = Logger.getLogger(BeanHandler.class.getPackage().getName());
 
-	private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern());
-	
-	private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
-	
-	private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
+    private static final Pattern INCLUDE_PATTERN = Pattern.compile("<%@*.include.*file=\"(.*)\".*%>");
 
-	Map<String, Class<?>> webBeans;
+    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern());
 
-	Map<String, Class<?>> authBeans;
+    private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
+
+    private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
+
+    Map<String, Class<?>> webBeans;
+
+    Map<String, Class<?>> authBeans;
 
     Map<String, Class<?>> asyncBeans;
 
     Map<String, Class<?>> pathBeans;
 
-	Map<String, Class<?>> smartServlets;
+    Map<String, Class<?>> smartServlets;
 
-	Map<String, Class<?>> smartFilters;
+    Map<String, Class<?>> smartFilters;
 
-	Set<WebContextListener> contextListeners;
-	
-	Set<WebSessionListener> sessionListeners;
+    Set<WebContextListener> contextListeners;
 
-	private Map<String, String> forwardPaths;
+    Set<WebSessionListener> sessionListeners;
 
-	private InitialContext initialContext;
+    private Map<String, String> forwardPaths;
 
-	private ApplicationContext springContext;
+    private InitialContext initialContext;
+
+    private ApplicationContext springContext;
 
     private Map<Class<?>, String> jndiMapping = new ConcurrentHashMap<Class<?>, String>();
 
-	private Map<Class<?>, Field[]> mappedBeanFields = new ConcurrentHashMap<Class<?>, Field[]>();
+    private Map<Class<?>, Field[]> mappedBeanFields = new ConcurrentHashMap<Class<?>, Field[]>();
 
-	private Map<Class<?>, Method[]> mappedBeanMethods = new ConcurrentHashMap<Class<?>, Method[]>();
+    private Map<Class<?>, Method[]> mappedBeanMethods = new ConcurrentHashMap<Class<?>, Method[]>();
 
-	private Map<String, JspPageBean> jspPageBeans = new ConcurrentHashMap<String, JspPageBean>();
+    private Map<String, JspPageBean> jspPageBeans = new ConcurrentHashMap<String, JspPageBean>();
 
-	void init(ServletContext context) {
-		checkWebXmlPath(context);
-		initJndiMapping();
-		initAnnotatedBeans(context);
-		initForwardPaths(context);
-		initJspPageBeans(context);
-	}
+    void init(ServletContext context) {
+        checkWebXmlPath(context);
+        initJndiMapping();
+        initAnnotatedBeans(context);
+        initForwardPaths(context);
+        initJspPageBeans(context);
+    }
 
-	void destroy(ServletContext context) {
+    void destroy(ServletContext context) {
         try {
-        	finalizeBeans(context);
-        	authBeans.clear();
+            finalizeWebBeans(context);
+            authBeans.clear();
             webBeans.clear();
             asyncBeans.clear();
             pathBeans.clear();
-        	smartServlets.clear();
-        	smartFilters.clear();
-        	contextListeners.clear();
-        	sessionListeners.clear();
-        	forwardPaths.clear();
-        	jspPageBeans.clear();
-        	jndiMapping.clear();
-        	initialContext = null;
-        	springContext = null;
+            smartServlets.clear();
+            smartFilters.clear();
+            contextListeners.clear();
+            sessionListeners.clear();
+            forwardPaths.clear();
+            jspPageBeans.clear();
+            jndiMapping.clear();
+            initialContext = null;
+            springContext = null;
         } catch (Exception ex) {
-        	LOGGER.log(Level.INFO, "Failure to destroy SmartHandler: " + ex.getMessage());
+            LOGGER.log(Level.INFO, "Failure to destroy SmartHandler: " + ex.getMessage());
         }
-	}
+    }
 
-	void setSpringContext(ApplicationContext springContext) {
-		this.springContext = springContext;
-	}
+    void setSpringContext(ApplicationContext springContext) {
+        this.springContext = springContext;
+    }
 
-	@SuppressWarnings("all")
-	boolean executePreSubmit(Object bean, String action) {
-		for (Method method : getBeanMethods(bean.getClass())) {
-			if (method.isAnnotationPresent(PreSubmit.class)) {
-				try {
-					String forAction = method.getAnnotation(PreSubmit.class).forAction();
+    @SuppressWarnings("all")
+    boolean executePreSubmit(Object bean, String action) {
+        for (Method method : getBeanMethods(bean.getClass())) {
+            if (method.isAnnotationPresent(PreSubmit.class)) {
+                try {
+                    String forAction = method.getAnnotation(PreSubmit.class).forAction();
 
-					if (action.equalsIgnoreCase(forAction)) {
-						Boolean result = (Boolean) method.invoke(bean, null);
-						return result != null && result;
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-		return true;
-	}
+                    if (action.equalsIgnoreCase(forAction)) {
+                        Boolean result = (Boolean) method.invoke(bean, null);
+                        return result != null && result;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
 
-	@SuppressWarnings("all")
-	void executePostSubmit(Object bean, String action) {
-		for (Method method : getBeanMethods(bean.getClass())) {
-			if (method.isAnnotationPresent(PostSubmit.class)) {
-				try {
-					String forAction = method.getAnnotation(PostSubmit.class).forAction();
+    @SuppressWarnings("all")
+    void executePostSubmit(Object bean, String action) {
+        for (Method method : getBeanMethods(bean.getClass())) {
+            if (method.isAnnotationPresent(PostSubmit.class)) {
+                try {
+                    String forAction = method.getAnnotation(PostSubmit.class).forAction();
 
-					if (action.equalsIgnoreCase(forAction)) {
-						method.invoke(bean, null);
-						return;
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return;
-			}
-		}
-	}
+                    if (action.equalsIgnoreCase(forAction)) {
+                        method.invoke(bean, null);
+                        return;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return;
+            }
+        }
+    }
 
-	@SuppressWarnings("all")
-	void executePreDestroy(Object bean) {
-		for (Method method : getBeanMethods(bean.getClass())) {
-			if (method.isAnnotationPresent(PreDestroy.class)) {
-				try {
-					method.invoke(bean, null);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return;
-			}
-		}
-	}
+    @SuppressWarnings("all")
+    void executePreDestroy(Object bean) {
+        for (Method method : getBeanMethods(bean.getClass())) {
+            if (method.isAnnotationPresent(PreDestroy.class)) {
+                try {
+                    method.invoke(bean, null);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return;
+            }
+        }
+    }
 
-	@SuppressWarnings("all")
-	void executePostConstruct(Object bean) {
-		for (Method method : getBeanMethods(bean.getClass())) {
-			if (method.isAnnotationPresent(PostConstruct.class)) {
-				try {
-					method.invoke(bean, null);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-				return;
-			}
-		}
-	}
+    @SuppressWarnings("all")
+    void executePostConstruct(Object bean) {
+        for (Method method : getBeanMethods(bean.getClass())) {
+            if (method.isAnnotationPresent(PostConstruct.class)) {
+                try {
+                    method.invoke(bean, null);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return;
+            }
+        }
+    }
 
-	void executePostPreset(String name, Object bean, Map<String, String> expressions) {
-		try {
-			if (expressions != null) {
-				for (Field field : getBeanFields(bean.getClass())) {
+    void executePostPreset(String name, Object bean, Map<String, String> expressions) {
+        try {
+            if (expressions != null) {
+                for (Field field : getBeanFields(bean.getClass())) {
 
-					if (field.isAnnotationPresent(PostPreset.class)) {
-						for (Entry<String, String> expr : expressions.entrySet()) {
-							
-							Matcher elMatcher = EL_PATTERN.matcher(expr.getValue());
-							if (elMatcher.find() && elMatcher.group(1).contains(name + "." + field.getName())) {
+                    if (field.isAnnotationPresent(PostPreset.class)) {
+                        for (Entry<String, String> expr : expressions.entrySet()) {
 
-								Matcher tagMatcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
-								if (tagMatcher.find()) {
+                            Matcher elMatcher = EL_PATTERN.matcher(expr.getValue());
+                            if (elMatcher.find() && elMatcher.group(1).contains(name + "." + field.getName())) {
 
-									String jTag = tagMatcher.group(1);
-									String jParam = tagMatcher.group(2);
-	
-									EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
-									expressions.remove(expr.getKey());
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Execute PostPreset on WebBean " + bean + " failure: " + ex.getMessage());
-		}
-	}
+                                Matcher tagMatcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
+                                if (tagMatcher.find()) {
 
-	boolean containsUnescapeMethod(String[] names) {
-		if (names != null && names.length > 1) {
-			Class<?> clazz = webBeans.get(names[0]);
-			if (clazz != null) {
-				for (Method method : getBeanMethods(clazz)) {
-					Matcher matcher = SET_METHOD_PATTERN.matcher(method.getName());
+                                    String jTag = tagMatcher.group(1);
+                                    String jParam = tagMatcher.group(2);
 
-					if (matcher.find() && names[1].equalsIgnoreCase(matcher.group(1))) {
-						return method.isAnnotationPresent(Unescape.class);
-					}
-				}
-			}
-		}
-		return false;
-	}
+                                    EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
+                                    expressions.remove(expr.getKey());
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Execute PostPreset on WebBean " + bean + " failure: " + ex.getMessage());
+        }
+    }
 
-	Map<String, String> getRequestExpressions() {
-		return EXPRESSIONS.getRequestExpressions();
-	}
+    boolean containsUnescapeMethod(String[] names) {
+        if (names != null && names.length > 1) {
+            Class<?> clazz = webBeans.get(names[0]);
+            if (clazz != null) {
+                for (Method method : getBeanMethods(clazz)) {
+                    Matcher matcher = SET_METHOD_PATTERN.matcher(method.getName());
 
-	String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
-		String submitParam = null;
-		String submitExpr = null;
+                    if (matcher.find() && names[1].equalsIgnoreCase(matcher.group(1))) {
+                        return method.isAnnotationPresent(Unescape.class);
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
-		for (Entry<String, String> expr : expressions.entrySet()) {
-			Matcher matcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
-			if (matcher.find()) {
+    Map<String, String> getRequestExpressions() {
+        return EXPRESSIONS.getRequestExpressions();
+    }
 
-				String jTag = matcher.group(1);
-				String jParam = matcher.group(2);
-				EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
-	
-				if (jTag.equals(TagHandler.J_SBMT)) {
-					submitExpr = expr.getValue();
-					submitParam = jParam;
-				}
-			}
-		}
+    String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
+        String submitParam = null;
+        String submitExpr = null;
 
-		String responsePath = null;
-		if (submitExpr != null) {
-			responsePath = EXPRESSIONS.handleSubmitExpression(submitExpr, submitParam);
-		}
-		return responsePath;
-	}
+        for (Entry<String, String> expr : expressions.entrySet()) {
+            Matcher matcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
+            if (matcher.find()) {
 
-	void instantiateBeans(String path, Map<String, String> expressions) throws Exception {
-		JspPageBean jspPageBean = jspPageBeans.get(path);
-		if (jspPageBean != null) {
+                String jTag = matcher.group(1);
+                String jParam = matcher.group(2);
+                EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
 
-			PageScope pageScope = new PageScope(path);
+                if (jTag.equals(TagHandler.J_SBMT)) {
+                    submitExpr = expr.getValue();
+                    submitParam = jParam;
+                }
+            }
+        }
 
-			for (String name : jspPageBean.getBeanNames()) {
-				instantiateBean(name, expressions, pageScope);
-			}
+        String responsePath = null;
+        if (submitExpr != null) {
+            responsePath = EXPRESSIONS.handleSubmitExpression(submitExpr, submitParam);
+        }
+        return responsePath;
+    }
 
-			// Include into session the path with respective page scoped bean names
-			if (!pageScope.getNames().isEmpty()) {
-				HttpSession session = WebContext.getSession();
-				synchronized (session) {
-					session.setAttribute(path, pageScope);
-				}
-			}
-		}
-	}
+    void instantiateBeans(String path, Map<String, String> expressions) throws Exception {
+        JspPageBean jspPageBean = jspPageBeans.get(path);
+        if (jspPageBean != null) {
 
-	private Object instantiateBean(String name, Map<String, String> expressions, PageScope pageScope) throws Exception {
-		Object bean = null;
-		ServletContext context = WebContext.getApplication();
-		HttpSession session = WebContext.getSession();
-		HttpServletRequest request = WebContext.getRequest();
+            PageScope pageScope = new PageScope(path);
 
-		if (request.getAttribute(name) != null) {
-			bean = request.getAttribute(name);
-			executeInjection(bean, pageScope);
-			return bean;
-		}
+            for (String name : jspPageBean.getBeanNames()) {
+                instantiateBean(name, expressions, pageScope);
+            }
 
-		synchronized (session) {
-			if (session.getAttribute(name) != null) {
-				bean = session.getAttribute(name);
-				executeInjection(bean, pageScope);
-				return bean;
-			}
-		}
+            // Include into session the path with respective page scoped bean names
+            if (!pageScope.getNames().isEmpty()) {
+                HttpSession session = WebContext.getSession();
+                synchronized (session) {
+                    session.setAttribute(path, pageScope);
+                }
+            }
+        }
+    }
 
-		if (context.getAttribute(name) != null) {
-			bean = context.getAttribute(name);
-			executeInjection(bean, pageScope);
-			return bean;
-		}
+    private Object instantiateBean(String name, Map<String, String> expressions, PageScope pageScope) throws Exception {
+        Object bean = null;
+        ServletContext context = WebContext.getApplication();
+        HttpSession session = WebContext.getSession();
+        HttpServletRequest request = WebContext.getRequest();
 
-		if (webBeans.containsKey(name)) {
-			Class<?> clazz = webBeans.get(name);
-			bean = clazz.newInstance();
+        if (request.getAttribute(name) != null) {
+            bean = request.getAttribute(name);
+            executeInjection(bean, pageScope);
+            return bean;
+        }
 
-			WebBean webBean = clazz.getAnnotation(WebBean.class);
-			if (webBean.scope().equals(ScopeType.REQUEST_SCOPE)) {
-				request.setAttribute(name, bean);
+        synchronized (session) {
+            if (session.getAttribute(name) != null) {
+                bean = session.getAttribute(name);
+                executeInjection(bean, pageScope);
+                return bean;
+            }
+        }
 
-			} else if (webBean.scope().equals(ScopeType.PAGE_SCOPE)) {
-				synchronized (session) {
-					pageScope.addName(name);
-					session.setAttribute(name, bean);
-				}
+        if (context.getAttribute(name) != null) {
+            bean = context.getAttribute(name);
+            executeInjection(bean, pageScope);
+            return bean;
+        }
 
-			} else if (webBean.scope().equals(ScopeType.SESSION_SCOPE)) {
-				synchronized (session) {
-					session.setAttribute(name, bean);
-				}
+        if (webBeans.containsKey(name)) {
+            Class<?> clazz = webBeans.get(name);
+            bean = clazz.newInstance();
 
-			} else if (webBean.scope().equals(ScopeType.APPLICATION_SCOPE)) {
-				context.setAttribute(name, bean);
+            WebBean webBean = clazz.getAnnotation(WebBean.class);
+            if (webBean.scope().equals(ScopeType.REQUEST_SCOPE)) {
+                request.setAttribute(name, bean);
 
-			} else {
-				return null;
-			}
+            } else if (webBean.scope().equals(ScopeType.PAGE_SCOPE)) {
+                synchronized (session) {
+                    pageScope.addName(name);
+                    session.setAttribute(name, bean);
+                }
 
-			executeInjection(bean, pageScope);
-			executePostPreset(name, bean, expressions);
-			executePostConstruct(bean);
-		}
-		return bean;
-	}
+            } else if (webBean.scope().equals(ScopeType.SESSION_SCOPE)) {
+                synchronized (session) {
+                    session.setAttribute(name, bean);
+                }
+
+            } else if (webBean.scope().equals(ScopeType.APPLICATION_SCOPE)) {
+                context.setAttribute(name, bean);
+
+            } else {
+                return null;
+            }
+
+            executeInjection(bean, pageScope);
+            executePostPreset(name, bean, expressions);
+            executePostConstruct(bean);
+        }
+        return bean;
+    }
 
     Object instantiatePathBean(String path) throws Exception {
         Object bean = null;
@@ -393,108 +392,108 @@ public enum BeanHandler {
         return bean;
     }
 
-	void executeInjection(Object bean) {
-		executeInjection(bean, null);
-	}
+    void executeInjection(Object bean) {
+        executeInjection(bean, null);
+    }
 
     private String getClassName(String name) {
         return name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toLowerCase());
     }
 
-	private String getClassName(WebBean webBean, Class<?> beanClass) {
-		if (webBean.name().trim().isEmpty()) {
-			String beanName = beanClass.getSimpleName();
-			return getClassName(beanName);
-		}
-		return webBean.name();
-	}
-
-	private String getClassName(AuthenticateBean authBean, Class<?> authClass) {
-		if (authBean.name().trim().isEmpty()) {
-			String beanName = authClass.getSimpleName();
+    private String getClassName(WebBean webBean, Class<?> beanClass) {
+        if (webBean.name().trim().isEmpty()) {
+            String beanName = beanClass.getSimpleName();
             return getClassName(beanName);
-		}
-		return authBean.name();
-	}
+        }
+        return webBean.name();
+    }
 
-	private String getClassName(com.jsmart5.framework.annotation.SmartServlet servlet, Class<?> servletClass) {
-		if (servlet.name() == null || servlet.name().trim().isEmpty()) {
-			String servletName = servletClass.getSimpleName();
+    private String getClassName(AuthenticateBean authBean, Class<?> authClass) {
+        if (authBean.name().trim().isEmpty()) {
+            String beanName = authClass.getSimpleName();
+            return getClassName(beanName);
+        }
+        return authBean.name();
+    }
+
+    private String getClassName(com.jsmart5.framework.annotation.SmartServlet servlet, Class<?> servletClass) {
+        if (servlet.name() == null || servlet.name().trim().isEmpty()) {
+            String servletName = servletClass.getSimpleName();
             return getClassName(servletName);
-		}
-		return servlet.name();
-	}
+        }
+        return servlet.name();
+    }
 
-	private String getClassName(SmartFilter filter, Class<?> filterClass) {
-		if (filter.name() == null || filter.name().trim().isEmpty()) {
-			String filterName = filterClass.getSimpleName();
+    private String getClassName(SmartFilter filter, Class<?> filterClass) {
+        if (filter.name() == null || filter.name().trim().isEmpty()) {
+            String filterName = filterClass.getSimpleName();
             return getClassName(filterName);
-		}
-		return filter.name();
-	}
+        }
+        return filter.name();
+    }
 
-	private void executeInjection(Object bean, PageScope pageScope) {
-		try {
-			HttpSession session = WebContext.getSession();
-			HttpServletRequest request = WebContext.getRequest();
+    private void executeInjection(Object bean, PageScope pageScope) {
+        try {
+            HttpSession session = WebContext.getSession();
+            HttpServletRequest request = WebContext.getRequest();
 
-			for (Field field : getBeanFields(bean.getClass())) {
-				if (field.isAnnotationPresent(Inject.class)) {
+            for (Field field : getBeanFields(bean.getClass())) {
+                if (field.isAnnotationPresent(Inject.class)) {
 
-					WebBean sb = field.getType().getAnnotation(WebBean.class);
-					if (sb != null) {
-						field.setAccessible(true);
-						field.set(bean, instantiateBean(getClassName(sb, field.getType()), null, pageScope));
-						continue;
-					}
+                    WebBean sb = field.getType().getAnnotation(WebBean.class);
+                    if (sb != null) {
+                        field.setAccessible(true);
+                        field.set(bean, instantiateBean(getClassName(sb, field.getType()), null, pageScope));
+                        continue;
+                    }
 
-					AuthenticateBean ab = field.getType().getAnnotation(AuthenticateBean.class);
-					if (ab != null) {
-						field.setAccessible(true);
-						field.set(bean, instantiateAuthBean(getClassName(ab, field.getType()), session));
-						continue;
-					}
-				}
+                    AuthenticateBean ab = field.getType().getAnnotation(AuthenticateBean.class);
+                    if (ab != null) {
+                        field.setAccessible(true);
+                        field.set(bean, instantiateAuthBean(getClassName(ab, field.getType()), session));
+                        continue;
+                    }
+                }
 
-				// Inject URL Parameters
-				if (field.isAnnotationPresent(QueryParam.class)) {
-					QueryParam queryParam = field.getAnnotation(QueryParam.class);
-					String paramValue = request.getParameter(queryParam.name());
+                // Inject URL Parameters
+                if (field.isAnnotationPresent(QueryParam.class)) {
+                    QueryParam queryParam = field.getAnnotation(QueryParam.class);
+                    String paramValue = request.getParameter(queryParam.name());
 
-					if (paramValue != null) {
-						field.setAccessible(true);
-						field.set(bean, EXPRESSIONS.decodeUrl(paramValue));
-					}
-					continue;
-				}
+                    if (paramValue != null) {
+                        field.setAccessible(true);
+                        field.set(bean, EXPRESSIONS.decodeUrl(paramValue));
+                    }
+                    continue;
+                }
 
-				// Inject dependencies
-				if (field.getAnnotations().length > 0) {
+                // Inject dependencies
+                if (field.getAnnotations().length > 0) {
 
-					if (initialContext != null && jndiMapping.containsKey(field.getType())) {
-						field.setAccessible(true);
-						field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
+                    if (initialContext != null && jndiMapping.containsKey(field.getType())) {
+                        field.setAccessible(true);
+                        field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
                         continue;
                     }
 
                     if (springContext != null) {
-						if (springContext.containsBean(getClassName(field.getType().getSimpleName()))) {
+                        if (springContext.containsBean(getClassName(field.getType().getSimpleName()))) {
                             field.setAccessible(true);
-							field.set(bean, springContext.getBean(field.getType()));
+                            field.set(bean, springContext.getBean(field.getType()));
 
-						} else if (field.isAnnotationPresent(Value.class)) {
-							String propertyName = field.getAnnotation(Value.class).value();
-							propertyName = SPRING_VALUE_PATTERN.matcher(propertyName).replaceAll("");
-							field.setAccessible(true);
-							field.set(bean, springContext.getEnvironment().getProperty(propertyName, field.getType()));
-						}
-					}
-				}
-			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Injection on WebBean " + bean + " failure: " + ex.getMessage());
-		}
-	}
+                        } else if (field.isAnnotationPresent(Value.class)) {
+                            String propertyName = field.getAnnotation(Value.class).value();
+                            propertyName = SPRING_VALUE_PATTERN.matcher(propertyName).replaceAll("");
+                            field.setAccessible(true);
+                            field.set(bean, springContext.getEnvironment().getProperty(propertyName, field.getType()));
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Injection on WebBean " + bean + " failure: " + ex.getMessage());
+        }
+    }
 
     void finalizePathBean(Object bean, HttpServletRequest request) {
         if (bean != null) {
@@ -510,459 +509,468 @@ public enum BeanHandler {
         }
     }
 
-	void finalizeBeans(ServletContext servletContext) {
-		List<String> names = Collections.list(servletContext.getAttributeNames());
-		for (String name : names) {
-			Object bean = servletContext.getAttribute(name);
-			if (bean != null) {
+    void finalizeWebBeans(ServletContext servletContext) {
+        List<String> names = Collections.list(servletContext.getAttributeNames());
+        for (String name : names) {
+            Object bean = servletContext.getAttribute(name);
+            if (bean != null) {
 
-				if (bean.getClass().isAnnotationPresent(WebBean.class)) {
-					finalizeBean(bean, servletContext);
-				}
-			}
-		}
-	}
+                if (bean.getClass().isAnnotationPresent(WebBean.class)) {
+                    finalizeWebBean(bean, servletContext);
+                }
+            }
+        }
+    }
 
-	private void finalizeBean(Object bean, ServletContext servletContext) {
-		if (bean != null) {
-			executePreDestroy(bean);
-			finalizeInjection(bean, servletContext);
-	
-			WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
-			servletContext.removeAttribute(getClassName(webBean, bean.getClass()));
-			bean = null;
-		}
-	}
+    private void finalizeWebBean(Object bean, ServletContext servletContext) {
+        if (bean != null) {
+            executePreDestroy(bean);
+            finalizeInjection(bean, servletContext);
 
-	void finalizeBeans(HttpSession session) {
-		synchronized (session) {
-			List<String> names = Collections.list(session.getAttributeNames());
-			for (String name : names) {
-				Object bean = session.getAttribute(name);
-				if (bean != null) {
+            WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
+            servletContext.removeAttribute(getClassName(webBean, bean.getClass()));
+            bean = null;
+        }
+    }
 
-					if (bean.getClass().isAnnotationPresent(WebBean.class)) {
-						finalizeBean(bean, session);
+    void finalizeBeans(HttpSession session) {
+        synchronized (session) {
+            List<String> names = Collections.list(session.getAttributeNames());
 
-					} else if (bean.getClass().isAnnotationPresent(AuthenticateBean.class)) {
-						finalizeAuthBean(bean, session);
-					}
-				}
-			}
-		}
-	}
+            for (String name : names) {
+                Object bean = session.getAttribute(name);
+                if (bean != null) {
 
-	void finalizeBeans(String path, HttpSession session) {
-		synchronized (session) {
-			List<String> names = Collections.list(session.getAttributeNames());
-			for (String attrname : names) {
-				Object object = session.getAttribute(attrname);
+                    if (bean.getClass().isAnnotationPresent(WebBean.class)) {
+                        finalizeWebBean(bean, session);
 
-				if (!attrname.equals(path) && object instanceof PageScope) {
-					
-					for (String name : ((PageScope) object).getNames()) {
-						finalizeBean(session.getAttribute(name), session);
-					}
-					session.removeAttribute(attrname);
-				}
-			}
-		}
-	}
+                    } else if (bean.getClass().isAnnotationPresent(AuthenticateBean.class)) {
+                        finalizeAuthBean(bean, session);
+                    }
+                }
+            }
+        }
+    }
 
-	void finalizeBean(String path, HttpSession session) {
-		synchronized (session) {
-			Object pageScope = session.getAttribute(path);
-			if (pageScope instanceof PageScope) {
+    void finalizeBeans(String path, HttpSession session) {
+        // Do not finalize beans case path was meant to be processed by
+        // PathBean or AsyncBean, otherwise (WebBean) clear the
+        // page scope beans
+        if (pathBeans.containsKey(path) || asyncBeans.containsKey(path)) {
+            return;
+        }
 
-				for (String name : ((PageScope) pageScope).getNames()) {
-					finalizeBean(session.getAttribute(name), session);
-				}
-			}
-			session.removeAttribute(path);
-		}
-	}
+        synchronized (session) {
+            List<String> names = Collections.list(session.getAttributeNames());
 
-	private void finalizeBean(Object bean, HttpSession session) {
-		if (bean != null) {
-			executePreDestroy(bean);
-			finalizeInjection(bean, session);
-	
-			WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
-			session.removeAttribute(getClassName(webBean, bean.getClass()));
-			bean = null;
-		}
-	}
+            for (String attrname : names) {
+                Object object = session.getAttribute(attrname);
 
-	public void finalizeBeans(HttpServletRequest request) {
-		List<String> names = Collections.list(request.getAttributeNames());
-		for (String name : names) {
+                if (!attrname.equals(path) && object instanceof PageScope) {
 
-			if (webBeans.containsKey(name)) {
-				Object webBean = request.getAttribute(name);
+                    for (String name : ((PageScope) object).getNames()) {
+                        finalizeWebBean(session.getAttribute(name), session);
+                    }
+                    session.removeAttribute(attrname);
+                }
+            }
+        }
+    }
 
-				if (webBean != null && webBean.getClass().isAnnotationPresent(WebBean.class)) {
-					finalizeBean(webBean, request);
-				}
-			}
-		}
-	}
+    void finalizeWebBean(String path, HttpSession session) {
+        synchronized (session) {
+            Object pageScope = session.getAttribute(path);
+            if (pageScope instanceof PageScope) {
 
-	private void finalizeBean(Object bean, HttpServletRequest request) {
-		if (bean != null) {
-			executePreDestroy(bean);
-			finalizeInjection(bean, request);
+                for (String name : ((PageScope) pageScope).getNames()) {
+                    finalizeWebBean(session.getAttribute(name), session);
+                }
+            }
+            session.removeAttribute(path);
+        }
+    }
 
-			WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
-			request.removeAttribute(getClassName(webBean, bean.getClass()));
-			bean = null;
-		}
-	}
+    private void finalizeWebBean(Object bean, HttpSession session) {
+        if (bean != null) {
+            executePreDestroy(bean);
+            finalizeInjection(bean, session);
 
-	private void finalizeInjection(Object bean, Object servletObject) {
-		try {
-			for (Field field : getBeanFields(bean.getClass())) {
-				if (field.isAnnotationPresent(Inject.class)) {
+            WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
+            session.removeAttribute(getClassName(webBean, bean.getClass()));
+            bean = null;
+        }
+    }
 
-					if (field.getType().isAnnotationPresent(WebBean.class)) {
-						field.setAccessible(true);
+    public void finalizeWebBeans(HttpServletRequest request) {
+        List<String> names = Collections.list(request.getAttributeNames());
+        for (String name : names) {
 
-						if (servletObject instanceof HttpServletRequest) {
-							finalizeBean(field.get(bean), (HttpServletRequest) servletObject);
+            if (webBeans.containsKey(name)) {
+                Object webBean = request.getAttribute(name);
 
-						} else if (servletObject instanceof HttpSession) {
-							finalizeBean(field.get(bean), (HttpSession) servletObject);
+                if (webBean != null && webBean.getClass().isAnnotationPresent(WebBean.class)) {
+                    finalizeWebBean(webBean, request);
+                }
+            }
+        }
+    }
 
-						} else if (servletObject instanceof ServletContext) {
-							finalizeBean(field.get(bean), (ServletContext) servletObject);
-						}
+    private void finalizeWebBean(Object bean, HttpServletRequest request) {
+        if (bean != null) {
+            executePreDestroy(bean);
+            finalizeInjection(bean, request);
 
-						field.set(bean, null);
-						continue;
-					}
+            WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
+            request.removeAttribute(getClassName(webBean, bean.getClass()));
+            bean = null;
+        }
+    }
 
-					if (field.getType().isAnnotationPresent(AuthenticateBean.class)) {
-						field.setAccessible(true);
-						field.set(bean, null);
-						continue;
-					}
-				}
+    private void finalizeInjection(Object bean, Object servletObject) {
+        try {
+            for (Field field : getBeanFields(bean.getClass())) {
+                if (field.isAnnotationPresent(Inject.class)) {
 
-				if (field.getAnnotations().length > 0) {
-					field.setAccessible(true);
-					field.set(bean, null);
-				}
-			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Finalize injection on WebBean " + bean + " failure: " + ex.getMessage());
-		}
-	}
+                    if (field.getType().isAnnotationPresent(WebBean.class)) {
+                        field.setAccessible(true);
 
-	void instantiateAuthBean(HttpSession session) {
-		for (String name : authBeans.keySet()) {
-			instantiateAuthBean(name, session);
+                        if (servletObject instanceof HttpServletRequest) {
+                            finalizeWebBean(field.get(bean), (HttpServletRequest) servletObject);
 
-			// We must have only one authentication bean mapped
-			break;
-		}
-	}
+                        } else if (servletObject instanceof HttpSession) {
+                            finalizeWebBean(field.get(bean), (HttpSession) servletObject);
 
-	private Object instantiateAuthBean(String name, HttpSession session) {
-		synchronized (session) {
-			Object bean = session.getAttribute(name);
+                        } else if (servletObject instanceof ServletContext) {
+                            finalizeWebBean(field.get(bean), (ServletContext) servletObject);
+                        }
 
-			if (bean == null) {
-				try {
-					bean = authBeans.get(name).newInstance();
-					for (Field field : getBeanFields(bean.getClass())) {
+                        field.set(bean, null);
+                        continue;
+                    }
 
-						if (field.getAnnotations().length > 0) {
+                    if (field.getType().isAnnotationPresent(AuthenticateBean.class)) {
+                        field.setAccessible(true);
+                        field.set(bean, null);
+                        continue;
+                    }
+                }
 
-							if (initialContext != null && jndiMapping.containsKey(field.getType())) {
-								field.setAccessible(true);
-								field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
+                if (field.getAnnotations().length > 0) {
+                    field.setAccessible(true);
+                    field.set(bean, null);
+                }
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Finalize injection on WebBean " + bean + " failure: " + ex.getMessage());
+        }
+    }
+
+    void instantiateAuthBean(HttpSession session) {
+        for (String name : authBeans.keySet()) {
+            instantiateAuthBean(name, session);
+
+            // We must have only one authentication bean mapped
+            break;
+        }
+    }
+
+    private Object instantiateAuthBean(String name, HttpSession session) {
+        synchronized (session) {
+            Object bean = session.getAttribute(name);
+
+            if (bean == null) {
+                try {
+                    bean = authBeans.get(name).newInstance();
+                    for (Field field : getBeanFields(bean.getClass())) {
+
+                        if (field.getAnnotations().length > 0) {
+
+                            if (initialContext != null && jndiMapping.containsKey(field.getType())) {
+                                field.setAccessible(true);
+                                field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
                                 continue;
                             }
 
                             if (springContext != null) {
-								if (springContext.containsBean(getClassName(field.getType().getSimpleName()))) {
+                                if (springContext.containsBean(getClassName(field.getType().getSimpleName()))) {
                                     field.setAccessible(true);
-									field.set(bean, springContext.getBean(field.getType()));
+                                    field.set(bean, springContext.getBean(field.getType()));
 
-								} else if (field.isAnnotationPresent(Value.class)) {
-									String propertyName = field.getAnnotation(Value.class).value();
-									propertyName = SPRING_VALUE_PATTERN.matcher(propertyName).replaceAll("");
-									field.setAccessible(true);
-									field.set(bean, springContext.getEnvironment().getProperty(propertyName, field.getType()));
-								}
-							}
-						}
-					}
+                                } else if (field.isAnnotationPresent(Value.class)) {
+                                    String propertyName = field.getAnnotation(Value.class).value();
+                                    propertyName = SPRING_VALUE_PATTERN.matcher(propertyName).replaceAll("");
+                                    field.setAccessible(true);
+                                    field.set(bean, springContext.getEnvironment().getProperty(propertyName, field.getType()));
+                                }
+                            }
+                        }
+                    }
 
-					executePostConstruct(bean);
-					session.setAttribute(name, bean);
-				} catch (Exception ex) {
-					LOGGER.log(Level.INFO, "Injection on AuthenticationBean " + bean + " failure: " + ex.getMessage());
-				}
-			}
-			return bean;
-		}
-	}
+                    executePostConstruct(bean);
+                    session.setAttribute(name, bean);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.INFO, "Injection on AuthenticationBean " + bean + " failure: " + ex.getMessage());
+                }
+            }
+            return bean;
+        }
+    }
 
-	private void finalizeAuthBean(Object bean, HttpSession session) {
-		executePreDestroy(bean);
+    private void finalizeAuthBean(Object bean, HttpSession session) {
+        executePreDestroy(bean);
 
-		try {
-			for (Field field : getBeanFields(bean.getClass())) {
-				if (field.getAnnotations().length > 0) {
-					field.setAccessible(true);
-					field.set(bean, null);
-				}
-			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Finalize injection on AuthenticationBean " + bean + " failure: " + ex.getMessage());
-		}
+        try {
+            for (Field field : getBeanFields(bean.getClass())) {
+                if (field.getAnnotations().length > 0) {
+                    field.setAccessible(true);
+                    field.set(bean, null);
+                }
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Finalize injection on AuthenticationBean " + bean + " failure: " + ex.getMessage());
+        }
 
-		AuthenticateBean authBean = bean.getClass().getAnnotation(AuthenticateBean.class);
-		session.removeAttribute(getClassName(authBean, bean.getClass()));
-		bean = null;
-	}
+        AuthenticateBean authBean = bean.getClass().getAnnotation(AuthenticateBean.class);
+        session.removeAttribute(getClassName(authBean, bean.getClass()));
+        bean = null;
+    }
 
-	String checkAuthentication(String path) throws ServletException {
+    String checkAuthentication(String path) throws ServletException {
 
-		if (authBeans.isEmpty() && !CONFIG.getContent().getSecureUrls().isEmpty()) {
-			throw new ServletException("Not found AuthenticationBean mapped in your system. Once your system has secure urls, please use @AuthenticateBean!");
-		}
+        if (authBeans.isEmpty() && !CONFIG.getContent().getSecureUrls().isEmpty()) {
+            throw new ServletException("Not found AuthenticationBean mapped in your system. Once your system has secure urls, please use @AuthenticateBean!");
+        }
 
-		boolean authenticated = true;
-		AuthenticateBean authBean = null;
+        boolean authenticated = true;
+        AuthenticateBean authBean = null;
 
-		HttpSession session = WebContext.getSession();
-		synchronized (session) {
+        HttpSession session = WebContext.getSession();
+        synchronized (session) {
 
-			for (String name : authBeans.keySet()) {
-				authBean = authBeans.get(name).getAnnotation(AuthenticateBean.class);
-				Object bean = session.getAttribute(name);
+            for (String name : authBeans.keySet()) {
+                authBean = authBeans.get(name).getAnnotation(AuthenticateBean.class);
+                Object bean = session.getAttribute(name);
 
-				if (bean != null) {
-					boolean foundField = false;
+                if (bean != null) {
+                    boolean foundField = false;
 
-					for (Field field : getBeanFields(bean.getClass())) {
-		
-						if (field.isAnnotationPresent(AuthenticateField.class)) {
-							try {
-								foundField = true;
-								field.setAccessible(true);
-								if (field.get(bean) == null) {
-									authenticated = false;
-									break;
-								}
-							} catch (Exception ex) {
-								throw new ServletException("AuthenticationField not accessible: " + ex.getMessage(), ex);
-							}
-						}
-					}
+                    for (Field field : getBeanFields(bean.getClass())) {
 
-					if (!foundField) {
-						throw new ServletException("None AuthenticateField found in AuthenticateBean!");
-					}
-				}
+                        if (field.isAnnotationPresent(AuthenticateField.class)) {
+                            try {
+                                foundField = true;
+                                field.setAccessible(true);
+                                if (field.get(bean) == null) {
+                                    authenticated = false;
+                                    break;
+                                }
+                            } catch (Exception ex) {
+                                throw new ServletException("AuthenticationField not accessible: " + ex.getMessage(), ex);
+                            }
+                        }
+                    }
 
-				// We must have only one authentication bean mapped
-				break;
-			}
-		}
+                    if (!foundField) {
+                        throw new ServletException("None AuthenticateField found in AuthenticateBean!");
+                    }
+                }
 
-		// Access secure url
-		//  - User authenticated ===>>> ok redirect to path
-		//  - User not authenticated ===>>> redirect to login
-		if (CONFIG.getContent().containsSecureUrl(path)) {
-			if (authenticated) {
-				return path;
-			} else {
-				return WebUtils.decodePath(authBean.loginPath());
-			}
-		}
+                // We must have only one authentication bean mapped
+                break;
+            }
+        }
 
-		// Access non secure url
-		//   - User authenticated
-		//         - access login page or except page ===>>> redirect to home
-	    //         - other cases ===>>> ok redirect to path
-		//   - User not authenticated ===>>> ok redirect to path
-		else {
-			if (authenticated) {
-				if (authBean != null && (path.equals(WebUtils.decodePath(authBean.loginPath()))
-						|| CONFIG.getContent().containsNonSecureUrlOnly(path))) {
-					return WebUtils.decodePath(authBean.homePath());
-				} else {
-					return path;
-				}
-			} else {
-				return path;
-			}
-		}
-	}
+        // Access secure url
+        //  - User authenticated ===>>> ok redirect to path
+        //  - User not authenticated ===>>> redirect to login
+        if (CONFIG.getContent().containsSecureUrl(path)) {
+            if (authenticated) {
+                return path;
+            } else {
+                return WebUtils.decodePath(authBean.loginPath());
+            }
+        }
 
-	@SuppressWarnings("all")
-	Integer checkAuthorization(String path) {
-		if (CONFIG.getContent().containsSecureUrl(path)) {
+        // Access non secure url
+        //   - User authenticated
+        //         - access login page or except page ===>>> redirect to home
+        //         - other cases ===>>> ok redirect to path
+        //   - User not authenticated ===>>> ok redirect to path
+        else {
+            if (authenticated) {
+                if (authBean != null && (path.equals(WebUtils.decodePath(authBean.loginPath()))
+                        || CONFIG.getContent().containsNonSecureUrlOnly(path))) {
+                    return WebUtils.decodePath(authBean.homePath());
+                } else {
+                    return path;
+                }
+            } else {
+                return path;
+            }
+        }
+    }
 
-			Collection<String> userAccess = getUserAuthorizationAccess();
+    @SuppressWarnings("all")
+    Integer checkAuthorization(String path) {
+        if (CONFIG.getContent().containsSecureUrl(path)) {
 
-			AuthenticateBean authBean = null;
-			for (String name : authBeans.keySet()) {
-				authBean = authBeans.get(name).getAnnotation(AuthenticateBean.class);
+            Collection<String> userAccess = getUserAuthorizationAccess();
 
-				// We must have only one authentication bean mapped
-				break;
-			}
+            AuthenticateBean authBean = null;
+            for (String name : authBeans.keySet()) {
+                authBean = authBeans.get(name).getAnnotation(AuthenticateBean.class);
 
-			// Check mapped urls
-			UrlPattern urlPattern = CONFIG.getContent().getUrlPattern(path);
-			if (urlPattern != null && urlPattern.getAccess() != null) {
+                // We must have only one authentication bean mapped
+                break;
+            }
 
-				for (String access : urlPattern.getAccess()) {
-					if (userAccess.contains(access) || access.equals("*")) {
-						return null; // It means, authorized user
-					}
-				}
+            // Check mapped urls
+            UrlPattern urlPattern = CONFIG.getContent().getUrlPattern(path);
+            if (urlPattern != null && urlPattern.getAccess() != null) {
 
-				return HttpServletResponse.SC_FORBIDDEN;
-			}
-		}
-		return null; // It means, authorized user
-	}
+                for (String access : urlPattern.getAccess()) {
+                    if (userAccess.contains(access) || access.equals("*")) {
+                        return null; // It means, authorized user
+                    }
+                }
 
-	@SuppressWarnings("unchecked")
-	Collection<String> getUserAuthorizationAccess() {
-		HttpServletRequest request = WebContext.getRequest();
+                return HttpServletResponse.SC_FORBIDDEN;
+            }
+        }
+        return null; // It means, authorized user
+    }
 
-		if (request.getAttribute(REQUEST_USER_ACCESS) == null) {
+    @SuppressWarnings("unchecked")
+    Collection<String> getUserAuthorizationAccess() {
+        HttpServletRequest request = WebContext.getRequest();
 
-			Collection<String> userAccess = new HashSet<String>();
+        if (request.getAttribute(REQUEST_USER_ACCESS) == null) {
 
-			HttpSession session = WebContext.getSession();
-			synchronized (session) {
+            Collection<String> userAccess = new HashSet<String>();
 
-				for (String name : authBeans.keySet()) {
-					Object bean = session.getAttribute(name);
+            HttpSession session = WebContext.getSession();
+            synchronized (session) {
 
-					if (bean != null) {
-						for (Field field : getBeanFields(bean.getClass())) {
+                for (String name : authBeans.keySet()) {
+                    Object bean = session.getAttribute(name);
 
-							if (field.isAnnotationPresent(AuthorizeAccess.class)) {
-								try {
-									field.setAccessible(true);
-									Object object = field.get(bean);
-									if (object != null) {
-										userAccess.addAll((Collection<String>) object);
-									}
-								} catch (Exception ex) {
-									LOGGER.log(Level.INFO, "AuthorizeAccess mapped on WebBean [" + bean + "] could not be cast to Collection<String>: " + ex.getMessage());
-								}
-								break;
-							}
-						}
-					}
+                    if (bean != null) {
+                        for (Field field : getBeanFields(bean.getClass())) {
 
-					// We must have only one authentication bean mapped
-					break;
-				}
-			}
-			request.setAttribute(REQUEST_USER_ACCESS, userAccess);
-		}
-		return (Collection<String>) request.getAttribute(REQUEST_USER_ACCESS);
-	}
+                            if (field.isAnnotationPresent(AuthorizeAccess.class)) {
+                                try {
+                                    field.setAccessible(true);
+                                    Object object = field.get(bean);
+                                    if (object != null) {
+                                        userAccess.addAll((Collection<String>) object);
+                                    }
+                                } catch (Exception ex) {
+                                    LOGGER.log(Level.INFO, "AuthorizeAccess mapped on WebBean [" + bean + "] could not be cast to Collection<String>: " + ex.getMessage());
+                                }
+                                break;
+                            }
+                        }
+                    }
 
-	boolean checkExecuteAuthorization(Object bean, String expression) {
+                    // We must have only one authentication bean mapped
+                    break;
+                }
+            }
+            request.setAttribute(REQUEST_USER_ACCESS, userAccess);
+        }
+        return (Collection<String>) request.getAttribute(REQUEST_USER_ACCESS);
+    }
 
-		for (Method method : getBeanMethods(bean.getClass())) {
+    boolean checkExecuteAuthorization(Object bean, String expression) {
 
-			ExecuteAccess execAccess = method.getAnnotation(ExecuteAccess.class);
-			if (execAccess != null && execAccess.access().length > 0 && expression.contains(method.getName())) {
+        for (Method method : getBeanMethods(bean.getClass())) {
 
-				Collection<String> userAccess = getUserAuthorizationAccess();
-				if (!userAccess.isEmpty()) {
-					
-					for (String access : execAccess.access()) {
-						if (userAccess.contains(access)) {
-							return true;
-						}
-					}
-					return false;
-				}
+            ExecuteAccess execAccess = method.getAnnotation(ExecuteAccess.class);
+            if (execAccess != null && execAccess.access().length > 0 && expression.contains(method.getName())) {
 
-				break;
-			}
-		}
-		return true;
-	}
+                Collection<String> userAccess = getUserAuthorizationAccess();
+                if (!userAccess.isEmpty()) {
+
+                    for (String access : execAccess.access()) {
+                        if (userAccess.contains(access)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                break;
+            }
+        }
+        return true;
+    }
 
     private void initAnnotatedBeans(ServletContext context) {
 
-		webBeans = new ConcurrentHashMap<String, Class<?>>();
-		authBeans = new ConcurrentHashMap<String, Class<?>>();
+        webBeans = new ConcurrentHashMap<String, Class<?>>();
+        authBeans = new ConcurrentHashMap<String, Class<?>>();
         asyncBeans = new ConcurrentHashMap<String, Class<?>>();
         pathBeans = new ConcurrentHashMap<String, Class<?>>();
-		smartServlets = new ConcurrentHashMap<String, Class<?>>();
-		smartFilters = new ConcurrentHashMap<String, Class<?>>();
-		contextListeners = new HashSet<WebContextListener>();
-		sessionListeners = new HashSet<WebSessionListener>();
+        smartServlets = new ConcurrentHashMap<String, Class<?>>();
+        smartFilters = new ConcurrentHashMap<String, Class<?>>();
+        contextListeners = new HashSet<WebContextListener>();
+        sessionListeners = new HashSet<WebSessionListener>();
 
-		if (CONFIG.getContent().getPackageScan() == null) {
-			LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML + " file! Skipping package scanning.");
-			return;
-		}
+        if (CONFIG.getContent().getPackageScan() == null) {
+            LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML + " file! Skipping package scanning.");
+            return;
+        }
 
-		Object[] packages = CONFIG.getContent().getPackageScan().split(",");
-		Reflections reflections = new Reflections(packages);
+        Object[] packages = CONFIG.getContent().getPackageScan().split(",");
+        Reflections reflections = new Reflections(packages);
 
-		Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebBean.class);
-		for (Class<?> clazz : annotations) {
-			WebBean bean = clazz.getAnnotation(WebBean.class);
-			LOGGER.log(Level.INFO, "Mapping WebBean class: " + clazz);
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebBean.class);
+        for (Class<?> clazz : annotations) {
+            WebBean bean = clazz.getAnnotation(WebBean.class);
+            LOGGER.log(Level.INFO, "Mapping WebBean class: " + clazz);
 
-			if ((bean.scope() == ScopeType.PAGE_SCOPE || bean.scope() == ScopeType.SESSION_SCOPE)
-					&& !Serializable.class.isAssignableFrom(clazz)) {
-				throw new RuntimeException("Mapped WebBean class [" + clazz + "] with scope [" + bean.scope() + "] " +
+            if ((bean.scope() == ScopeType.PAGE_SCOPE || bean.scope() == ScopeType.SESSION_SCOPE)
+                    && !Serializable.class.isAssignableFrom(clazz)) {
+                throw new RuntimeException("Mapped WebBean class [" + clazz + "] with scope [" + bean.scope() + "] " +
                         "must implement java.io.Serializable interface");
-			}
+            }
 
-			setBeanFields(clazz);
-			setBeanMethods(clazz);
-			
-			String className = getClassName(bean, clazz); 
-			webBeans.put(className, clazz);
-		}
+            setBeanFields(clazz);
+            setBeanMethods(clazz);
 
-		annotations = reflections.getTypesAnnotatedWith(AuthenticateBean.class);
-		for (Class<?> clazz : annotations) {
-			AuthenticateBean authBean = clazz.getAnnotation(AuthenticateBean.class);
-			if (authBeans.isEmpty()) {
-				LOGGER.log(Level.INFO, "Mapping AuthenticateBean class: " + clazz);
+            String className = getClassName(bean, clazz);
+            webBeans.put(className, clazz);
+        }
 
-				if (!Serializable.class.isAssignableFrom(clazz)) {
-					throw new RuntimeException("Mapped AuthenticateBean class [" + clazz + "] must implement " +
+        annotations = reflections.getTypesAnnotatedWith(AuthenticateBean.class);
+        for (Class<?> clazz : annotations) {
+            AuthenticateBean authBean = clazz.getAnnotation(AuthenticateBean.class);
+            if (authBeans.isEmpty()) {
+                LOGGER.log(Level.INFO, "Mapping AuthenticateBean class: " + clazz);
+
+                if (!Serializable.class.isAssignableFrom(clazz)) {
+                    throw new RuntimeException("Mapped AuthenticateBean class [" + clazz + "] must implement " +
                             "java.io.Serializable interface");
-				}
+                }
 
-				setBeanFields(clazz);
-				setBeanMethods(clazz);
-				String className = getClassName(authBean, clazz);
-				authBeans.put(className, clazz);
-				continue;
-			} else {
-				LOGGER.log(Level.SEVERE, "Only one AuthenticateBean must be declared! Skipping remained ones.");
-			}
-		}
+                setBeanFields(clazz);
+                setBeanMethods(clazz);
+                String className = getClassName(authBean, clazz);
+                authBeans.put(className, clazz);
+                continue;
+            } else {
+                LOGGER.log(Level.SEVERE, "Only one AuthenticateBean must be declared! Skipping remained ones.");
+            }
+        }
 
         annotations = reflections.getTypesAnnotatedWith(PathBean.class);
         for (Class<?> clazz : annotations) {
             PathBean pathBean = clazz.getAnnotation(PathBean.class);
             LOGGER.log(Level.INFO, "Mapping PathBean class: " + clazz);
 
-            if (!WebPathListener.class.isAssignableFrom(clazz)) {
-                throw new RuntimeException("Mapped PathBean class [" + clazz + "] must implement " +
-                        "com.jsmart5.framework.listener.WebPathListener interface");
+            if (!WebPathRequest.class.isAssignableFrom(clazz)) {
+                throw new RuntimeException("Mapped PathBean class [" + clazz + "] must extends " +
+                        "com.jsmart5.framework.manager.WebPathRequest abstract class");
             }
 
             setBeanFields(clazz);
@@ -985,286 +993,286 @@ public enum BeanHandler {
             asyncBeans.put(asyncBean.asyncPath(), clazz);
         }
 
-		annotations = reflections.getTypesAnnotatedWith(SmartServlet.class);
-		for (Class<?> clazz : annotations) {
-			SmartServlet servlet = clazz.getAnnotation(SmartServlet.class);
-			LOGGER.log(Level.INFO, "Mapping SmartServlet class: " + clazz);
+        annotations = reflections.getTypesAnnotatedWith(SmartServlet.class);
+        for (Class<?> clazz : annotations) {
+            SmartServlet servlet = clazz.getAnnotation(SmartServlet.class);
+            LOGGER.log(Level.INFO, "Mapping SmartServlet class: " + clazz);
 
             if (!HttpServlet.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("Mapped SmartServlet class [" + clazz + "] must extends " +
                         "javax.servlet.http.HttpServlet class");
             }
 
-			setBeanFields(clazz);
-			setBeanMethods(clazz);
-			smartServlets.put(getClassName(servlet, clazz), clazz);
-		}
-		
-		annotations = reflections.getTypesAnnotatedWith(SmartFilter.class);
-		for (Class<?> clazz : annotations) {
-			SmartFilter filter = clazz.getAnnotation(SmartFilter.class);
-			LOGGER.log(Level.INFO, "Mapping SmartFilter class: " + clazz);
+            setBeanFields(clazz);
+            setBeanMethods(clazz);
+            smartServlets.put(getClassName(servlet, clazz), clazz);
+        }
+
+        annotations = reflections.getTypesAnnotatedWith(SmartFilter.class);
+        for (Class<?> clazz : annotations) {
+            SmartFilter filter = clazz.getAnnotation(SmartFilter.class);
+            LOGGER.log(Level.INFO, "Mapping SmartFilter class: " + clazz);
 
             if (!Filter.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("Mapped SmartFilter class [" + clazz + "] must implement " +
                         "javax.servlet.Filter interface");
             }
 
-			setBeanFields(clazz);
-			setBeanMethods(clazz);
-			smartFilters.put(getClassName(filter, clazz), clazz);
-		}
+            setBeanFields(clazz);
+            setBeanMethods(clazz);
+            smartFilters.put(getClassName(filter, clazz), clazz);
+        }
 
-		annotations = reflections.getTypesAnnotatedWith(SmartListener.class);
-		for (Class<?> clazz : annotations) {
-			try {
-				Object listenerObj = clazz.newInstance();
-				if (WebContextListener.class.isInstance(listenerObj)) {
-					LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
-					setBeanFields(clazz);
-					setBeanMethods(clazz);
-					contextListeners.add((WebContextListener) listenerObj);
+        annotations = reflections.getTypesAnnotatedWith(SmartListener.class);
+        for (Class<?> clazz : annotations) {
+            try {
+                Object listenerObj = clazz.newInstance();
+                if (WebContextListener.class.isInstance(listenerObj)) {
+                    LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
+                    setBeanFields(clazz);
+                    setBeanMethods(clazz);
+                    contextListeners.add((WebContextListener) listenerObj);
 
-				} else if (WebSessionListener.class.isInstance(listenerObj)) {
-					LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
-					setBeanFields(clazz);
-					setBeanMethods(clazz);
-					sessionListeners.add((WebSessionListener) listenerObj);
+                } else if (WebSessionListener.class.isInstance(listenerObj)) {
+                    LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
+                    setBeanFields(clazz);
+                    setBeanMethods(clazz);
+                    sessionListeners.add((WebSessionListener) listenerObj);
 
-				} else {
+                } else {
                     throw new RuntimeException("Mapped SmartListener class [" + clazz + "] must implement " +
                             "com.jsmart5.framework.listener.WebContextListener or " +
                             "com.jsmart5.framework.listener.WebSessionListener interface");
                 }
-			} catch (Exception ex) {
-				LOGGER.log(Level.INFO, "SmartListener class [" + clazz.getName() + "] could not be instantiated!");
-			}
-		}
+            } catch (Exception ex) {
+                LOGGER.log(Level.INFO, "SmartListener class [" + clazz.getName() + "] could not be instantiated!");
+            }
+        }
 
-		if (webBeans.isEmpty()) {
-			LOGGER.log(Level.INFO, "WebBeans were not mapped!");
-		}
-		if (authBeans.isEmpty()) {
-			LOGGER.log(Level.INFO, "AuthenticateBean was not mapped!");
-		}
+        if (webBeans.isEmpty()) {
+            LOGGER.log(Level.INFO, "WebBeans were not mapped!");
+        }
+        if (authBeans.isEmpty()) {
+            LOGGER.log(Level.INFO, "AuthenticateBean was not mapped!");
+        }
         if (pathBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "PathBeans were not mapped!");
         }
         if (asyncBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");
         }
-		if (smartServlets.isEmpty()) {
-			LOGGER.log(Level.INFO, "SmartServlets were not mapped!");
-		}
-		if (smartFilters.isEmpty()) {
-			LOGGER.log(Level.INFO, "SmartFilters were not mapped!");
-		}
-		if (contextListeners.isEmpty() && sessionListeners.isEmpty()) {
-			LOGGER.log(Level.INFO, "SmartListeners were not mapped!");
-		}
+        if (smartServlets.isEmpty()) {
+            LOGGER.log(Level.INFO, "SmartServlets were not mapped!");
+        }
+        if (smartFilters.isEmpty()) {
+            LOGGER.log(Level.INFO, "SmartFilters were not mapped!");
+        }
+        if (contextListeners.isEmpty() && sessionListeners.isEmpty()) {
+            LOGGER.log(Level.INFO, "SmartListeners were not mapped!");
+        }
     }
 
-	public String getForwardPath(String path) {
-    	if (path != null) {
-    		return forwardPaths.get(path);
-    	}
-    	return path;
+    public String getForwardPath(String path) {
+        if (path != null) {
+            return forwardPaths.get(path);
+        }
+        return path;
     }
 
     private void initForwardPaths(ServletContext servletContext) {
-    	forwardPaths = new HashMap<String, String>();
-    	lookupInResourcePath(servletContext, PATH_SEPARATOR);
-    	overrideForwardPaths();
+        forwardPaths = new HashMap<String, String>();
+        lookupInResourcePath(servletContext, PATH_SEPARATOR);
+        overrideForwardPaths();
     }
 
     private void overrideForwardPaths() {
-    	for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
 
-    		if (urlPattern.getJsp() != null && !urlPattern.getJsp().trim().isEmpty()) {
-    			String prevJsp = forwardPaths.put(urlPattern.getUrl(), urlPattern.getJsp());
+            if (urlPattern.getJsp() != null && !urlPattern.getJsp().trim().isEmpty()) {
+                String prevJsp = forwardPaths.put(urlPattern.getUrl(), urlPattern.getJsp());
 
-    			if (prevJsp != null) {
-    				LOGGER.log(Level.INFO, "Overriding path mapping [" + urlPattern.getUrl() + "] from [" + prevJsp + "] to [" + urlPattern.getJsp() + "]");
-    			} else {
-    				LOGGER.log(Level.INFO, "Mapping path  [" + urlPattern.getUrl() + "] to [" + urlPattern.getJsp() + "]");
-    			}
-    		}
-    	}
+                if (prevJsp != null) {
+                    LOGGER.log(Level.INFO, "Overriding path mapping [" + urlPattern.getUrl() + "] from [" + prevJsp + "] to [" + urlPattern.getJsp() + "]");
+                } else {
+                    LOGGER.log(Level.INFO, "Mapping path  [" + urlPattern.getUrl() + "] to [" + urlPattern.getJsp() + "]");
+                }
+            }
+        }
     }
 
     private void lookupInResourcePath(ServletContext servletContext, String path) {
-    	Set<String> resources = servletContext.getResourcePaths(path);
-    	if (resources != null) {
-	    	for (String res : resources) {
-	    		if (res.endsWith(".jsp") || res.endsWith(".jspf") || res.endsWith(".html")) {
-	    			String[] bars = res.split(PATH_SEPARATOR);
-	    			if (res.endsWith(".jspf")) {
+        Set<String> resources = servletContext.getResourcePaths(path);
+        if (resources != null) {
+            for (String res : resources) {
+                if (res.endsWith(".jsp") || res.endsWith(".jspf") || res.endsWith(".html")) {
+                    String[] bars = res.split(PATH_SEPARATOR);
+                    if (res.endsWith(".jspf")) {
 
-	    				// Save the entire resource path to capture it later when reading JSP include tags
-	    				forwardPaths.put(res, res);
-	    			} else {
-	    				forwardPaths.put(PATH_SEPARATOR + bars[bars.length -1].replace(".jsp", "").replace(".html", ""), res);
-	    			}
-	    		} else {
-	    			lookupInResourcePath(servletContext, res);
-	    		}
-	    	}
-    	}
+                        // Save the entire resource path to capture it later when reading JSP include tags
+                        forwardPaths.put(res, res);
+                    } else {
+                        forwardPaths.put(PATH_SEPARATOR + bars[bars.length -1].replace(".jsp", "").replace(".html", ""), res);
+                    }
+                } else {
+                    lookupInResourcePath(servletContext, res);
+                }
+            }
+        }
     }
 
     private void checkWebXmlPath(ServletContext servletContext) {
-    	try {
-	    	URL webXml = servletContext.getResource("/WEB-INF/web.xml");
-	    	if (webXml != null) {
-	    		throw new RuntimeException("JSmart5 framework is not compatible with [/WEB-INF/web.xml] file. Please remove the web.xml and compile your project with [failOnMissingWebXml=false]");
-	    	}
-    	} catch (MalformedURLException ex) {
-    		LOGGER.log(Level.WARNING, "/WEB-INF/web.xml malformed Url: " + ex.getMessage());
-    	}
+        try {
+            URL webXml = servletContext.getResource("/WEB-INF/web.xml");
+            if (webXml != null) {
+                throw new RuntimeException("JSmart5 framework is not compatible with [/WEB-INF/web.xml] file. Please remove the web.xml and compile your project with [failOnMissingWebXml=false]");
+            }
+        } catch (MalformedURLException ex) {
+            LOGGER.log(Level.WARNING, "/WEB-INF/web.xml malformed Url: " + ex.getMessage());
+        }
     }
 
     private void initJndiMapping() {
-		try {
-			String lookupName = CONFIG.getContent().getEjbLookup();
-			initialContext = new InitialContext();
+        try {
+            String lookupName = CONFIG.getContent().getEjbLookup();
+            initialContext = new InitialContext();
 
-			// For glassfish implementation
-			NamingEnumeration<Binding> bindList = initialContext.listBindings("");
-			while (bindList.hasMore()) {
-				Binding bind = bindList.next();
-				if (bind != null && ("java:" + lookupName).equals(bind.getName()) && bind.getObject() instanceof Context) {
-					lookupInContext((Context) bind.getObject(), "java:" + lookupName);
-				}
-			}
+            // For glassfish implementation
+            NamingEnumeration<Binding> bindList = initialContext.listBindings("");
+            while (bindList.hasMore()) {
+                Binding bind = bindList.next();
+                if (bind != null && ("java:" + lookupName).equals(bind.getName()) && bind.getObject() instanceof Context) {
+                    lookupInContext((Context) bind.getObject(), "java:" + lookupName);
+                }
+            }
 
-			// For Jboss implementation
-			if (jndiMapping.isEmpty()) {
-				lookupInContext((Context) initialContext.lookup("java:" + lookupName), "java:" + lookupName);
-			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.WARNING, "JNDI for EJB mapping could not be initialized: " + ex.getMessage());
-		}
-	}
+            // For Jboss implementation
+            if (jndiMapping.isEmpty()) {
+                lookupInContext((Context) initialContext.lookup("java:" + lookupName), "java:" + lookupName);
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.WARNING, "JNDI for EJB mapping could not be initialized: " + ex.getMessage());
+        }
+    }
 
-	private void lookupInContext(Context context, String prefix) {
-		try {
-			prefix += "/";
-			NamingEnumeration<Binding> bindList = context.listBindings("");
-			while (bindList.hasMore()) {
-				Binding bind = bindList.next();
-				if (bind != null) {
-					if (bind.getObject() instanceof Context) {
-						lookupInContext((Context) bind.getObject(), prefix + bind.getName());
-					}
-					String[] binds = bind.getName().split("!");
-					if (binds.length > 1) {
-						try {
-							jndiMapping.put(Class.forName(binds[1]), prefix + binds[0]);
-						} catch (Throwable ex) {
-							LOGGER.log(Level.WARNING, "Class could not be found for EJB mapping: " + ex.getMessage());
-						}
-					}
-				}
-			}
-		} catch (Throwable ex) {
-			LOGGER.log(Level.WARNING, "Bindings could not be found for EJB context: " + ex.getMessage());
-		}
-	}
+    private void lookupInContext(Context context, String prefix) {
+        try {
+            prefix += "/";
+            NamingEnumeration<Binding> bindList = context.listBindings("");
+            while (bindList.hasMore()) {
+                Binding bind = bindList.next();
+                if (bind != null) {
+                    if (bind.getObject() instanceof Context) {
+                        lookupInContext((Context) bind.getObject(), prefix + bind.getName());
+                    }
+                    String[] binds = bind.getName().split("!");
+                    if (binds.length > 1) {
+                        try {
+                            jndiMapping.put(Class.forName(binds[1]), prefix + binds[0]);
+                        } catch (Throwable ex) {
+                            LOGGER.log(Level.WARNING, "Class could not be found for EJB mapping: " + ex.getMessage());
+                        }
+                    }
+                }
+            }
+        } catch (Throwable ex) {
+            LOGGER.log(Level.WARNING, "Bindings could not be found for EJB context: " + ex.getMessage());
+        }
+    }
 
     private Field[] getBeanFields(Class<?> clazz) {
-    	if (!mappedBeanFields.containsKey(clazz)) {
-    		mappedBeanFields.put(clazz, clazz.getDeclaredFields());
-    	}
-    	return mappedBeanFields.get(clazz);
+        if (!mappedBeanFields.containsKey(clazz)) {
+            mappedBeanFields.put(clazz, clazz.getDeclaredFields());
+        }
+        return mappedBeanFields.get(clazz);
     }
    
     private void setBeanFields(Class<?> clazz) {
-    	if (!mappedBeanFields.containsKey(clazz)) {
-    		mappedBeanFields.put(clazz, clazz.getDeclaredFields());
-    	}
+        if (!mappedBeanFields.containsKey(clazz)) {
+            mappedBeanFields.put(clazz, clazz.getDeclaredFields());
+        }
     }
 
     private Method[] getBeanMethods(Class<?> clazz) {
-    	if (!mappedBeanMethods.containsKey(clazz)) {
-    		mappedBeanMethods.put(clazz, clazz.getMethods());
-    	}
-    	return mappedBeanMethods.get(clazz);
+        if (!mappedBeanMethods.containsKey(clazz)) {
+            mappedBeanMethods.put(clazz, clazz.getMethods());
+        }
+        return mappedBeanMethods.get(clazz);
     }
 
     private void setBeanMethods(Class<?> clazz) {
-    	if (!mappedBeanMethods.containsKey(clazz)) {
-    		mappedBeanMethods.put(clazz, clazz.getMethods());
-    	}
+        if (!mappedBeanMethods.containsKey(clazz)) {
+            mappedBeanMethods.put(clazz, clazz.getMethods());
+        }
     }
 
     private void initJspPageBeans(ServletContext context) {
-    	for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
-    		JspPageBean jspPageBean = new JspPageBean();
-    		readJspPageResource(context, urlPattern.getUrl(), jspPageBean);
-    		jspPageBeans.put(urlPattern.getUrl(), jspPageBean);
-    	}
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+            JspPageBean jspPageBean = new JspPageBean();
+            readJspPageResource(context, urlPattern.getUrl(), jspPageBean);
+            jspPageBeans.put(urlPattern.getUrl(), jspPageBean);
+        }
     }
 
     private void readJspPageResource(ServletContext context, String path, JspPageBean jspPageBean) {
-    	InputStream is = context.getResourceAsStream(getForwardPath(path));
+        InputStream is = context.getResourceAsStream(getForwardPath(path));
 
-		if (is != null) {
-			Scanner fileScanner = new Scanner(is);
-			Set<String> includes = new LinkedHashSet<String>();
+        if (is != null) {
+            Scanner fileScanner = new Scanner(is);
+            Set<String> includes = new LinkedHashSet<String>();
 
-			try {
-				String lineScan = null;
-				while ((lineScan = fileScanner.findWithinHorizon(HANDLER_EL_PATTERN, 0)) != null) {
+            try {
+                String lineScan = null;
+                while ((lineScan = fileScanner.findWithinHorizon(HANDLER_EL_PATTERN, 0)) != null) {
 
-					boolean hasInclude = false;
-					Matcher matcher = INCLUDE_PATTERN.matcher(lineScan);
+                    boolean hasInclude = false;
+                    Matcher matcher = INCLUDE_PATTERN.matcher(lineScan);
 
-					while (matcher.find()) {
-						hasInclude = true;
-						includes.add(matcher.group(1));
-					}
+                    while (matcher.find()) {
+                        hasInclude = true;
+                        includes.add(matcher.group(1));
+                    }
 
-					if (hasInclude) {
-						continue;
-					}
+                    if (hasInclude) {
+                        continue;
+                    }
 
-					matcher = EL_PATTERN.matcher(lineScan);
-					while (matcher.find()) {
-		            	for (String name : matcher.group(1).split(EL_SEPARATOR)) {
-		            		if (webBeans.containsKey(name.trim())) {
-		            			jspPageBean.addBeanName(name.trim());
-		            		}
-		            	}
-					}
-				}
-			} finally {
-				fileScanner.close();
-			}
+                    matcher = EL_PATTERN.matcher(lineScan);
+                    while (matcher.find()) {
+                        for (String name : matcher.group(1).split(EL_SEPARATOR)) {
+                            if (webBeans.containsKey(name.trim())) {
+                                jspPageBean.addBeanName(name.trim());
+                            }
+                        }
+                    }
+                }
+            } finally {
+                fileScanner.close();
+            }
 
-			// Read include page resources
-			for (String include : includes) {
-				String includeOwner = getForwardPath(path);
-				include = includeOwner.substring(0, includeOwner.lastIndexOf(PATH_SEPARATOR) + 1) + include;
-				readJspPageResource(context, include, jspPageBean);
-			}
-		}
+            // Read include page resources
+            for (String include : includes) {
+                String includeOwner = getForwardPath(path);
+                include = includeOwner.substring(0, includeOwner.lastIndexOf(PATH_SEPARATOR) + 1) + include;
+                readJspPageResource(context, include, jspPageBean);
+            }
+        }
     }
 
     private class JspPageBean {
 
-    	private Set<String> beanNames;
+        private Set<String> beanNames;
 
-    	public JspPageBean() {
-    		this.beanNames = new LinkedHashSet<String>();
-    	}
+        public JspPageBean() {
+            this.beanNames = new LinkedHashSet<String>();
+        }
 
-		public Set<String> getBeanNames() {
-			return beanNames;
-		}
+        public Set<String> getBeanNames() {
+            return beanNames;
+        }
 
-		public void addBeanName(String beanName) {
-			this.beanNames.add(beanName);
-		}
+        public void addBeanName(String beanName) {
+            this.beanNames.add(beanName);
+        }
     }
 
 }

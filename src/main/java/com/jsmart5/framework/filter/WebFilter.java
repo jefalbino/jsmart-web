@@ -117,15 +117,16 @@ public final class WebFilter implements Filter {
         	thrown.printStackTrace();
         }
 
-        // Finalize request scoped beans
-        HANDLER.finalizeBeans(httpRequest);
+        // Finalize request scoped web beans
+        HANDLER.finalizeWebBeans(httpRequest);
 
         // Close bean context based on current thread instance
         WebContext.closeCurrentInstance();
 
         // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide
         // HTML via framework
-        if (httpRequest.isAsyncStarted() || httpRequest.getAttribute(Constants.REQUEST_PATH_ATTR) != null) {
+        if (httpRequest.isAsyncStarted()
+                || httpRequest.getAttribute(Constants.REQUEST_WEB_PATH_ATTR) != null) {
 
             // Close current outputStream on responseWrapper
             responseWrapper.close();

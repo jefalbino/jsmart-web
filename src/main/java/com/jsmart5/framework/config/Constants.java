@@ -30,7 +30,7 @@ public final class Constants {
 
 	public static final String SESSION_RESET_ATTR = "jsmart5_session_reset_attr";
 
-    public static final String REQUEST_PATH_ATTR = "jsmart5_request_path_attr";
+    public static final String REQUEST_WEB_PATH_ATTR = "jsmart5_request_web_path_attr";
 
 
 	public static final String JSP_EL = "${%s}";
