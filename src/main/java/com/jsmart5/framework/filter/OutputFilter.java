@@ -27,8 +27,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.manager.ExpressionHandler;
 
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
@@ -47,9 +49,16 @@ public final class OutputFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		final HttpServletResponseWrapper responseWrapper = (HttpServletResponseWrapper) response;
 
         filterChain.doFilter(request, responseWrapper);
+
+        // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide
+        // HTML via framework
+        if (httpRequest.isAsyncStarted() || httpRequest.getAttribute(Constants.REQUEST_PATH_ATTR) != null) {
+            return;
+        }
 
         boolean foundRegex = false;
         String html = responseWrapper.toString();

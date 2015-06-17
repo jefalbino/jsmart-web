@@ -26,11 +26,11 @@ public final class Constants {
 
 	public static final String REQUEST_PAGE_SCRIPT_ATTR = "jsmart5_page_script_attr";
 
-	public static final String REQUEST_REDIRECT_PATH = "jsmart5_redirect_ajax_path";
-
 	public static final String REQUEST_REDIRECT_PATH_AJAX_ATTR = "jsmart5_request_redirect_path_ajax_attr";
 
 	public static final String SESSION_RESET_ATTR = "jsmart5_session_reset_attr";
+
+    public static final String REQUEST_PATH_ATTR = "jsmart5_request_path_attr";
 
 
 	public static final String JSP_EL = "${%s}";

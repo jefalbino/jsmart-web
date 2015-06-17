@@ -61,6 +61,7 @@ import com.jsmart5.framework.annotation.*;
 import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.listener.WebAsyncListener;
 import com.jsmart5.framework.listener.WebContextListener;
+import com.jsmart5.framework.listener.WebPathListener;
 import com.jsmart5.framework.listener.WebSessionListener;
 import com.jsmart5.framework.util.WebUtils;
 import org.reflections.Reflections;
@@ -92,6 +93,8 @@ public enum BeanHandler {
 	Map<String, Class<?>> authBeans;
 
     Map<String, Class<?>> asyncBeans;
+
+    Map<String, Class<?>> pathBeans;
 
 	Map<String, Class<?>> smartServlets;
 
@@ -129,6 +132,7 @@ public enum BeanHandler {
         	authBeans.clear();
             webBeans.clear();
             asyncBeans.clear();
+            pathBeans.clear();
         	smartServlets.clear();
         	smartFilters.clear();
         	contextListeners.clear();
@@ -369,6 +373,16 @@ public enum BeanHandler {
 		return bean;
 	}
 
+    Object instantiatePathBean(String path) throws Exception {
+        Object bean = null;
+        if (pathBeans.containsKey(path)) {
+            Class<?> clazz = pathBeans.get(path);
+            bean = clazz.newInstance();
+            executeInjection(bean);
+        }
+        return bean;
+    }
+
     Object instantiateAsyncBean(String path) throws Exception {
         Object bean = null;
         if (asyncBeans.containsKey(path)) {
@@ -481,6 +495,13 @@ public enum BeanHandler {
 			LOGGER.log(Level.INFO, "Injection on WebBean " + bean + " failure: " + ex.getMessage());
 		}
 	}
+
+    void finalizePathBean(Object bean, HttpServletRequest request) {
+        if (bean != null) {
+            finalizeInjection(bean, request);
+            bean = null;
+        }
+    }
 
     void finalizeAsyncBean(Object bean, HttpServletRequest request) {
         if (bean != null) {
@@ -881,6 +902,7 @@ public enum BeanHandler {
 		webBeans = new ConcurrentHashMap<String, Class<?>>();
 		authBeans = new ConcurrentHashMap<String, Class<?>>();
         asyncBeans = new ConcurrentHashMap<String, Class<?>>();
+        pathBeans = new ConcurrentHashMap<String, Class<?>>();
 		smartServlets = new ConcurrentHashMap<String, Class<?>>();
 		smartFilters = new ConcurrentHashMap<String, Class<?>>();
 		contextListeners = new HashSet<WebContextListener>();
@@ -932,6 +954,21 @@ public enum BeanHandler {
 				LOGGER.log(Level.SEVERE, "Only one AuthenticateBean must be declared! Skipping remained ones.");
 			}
 		}
+
+        annotations = reflections.getTypesAnnotatedWith(PathBean.class);
+        for (Class<?> clazz : annotations) {
+            PathBean pathBean = clazz.getAnnotation(PathBean.class);
+            LOGGER.log(Level.INFO, "Mapping PathBean class: " + clazz);
+
+            if (!WebPathListener.class.isAssignableFrom(clazz)) {
+                throw new RuntimeException("Mapped PathBean class [" + clazz + "] must implement " +
+                        "com.jsmart5.framework.listener.WebPathListener interface");
+            }
+
+            setBeanFields(clazz);
+            setBeanMethods(clazz);
+            pathBeans.put(pathBean.path(), clazz);
+        }
 
         annotations = reflections.getTypesAnnotatedWith(AsyncBean.class);
         for (Class<?> clazz : annotations) {
@@ -1010,6 +1047,9 @@ public enum BeanHandler {
 		if (authBeans.isEmpty()) {
 			LOGGER.log(Level.INFO, "AuthenticateBean was not mapped!");
 		}
+        if (pathBeans.isEmpty()) {
+            LOGGER.log(Level.INFO, "PathBeans were not mapped!");
+        }
         if (asyncBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");
         }

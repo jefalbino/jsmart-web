@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
+import com.jsmart5.framework.config.Constants;
 import org.apache.commons.io.IOUtils;
 import org.reflections.vfs.Vfs;
 import org.reflections.vfs.Vfs.Dir;
@@ -122,9 +123,9 @@ public final class WebFilter implements Filter {
         // Close bean context based on current thread instance
         WebContext.closeCurrentInstance();
 
-        // Case async process was started it cannot proceed because we need
-        // the original response opened and the AsyncContext will not provide HTML via framework
-        if (httpRequest.isAsyncStarted()) {
+        // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide
+        // HTML via framework
+        if (httpRequest.isAsyncStarted() || httpRequest.getAttribute(Constants.REQUEST_PATH_ATTR) != null) {
 
             // Close current outputStream on responseWrapper
             responseWrapper.close();
