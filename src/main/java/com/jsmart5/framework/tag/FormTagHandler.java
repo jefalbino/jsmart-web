@@ -61,8 +61,8 @@ public final class FormTagHandler extends TagHandler {
 	@Override
 	public void validateTag() throws JspException {
 		if (method != null && !Method.validatePostGet(method)) {
-			throw InvalidAttributeException.fromPossibleValues("form", "method", Method.getPostGetValues());
-		}
+            throw InvalidAttributeException.fromPossibleValues("form", "method", Method.getPostGetValues());
+        }
 		if (position != null && !Position.validate(position)) {
 			throw InvalidAttributeException.fromPossibleValues("form", "position", Position.getValues());
 		}
@@ -88,9 +88,9 @@ public final class FormTagHandler extends TagHandler {
 			.addAttribute("enctype", enctype)
 			.addAttribute("style", style);
 
-		if (Position.HORIZONTAL.name().equalsIgnoreCase(position)) {
+		if (Position.HORIZONTAL.equalsIgnoreCase(position)) {
 			form.addAttribute("class", Bootstrap.FORM_HORIZONTAL);
-		} else if (Position.INLINE.name().equalsIgnoreCase(position)) {
+		} else if (Position.INLINE.equalsIgnoreCase(position)) {
 			form.addAttribute("class", Bootstrap.FORM_INLINE);
 		}
 		

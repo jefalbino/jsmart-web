@@ -84,8 +84,8 @@ public final class ReCaptchaTagHandler extends TagHandler {
 	public Tag executeTag() throws JspException, IOException {
 
 		JspTag parent = getParent();
-		if (!(parent instanceof FormTagHandler)) {
-			throw ConstraintTagException.fromConstraint("recaptcha", "Tag must be placed inside [form] tag");
+		if (!(parent instanceof FormTagHandler) && !(parent instanceof RestTagHandler)) {
+			throw ConstraintTagException.fromConstraint("recaptcha", "Tag must be placed inside [form] or [rest] tag");
 		}
 
 		// Just to call nested tags
@@ -142,17 +142,18 @@ public final class ReCaptchaTagHandler extends TagHandler {
 
 		Div formGroup = new Div();
 		formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
-		
-		if (parent instanceof FormTagHandler) {
-			String size = ((FormTagHandler) parent).getSize();
 
-			if (Size.LARGE.equalsIgnoreCase(size)) {
-				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
-
-			} else if (Size.SMALL.equalsIgnoreCase(size)) {
-				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
-			}
-		}
+        String size = null;
+        if (parent instanceof FormTagHandler) {
+            size = ((FormTagHandler) parent).getSize();
+        } else if (parent instanceof RestTagHandler) {
+            size = ((RestTagHandler) parent).getSize();
+        }
+        if (Size.LARGE.equalsIgnoreCase(size)) {
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
+        } else if (Size.SMALL.equalsIgnoreCase(size)) {
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
+        }
 
 		Label labelTag = new Label();
 		labelTag.addAttribute("for", ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)
@@ -231,8 +232,12 @@ public final class ReCaptchaTagHandler extends TagHandler {
 			options.addText(", lang: '" + locale + "'");
 		}
 		options.addText("};");
-		
-		((FormTagHandler) parent).addBeforeFormTag(options);
+
+        if (parent instanceof FormTagHandler) {
+            ((FormTagHandler) parent).addBeforeFormTag(options);
+        } else if (parent instanceof RestTagHandler) {
+            ((RestTagHandler) parent).addBeforeRestTag(options);
+        }
 
 		Script challenge = new Script();
 		challenge.addAttribute("type", "text/javascript")
@@ -249,16 +254,17 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		Div formGroup = new Div();
 		formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 
-		if (parent instanceof FormTagHandler) {
-			String size = ((FormTagHandler) parent).getSize();
-
-			if (Size.LARGE.equalsIgnoreCase(size)) {
-				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
-
-			} else if (Size.SMALL.equalsIgnoreCase(size)) {
-				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
-			}
-		}
+        String size = null;
+        if (parent instanceof FormTagHandler) {
+            size = ((FormTagHandler) parent).getSize();
+        } else if (parent instanceof RestTagHandler) {
+            size = ((RestTagHandler) parent).getSize();
+        }
+        if (Size.LARGE.equalsIgnoreCase(size)) {
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
+        } else if (Size.SMALL.equalsIgnoreCase(size)) {
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
+        }
 
 		Label labelTag = new Label();
 		labelTag.addAttribute("for", ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)
@@ -290,7 +296,11 @@ public final class ReCaptchaTagHandler extends TagHandler {
 			.addText("'sitekey': '" + siteKey + "'")
 			.addText("});").addText("};");
 
-		((FormTagHandler) parent).addBeforeFormTag(callback);
+        if (parent instanceof FormTagHandler) {
+            ((FormTagHandler) parent).addBeforeFormTag(callback);
+        } else if (parent instanceof RestTagHandler) {
+            ((RestTagHandler) parent).addBeforeRestTag(callback);
+        }
 
 		return formGroup;
 	}

@@ -89,7 +89,7 @@ public final class FunctionTagHandler extends TagHandler {
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 
-		appendScript(getFunction(name, builder));
+		appendFunction(getFunction(name, builder));
 
 		return input;
 	}
@@ -100,6 +100,11 @@ public final class FunctionTagHandler extends TagHandler {
 		jsonAjax.setTimeout(timeout);
 		jsonAjax.setTag("function");
 
+        // Params must be considered regardless the action for rest purpose
+        for (String name : params.keySet()) {
+            jsonAjax.addParam(new Param(name, null));
+        }
+
 		if (action != null) {
 			jsonAjax.setMethod("post");
 			jsonAjax.setAction(getTagName(J_SBMT, action));
@@ -107,10 +112,6 @@ public final class FunctionTagHandler extends TagHandler {
 			if (!args.isEmpty()) {
 				String name = getTagName(J_SBMT_ARGS, action);
 				jsonAjax.addArg(new Param(name, null));
-			}
-
-			for (String name : params.keySet()) {						
-				jsonAjax.addParam(new Param(name, null));
 			}
 		} else if (update != null) {
 			jsonAjax.setMethod("get");

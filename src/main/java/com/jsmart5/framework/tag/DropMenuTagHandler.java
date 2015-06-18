@@ -162,13 +162,14 @@ public final class DropMenuTagHandler extends TagHandler {
 		jsonAjax.setId(dropAction.getId());
 		jsonAjax.setTag("dropaction");
 
+        // Params must be considered regardless the action for rest purpose
+        for (String name : dropAction.getParams().keySet()) {
+            jsonAjax.addParam(new Param(name, dropAction.getParams().get(name)));
+        }
+
 		if (dropAction.getAction() != null) {
 			jsonAjax.setMethod("post");
 			jsonAjax.setAction(getTagName(J_SBMT, dropAction.getAction()));
-
-			for (String name : dropAction.getParams().keySet()) {						
-				jsonAjax.addParam(new Param(name, dropAction.getParams().get(name)));
-			}
 		} else if (dropAction.getUpdate() != null) {
 			jsonAjax.setMethod("get");
 		}

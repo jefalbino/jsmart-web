@@ -263,13 +263,14 @@ public final class LinkTagHandler extends TagHandler {
 		jsonAjax.setId(id);
 		jsonAjax.setTag("link");
 
+        // Params must be considered regardless the action for rest purpose
+        for (String name : params.keySet()) {
+            jsonAjax.addParam(new Param(name, params.get(name)));
+        }
+
 		if (action != null) {
 			jsonAjax.setMethod("post");
 			jsonAjax.setAction(getTagName(J_SBMT, action));
-
-			for (String name : params.keySet()) {						
-				jsonAjax.addParam(new Param(name, params.get(name)));
-			}
 
 			if (update == null && onError == null && onSuccess == null && onComplete == null) {
 				jsonAjax.setUrl(url);

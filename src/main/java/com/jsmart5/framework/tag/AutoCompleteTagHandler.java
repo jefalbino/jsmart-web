@@ -141,19 +141,20 @@ public final class AutoCompleteTagHandler extends TagHandler {
         Div inputGroup = null;
 
         JspTag parent = getParent();
-        if (label != null || parent instanceof FormTagHandler) {
+        if (label != null || parent instanceof FormTagHandler || parent instanceof RestTagHandler) {
             formGroup = new Div();
             formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 
+            String size = null;
             if (parent instanceof FormTagHandler) {
-                String size = ((FormTagHandler) parent).getSize();
-
-                if (Size.LARGE.equalsIgnoreCase(size)) {
-                    formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
-
-                } else if (Size.SMALL.equalsIgnoreCase(size)) {
-                    formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
-                }
+                size = ((FormTagHandler) parent).getSize();
+            } else if (parent instanceof RestTagHandler) {
+                size = ((RestTagHandler) parent).getSize();
+            }
+            if (Size.LARGE.equalsIgnoreCase(size)) {
+                formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
+            } else if (Size.SMALL.equalsIgnoreCase(size)) {
+                formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
             }
         }
 

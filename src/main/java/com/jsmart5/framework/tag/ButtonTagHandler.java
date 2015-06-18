@@ -301,13 +301,14 @@ public final class ButtonTagHandler extends TagHandler {
 		jsonAjax.setId(id);
 		jsonAjax.setTag("button");
 
+        // Params must be considered regardless the action for rest purpose
+        for (String name : params.keySet()) {
+            jsonAjax.addParam(new Param(name, params.get(name)));
+        }
+
 		if (action != null) {
 			jsonAjax.setMethod("post");
 			jsonAjax.setAction(getTagName(J_SBMT, action));
-
-			for (String name : params.keySet()) {						
-				jsonAjax.addParam(new Param(name, params.get(name)));
-			}
 		} else if (update != null) {
 			jsonAjax.setMethod("get");
 		}

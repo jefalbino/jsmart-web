@@ -94,6 +94,17 @@ public final class AjaxTagHandler extends TagHandler {
 		jsonAjax.setTimeout(timeout);
 		jsonAjax.setTag("ajax");
 
+        // Params must be considered regardless the action for rest purpose
+        if (!hasDelegate) {
+            for (String name : params.keySet()) {
+                jsonAjax.addParam(new Param(name, params.get(name)));
+            }
+        } else {
+            for (String name : params.keySet()) {
+                jsonAjax.addParam(new Param(name, null));
+            }
+        }
+
 		if (action != null) {
 			jsonAjax.setMethod("post");
 			jsonAjax.setAction(getTagName(J_SBMT, action));
@@ -107,18 +118,11 @@ public final class AjaxTagHandler extends TagHandler {
 				for (Object arg : args) {
 					jsonAjax.addArg(new Param(argName, arg));
 				}
-				for (String name : params.keySet()) {						
-					jsonAjax.addParam(new Param(name, params.get(name)));
-				}
 			} else {
-				
 				// Do not place parameter value on json ajax because it depends on each tag
 				// being delegate via parent tag
 				if (argName != null) {
 					jsonAjax.addArg(new Param(argName, null));
-				}
-				for (String name : params.keySet()) {						
-					jsonAjax.addParam(new Param(name, null));
 				}
 			}
 		} else if (update != null) {

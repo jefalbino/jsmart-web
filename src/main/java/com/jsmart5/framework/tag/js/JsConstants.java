@@ -37,15 +37,7 @@ public enum JsConstants {
 	JSMART_TABLEHEADER("Jsmart5.tableheader", "(%s);"),
 	JSMART_AUTOCOMPLETE("Jsmart5.autocplt", "(%s,e);"),
 	JSMART_AUTOCPLTSCROLL("Jsmart5.autocpltscroll", "(%s);"),
-
-	JSMART_LOAD("Jsmart5.load", "('%s');"),
-
-	JSMART_REST("Jsmart5.rest", "(%s,%s,%s);"),
-	JSMART_SWITCH("Jsmart5.xswitch", "('%s',%s,%s);"),
-	JSMART_SWITCH_RESET("Jsmart5.resetSwitch", "('%s');"),
-	JSMART_RANGE("Jsmart5.range", "('%s');"),
-	JSMART_TREE("Jsmart5.tree", "('%s');"),
-	JSMART_BUTTON_RESTARRAY("Jsmart5.buttonRestArray", "('%s','%s');");
+    JSMART_ASYNCEVENT("Jsmart5.asyncevent", "(%s);");
 
 	private String name;
 

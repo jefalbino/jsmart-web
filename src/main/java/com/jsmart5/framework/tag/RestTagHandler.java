@@ -19,236 +19,143 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
+import com.jsmart5.framework.tag.css.Bootstrap;
+import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Set;
 import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.type.ContentType;
+import com.jsmart5.framework.tag.type.Method;
+import com.jsmart5.framework.tag.type.Position;
+import com.jsmart5.framework.tag.type.Size;
 
 public final class RestTagHandler extends TagHandler {
 
-	private static final String CONTENT_TYPE_JSON = "json";
-
-	private static final String CONTENT_TYPE_XML = "xml";
-
-	private static final String POST = "post";
-
-	private static final String GET = "get";
-
-	private static final String DELETE = "delete";
-
-	private static final String PUT = "put";
-
-	private static final String HEAD = "head";
-
-	private static final String OPTIONS = "options";
-
-	private String label;
-
-	private Integer length;
-
-	private boolean ellipsize;
-
-	private String image;
-
 	private String endpoint;
+
+    private String method;
 
 	private String contentType;
 
-	private String rootContent;
-
-	private Boolean crossDomain;
-
-	private String jsonp;
+	private Boolean cors;
 
 	private String jsonpCallback;
 
-	private String method;
+    private String bodyRoot;
 
-	private Integer timeout;
+    private String position;
 
-	private String beforeAjax;
+    private String size;
 
-	private String onSuccess;
+    private List<Tag> beforeRest;
 
-	private String onError;
-
-	private Integer tabIndex;
-
-	private boolean disabled;
+    public RestTagHandler() {
+        beforeRest = new ArrayList<Tag>();
+    }
 
 	@Override
 	public void validateTag() throws JspException {
-		if (!method.equalsIgnoreCase(POST) && !method.equalsIgnoreCase(GET) && !method.equalsIgnoreCase(DELETE) && !method.equalsIgnoreCase(PUT)
-				&& !method.equalsIgnoreCase(HEAD) && !method.equalsIgnoreCase(OPTIONS)) {
-			throw new JspException("Invalid method for rest tag. Valid values are " + POST + ", " + GET + ", " + DELETE + ", " 
-				+ PUT  + ", " + HEAD  + ", " + OPTIONS);
+        if (method != null && !Method.validate(method)) {
+            throw InvalidAttributeException.fromPossibleValues("rest", "method", Method.getValues());
+        }
+		if (contentType != null && !ContentType.validate(contentType)) {
+            throw InvalidAttributeException.fromPossibleValues("rest", "contentType", ContentType.getValues());
 		}
-		if (contentType != null && !CONTENT_TYPE_JSON.equalsIgnoreCase(contentType) && !CONTENT_TYPE_XML.equalsIgnoreCase(contentType)) {
-			throw new JspException("Invalid contentType for rest tag. Valid values are " + CONTENT_TYPE_JSON + ", " + CONTENT_TYPE_XML);
-		}
-		if (timeout != null && timeout < 0) {
-			throw new JspException("Invalid timeout value for rest tag. The valid value must be greater or equal to 0"); 
-		}
-		if ((jsonp != null || jsonpCallback != null) && contentType != null && CONTENT_TYPE_XML.equalsIgnoreCase(contentType)) {
-			throw new JspException("Invalid contentType value for rest tag. The xml value for contentType attribute cannot be used together jsonp or jsonpCallback attributes");
-		}
+        if (position != null && !Position.validate(position)) {
+            throw InvalidAttributeException.fromPossibleValues("rest", "position", Position.getValues());
+        }
+        if (size != null && !Size.validateSmallLarge(size)) {
+            throw InvalidAttributeException.fromPossibleValues("rest", "size", Size.getSmallLargeValues());
+        }
 	}
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {
-//		StringBuilder builder = new StringBuilder();
-//
-//		// Look for parameters
-//		JspFragment body = getJspBody();
-//		if (body != null) {
-//			body.invoke(null);
-//		}
-//
-//		if (image != null) {
-//			builder.append(INPUT_TAG);
-//		} else {
-//			builder.append(OPEN_BUTTON_TAG);
-//		}
-//
-//		if (id != null) {
-//			builder.append("id=\"" + id + "\" ");
-//		}
-//		if (style != null) {
-//			builder.append("style=\"" + style + "\" ");
-//		}
-//		if (styleClass != null) {
-//			builder.append("class=\"" + styleClass + "\" ");
-//		} else {
-//			if (image != null) {
-//				appendClass(builder, CSS_BUTTON_IMAGE);
-//			} else {
-//				appendClass(builder, CSS_BUTTON);
-//			}
-//		}
-//
-//		if (tabIndex != null) {
-//			builder.append("tabindex=\"" + tabIndex + "\" ");
-//		}
-//
-//		if (disabled || isEditRowTagEnabled()) {
-//			builder.append("disabled=\"disabled\" ");
-//		}
-//
-//		if (image != null) {
-//			builder.append("type=\"image\" src=\"" + image + "\" ");
-//		} else {
-//			builder.append("type=\"button\" ");
-//		}
-//
-//		builder.append(ON_CLICK + JSMART_REST.format(async, "$(this)", timeout != null ? timeout : 0) + "return false;\" ");
-//
-//		JsonRest jsonRest = new JsonRest();
-//		jsonRest.setMethod(getTagValue(method));
-//		jsonRest.setEndpoint(WebUtils.decodePath((String) getTagValue(endpoint)));
-//		jsonRest.setContent(contentType != null ? contentType.toLowerCase() : CONTENT_TYPE_JSON);
-//
-//		if (!params.isEmpty()) {
-//			for (String name : params.keySet()) {						
-//				jsonRest.getParams().add(new JsonParam(name, params.get(name)));
-//			}
-//		}
-//		jsonRest.setBodyRoot(rootContent != null ? rootContent.trim() : null);
-//		jsonRest.setCrossdomain(crossDomain);
-//		jsonRest.setJsonp(jsonp != null ? jsonp.trim() : null);
-//		jsonRest.setJsonpcallback(jsonpCallback != null ? jsonpCallback.trim() : null);
-//		jsonRest.setBefore(beforeAjax);
-//		jsonRest.setSuccess(onSuccess);
-//		jsonRest.setError(onError);
-//
-//		builder.append("ajax=\"" + getJsonValue(jsonRest) + "\" ");
-//
-//		String val = (String) getTagValue(label);
-//
-//		if (val != null && length != null && length > 0 && val.length() >= length) {
-//			if (ellipsize && length > 4) {
-//				val = val.substring(0, length - 4) + " ...";
-//			} else {
-//				val = val.substring(0, length);
-//			}
-//		}
-//
-//		if (image != null) {
-//			builder.append((val != null ? "value=\"" + val + "\"" : "") + " />");
-//		} else {
-//			builder.append(">" + (val != null ? val : "") + CLOSE_BUTTON_TAG);
-//		}
-//
-//		printOutput(builder);
-		return null;
+
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
+
+        setRandomId("rest");
+
+        Div rest = new Div();
+        rest.addAttribute("id", id)
+            .addAttribute("role", "restrequest")
+            .addAttribute("endpoint", endpoint)
+            .addAttribute("content-type", contentType != null ? contentType.toLowerCase() : ContentType.JSON.toString().toLowerCase())
+            .addAttribute("method", method)
+            .addAttribute("cors", cors)
+            .addAttribute("callback", jsonpCallback)
+            .addAttribute("body-root", bodyRoot);
+
+        if (Position.HORIZONTAL.equalsIgnoreCase(position)) {
+            rest.addAttribute("class", Bootstrap.FORM_HORIZONTAL);
+        } else if (Position.INLINE.equalsIgnoreCase(position)) {
+            rest.addAttribute("class", Bootstrap.FORM_INLINE);
+        }
+
+        rest.addAttribute("class", styleClass)
+            .addAttribute("style", style)
+            .addText(sw.toString());
+
+        if (!beforeRest.isEmpty()) {
+            Set set = new Set();
+            for (Tag tag : beforeRest) {
+                set.addTag(tag);
+            }
+            set.addTag(rest);
+            return set;
+        }
+		return rest;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    void addBeforeRestTag(Tag tag) {
+        this.beforeRest.add(tag);
+    }
 
-	public void setLength(Integer length) {
-		this.length = length;
-	}
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
 
-	public void setEllipsize(boolean ellipsize) {
-		this.ellipsize = ellipsize;
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-	public void setImage(String image) {
-		this.image = image;
-	}
+    public void setCors(Boolean cors) {
+        this.cors = cors;
+    }
 
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
+    public void setJsonpCallback(String jsonpCallback) {
+        this.jsonpCallback = jsonpCallback;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-	public void setRootContent(String rootContent) {
-		this.rootContent = rootContent;
-	}
+    public void setBodyRoot(String bodyRoot) {
+        this.bodyRoot = bodyRoot;
+    }
 
-	public void setCrossDomain(Boolean crossDomain) {
-		this.crossDomain = crossDomain;
-	}
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
-	public void setJsonp(String jsonp) {
-		this.jsonp = jsonp;
-	}
+    String getSize() {
+        return size;
+    }
 
-	public void setJsonpCallback(String jsonpCallback) {
-		this.jsonpCallback = jsonpCallback;
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
-	}
-
-	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
-	}
-
-	public void setBeforeAjax(String beforeAjax) {
-		this.beforeAjax = beforeAjax;
-	}
-
-	public void setOnSuccess(String onSuccess) {
-		this.onSuccess = onSuccess;
-	}
-
-	public void setOnError(String onError) {
-		this.onError = onError;
-	}
-
-	public void setTabIndex(Integer tabIndex) {
-		this.tabIndex = tabIndex;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
-
+    public void setSize(String size) {
+        this.size = size;
+    }
 }

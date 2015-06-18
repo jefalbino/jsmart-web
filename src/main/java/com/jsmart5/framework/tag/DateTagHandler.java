@@ -104,17 +104,18 @@ public final class DateTagHandler extends TagHandler {
 		Div formGroup = new Div();
 		formGroup.addAttribute("class", Bootstrap.FORM_GROUP)
 			.addAttribute("class", JSmart5.DATE_FORM_GROUP);
-		
-		if (parent instanceof FormTagHandler) {
-			String size = ((FormTagHandler) parent).getSize();
 
-			if (Size.LARGE.equalsIgnoreCase(size)) {
-				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
-
-			} else if (Size.SMALL.equalsIgnoreCase(size)) {
-				formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
-			}
-		}
+        String size = null;
+        if (parent instanceof FormTagHandler) {
+            size = ((FormTagHandler) parent).getSize();
+        } else if (parent instanceof RestTagHandler) {
+            size = ((RestTagHandler) parent).getSize();
+        }
+        if (Size.LARGE.equalsIgnoreCase(size)) {
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP_LARGE);
+        } else if (Size.SMALL.equalsIgnoreCase(size)) {
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
+        }
 		
 		if (label != null) {
 			Label labelTag = new Label();

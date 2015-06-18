@@ -70,7 +70,7 @@ public final class TextAreaTagHandler extends TagHandler {
 		Div formGroup = null;
 
 		JspTag parent = getParent();
-		if (label != null || parent instanceof FormTagHandler) {
+		if (label != null || parent instanceof FormTagHandler || parent instanceof RestTagHandler) {
 			formGroup = new Div();
 			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 		}

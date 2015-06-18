@@ -556,7 +556,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 		return builder;
 	}
 
-	protected void appendScript(StringBuilder builder) {
+	protected void appendFunction(StringBuilder builder) {
 		if (builder != null) {
 			HttpServletRequest httpRequest = getRequest();
 			Script script = (Script) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);

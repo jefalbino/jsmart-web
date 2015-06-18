@@ -113,14 +113,6 @@ var Jsmart5 = (function() {
 		bind: function(map) {
 			doBind(map);
 		},
-
-		rest: function(el, timeout) {
-			doRest(el, timeout);
-		},
-		
-		buttonRestArray: function(id, op) {
-			doRestArray(id, op);
-		},
 			
 		validate: function(id) {
 			return doValidate(id);
@@ -184,6 +176,10 @@ var Jsmart5 = (function() {
 
 		autocpltscroll: function(map) {
 			doAutoCompleteScroll(map);
+		},
+
+		asyncevent: function(map) {
+		    doAsyncEvent(map);
 		}
 	};
 
@@ -198,12 +194,18 @@ var Jsmart5 = (function() {
 			setTimeout(function() {doAjax(map, el);}, timeout);
 
 		} else {
-			if (map.method) {
-				if (map.tag && (map.tag == 'select' || map.tag == 'link' || map.tag == 'button' 
-						|| map.tag == 'dropaction' || map.tag == 'function')) {
-					el = $(getId(map.id));
-				}
+		    if (map.tag && (map.tag == 'select' || map.tag == 'link' || map.tag == 'button'
+		                        || map.tag == 'dropaction' || map.tag == 'function')) {
+                el = $(getId(map.id));
+            }
 
+            var rest = el.closest('div[role="restrequest"]');
+            if (rest && rest.length > 0) {
+                doRest(map, rest);
+                return;
+            }
+
+			if (map.method) {
 				var options = getAjaxOptions(map);
 				var closestForm = el.closest('form');
 				var elParam = getElementParam(el, false);
@@ -260,98 +262,51 @@ var Jsmart5 = (function() {
 		}
 	}
 
-	function doRest(element, timeout) {
-		if ($(element) && $(element).attr('ajax')) {
-			if (timeout && timeout > 0) {
-				setTimeout(function() {doRest(element, null);}, timeout);
-			} else {
+	function doRest(map, rest) {
+		if (rest && rest.attr('role') == 'restrequest') {
 
-				var ajax = $.parseJSON($(element).attr('ajax'));
-				var queryParams = getRestQueryParams(element);
-	
-				var options = {
-					type: ajax.method,
-				    url: ajax.endpoint + (queryParams.length > 0 ? (ajax.endpoint.indexOf('?') >= 0 ? '&' : '?') + queryParams : ''),
-				    complete: function (xhr, status) {
-						jQuery.event.trigger('ajaxStop');
-					},
-					async: true
-				};
-	
-				// callback settings
-				if (ajax.before && ajax.before.length > 0) {
-					options.beforeSend = eval(ajax.before);
-				}
-				if (ajax.success && ajax.success.length > 0) {
-					options.success = eval(ajax.success);
-				}
-				if (ajax.error && ajax.error.length > 0) {
-					options.error = eval(ajax.error);
-				}
+            var queryParams = '';
+            var endpoint = rest.attr('endpoint');
 
-				options.dataType = ajax.content;
-				options.contentType = 'application/' + ajax.content;
+            var mappedParams = getAjaxParams(map);
+            for (var i = 0; i < mappedParams.length; i++) {
+                if (queryParams.length != 0) {
+                    queryParams += '&'
+                }
+                queryParams += mappedParams[i].name + '=' + mappedParams[i].value;
+            }
 
-				// jsonp settings
-				if (ajax.crossdomain) {
-					options.crossDomain = ajax.crossdomain;
-				}
-				if (options.crossDomain || (ajax.jsonp && ajax.jsonp.length > 0) || (ajax.jsonpcallback && ajax.jsonpcallback.length > 0)) {
-					options.dataType = 'jsonp';
-				}
-				if (ajax.jsonp && ajax.jsonp.length > 0) {
-					options.jsonp = ajax.jsonp;
-				}
-				if (ajax.jsonpcallback && ajax.jsonpcallback.length > 0) {
-					options.jsonpCallback = ajax.jsonpcallback;
-				}
+            var options = getAjaxOptions(map);
+            options.type = rest.attr('method');
+            options.url = endpoint + (queryParams.length > 0 ? (endpoint.indexOf('?') >= 0 ? '&' : '?') + queryParams : '');
+            options.dataType = rest.attr('content-type');
+            options.contentType = 'application/' + rest.attr('content-type');
 
-				// body settings
-				if (ajax.method != 'get' && ajax.method != 'head') {
-					if (ajax.content == 'json') {
-						options.data = getRestJsonBody(element, ajax.bodyRoot);
+            // jsonp settings
+            if (rest.attr('cors')) {
+                options.crossDomain = rest.attr('cors') === 'true';
+            }
+            if (options.crossDomain || rest.attr('callback')) {
+                options.dataType = 'jsonp';
+            }
+            if (rest.attr('callback')) {
+                options.jsonp = false;
+                options.jsonpCallback = rest.attr('callback');
+            } else if (options.crossDomain) {
+                options.jsonp = true;
+            }
 
-					} else if (ajax.content == 'xml') {
-						options.data = getRestXmlBody(element, ajax.bodyRoot);
-					}
-				}
+            // body settings
+            if (rest.attr('method') != 'get' && rest.attr('method') != 'head') {
+                if (rest.attr('content-type') == 'json') {
+                    options.data = getRestJsonBody(rest);
 
-				$.ajax(options);
-			}
-		}
-	}
-
-	function doRestArray(id, operation) {
-		if (id && id.length > 0) {
-			var arrayElement = $(getId(id));
-			var arrayLength = arrayElement.parent().find('[id^="' + id + '"]').length;
-
-			if (operation == 'add') {
-				var maxItems = null;
-				if (arrayElement.attr('maxItems')) {
-					maxItems = parseInt(arrayElement.attr('maxItems'));
-				}
-
-				if (!maxItems || arrayLength < maxItems) {
-					var cloneElement = arrayElement.clone();
-					cloneElement.attr('id', id + '_' + arrayLength);
-
-					cloneElement.find('*[id]').each(function(index) {
-						$(this).attr('id', $(this).attr('id') + '_' + arrayLength);
-					});
-
-					if (arrayLength == 1) {
-						arrayElement.after(cloneElement);
-					} else {
-						$(getId(id + '_' + (arrayLength - 1))).after(cloneElement);
-					}
-				}
-			} else if (operation == 'remove') {
-				if (arrayLength > 1) {
-					$(getId(id + '_' + (arrayLength - 1))).remove();
-				}
-			}
-		}
+                } else if (rest.attr('content-type') == 'xml') {
+                    options.data = getRestXmlBody(rest);
+                }
+            }
+            $.ajax(options);
+        }
 	}
 
 	function doList(li, map) {
@@ -1205,92 +1160,65 @@ var Jsmart5 = (function() {
 		});
 	}
 
+	function doAsyncEvent(map) {
+	    if (map) {
+	        if (typeof(EventSource) === "undefined") {
+                showOnConsole('Your browser do not support EventSource for async events');
+                return;
+            }
+
+	        var source = null;
+	        if (map.credentials) {
+	            source = new EventSource(map.path, map.credentials);
+	        } else {
+	            source = new EventSource(map.path);
+	        }
+
+            for (var i = 0; i < map.events.length; i++) {
+                if (map.events[i].execute && map.events[i].execute.length > 0) {
+                    var eventListener = window[map.events[i].execute];
+
+                    if (typeof eventListener === 'function') {
+                        source.addEventListener(map.events[i].event, eventListener,
+                                map.events[i].capture != null ? map.events[i].capture : false);
+                    } else {
+                        showOnConsole('Found error on async [' + map.id + ']. The [' + map.events[i].execute + '] execute attribute is '
+                                        + 'not a function. Please provide a function with event parameter');
+                    }
+                }
+            }
+
+            if (map.start && map.start.length > 0) {
+                var onStart = window[map.start];
+                if (typeof onStart === 'function') {
+                    onStart(source, map.id);
+                } else {
+                    showOnConsole('Found error on async [' + map.id + ']. The [' + map.start + ' is not a function');
+                }
+            }
+	    }
+	}
+
 	/******************************************************
 	 * REST FUNCTIONS
 	 ******************************************************/
-	
-	function getRestJsonBody(element, bodyRoot) {
-		var json = '';
-		var closestForm = $(element).closest('form');
 
-		if (closestForm && closestForm.length > 0) {
-			if (!doValidate($(closestForm).attr('id'))) {
-				return;
-			}
+	function getRestJsonBody(rest) {
+        if (!doValidate(rest.attr('id'))) {
+            return;
+        }
 
-			var restGroups = $(closestForm).find('div[type="restarray"]');
+        var json = '';
+        var root = rest.attr('body-root');
 
-			if (restGroups && restGroups.length > 0) {
-				var restMap = {};
-				var initGroup = false;
+        if (root && root.length > 0) {
+            json += '{\"' + root + '\":';
+        }
+        json += getRestJsonItem(rest);
 
-				restGroups.each(function(index) {
-
-					var groupName = $(this).attr('rest');
-					if (!groupName || groupName.length == 0) {
-						groupName = 'none';
-					} else {
-						initGroup = true;
-					}
-
-					if (!restMap[groupName]) {
-						restMap[groupName] = '';
-					}
-					restMap[groupName] += getRestJsonItem($(this)) + ',';
-				});
-
-				if (bodyRoot && bodyRoot.length > 0) {
-					if (initGroup) {
-						json = '{\"' + bodyRoot + '\":{';
-					} else {
-						json = '{\"' + bodyRoot + '\":[';
-					}
-				} else {
-					if (initGroup) {
-						json = '{';
-					} else {
-						json = '[';
-					}
-				}
-
-				for (var groupName in restMap) {
-					var item = restMap[groupName];
-					if (groupName != 'none') {
-						json += '\"' + groupName + '\":[' + item.substring(0, item.length - 1) + '],';
-					} else {
-						json += item.substring(0, item.length - 1) + ',';
-					}
-				}
-				
-				if (json.length > 1) {
-					json = json.substring(0, json.length - 1);
-				}
-
-				if (bodyRoot && bodyRoot.length > 0) {
-					if (initGroup) {
-						json += '}}';
-					} else {
-						json += ']}';
-					}
-				} else {
-					if (initGroup) {
-						json += '}';
-					} else {
-						json += ']';
-					}
-				}
-			} else {
-				if (bodyRoot && bodyRoot.length > 0) {
-					json += '{\"' + bodyRoot + '\":';
-				}
-
-				json = getRestJsonItem(closestForm);
-				
-				if (bodyRoot && bodyRoot.length > 0) {
-					json += '}';
-				}
-			}
-		}
+        if (root && root.length > 0) {
+            json += '}';
+        }
 		return json;
 	}
 
@@ -1334,43 +1262,27 @@ var Jsmart5 = (function() {
 		if (json.length > 1) {
 			json = json.substring(0, json.length - 1);
 		}
-
 		return json + '}';
 	}
 
-	function getRestXmlBody(element, bodyRoot) {
+	function getRestXmlBody(rest) {
+	    if (!doValidate(rest.attr('id'))) {
+            return;
+        }
+
 		var xml = '<?xml version="1.0" encoding="UTF-8" ?>';
-		
-		if (bodyRoot && bodyRoot.length > 0) {
-			xml += '<' + bodyRoot + '>';
+		var root = rest.attr('body-root');
+
+		if (root && root.length > 0) {
+			xml += '<' + root + '>';
 		} else {
 			xml += '<root>';
 		}
 
-		var closestForm = $(element).closest('form');
+        xml += getRestXmlItem(rest);
 
-		if (closestForm && closestForm.length > 0) {
-			if (!doValidate($(closestForm).attr('id'))) {
-				return;
-			}
-
-			var restGroups = $(closestForm).find('div[type="restarray"]');
-
-			if (restGroups && restGroups.length > 0) {
-				restGroups.each(function(index) {
-					var groupName = $(this).attr('rest');
-					if (!groupName || groupName.length == 0) {
-						groupName = 'none';
-					}
-					xml += '<' + groupName + '>' + getRestXmlItem($(this)) + '</' + groupName + '>';
-				});
-			} else {
-				xml += getRestXmlItem(closestForm);
-			}
-		}
-
-		if (bodyRoot && bodyRoot.length > 0) {
-			xml += '</' + bodyRoot + '>';
+		if (root && root.length > 0) {
+			xml += '</' + root + '>';
 		} else {
 			xml += '</root>';
 		}
@@ -1410,19 +1322,7 @@ var Jsmart5 = (function() {
 				}
 			}
 		});
-
 		return xml;
-	}
-
-	function getRestQueryParams(element) {
-		var queryParams = '';
-		var ajax = $.parseJSON($(element).attr('ajax'));
-		if (ajax.params) {
-			for (var i = 0; i < ajax.params.length; i++) {
-				queryParams += ajax.params[i].name + '=' + ajax.params[i].value + '&';
-			}
-		}
-		return queryParams.length > 0 ? queryParams.substring(0, queryParams.length - 1) : queryParams;
 	}
 	
 	/******************************************************
