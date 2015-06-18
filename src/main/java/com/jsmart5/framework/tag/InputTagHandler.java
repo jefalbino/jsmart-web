@@ -164,8 +164,10 @@ public final class InputTagHandler extends TagHandler {
 			}
 		}
 
+        String name = getTagName(J_TAG, value);
+
 		Input input = new Input();
-		input.addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+		input.addAttribute("name", name + (readOnly ? EL_PARAM_READ_ONLY : ""))
 			 .addAttribute("type", type != null ? type : Type.TEXT.name().toLowerCase())
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
@@ -208,7 +210,7 @@ public final class InputTagHandler extends TagHandler {
 		}
 
         appendValidator(input);
-		appendRest(input);
+		appendRest(input, name);
 		appendEvent(input);
 
 		if (inputGroup != null) {

@@ -265,6 +265,10 @@ var Jsmart5 = (function() {
 	function doRest(map, rest) {
 		if (rest && rest.attr('role') == 'restrequest') {
 
+            if (!doValidate(rest.attr('id'))) {
+                return;
+            }
+
             var queryParams = '';
             var endpoint = rest.attr('endpoint');
 
@@ -1204,10 +1208,6 @@ var Jsmart5 = (function() {
 	 ******************************************************/
 
 	function getRestJsonBody(rest) {
-        if (!doValidate(rest.attr('id'))) {
-            return;
-        }
-
         var json = '';
         var root = rest.attr('body-root');
 
@@ -1266,10 +1266,6 @@ var Jsmart5 = (function() {
 	}
 
 	function getRestXmlBody(rest) {
-	    if (!doValidate(rest.attr('id'))) {
-            return;
-        }
-
 		var xml = '<?xml version="1.0" encoding="UTF-8" ?>';
 		var root = rest.attr('body-root');
 
@@ -1653,7 +1649,7 @@ var Jsmart5 = (function() {
 			validateElement.find('*[vldt-req]').each(function(index) {
 				var name = $(this).attr("name");
 
-				if (name && name.indexOf(tagInit) >= 0) {
+				if (name) {
 					var text = $(this).attr('vldt-text');
 					var look = 'has-' + $(this).attr('vldt-look');
 					var regex = $(this).attr('vldt-regex');
@@ -1673,7 +1669,12 @@ var Jsmart5 = (function() {
 						if (!contains(checkgroups, name)) {
 							checkgroups[checkgroups.length] = name;
 
-							$(this).closest('div[checkgroup]').removeClass(look);
+                            // If checkgroup has label or it is inside rest or form we need to use the form-group class
+							if ($(this).closest('div.form-group').length > 0) {
+							    $(this).closest('div.form-group').removeClass(look);
+							} else {
+							    $(this).closest('div[checkgroup]').removeClass(look);
+							}
 	
 							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
 								
@@ -1688,7 +1689,12 @@ var Jsmart5 = (function() {
 						if (!contains(checkgroups, name)) {
 							checkgroups[checkgroups.length] = name;
 
-							$(this).closest('div[radiogroup]').removeClass(look);
+                            // If radiogroup has label or it is inside rest or form we need to use the form-group class
+                            if ($(this).closest('div.form-group').length > 0) {
+                                $(this).closest('div.form-group').removeClass(look);
+                            } else {
+                                $(this).closest('div[radiogroup]').removeClass(look);
+                            }
 
 							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
 								
@@ -1789,7 +1795,13 @@ var Jsmart5 = (function() {
 	
 	function addValidate(element, text, type, look, textLook) {
 		if (type == 'radiogroup' || type == 'checkgroup') {
-			element.closest('div[' + type + ']').addClass(look);
+		    // If radiogroup or checkgroup has label or it is inside rest or form we need to use the form-group class
+		    if (element.closest('div.form-group').length > 0) {
+		        element.closest('div.form-group').addClass(look);
+		    } else {
+			    element.closest('div[' + type + ']').addClass(look);
+			}
+
 			if (text && text.length > 0) {
 				element.closest('div[' + type + ']').after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
 			}

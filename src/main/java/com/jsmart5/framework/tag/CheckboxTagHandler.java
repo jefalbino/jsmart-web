@@ -72,9 +72,11 @@ public final class CheckboxTagHandler extends TagHandler {
 		
 		setRandomId("checkbox");
 
+        String name = getTagName(J_TAG, value);
+
 		Input input = new Input();
 		input.addAttribute("type", "checkbox")
-			.addAttribute("name", getTagName(J_TAG, value))
+			.addAttribute("name", name)
 			.addAttribute("tabindex", tabIndex)
 			.addAttribute("disabled", disabled ? "disabled" : null);
 		
@@ -92,7 +94,7 @@ public final class CheckboxTagHandler extends TagHandler {
 			.addTag(lb);
 
 		appendValidator(input);
-		appendRest(input);
+		appendRest(input, name);
 		appendEvent(input);
 
 		appendTooltip(div);

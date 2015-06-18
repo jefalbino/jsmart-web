@@ -46,7 +46,6 @@ import com.jsmart5.framework.adapter.ListAdapter;
 import com.jsmart5.framework.adapter.TableAdapter;
 
 import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.filter.WebFilter;
 import com.jsmart5.framework.json.Scroll;
 
 import com.jsmart5.framework.util.WebText;

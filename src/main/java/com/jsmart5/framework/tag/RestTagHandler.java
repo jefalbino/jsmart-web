@@ -91,12 +91,12 @@ public final class RestTagHandler extends TagHandler {
         Div rest = new Div();
         rest.addAttribute("id", id)
             .addAttribute("role", "restrequest")
-            .addAttribute("endpoint", endpoint)
+            .addAttribute("endpoint", getTagValue(endpoint))
             .addAttribute("content-type", contentType != null ? contentType.toLowerCase() : ContentType.JSON.toString().toLowerCase())
-            .addAttribute("method", method)
+            .addAttribute("method", getTagValue(method))
             .addAttribute("cors", cors)
             .addAttribute("callback", jsonpCallback)
-            .addAttribute("body-root", bodyRoot);
+            .addAttribute("body-root", getTagValue(bodyRoot));
 
         if (Position.HORIZONTAL.equalsIgnoreCase(position)) {
             rest.addAttribute("class", Bootstrap.FORM_HORIZONTAL);

@@ -170,7 +170,7 @@ public final class UploadTagHandler extends TagHandler {
 		}
 		
 		appendValidator(input);
-		appendRest(input);
+		appendRest(input, name);
 		appendEvent(input);
 		
 		if (inputGroup != null) {

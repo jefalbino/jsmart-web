@@ -18,40 +18,37 @@
 
 package com.jsmart5.framework.manager;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 public abstract class WebPathRequest {
 
     static enum Method {
         GET, POST, PUT, OPTIONS, DELETE, HEAD, TRACE
     }
 
-    public void get(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void get(final PathRequestHandler requestHandler) throws Exception {
         // DO NOTHING
     }
 
-    public void post(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void post(final PathRequestHandler requestHandler) throws Exception {
         // DO NOTHING
     }
 
-    public void put(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void put(final PathRequestHandler requestHandler) throws Exception {
         // DO NOTHING
     }
 
-    public void options(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void options(final PathRequestHandler requestHandler) throws Exception {
         // DO NOTHING
     }
 
-    public void delete(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void delete(final PathRequestHandler requestHandler) throws Exception {
         // DO NOTHING
     }
 
-    public void head(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void head(final PathRequestHandler requestHandler) throws Exception {
         // DO NOTHING
     }
 
-    public void trace(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public void trace(final PathRequestHandler requestHandler) throws Exception {
         // DO NOTHING
     }
 }

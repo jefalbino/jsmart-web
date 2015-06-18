@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.filter;
+package com.jsmart5.framework.manager;
 
 import java.io.*;
 import java.util.Iterator;
@@ -51,7 +51,6 @@ import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import com.jsmart5.framework.config.HtmlCompress;
 import com.jsmart5.framework.json.Headers;
 import com.jsmart5.framework.json.Resources;
-import com.jsmart5.framework.manager.WebContext;
 import com.jsmart5.framework.tag.html.Head;
 import com.jsmart5.framework.tag.html.DocScript;
 import com.jsmart5.framework.tag.html.Script;

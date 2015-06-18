@@ -148,10 +148,12 @@ public final class SelectTagHandler extends TagHandler {
 			}
 		}
 
+        String name = getTagName((multiple ? J_ARRAY : J_TAG), selectValues);
+
 		Select select = new Select();
 		select.addAttribute("id", id)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
-			 .addAttribute("name", getTagName((multiple ? J_ARRAY : J_TAG), selectValues))
+			 .addAttribute("name", name)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
 			 .addAttribute("multiple", multiple ? "multiple" : null);
@@ -172,7 +174,7 @@ public final class SelectTagHandler extends TagHandler {
 		}
 
 		appendValidator(select);
-		appendRest(select);
+		appendRest(select, name);
 		appendEvent(select);
 
 		if (inputGroup != null) {

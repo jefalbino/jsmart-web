@@ -170,3 +170,8 @@
     position: absolute;
     z-index: 10;
 }
+
+.js5-check-group-in-column div.checkbox, .js5-radio-group-in-column div.radio {
+    margin-top: 0px;
+}
+

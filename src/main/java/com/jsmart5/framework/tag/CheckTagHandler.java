@@ -102,12 +102,13 @@ public final class CheckTagHandler extends TagHandler {
 
 		String name = getTagName((type == null || type.equals(RADIO) ? J_TAG : J_ARRAY), 
 				this.name != null ? this.name : (value != null ? value.toString() : null));
+
 		if (name != null) {
 			input.addAttribute("name", name);
 		}
 
 		appendValidator(input);
-		appendRest(input);
+		appendRest(input, this.name);
 		appendEvent(input);
 
 		Object object = getTagValue(value);

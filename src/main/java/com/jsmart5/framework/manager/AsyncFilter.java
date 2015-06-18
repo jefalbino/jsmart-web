@@ -1,4 +1,4 @@
-package com.jsmart5.framework.filter;
+package com.jsmart5.framework.manager;
 
 import com.jsmart5.framework.manager.WebContext;
 

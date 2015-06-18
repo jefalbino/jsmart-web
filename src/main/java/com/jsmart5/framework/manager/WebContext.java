@@ -91,11 +91,11 @@ public final class WebContext implements Serializable {
 		return THREADS.get(Thread.currentThread());
 	}
 
-	public static final void initCurrentInstance(final HttpServletRequest request, final HttpServletResponse response) {
+	static final void initCurrentInstance(final HttpServletRequest request, final HttpServletResponse response) {
 		THREADS.put(Thread.currentThread(), new WebContext(request, response));
 	}
 
-	public static final void closeCurrentInstance() {
+	static final void closeCurrentInstance() {
 		THREADS.remove(Thread.currentThread()).close();
 	}
 

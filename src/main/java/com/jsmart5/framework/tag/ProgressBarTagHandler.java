@@ -181,7 +181,7 @@ public final class ProgressBarTagHandler extends TagHandler {
 				.addAttribute("name", name)
 				.addAttribute("value", intValue);
 			
-			appendRest(hidden);
+			appendRest(hidden, name);
 		}
 
 		appendAjax(id);

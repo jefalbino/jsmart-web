@@ -181,8 +181,10 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		}
 		formGroup.addTag(inputGroup);
 
+        String name = getTagName(J_CAPTCHA, fakeTagName(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME));
+
 		Input input = new Input();
-		input.addAttribute("name", getTagName(J_CAPTCHA, fakeTagName(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME)))
+		input.addAttribute("name", name)
 			 .addAttribute("type", Type.TEXT.name().toLowerCase())
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
@@ -204,7 +206,9 @@ public final class ReCaptchaTagHandler extends TagHandler {
 			.addAttribute("class", styleClass);
 		
 		appendValidator(input);
-		appendRest(input);
+
+        // Do not use name here
+		appendRest(input, null);
 		appendEvent(input);
 
 		inputGroup.addTag(input);

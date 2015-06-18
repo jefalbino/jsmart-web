@@ -172,7 +172,7 @@ public final class ContainerListener implements ServletContextListener {
 	        }
 
 	        // WebFilter -> @WebFilter(servletNames = {"WebServlet"})
-	        Filter webFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.WebFilter"));
+	        Filter webFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.WebFilter"));
 	        FilterRegistration.Dynamic webFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("WebFilter", webFilter);
 
 	        webFilterReg.setAsyncSupported(true);
@@ -189,7 +189,7 @@ public final class ContainerListener implements ServletContextListener {
 
             // AsyncFilter -> @WebFilter(servletNames = {"WebServlet"})
             // Filter used case AsyncContext is dispatched internally by AsyncBean implementation
-            Filter asyncFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.AsyncFilter"));
+            Filter asyncFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.AsyncFilter"));
             FilterRegistration.Dynamic asyncFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("AsyncFilter", asyncFilter);
 
             asyncFilterReg.setAsyncSupported(true);

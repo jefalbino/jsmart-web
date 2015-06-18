@@ -55,6 +55,10 @@ public final class JSmart5 {
 	public static final String TABLE_SORT_BY = "js5-table-sort-by";
 
     public static final String AUTO_COMPLETE_REFRESH = "js5-auto-complete-refresh";
+
+    public static final String CHECK_GROUP_IN_COLUMN = "js5-check-group-in-column";
+
+    public static final String RADIO_GROUP_IN_COLUMN = "js5-radio-group-in-column";
 	
 	private JSmart5() {
 		// DO NOTHING

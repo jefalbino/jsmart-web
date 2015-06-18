@@ -24,77 +24,88 @@ import java.util.List;
 import java.util.Map;
 
 public class Tag {
-	
-	protected String name;
 
-	protected Map<String, Object> attributes;
+    protected String name;
 
-	protected List<Object> objects;
+    protected Map<String, Object> attributes;
 
-	public Tag(String name) {
-		this.name = name;
-		this.attributes = new HashMap<String, Object>();
-		this.objects = new ArrayList<Object>();
-	}
+    protected List<Object> objects;
 
-	public Tag addAttribute(String name, Object value) {
-		if (value != null) {
-			Object oldValue = attributes.get(name);
-			if (oldValue == null) {
-				attributes.put(name, value);
-			} else {
-				attributes.put(name, oldValue + " " + value);
-			}
-		}
-		return this;
-	}
+    public Tag(String name) {
+        this.name = name;
+        this.attributes = new HashMap<String, Object>();
+        this.objects = new ArrayList<Object>();
+    }
 
-	public Tag addUniqueAttribute(String name, Object value) {
-		if (value != null) {
-			if (attributes.get(name) == null) {
-				attributes.put(name, value);
-			}
-		}
-		return this;
-	}
+    public Tag addAttribute(String name, Object value) {
+        if (value != null) {
+            Object oldValue = attributes.get(name);
+            if (oldValue == null) {
+                attributes.put(name, value);
+            } else {
+                attributes.put(name, oldValue + " " + value);
+            }
+        }
+        return this;
+    }
 
-	public Tag addText(Object text) {
-		if (text != null) {
-			this.objects.add(text.toString());
-		}
-		return this;
-	}
+    public Object getAttribute(String name) {
+        return attributes.get(name);
+    }
 
-	public Tag addTag(Tag tag) {
-		if (tag != null) {
-			this.objects.add(tag);
-		}
-		return this;
-	}
-	
-	public Object getObject(int index) {
-		return this.objects.get(index);
-	}
+    public Tag setAttribute(String name, Object value) {
+        if (value != null) {
+            attributes.put(name, value);
+        }
+        return this;
+    }
 
-	public StringBuilder getHtml() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<").append(name);
+    public Tag addUniqueAttribute(String name, Object value) {
+        if (value != null) {
+            if (attributes.get(name) == null) {
+                attributes.put(name, value);
+            }
+        }
+        return this;
+    }
 
-		for (String attr : attributes.keySet()) {
-			builder.append(" ").append(attr).append("=\"").append(attributes.get(attr)).append("\"");
-		}
-		builder.append(">");
+    public Tag addText(Object text) {
+        if (text != null) {
+            this.objects.add(text.toString());
+        }
+        return this;
+    }
 
-		for (Object obj : objects) {
-			if (obj instanceof Tag) {
-				builder.append(((Tag) obj).getHtml());
-			} else {
-				builder.append(obj);
-			}
-		}
+    public Tag addTag(Tag tag) {
+        if (tag != null) {
+            this.objects.add(tag);
+        }
+        return this;
+    }
 
-		builder.append("</").append(name).append(">");
-		return builder;
-	}
+    public Object getObject(int index) {
+        return this.objects.get(index);
+    }
+
+    public StringBuilder getHtml() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<").append(name);
+
+        for (String attr : attributes.keySet()) {
+            builder.append(" ").append(attr).append("=\"").append(attributes.get(attr)).append("\"");
+        }
+        builder.append(">");
+
+        for (Object obj : objects) {
+            if (obj instanceof Tag) {
+                builder.append(((Tag) obj).getHtml());
+            } else {
+                builder.append(obj);
+            }
+        }
+
+        builder.append("</").append(name).append(">");
+        return builder;
+    }
 
 }

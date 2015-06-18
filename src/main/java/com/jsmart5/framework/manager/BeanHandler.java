@@ -87,6 +87,10 @@ public enum BeanHandler {
 
     private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
 
+    private static final Pattern PATH_BEAN_PARAM_PATTERN = Pattern.compile("\\{([^/]*)\\}");
+
+    private static final Pattern PATH_BEAN_ALL_PATTERN = Pattern.compile("(.*)/\\*");
+
     Map<String, Class<?>> webBeans;
 
     Map<String, Class<?>> authBeans;
@@ -373,23 +377,23 @@ public enum BeanHandler {
     }
 
     Object instantiatePathBean(String path) throws Exception {
-        Object bean = null;
-        if (pathBeans.containsKey(path)) {
-            Class<?> clazz = pathBeans.get(path);
-            bean = clazz.newInstance();
+        Class<?> clazz = pathBeans.get(path);
+        if (clazz != null) {
+            Object bean = clazz.newInstance();
             executeInjection(bean);
+            return bean;
         }
-        return bean;
+        return null;
     }
 
     Object instantiateAsyncBean(String path) throws Exception {
-        Object bean = null;
-        if (asyncBeans.containsKey(path)) {
-            Class<?> clazz = asyncBeans.get(path);
-            bean = clazz.newInstance();
+        Class<?> clazz = asyncBeans.get(path);
+        if (clazz != null) {
+            Object bean = clazz.newInstance();
             executeInjection(bean);
+            return bean;
         }
-        return bean;
+        return null;
     }
 
     void executeInjection(Object bean) {
@@ -975,7 +979,19 @@ public enum BeanHandler {
 
             setBeanFields(clazz);
             setBeanMethods(clazz);
-            pathBeans.put(pathBean.path(), clazz);
+
+            String path = pathBean.path();
+
+            Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
+            if (matcher.find()) {
+                path = matcher.group(1);
+            } else {
+                matcher = PATH_BEAN_PARAM_PATTERN.matcher(path);
+                if (matcher.find()) {
+                    path = path.substring(0, matcher.start() -1);
+                }
+            }
+            pathBeans.put(path, clazz);
         }
 
         annotations = reflections.getTypesAnnotatedWith(AsyncBean.class);
@@ -990,7 +1006,13 @@ public enum BeanHandler {
 
             setBeanFields(clazz);
             setBeanMethods(clazz);
-            asyncBeans.put(asyncBean.asyncPath(), clazz);
+
+            String path = asyncBean.asyncPath();
+            Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
+            if (matcher.find()) {
+                path = matcher.group(1);
+            }
+            asyncBeans.put(path, clazz);
         }
 
         annotations = reflections.getTypesAnnotatedWith(SmartServlet.class);

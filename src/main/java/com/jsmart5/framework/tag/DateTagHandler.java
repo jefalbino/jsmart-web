@@ -155,9 +155,11 @@ public final class DateTagHandler extends TagHandler {
 			}
 		}
 
+        String name = getTagName(J_DATE, value);
+
 		Input hidden = new Input();
 		hidden.addAttribute("id", id + (inputGroup != null ? "-wrap-date" : "-date"))
-			.addAttribute("name", getTagName(J_DATE, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+			.addAttribute("name", name + (readOnly ? EL_PARAM_READ_ONLY : ""))
 			.addAttribute("type", Type.HIDDEN.name().toLowerCase());
 
 		Input input = new Input();
@@ -196,7 +198,7 @@ public final class DateTagHandler extends TagHandler {
 		hidden.addAttribute("value", dateValue);
 
 		appendValidator(input);
-		appendRest(input);
+		appendRest(input, name);
 		appendEvent(input);
 
 		if (inputGroup != null) {

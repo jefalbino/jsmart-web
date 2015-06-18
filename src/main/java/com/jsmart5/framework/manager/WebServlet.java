@@ -264,19 +264,19 @@ public final class WebServlet extends HttpServlet {
 
                 try {
                     if (GET.equals(method)) {
-                        bean.get(request, response);
+                        bean.get(new PathRequestHandler(request, response));
                     } else if (POST.equals(method)) {
-                        bean.post(request, response);
+                        bean.post(new PathRequestHandler(request, response));
                     } else if (PUT.equals(method)) {
-                        bean.put(request, response);
+                        bean.put(new PathRequestHandler(request, response));
                     } else if (OPTIONS.equals(method)) {
-                        bean.options(request, response);
+                        bean.options(new PathRequestHandler(request, response));
                     } else if (DELETE.equals(method)) {
-                        bean.delete(request, response);
+                        bean.delete(new PathRequestHandler(request, response));
                     } else if (HEAD.equals(method)) {
-                        bean.head(request, response);
+                        bean.head(new PathRequestHandler(request, response));
                     } else if (TRACE.equals(method)) {
-                        bean.trace(request, response);
+                        bean.trace(new PathRequestHandler(request, response));
                     }
                     return true;
 

@@ -83,8 +83,10 @@ public final class TextAreaTagHandler extends TagHandler {
 			formGroup.addTag(labelTag);
 		}
 
+        String name = getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : "");
+
 		TextArea textArea = new TextArea();
-		textArea.addAttribute("name", getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : ""))
+		textArea.addAttribute("name", name)
 			 .addAttribute("style", style)
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("rows", rows)
@@ -102,7 +104,7 @@ public final class TextAreaTagHandler extends TagHandler {
 		textArea.addAttribute("class", styleClass);
 
 		appendValidator(textArea);
-		appendRest(textArea);
+		appendRest(textArea, name);
 		appendEvent(textArea);
 		
 		appendTooltip(textArea);
