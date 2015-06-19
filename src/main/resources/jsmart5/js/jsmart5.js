@@ -283,7 +283,6 @@ var Jsmart5 = (function() {
             var options = getAjaxOptions(map);
             options.type = rest.attr('method');
             options.url = endpoint + (queryParams.length > 0 ? (endpoint.indexOf('?') >= 0 ? '&' : '?') + queryParams : '');
-            options.dataType = rest.attr('content-type');
             options.contentType = 'application/' + rest.attr('content-type');
 
             // jsonp settings
@@ -1359,7 +1358,8 @@ var Jsmart5 = (function() {
 			error: function (xhr, status, error) {
 			    doExecute(map.errorHandler, xhr, status, error);
 				doExecute(map.error, xhr, status, error);
-				showOnConsole(xhr.responseText);
+				showOnConsole(status);
+				showOnConsole(error);
 			},
 			complete: function (xhr, status) {
 				removeLoadIcon(map);

@@ -122,13 +122,20 @@ public final class WebFilter implements Filter {
         // Close bean context based on current thread instance
         WebContext.closeCurrentInstance();
 
-        // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide
-        // HTML via framework
-        if (httpRequest.isAsyncStarted()
-                || httpRequest.getAttribute(Constants.REQUEST_WEB_PATH_ATTR) != null) {
+        // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide HTML via framework
+        if (httpRequest.isAsyncStarted() || httpRequest.getAttribute(Constants.REQUEST_WEB_PATH_ATTR) != null) {
+
+            // Generate response value after flushing the response wrapper buffer
+            responseWrapper.flushBuffer();
+            String responseVal = responseWrapper.toString();
 
             // Close current outputStream on responseWrapper
             responseWrapper.close();
+
+            // Write the response value on real response object
+            if (!httpResponse.isCommitted()) {
+                httpResponse.getWriter().write(responseVal);
+            }
 
             // Case internal server error
             if (throwable != null) {
@@ -143,7 +150,7 @@ public final class WebFilter implements Filter {
         // Add Ajax headers to control redirect and reset
         addAjaxHeaders(httpRequest, responseWrapper);
 
-        // Generate HTML after flushing the response buffer
+        // Generate HTML after flushing the response wrapper buffer
         responseWrapper.flushBuffer();
         String html = getCompleteHtml(httpRequest, responseWrapper);
 

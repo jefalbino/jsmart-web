@@ -24,9 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +37,11 @@ import java.util.regex.Pattern;
 
 public class PathRequestHandler {
 
-    private static final Pattern PATH_PARAM_PATTERN = Pattern.compile("\\{([^/]*)\\}");
+    private static final Pattern PATH_PATTERN = Pattern.compile("(/[^?#/]*)");
 
     private static final Gson gson = new Gson();
+
+    private final String pathPattern;
 
     private final HttpServletRequest request;
 
@@ -47,7 +51,8 @@ public class PathRequestHandler {
 
     private Map<String, String> queryParams;
 
-    PathRequestHandler(final HttpServletRequest request, final HttpServletResponse response) {
+    PathRequestHandler(final String pathPattern, final HttpServletRequest request, final HttpServletResponse response) {
+        this.pathPattern = pathPattern;
         this.request = request;
         this.response = response;
     }
@@ -65,11 +70,26 @@ public class PathRequestHandler {
     }
 
     public String getPathParam(String param) {
-//        String requestPath = getRequestPath();
-//        Matcher matcher = PATH_PARAM_PATTERN.matcher(requestPath);
-//        while (matcher.find()) {
-//            System.out.println("/home/{user}/test/{test1}".substring(matcher.start(), matcher.end()));
-//        }
+        if (param == null || param.trim().isEmpty()) {
+            return null;
+        }
+
+        int iteration = 0;
+        String normPath = pathPattern.replace(request.getServletPath(), "");
+
+        Matcher matcher = PATH_PATTERN.matcher(normPath);
+        while (matcher.find()) {
+            iteration++;
+            if (matcher.group(1).contains("{" + param + "}")) {
+                break;
+            }
+        }
+        matcher = PATH_PATTERN.matcher(getRequestPath());
+        while (matcher.find()) {
+            if ((--iteration) == 0) {
+                return matcher.group(1).replace("/", "");
+            }
+        }
         return null;
     }
 
@@ -116,4 +136,26 @@ public class PathRequestHandler {
         return (T) unmarshaller.unmarshal(reader);
     }
 
+    public void writeResponseAsString(String responseVal) throws IOException {
+        PrintWriter writer = response.getWriter();
+        writer.write(responseVal);
+        writer.flush();
+    }
+
+    public void writeResponseAsJson(Object object) throws IOException {
+        response.setContentType("application/json");
+        PrintWriter writer = response.getWriter();
+        writer.write(gson.toJson(object));
+        writer.flush();
+    }
+
+    public void writeResponseAsXml(Object object) throws IOException, JAXBException  {
+        response.setContentType("application/xml");
+        PrintWriter writer = response.getWriter();
+
+        final JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+        final Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.marshal(object, writer);
+        writer.flush();
+    }
 }

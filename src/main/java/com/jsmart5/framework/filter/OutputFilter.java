@@ -54,10 +54,8 @@ public final class OutputFilter implements Filter {
 
         filterChain.doFilter(request, responseWrapper);
 
-        // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide
-        // HTML via framework
-        if (httpRequest.isAsyncStarted()
-                || httpRequest.getAttribute(Constants.REQUEST_WEB_PATH_ATTR) != null) {
+        // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide HTML via framework
+        if (httpRequest.isAsyncStarted() || httpRequest.getAttribute(Constants.REQUEST_WEB_PATH_ATTR) != null) {
             return;
         }
 

@@ -260,23 +260,24 @@ public final class WebServlet extends HttpServlet {
             bean = (WebPathRequest) HANDLER.instantiatePathBean(path);
 
             if (bean != null) {
+                String pathPattern = HANDLER.getPathBeanPattern(path);
                 request.setAttribute(Constants.REQUEST_WEB_PATH_ATTR, true);
 
                 try {
                     if (GET.equals(method)) {
-                        bean.get(new PathRequestHandler(request, response));
+                        bean.get(new PathRequestHandler(pathPattern, request, response));
                     } else if (POST.equals(method)) {
-                        bean.post(new PathRequestHandler(request, response));
+                        bean.post(new PathRequestHandler(pathPattern, request, response));
                     } else if (PUT.equals(method)) {
-                        bean.put(new PathRequestHandler(request, response));
+                        bean.put(new PathRequestHandler(pathPattern, request, response));
                     } else if (OPTIONS.equals(method)) {
-                        bean.options(new PathRequestHandler(request, response));
+                        bean.options(new PathRequestHandler(pathPattern, request, response));
                     } else if (DELETE.equals(method)) {
-                        bean.delete(new PathRequestHandler(request, response));
+                        bean.delete(new PathRequestHandler(pathPattern, request, response));
                     } else if (HEAD.equals(method)) {
-                        bean.head(new PathRequestHandler(request, response));
+                        bean.head(new PathRequestHandler(pathPattern, request, response));
                     } else if (TRACE.equals(method)) {
-                        bean.trace(new PathRequestHandler(request, response));
+                        bean.trace(new PathRequestHandler(pathPattern, request, response));
                     }
                     return true;
 

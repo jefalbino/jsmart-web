@@ -87,8 +87,6 @@ public enum BeanHandler {
 
     private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
 
-    private static final Pattern PATH_BEAN_PARAM_PATTERN = Pattern.compile("\\{([^/]*)\\}");
-
     private static final Pattern PATH_BEAN_ALL_PATTERN = Pattern.compile("(.*)/\\*");
 
     Map<String, Class<?>> webBeans;
@@ -108,6 +106,8 @@ public enum BeanHandler {
     Set<WebSessionListener> sessionListeners;
 
     private Map<String, String> forwardPaths;
+
+    private Map<String, String> pathBeanPatterns;
 
     private InitialContext initialContext;
 
@@ -141,6 +141,7 @@ public enum BeanHandler {
             contextListeners.clear();
             sessionListeners.clear();
             forwardPaths.clear();
+            pathBeanPatterns.clear();
             jspPageBeans.clear();
             jndiMapping.clear();
             initialContext = null;
@@ -915,6 +916,7 @@ public enum BeanHandler {
         authBeans = new ConcurrentHashMap<String, Class<?>>();
         asyncBeans = new ConcurrentHashMap<String, Class<?>>();
         pathBeans = new ConcurrentHashMap<String, Class<?>>();
+        pathBeanPatterns = new ConcurrentHashMap<String, String>();
         smartServlets = new ConcurrentHashMap<String, Class<?>>();
         smartFilters = new ConcurrentHashMap<String, Class<?>>();
         contextListeners = new HashSet<WebContextListener>();
@@ -985,13 +987,11 @@ public enum BeanHandler {
             Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
             if (matcher.find()) {
                 path = matcher.group(1);
-            } else {
-                matcher = PATH_BEAN_PARAM_PATTERN.matcher(path);
-                if (matcher.find()) {
-                    path = path.substring(0, matcher.start() -1);
-                }
             }
+            path = matchUrlPattern(path);
+
             pathBeans.put(path, clazz);
+            pathBeanPatterns.put(path, pathBean.path());
         }
 
         annotations = reflections.getTypesAnnotatedWith(AsyncBean.class);
@@ -1008,10 +1008,13 @@ public enum BeanHandler {
             setBeanMethods(clazz);
 
             String path = asyncBean.asyncPath();
+
             Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
             if (matcher.find()) {
                 path = matcher.group(1);
             }
+            path = matchUrlPattern(path);
+
             asyncBeans.put(path, clazz);
         }
 
@@ -1092,6 +1095,28 @@ public enum BeanHandler {
         if (contextListeners.isEmpty() && sessionListeners.isEmpty()) {
             LOGGER.log(Level.INFO, "SmartListeners were not mapped!");
         }
+    }
+
+    private String matchUrlPattern(String path) {
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+
+            if (urlPattern.getUrl().contains("/*")) {
+                String url = urlPattern.getUrl().replace("/*", "");
+                if (path.startsWith(url)) {
+                    return url;
+                }
+            } else if (urlPattern.getUrl().equals(path)) {
+                return urlPattern.getUrl();
+            }
+        }
+        return path;
+    }
+
+    public String getPathBeanPattern(String path) {
+        if (path != null) {
+            return pathBeanPatterns.get(path);
+        }
+        return path;
     }
 
     public String getForwardPath(String path) {
