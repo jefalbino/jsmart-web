@@ -1211,7 +1211,7 @@ var Jsmart5 = (function() {
         var root = rest.attr('body-root');
 
         if (root && root.length > 0) {
-            json += '{\"' + root + '\":';
+            json += '{\"' + root.replace(/"/g, '\\"') + '\":';
         }
         json += getRestJsonItem(rest);
 
@@ -1240,17 +1240,27 @@ var Jsmart5 = (function() {
 
 				if (elementParam[0].array == true) {
 					json += '\"' + rest + '\":[';
+
 					if (elementParam[0].value && elementParam[0].value.length > 0) {
 						var values = elementParam[0].value.split(',');
+
 						for (var i = 0; i < values.length; i++) {
-							json += '\"' + values[i] + '\",';
+                            if (isString(values[i])) {
+                                json += '\"' + values[i].replace(/"/g, '\\"') + '\",';
+                            } else {
+                                json += '\"' + values[i] + '\",';
+                            }
 						}
 						json = json.substring(0, json.length - 1);
 					}
 					json += '],';
 				} else {
 					if (elementParam[0].value || elementParam[0].value == false) {
-						json += '\"' + rest + '\":\"' + elementParam[0].value + '\",';
+					    if (isString(elementParam[0].value)) {
+					        json += '\"' + rest + '\":\"' + elementParam[0].value.replace(/"/g, '\\"') + '\",';
+					    } else {
+					        json += '\"' + rest + '\":\"' + elementParam[0].value + '\",';
+					    }
 					} else {
 						json += '\"' + rest + '\":null,';
 					}
@@ -1269,7 +1279,7 @@ var Jsmart5 = (function() {
 		var root = rest.attr('body-root');
 
 		if (root && root.length > 0) {
-			xml += '<' + root + '>';
+			xml += '<' + root.replace(/>/g, '&gt;').replace(/</g, '&lt;') + '>';
 		} else {
 			xml += '<root>';
 		}
@@ -1277,7 +1287,7 @@ var Jsmart5 = (function() {
         xml += getRestXmlItem(rest);
 
 		if (root && root.length > 0) {
-			xml += '</' + root + '>';
+			xml += '</' + root.replace(/>/g, '&gt;').replace(/</g, '&lt;') + '>';
 		} else {
 			xml += '</root>';
 		}
@@ -1305,12 +1315,23 @@ var Jsmart5 = (function() {
 					if (elementParam[0].value && elementParam[0].value.length > 0) {
 						var values = elementParam[0].value.split(',');
 						for (var i = 0; i < values.length; i++) {
-							xml += '<' + rest + '>' + values[i] + '</' + rest + '>';
+						    if (isString(values[i])) {
+						        var value = values[i].replace(/>/g, '&gt;').replace(/</g, '&lt;');
+						        xml += '<' + rest + '>' + value + '</' + rest + '>';
+						    } else {
+						        xml += '<' + rest + '>' + values[i] + '</' + rest + '>';
+						    }
 						}
 					}
 				} else {
 					if (elementParam[0].value || elementParam[0].value == false) {
-						xml += '<' + rest + '>' + elementParam[0].value + '</' + rest + '>';
+					    if (isString(elementParam[0].value)) {
+					        var value = elementParam[0].value.replace(/>/g, '&gt;').replace(/</g, '&lt;');
+					        xml += '<' + rest + '>' + value + '</' + rest + '>';
+					    } else {
+                            xml += '<' + rest + '>' + elementParam[0].value + '</' + rest + '>';
+					    }
+
 					} else {
 						xml += '<' + rest + ' />';
 					}
