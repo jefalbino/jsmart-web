@@ -2711,7 +2711,7 @@
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
-            <required>false</required>
+            <required>true</required>
         </attribute>
         <attribute>
             <name>style</name>
