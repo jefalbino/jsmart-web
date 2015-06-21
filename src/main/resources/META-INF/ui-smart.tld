@@ -1305,7 +1305,7 @@
         <body-content>empty</body-content>
         <attribute>
             <name>type</name>
-            <required>false</required>
+            <required>true</required>
         </attribute>
         <attribute>
             <name>regex</name>

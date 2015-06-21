@@ -64,10 +64,6 @@ public final class IconTagHandler extends TagHandler {
 			((HeaderTagHandler) parent).addIconTag(this);
 			return false;
 
-		} else if (parent instanceof OutputTagHandler) {
-			((OutputTagHandler) parent).addIconTag(this);
-			return false;
-
 		} else if (parent instanceof TabPaneTagHandler) {
 			((TabPaneTagHandler) parent).addIconTag(this);
 			return false;

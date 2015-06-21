@@ -19,6 +19,7 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -76,8 +77,9 @@ public final class OutputTagHandler extends TagHandler {
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();
+        StringWriter writer = new StringWriter();
 		if (body != null) {
-			body.invoke(null);
+			body.invoke(writer);
 		}
 		
 		setRandomId("output");
@@ -172,15 +174,11 @@ public final class OutputTagHandler extends TagHandler {
 		tag.addAttribute("class", styleClass);
 
 		if (target != null && (Output.LABEL.equalsIgnoreCase(type) || Output.OUTPUT.equalsIgnoreCase(type))) {
-			tag.addAttribute("for", target);
+			tag.addAttribute("for", getTagValue(target));
 		}
-		
-		for (IconTagHandler iconTag : iconTags) {
-			if (Align.LEFT.name().equalsIgnoreCase(iconTag.getSide())) {
-				tag.addTag(iconTag.executeTag());
-				tag.addText(" ");
-			}
-		}
+
+        // Add inner text before the text in the value
+        tag.addText(writer);
 
 		Object obj = getTagValue(value);
 		if (format != null) {
@@ -197,13 +195,6 @@ public final class OutputTagHandler extends TagHandler {
 				}
 			}
 			tag.addText(text);
-		}
-
-		for (IconTagHandler iconTag : iconTags) {
-			if (Align.RIGHT.name().equalsIgnoreCase(iconTag.getSide())) {
-				tag.addText(" ");
-				tag.addTag(iconTag.executeTag());
-			}
 		}
 
 		appendAjax(id);

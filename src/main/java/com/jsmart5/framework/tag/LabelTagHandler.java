@@ -19,6 +19,7 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -49,8 +50,9 @@ public final class LabelTagHandler extends TagHandler {
 	public Tag executeTag() throws JspException, IOException {
 
 		JspFragment body = getJspBody();
+        StringWriter writer = new StringWriter();
 		if (body != null) {
-			body.invoke(null);
+			body.invoke(writer);
 		}
 
 		setRandomId("label");
@@ -59,6 +61,7 @@ public final class LabelTagHandler extends TagHandler {
 		span.addAttribute("style", style)
 			.addAttribute("for", getTagValue(target))
 			.addAttribute("class", Bootstrap.LABEL)
+            .addText(writer.toString())
 			.addText(getTagValue(value));
 		
 		appendRefId(span, id);
