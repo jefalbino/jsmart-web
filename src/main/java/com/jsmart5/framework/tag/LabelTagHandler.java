@@ -57,13 +57,27 @@ public final class LabelTagHandler extends TagHandler {
 
 		setRandomId("label");
 
+        String text = writer.toString();
+        if (!params.isEmpty() && !text.trim().isEmpty()) {
+            text = TextTagHandler.formatText(text, params);
+        }
+
 		Span span = new Span();
 		span.addAttribute("style", style)
 			.addAttribute("for", getTagValue(target))
 			.addAttribute("class", Bootstrap.LABEL)
-            .addText(writer.toString())
-			.addText(getTagValue(value));
-		
+            .addText(text);
+
+        Object labelVal = getTagValue(value);
+        if (labelVal != null) {
+            text = labelVal.toString();
+
+            if (!params.isEmpty() && !text.trim().isEmpty()) {
+                text = TextTagHandler.formatText(text, params);
+            }
+            span.addText(text);
+        }
+
 		appendRefId(span, id);
 
 		String lookVal = (String) getTagValue(look);

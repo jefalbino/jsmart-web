@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
+import javax.xml.soap.Text;
 
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
@@ -177,15 +178,24 @@ public final class OutputTagHandler extends TagHandler {
 			tag.addAttribute("for", getTagValue(target));
 		}
 
+        String text = writer.toString();
+        if (!params.isEmpty() && !text.trim().isEmpty()) {
+            text = TextTagHandler.formatText(text, params);
+        }
+
         // Add inner text before the text in the value
-        tag.addText(writer);
+        tag.addText(text);
 
 		Object obj = getTagValue(value);
 		if (format != null) {
 			tag.addText(format.formatValue(obj));
 
 		} else if (obj != null) {
-			String text = obj.toString();
+			text = obj.toString();
+
+            if (!params.isEmpty() && !text.trim().isEmpty()) {
+                text = TextTagHandler.formatText(text, params);
+            }
 
 			if (length != null && length > 0 && text.length() >= length) {
 				if (ellipsize && length > 4) {

@@ -20,6 +20,7 @@ package com.jsmart5.framework.tag;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.jsp.JspException;
@@ -52,16 +53,21 @@ public final class TextTagHandler extends TagHandler {
 		String message = getResourceString(res, key);
 
 		if (!params.isEmpty()) {
-			if (BRACKETS.matcher(message).find()) {
-				message = MessageFormat.format(message, params.values().toArray());
-
-			} else if (message.contains("%s")) {
-				message = String.format(message, params.values().toArray());
-			}
+			message = formatText(message, params);
 		}
 		printOutput(message);
 		return true;
 	}
+
+    static String formatText(final String message, final Map<String, Object> params) {
+        if (BRACKETS.matcher(message).find()) {
+            return MessageFormat.format(message, params.values().toArray());
+
+        } else if (message.contains("%s")) {
+            return String.format(message, params.values().toArray());
+        }
+        return message;
+    }
 
 	@Override
 	public Tag executeTag() throws JspException, IOException {

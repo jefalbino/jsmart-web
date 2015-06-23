@@ -95,10 +95,12 @@ public final class DropDownTagHandler extends TagHandler {
 			}
 		}
 
-		Span caret = new Span();
-		caret.addAttribute("class", Bootstrap.CARET);
-		a.addText(" ");
-		a.addTag(caret);
+        if (dropMenu != null) {
+            Span caret = new Span();
+            caret.addAttribute("class", Bootstrap.CARET);
+            a.addText(" ");
+            a.addTag(caret);
+        }
 
 		dropDown.addTag(a);
 

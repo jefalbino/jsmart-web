@@ -215,7 +215,7 @@
 		</attribute>
         <attribute>
             <name>label</name>
-            <required>false</required>
+            <required>true</required>
 		</attribute>
         <attribute>
             <name>navbar</name>
