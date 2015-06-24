@@ -170,6 +170,13 @@ public final class DropMenuTagHandler extends TagHandler {
 		if (dropAction.getAction() != null) {
 			jsonAjax.setMethod("post");
 			jsonAjax.setAction(getTagName(J_SBMT, dropAction.getAction()));
+
+            if (!dropAction.getArgs().isEmpty()) {
+                String argName = getTagName(J_SBMT_ARGS, dropAction.getAction());
+                for (Object arg : dropAction.getArgs()) {
+                    jsonAjax.addArg(new Param(argName, arg));
+                }
+            }
 		} else if (dropAction.getUpdate() != null) {
 			jsonAjax.setMethod("get");
 		}
