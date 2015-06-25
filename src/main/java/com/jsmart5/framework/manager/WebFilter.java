@@ -119,11 +119,14 @@ public final class WebFilter implements Filter {
         // Finalize request scoped web beans
         HANDLER.finalizeWebBeans(httpRequest);
 
+        // Check if response was written before closing the WebContext
+        boolean responseWritten = WebContext.isResponseWritten();
+
         // Close bean context based on current thread instance
         WebContext.closeCurrentInstance();
 
-        // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide HTML via framework
-        if (httpRequest.isAsyncStarted() || httpRequest.getAttribute(Constants.REQUEST_WEB_PATH_ATTR) != null) {
+        // Case AsyncBean or RequestPath process was started it cannot proceed because it will not provide HTML via framework
+        if (httpRequest.isAsyncStarted() || responseWritten) {
 
             // Generate response value after flushing the response wrapper buffer
             responseWrapper.flushBuffer();

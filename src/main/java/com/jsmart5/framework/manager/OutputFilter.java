@@ -16,7 +16,7 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmart5.framework.filter;
+package com.jsmart5.framework.manager;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.manager.ExpressionHandler;
+import com.jsmart5.framework.manager.WebContext;
 
 import static com.jsmart5.framework.manager.ExpressionHandler.*;
 
@@ -54,8 +55,9 @@ public final class OutputFilter implements Filter {
 
         filterChain.doFilter(request, responseWrapper);
 
-        // Case AsyncBean or PathBean process was started it cannot proceed because it will not provide HTML via framework
-        if (httpRequest.isAsyncStarted() || httpRequest.getAttribute(Constants.REQUEST_WEB_PATH_ATTR) != null) {
+        // Case AsyncBean process was started or response was written directly, it cannot proceed
+        // because it will not provide HTML via framework
+        if (httpRequest.isAsyncStarted() || WebContext.isResponseWritten()) {
             return;
         }
 

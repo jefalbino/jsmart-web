@@ -51,6 +51,8 @@ import org.springframework.web.context.ContextLoader;
 
 import com.jsmart5.framework.annotation.SmartFilter;
 import com.jsmart5.framework.annotation.SmartServlet;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.manager.BeanHandler.*;
@@ -62,7 +64,7 @@ public final class ContainerListener implements ServletContextListener {
 
 	private static final List<String> METHODS = Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE");
 
-	private static final ContextLoader CONTEXT_LOADER = new ContextLoader();
+	private static ContextLoader CONTEXT_LOADER;
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -75,18 +77,17 @@ public final class ContainerListener implements ServletContextListener {
 	        	throw new RuntimeException("Configuration file " + Constants.WEB_CONFIG_XML + " was not found in WEB-INF resources folder!");
 	        }
 
-	        // Configure the necessary parameters in the Servlet context to get Spring to configure the application without needing an XML file
-	        servletContext.setInitParameter("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
-
 	        String contextConfigLocation = "com.jsmart5.framework.manager";
 	        if (CONFIG.getContent().getPackageScan() != null) {
 	        	contextConfigLocation += "," + CONFIG.getContent().getPackageScan();
 	        }
 
-	        // Tell Spring where to scan for annotations
-	        servletContext.setInitParameter("contextConfigLocation", contextConfigLocation);
+            // Configure necessary parameters in the ServletContext to set Spring configuration without needing an XML file
+            AnnotationConfigWebApplicationContext configWebAppContext = new AnnotationConfigWebApplicationContext();
+            configWebAppContext.setConfigLocation(contextConfigLocation);
 
-	        CONTEXT_LOADER.initWebApplicationContext(servletContext);
+            CONTEXT_LOADER = new ContextLoader(configWebAppContext);
+            CONTEXT_LOADER.initWebApplicationContext(servletContext);
 
 	        IMAGES.init(servletContext);
 	        TEXTS.init(CONFIG.getContent().getMessageFiles(), CONFIG.getContent().getDefaultLocale());
@@ -180,7 +181,7 @@ public final class ContainerListener implements ServletContextListener {
 	        		DispatcherType.INCLUDE), true, "WebServlet");
 
 	        // OutputFilter -> @WebFilter(servletNames = {"WebServlet"})
-	        Filter outputFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.OutputFilter"));
+	        Filter outputFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.OutputFilter"));
 	        FilterRegistration.Dynamic outputFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("OutputFilter", outputFilter);
 
 	        outputFilterReg.setAsyncSupported(true);
@@ -225,6 +226,20 @@ public final class ContainerListener implements ServletContextListener {
 		        }
 	        }
 
+            // Controller Dispatcher for Spring MVC
+            Set<String> requestPaths = HANDLER.requestPaths.keySet();
+            if (!requestPaths.isEmpty()) {
+                ServletRegistration.Dynamic mvcDispatcherReg = servletContext.addServlet("DispatcherServlet", new DispatcherServlet(configWebAppContext));
+                mvcDispatcherReg.setLoadOnStartup(1);
+                mvcDispatcherReg.addMapping(requestPaths.toArray(new String[requestPaths.size()]));
+
+                // RequestPathFilter -> @WebFilter(servletNames = {"DispatcherServlet"})
+                Filter requestPathFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.RequestPathFilter"));
+                FilterRegistration.Dynamic reqPathFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("RequestPathFilter", requestPathFilter);
+
+                reqPathFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD,
+                        DispatcherType.ERROR, DispatcherType.INCLUDE, DispatcherType.ASYNC), true, "DispatcherServlet");
+            }
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -233,7 +248,7 @@ public final class ContainerListener implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		HANDLER.destroy(sce.getServletContext());
-		CONTEXT_LOADER.closeWebApplicationContext(sce.getServletContext());
+        CONTEXT_LOADER.closeWebApplicationContext(sce.getServletContext());
 	}
 
 	private List<String> sortCustomFilters() {

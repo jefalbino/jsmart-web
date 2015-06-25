@@ -56,8 +56,6 @@ public final class ConfigContent {
 
 	private boolean escapeRequest = true;
 
-	private boolean encryptTags = true;
-
 	private boolean printHtml = false;
 
 	private HtmlCompress compressHtml;
@@ -247,15 +245,6 @@ public final class ConfigContent {
 
 	public void setEscapeRequest(boolean escapeRequest) {
 		this.escapeRequest = escapeRequest;
-	}
-
-	@XmlElement(name = "encrypt-tags")
-	public boolean isEncryptTags() {
-		return encryptTags;
-	}
-
-	public void setEncryptTags(boolean encryptTags) {
-		this.encryptTags = encryptTags;
 	}
 
 	@XmlElement(name = "print-html")

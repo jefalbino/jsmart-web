@@ -36,7 +36,6 @@ import com.jsmart5.framework.listener.WebAsyncListener.Reason;
 import com.jsmart5.framework.util.WebUtils;
 
 import static com.jsmart5.framework.manager.BeanHandler.*;
-import static com.jsmart5.framework.manager.WebPathRequest.Method.*;
 
 public final class WebServlet extends HttpServlet {
 
@@ -76,10 +75,6 @@ public final class WebServlet extends HttpServlet {
         if (checkAuthentication(path, request, response)) {
             return;
         }
-        // Return if request is for path bean handling
-        if (doPath(GET, path, request, response)) {
-            return;
-        }
         // Return if request is for async bean handling
         if (doAsync(path, request, response)) {
             return;
@@ -95,10 +90,6 @@ public final class WebServlet extends HttpServlet {
 
         // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
         if (checkAuthentication(path, request, response)) {
-            return;
-        }
-        // Return if request is for path bean handling
-        if (doPath(POST, path, request, response)) {
             return;
         }
 
@@ -132,7 +123,12 @@ public final class WebServlet extends HttpServlet {
         boolean redirectAjax = false;
         String responsePath = HANDLER.handleRequestExpressions(expressions);
 
-        // Check authorization roles on submit expression and after execute it
+        // Case response was written directly, just return
+        if (WebContext.isResponseWritten()) {
+            return;
+        }
+
+        // Decode the response path case returned from action method
         if (responsePath != null) {
             responsePath = WebUtils.decodePath(responsePath);
         }
@@ -165,66 +161,6 @@ public final class WebServlet extends HttpServlet {
         sendRedirect(responsePath, request, response);
     }
 
-    @Override
-    protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getServletPath();
-
-        // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
-        if (checkAuthentication(path, request, response)) {
-            return;
-        }
-        // Check if request is for path bean handling
-        doPath(HEAD, path, request, response);
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getServletPath();
-
-        // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
-        if (checkAuthentication(path, request, response)) {
-            return;
-        }
-        // Check if request is for path bean handling
-        doPath(PUT, path, request, response);
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getServletPath();
-
-        // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
-        if (checkAuthentication(path, request, response)) {
-            return;
-        }
-        // Check if request is for path bean handling
-        doPath(DELETE, path, request, response);
-    }
-
-    @Override
-    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getServletPath();
-
-        // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
-        if (checkAuthentication(path, request, response)) {
-            return;
-        }
-        // Check if request is for path bean handling
-        doPath(OPTIONS, path, request, response);
-    }
-
-    @Override
-    protected void doTrace(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getServletPath();
-
-        // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
-        if (checkAuthentication(path, request, response)) {
-            return;
-        }
-        // Check if request is for path bean handling
-        doPath(TRACE, path, request, response);
-    }
-
     private boolean checkAuthentication(String path, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String authPath = HANDLER.checkAuthentication(path);
         if (authPath != null && !authPath.equals(path)) {
@@ -254,47 +190,6 @@ public final class WebServlet extends HttpServlet {
         return false;
     }
 
-    private boolean doPath(WebPathRequest.Method method, String path, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        WebPathRequest bean = null;
-        try {
-            bean = (WebPathRequest) HANDLER.instantiatePathBean(path);
-
-            if (bean != null) {
-                String pathPattern = HANDLER.getPathBeanPattern(path);
-                request.setAttribute(Constants.REQUEST_WEB_PATH_ATTR, true);
-
-                try {
-                    if (GET.equals(method)) {
-                        bean.get(new PathRequestHandler(pathPattern, request, response));
-                    } else if (POST.equals(method)) {
-                        bean.post(new PathRequestHandler(pathPattern, request, response));
-                    } else if (PUT.equals(method)) {
-                        bean.put(new PathRequestHandler(pathPattern, request, response));
-                    } else if (OPTIONS.equals(method)) {
-                        bean.options(new PathRequestHandler(pathPattern, request, response));
-                    } else if (DELETE.equals(method)) {
-                        bean.delete(new PathRequestHandler(pathPattern, request, response));
-                    } else if (HEAD.equals(method)) {
-                        bean.head(new PathRequestHandler(pathPattern, request, response));
-                    } else if (TRACE.equals(method)) {
-                        bean.trace(new PathRequestHandler(pathPattern, request, response));
-                    }
-                    return true;
-
-                } catch (Exception ex) {
-                    throw new ServletException(ex);
-
-                } finally {
-                    HANDLER.finalizePathBean(bean, request);
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "PathBean on path [" + path + "] could not be instantiated: " + ex.getMessage());
-            throw new ServletException(ex);
-        }
-        return false;
-    }
-
     private void sendForward(String path, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         // Check if user is authorized to access the page. Send HTTP 403 response case they did not have
@@ -318,6 +213,11 @@ public final class WebServlet extends HttpServlet {
         if (redirectPath != null && !redirectPath.equals(path)) {
             HANDLER.finalizeWebBean(path, request.getSession());
             sendRedirect(redirectPath, request, response);
+            return;
+        }
+
+        // Case response was written directly, just return
+        if (WebContext.isResponseWritten()) {
             return;
         }
 

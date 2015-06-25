@@ -81,7 +81,14 @@
 			<version>4.0.0.RELEASE</version>
 		</dependency>
 
-		<!-- JAXB -->
+        <!-- Spring Web MVC for RequestPath -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>4.0.0.RELEASE</version>
+        </dependency>
+
+        <!-- JAXB -->
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>

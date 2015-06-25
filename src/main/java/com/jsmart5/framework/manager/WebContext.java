@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.manager;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.el.ExpressionFactory;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,6 +39,12 @@ import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 
 import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+
+import com.google.gson.Gson;
 import com.jsmart5.framework.annotation.WebBean;
 import com.jsmart5.framework.util.WebAlert;
 import com.jsmart5.framework.util.WebAlert.AlertType;
@@ -59,13 +66,19 @@ public final class WebContext implements Serializable {
 
 	private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<Thread, WebContext>();
 
+    private static final Gson gson = new Gson();
+
 	private static Servlet smartServlet;
 
 	private static JspApplicationContext jspContext;
 
 	private HttpServletRequest request;
 
+    private String bodyContent;
+
 	private HttpServletResponse response;
+
+    private boolean responseWritten;
 
 	private String redirectTo;
 
@@ -76,6 +89,8 @@ public final class WebContext implements Serializable {
 	private Map<String, List<WebAlert>> alerts = new LinkedHashMap<String, List<WebAlert>>();
 
 	private Map<String, Object> mappedValues = new ConcurrentHashMap<String, Object>();
+
+    private Map<String, String> queryParams;
 
 	private WebContext(final HttpServletRequest request, final HttpServletResponse response) {
 		this.request = request;
@@ -105,7 +120,9 @@ public final class WebContext implements Serializable {
 		}
 		invalidate = false;
 		request = null;
+        bodyContent = null;
 		response = null;
+        responseWritten = false;
 		redirectTo = null;
 		alerts.clear();
 		alerts = null;
@@ -162,6 +179,28 @@ public final class WebContext implements Serializable {
 		WebContext context = getCurrentInstance();
 		return context != null ? context.request : null;
 	}
+
+    public static Map<String, String> getQueryParams() {
+        WebContext context = getCurrentInstance();
+        if (context == null) {
+            return null;
+        }
+        if (context.queryParams == null) {
+            context.queryParams = new ConcurrentHashMap<String, String>();
+
+            final String queryParam = context.request.getQueryString();
+            if (queryParam == null || queryParam.trim().isEmpty()) {
+                return context.queryParams;
+            }
+
+            for (String param : context.request.getParameterMap().keySet()) {
+                if (queryParam.contains(param + "=")) {
+                    context.queryParams.put(param, context.request.getParameter(param));
+                }
+            }
+        }
+        return context.queryParams;
+    }
 
 	/**
 	 * Returns the current {@link HttpServletResponse} instance associated to the request 
@@ -313,7 +352,7 @@ public final class WebContext implements Serializable {
 		alert.setMessage(message);
 		addAlert(id, alert);
 	}
-	
+
 	static Object getMappedValue(final String name) {
 		WebContext context = getCurrentInstance();
 		if (context != null) {
@@ -410,4 +449,113 @@ public final class WebContext implements Serializable {
 		throw new RuntimeException("ReCaptcha not found on this submit. Plase make sure the recaptcha tag is included on submitted form");
 	}
 
+    public static String getContentAsString() throws IOException {
+        WebContext context = getCurrentInstance();
+        if (context == null) {
+            return null;
+        }
+        if (context.bodyContent == null) {
+            String line = null;
+            final StringBuffer buffer = new StringBuffer();
+
+            BufferedReader reader = context.request.getReader();
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+            context.bodyContent = buffer.toString();
+        }
+        return context.bodyContent;
+    }
+
+    public static <T> T getContentFromJson(Class<T> clazz) throws IOException {
+        return gson.fromJson(getContentAsString(), clazz);
+    }
+
+    public static <T> T getContentFromXml(Class<T> clazz) throws IOException, JAXBException {
+        final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+        final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        StringReader reader = new StringReader(getContentAsString());
+        return (T) unmarshaller.unmarshal(reader);
+    }
+
+    static boolean isResponseWritten() {
+        WebContext context = getCurrentInstance();
+        return context != null ? context.responseWritten : false;
+    }
+
+    public static void writeResponseAsString(String responseVal) throws IOException {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.responseWritten = true;
+            PrintWriter writer = context.response.getWriter();
+            writer.write(responseVal);
+            writer.flush();
+        }
+    }
+
+    public static void writeResponseAsJson(Object object) throws IOException {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.responseWritten = true;
+            context.response.setContentType("application/json");
+            PrintWriter writer = context.response.getWriter();
+            writer.write(gson.toJson(object));
+            writer.flush();
+        }
+    }
+
+    public static void writeResponseAsXml(Object object) throws IOException, JAXBException {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.responseWritten = true;
+            context.response.setContentType("application/xml");
+            PrintWriter writer = context.response.getWriter();
+
+            final JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+            final Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.marshal(object, writer);
+            writer.flush();
+        }
+    }
+
+    public static void writeResponseAsEventStream(final String event, final String data, final Long retry) throws IOException {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.responseWritten = true;
+            context.response.setContentType("text/event-stream");
+            PrintWriter printWriter = context.response.getWriter();
+
+            printWriter.write("retry:" + retry + "\n");
+            printWriter.write("event:" + event + "\n");
+            printWriter.write("data:" + data + "\n\n");
+            printWriter.flush();
+        }
+    }
+
+    public static void writeResponseAsFileStream(final File file, final int bufferSize) throws IOException {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.responseWritten = true;
+            context.response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
+            context.response.addHeader("Content-Length", Long.toString(file.length()));
+            context.response.setContentLength((int) file.length());
+
+            String mimetype = getApplication().getMimeType(file.getName());
+            context.response.setContentType((mimetype != null) ? mimetype : "application/octet-stream");
+
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ServletOutputStream outputStream = context.response.getOutputStream();
+
+            try {
+                int i;
+                byte[] buffer = new byte[bufferSize];
+                while ((i = fileInputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, i);
+                }
+            } finally {
+                outputStream.flush();
+                fileInputStream.close();
+            }
+        }
+    }
 }

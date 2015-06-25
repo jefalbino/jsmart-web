@@ -27,8 +27,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.jsmart5.framework.config.Config;
-
 final class TagEncrypter {
 
 	private static final String KEY_VALUE = "Aq0Sw9De8Fr7GtH6";
@@ -38,8 +36,6 @@ final class TagEncrypter {
 	private static Cipher encryptCipher;
 
 	private static Cipher decryptCipher;
-
-	private static boolean encryptTagEnabled = Config.CONFIG.getContent().isEncryptTags();
 
 	static {
 		try {
@@ -57,10 +53,8 @@ final class TagEncrypter {
 
 	static String complexEncrypt(String value) {
 		try {
-			if (encryptTagEnabled) {
-	            byte[] encode = encryptCipher.doFinal(value.getBytes("UTF8"));
-	            return new String(Base64.encodeBase64(encode, true, true)).trim();
-			}
+            byte[] encode = encryptCipher.doFinal(value.getBytes("UTF8"));
+            return new String(Base64.encodeBase64(encode, true, true)).trim();
         } catch (Exception ex) {
         	LOGGER.log(Level.INFO, "Failure to encrypt tag: " + value + " " + ex.getMessage());
         }
@@ -69,10 +63,8 @@ final class TagEncrypter {
 
 	static String complexDecrypt(String value) {
 		try {
-			if (encryptTagEnabled) {
-				byte[] decoded = Base64.decodeBase64(value);
-	        	return new String(decryptCipher.doFinal(decoded), "UTF8");
-			}
+            byte[] decoded = Base64.decodeBase64(value);
+            return new String(decryptCipher.doFinal(decoded), "UTF8");
 		} catch (Exception ex) {
 			LOGGER.log(Level.INFO, "Failure to decrypt tag: " + value + " " + ex.getMessage());
         }

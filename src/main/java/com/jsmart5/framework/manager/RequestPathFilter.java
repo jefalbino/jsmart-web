@@ -18,16 +18,12 @@
 
 package com.jsmart5.framework.manager;
 
-import com.jsmart5.framework.manager.WebContext;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AsyncFilter implements Filter {
-
-    public static final String ENCODING = "UTF-8";
+public class RequestPathFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -39,14 +35,11 @@ public class AsyncFilter implements Filter {
         // DO NOTHING
     }
 
-    // Filter used case AsyncContext is dispatched internally by AsyncBean implementation
+    // Filter used case RequestPath is mapping MVC String controllers
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
         final HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        httpRequest.setCharacterEncoding(ENCODING);
-        httpResponse.setCharacterEncoding(ENCODING);
 
         // Initiate bean context based on current thread instance
         WebContext.initCurrentInstance(httpRequest, httpResponse);
@@ -70,5 +63,4 @@ public class AsyncFilter implements Filter {
             throw new ServletException(throwable);
         }
     }
-
 }

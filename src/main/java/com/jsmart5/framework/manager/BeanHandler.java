@@ -59,6 +59,7 @@ import javax.servlet.http.HttpSession;
 
 import com.jsmart5.framework.annotation.*;
 import com.jsmart5.framework.config.Constants;
+import com.jsmart5.framework.config.UrlPattern;
 import com.jsmart5.framework.listener.WebAsyncListener;
 import com.jsmart5.framework.listener.WebContextListener;
 import com.jsmart5.framework.listener.WebSessionListener;
@@ -66,8 +67,6 @@ import com.jsmart5.framework.util.WebUtils;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-
-import com.jsmart5.framework.config.UrlPattern;
 
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.config.Constants.*;
@@ -95,19 +94,17 @@ public enum BeanHandler {
 
     Map<String, Class<?>> asyncBeans;
 
-    Map<String, Class<?>> pathBeans;
-
     Map<String, Class<?>> smartServlets;
 
     Map<String, Class<?>> smartFilters;
+
+    Map<String, Class<?>> requestPaths;
 
     Set<WebContextListener> contextListeners;
 
     Set<WebSessionListener> sessionListeners;
 
     private Map<String, String> forwardPaths;
-
-    private Map<String, String> pathBeanPatterns;
 
     private InitialContext initialContext;
 
@@ -135,13 +132,12 @@ public enum BeanHandler {
             authBeans.clear();
             webBeans.clear();
             asyncBeans.clear();
-            pathBeans.clear();
             smartServlets.clear();
             smartFilters.clear();
+            requestPaths.clear();
             contextListeners.clear();
             sessionListeners.clear();
             forwardPaths.clear();
-            pathBeanPatterns.clear();
             jspPageBeans.clear();
             jndiMapping.clear();
             initialContext = null;
@@ -377,16 +373,6 @@ public enum BeanHandler {
         return bean;
     }
 
-    Object instantiatePathBean(String path) throws Exception {
-        Class<?> clazz = pathBeans.get(path);
-        if (clazz != null) {
-            Object bean = clazz.newInstance();
-            executeInjection(bean);
-            return bean;
-        }
-        return null;
-    }
-
     Object instantiateAsyncBean(String path) throws Exception {
         Class<?> clazz = asyncBeans.get(path);
         if (clazz != null) {
@@ -500,13 +486,6 @@ public enum BeanHandler {
         }
     }
 
-    void finalizePathBean(Object bean, HttpServletRequest request) {
-        if (bean != null) {
-            finalizeInjection(bean, request);
-            bean = null;
-        }
-    }
-
     void finalizeAsyncBean(Object bean, HttpServletRequest request) {
         if (bean != null) {
             finalizeInjection(bean, request);
@@ -558,10 +537,9 @@ public enum BeanHandler {
     }
 
     void finalizeBeans(String path, HttpSession session) {
-        // Do not finalize beans case path was meant to be processed by
-        // PathBean or AsyncBean, otherwise (WebBean) clear the
-        // page scope beans
-        if (pathBeans.containsKey(path) || asyncBeans.containsKey(path)) {
+        // Do not finalize beans case path was meant to be processed by AsyncBean,
+        // otherwise (WebBean) clear the page scope beans
+        if (asyncBeans.containsKey(path)) {
             return;
         }
 
@@ -830,7 +808,7 @@ public enum BeanHandler {
             }
 
             // Check mapped urls
-            UrlPattern urlPattern = CONFIG.getContent().getUrlPattern(path);
+            com.jsmart5.framework.config.UrlPattern urlPattern = CONFIG.getContent().getUrlPattern(path);
             if (urlPattern != null && urlPattern.getAccess() != null) {
 
                 for (String access : urlPattern.getAccess()) {
@@ -915,10 +893,9 @@ public enum BeanHandler {
         webBeans = new ConcurrentHashMap<String, Class<?>>();
         authBeans = new ConcurrentHashMap<String, Class<?>>();
         asyncBeans = new ConcurrentHashMap<String, Class<?>>();
-        pathBeans = new ConcurrentHashMap<String, Class<?>>();
-        pathBeanPatterns = new ConcurrentHashMap<String, String>();
         smartServlets = new ConcurrentHashMap<String, Class<?>>();
         smartFilters = new ConcurrentHashMap<String, Class<?>>();
+        requestPaths = new ConcurrentHashMap<String, Class<?>>();
         contextListeners = new HashSet<WebContextListener>();
         sessionListeners = new HashSet<WebSessionListener>();
 
@@ -969,29 +946,14 @@ public enum BeanHandler {
             }
         }
 
-        annotations = reflections.getTypesAnnotatedWith(PathBean.class);
+        annotations = reflections.getTypesAnnotatedWith(RequestPath.class);
         for (Class<?> clazz : annotations) {
-            PathBean pathBean = clazz.getAnnotation(PathBean.class);
-            LOGGER.log(Level.INFO, "Mapping PathBean class: " + clazz);
-
-            if (!WebPathRequest.class.isAssignableFrom(clazz)) {
-                throw new RuntimeException("Mapped PathBean class [" + clazz + "] must extends " +
-                        "com.jsmart5.framework.manager.WebPathRequest abstract class");
-            }
+            RequestPath requestPath = clazz.getAnnotation(RequestPath.class);
+            LOGGER.log(Level.INFO, "Mapping RequestPath class: " + clazz);
 
             setBeanFields(clazz);
             setBeanMethods(clazz);
-
-            String path = pathBean.path();
-
-            Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
-            if (matcher.find()) {
-                path = matcher.group(1);
-            }
-            path = matchUrlPattern(path);
-
-            pathBeans.put(path, clazz);
-            pathBeanPatterns.put(path, pathBean.path());
+            requestPaths.put(requestPath.path(), clazz);
         }
 
         annotations = reflections.getTypesAnnotatedWith(AsyncBean.class);
@@ -1014,7 +976,6 @@ public enum BeanHandler {
                 path = matcher.group(1);
             }
             path = matchUrlPattern(path);
-
             asyncBeans.put(path, clazz);
         }
 
@@ -1080,9 +1041,6 @@ public enum BeanHandler {
         if (authBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "AuthenticateBean was not mapped!");
         }
-        if (pathBeans.isEmpty()) {
-            LOGGER.log(Level.INFO, "PathBeans were not mapped!");
-        }
         if (asyncBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");
         }
@@ -1091,6 +1049,9 @@ public enum BeanHandler {
         }
         if (smartFilters.isEmpty()) {
             LOGGER.log(Level.INFO, "SmartFilters were not mapped!");
+        }
+        if (requestPaths.isEmpty()) {
+            LOGGER.log(Level.INFO, "RequestPaths were not mapped!");
         }
         if (contextListeners.isEmpty() && sessionListeners.isEmpty()) {
             LOGGER.log(Level.INFO, "SmartListeners were not mapped!");
@@ -1112,13 +1073,6 @@ public enum BeanHandler {
         return path;
     }
 
-    public String getPathBeanPattern(String path) {
-        if (path != null) {
-            return pathBeanPatterns.get(path);
-        }
-        return path;
-    }
-
     public String getForwardPath(String path) {
         if (path != null) {
             return forwardPaths.get(path);
@@ -1133,7 +1087,7 @@ public enum BeanHandler {
     }
 
     private void overrideForwardPaths() {
-        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+        for (com.jsmart5.framework.config.UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
 
             if (urlPattern.getJsp() != null && !urlPattern.getJsp().trim().isEmpty()) {
                 String prevJsp = forwardPaths.put(urlPattern.getUrl(), urlPattern.getJsp());
@@ -1253,7 +1207,7 @@ public enum BeanHandler {
     }
 
     private void initJspPageBeans(ServletContext context) {
-        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+        for (com.jsmart5.framework.config.UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
             JspPageBean jspPageBean = new JspPageBean();
             readJspPageResource(context, urlPattern.getUrl(), jspPageBean);
             jspPageBeans.put(urlPattern.getUrl(), jspPageBean);
