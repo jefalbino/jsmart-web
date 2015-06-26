@@ -59,6 +59,8 @@ public final class JSmart5 {
     public static final String CHECK_GROUP_IN_COLUMN = "js5-check-group-in-column";
 
     public static final String RADIO_GROUP_IN_COLUMN = "js5-radio-group-in-column";
+
+    public static final String BUTTON_DROPDOWN_TOGGLE = "js5-btn-dropdown-toggle";
 	
 	private JSmart5() {
 		// DO NOTHING

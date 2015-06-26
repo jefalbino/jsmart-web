@@ -33,6 +33,7 @@ import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Param;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
+import com.jsmart5.framework.tag.css.JSmart5;
 import com.jsmart5.framework.tag.html.Button;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Span;
@@ -219,10 +220,11 @@ public final class ButtonTagHandler extends TagHandler {
 					.addAttribute("role", "button")
 					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
 					.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
+                    .addAttribute("class", JSmart5.BUTTON_DROPDOWN_TOGGLE)
 					.addAttribute("data-toggle", "dropdown")
 					.addAttribute("aria-expanded", false);
 
-				dropDown.addTag(caret);
+				dropDown.addText("&zwnj;").addTag(caret);
 				buttonGroup.addTag(dropDown);
 			} else {
 				button.addAttribute("role", "button")
