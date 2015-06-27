@@ -67,6 +67,7 @@ import com.jsmart5.framework.util.WebUtils;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
 
 import static com.jsmart5.framework.config.Config.*;
 import static com.jsmart5.framework.config.Constants.*;
@@ -950,6 +951,15 @@ public enum BeanHandler {
         for (Class<?> clazz : annotations) {
             RequestPath requestPath = clazz.getAnnotation(RequestPath.class);
             LOGGER.log(Level.INFO, "Mapping RequestPath class: " + clazz);
+
+            if (!clazz.isAnnotationPresent(Controller.class)) {
+                throw new RuntimeException("Mapped RequestPath class [" + clazz + "] must be annotated with " +
+                        "org.springframework.stereotype.Controller from Spring");
+            }
+            if (!requestPath.path().endsWith("*")) {
+                throw new RuntimeException("Mapped class [" + clazz + "] annotated with RequestPath must have its " +
+                        "path annotation attribute ending with * character");
+            }
 
             setBeanFields(clazz);
             setBeanMethods(clazz);
