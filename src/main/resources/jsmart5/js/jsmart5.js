@@ -838,7 +838,11 @@ var Jsmart5 = (function() {
 
 		// Update hidden field on change with date in milliseconds
 		inputDate.on('dp.change', function(event) {
-			hiddenDate.val(event.date.valueOf());
+		    if (event.date) {
+			    hiddenDate.val(event.date.valueOf());
+			} else {
+			    hiddenDate.val(null);
+			}
 		});
 
 		if (map.linkDate && map.linkDate.length > 0) {
