@@ -92,12 +92,13 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     private String onComplete;
 
-    private TagHandler childAddOn;
+    private List<TagHandler> childAddOns;
 
     private final List<RowTagHandler> rows;
 
     public AutoCompleteTagHandler() {
         rows = new ArrayList<RowTagHandler>();
+        childAddOns = new ArrayList<TagHandler>(2);
     }
 
 	@Override
@@ -182,9 +183,16 @@ public final class AutoCompleteTagHandler extends TagHandler {
         }
 
         if (leftAddOn != null) {
-            if (childAddOn != null && leftAddOn.equalsIgnoreCase(childAddOn.getId())) {
-                inputGroup.addTag(childAddOn.executeTag());
-            } else {
+            boolean foundAddOn = false;
+
+            for (int i = 0; i < childAddOns.size(); i++) {
+                if (leftAddOn.equalsIgnoreCase(childAddOns.get(i).getId())) {
+                    inputGroup.addTag(childAddOns.get(i).executeTag());
+                    foundAddOn = true;
+                    break;
+                }
+            }
+            if (!foundAddOn) {
                 Div div = new Div();
                 div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
                         .addText(getTagValue(leftAddOn));
@@ -248,9 +256,16 @@ public final class AutoCompleteTagHandler extends TagHandler {
         }
 
         if (rightAddOn != null) {
-            if (childAddOn != null && rightAddOn.equalsIgnoreCase(childAddOn.getId())) {
-                inputGroup.addTag(childAddOn.executeTag());
-            } else {
+            boolean foundAddOn = false;
+
+            for (int i = 0; i < childAddOns.size(); i++) {
+                if (rightAddOn.equalsIgnoreCase(childAddOns.get(i).getId())) {
+                    inputGroup.addTag(childAddOns.get(i).executeTag());
+                    foundAddOn = true;
+                    break;
+                }
+            }
+            if (!foundAddOn) {
                 Div div = new Div();
                 div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
                         .addText(getTagValue(rightAddOn));
@@ -437,8 +452,8 @@ public final class AutoCompleteTagHandler extends TagHandler {
         rows.add(row);
     }
 
-    void setChildAddOn(TagHandler childAddOn) {
-        this.childAddOn = childAddOn;
+    void addChildAddOn(TagHandler childAddOn) {
+        this.childAddOns.add(childAddOn);
     }
 
     public void setVar(String var) {

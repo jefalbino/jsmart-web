@@ -80,23 +80,23 @@ public final class ButtonTagHandler extends TagHandler {
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof InputTagHandler) {
-            ((InputTagHandler) parent).setChildAddOn(this);
+            ((InputTagHandler) parent).addChildAddOn(this);
             return false;
 
         } else if (parent instanceof AutoCompleteTagHandler) {
-            ((AutoCompleteTagHandler) parent).setChildAddOn(this);
+            ((AutoCompleteTagHandler) parent).addChildAddOn(this);
             return false;
 
 		} else if (parent instanceof DateTagHandler) {
-			((DateTagHandler) parent).setChildAddOn(this);
+			((DateTagHandler) parent).addChildAddOn(this);
 			return false;
 
 		} else if (parent instanceof UploadTagHandler) {
-			((UploadTagHandler) parent).setChildAddOn(this);
+			((UploadTagHandler) parent).addChildAddOn(this);
 			return false;
 
 		} else if (parent instanceof SelectTagHandler) {
-			((SelectTagHandler) parent).setChildAddOn(this);
+			((SelectTagHandler) parent).addChildAddOn(this);
 			return false;
 		}
 		return true;

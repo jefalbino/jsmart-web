@@ -69,10 +69,11 @@ public final class SelectTagHandler extends TagHandler {
 
 	private List<OptionTagHandler> options;
 
-	private TagHandler childAddOn;
+	private List<TagHandler> childAddOns;
 
 	public SelectTagHandler() {
 		options = new ArrayList<OptionTagHandler>();
+        childAddOns = new ArrayList<TagHandler>(2);
 	}
 
 	@Override
@@ -138,9 +139,16 @@ public final class SelectTagHandler extends TagHandler {
 		}
 		
 		if (leftAddOn != null) {
-			if (childAddOn != null && leftAddOn.equalsIgnoreCase(childAddOn.getId())) {
-				inputGroup.addTag(childAddOn.executeTag());
-			} else {
+            boolean foundAddOn = false;
+
+            for (int i = 0; i < childAddOns.size(); i++) {
+                if (leftAddOn.equalsIgnoreCase(childAddOns.get(i).getId())) {
+                    inputGroup.addTag(childAddOns.get(i).executeTag());
+                    foundAddOn = true;
+                    break;
+                }
+            }
+			if (!foundAddOn) {
 				Div div = new Div();
 				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
 					.addText(getTagValue(leftAddOn));
@@ -184,9 +192,16 @@ public final class SelectTagHandler extends TagHandler {
 		}
 
 		if (rightAddOn != null) {
-			if (childAddOn != null && rightAddOn.equalsIgnoreCase(childAddOn.getId())) {
-				inputGroup.addTag(childAddOn.executeTag());
-			} else {
+            boolean foundAddOn = false;
+
+            for (int i = 0; i < childAddOns.size(); i++) {
+                if (rightAddOn.equalsIgnoreCase(childAddOns.get(i).getId())) {
+                    inputGroup.addTag(childAddOns.get(i).executeTag());
+                    foundAddOn = true;
+                    break;
+                }
+            }
+			if (!foundAddOn) {
 				Div div = new Div();
 				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
 					.addText(getTagValue(rightAddOn));
@@ -248,8 +263,8 @@ public final class SelectTagHandler extends TagHandler {
 		return getBindFunction(id, Event.CHANGE.name(), builder);
 	}
 	
-	void setChildAddOn(TagHandler childAddOn) {
-		this.childAddOn = childAddOn;
+	void addChildAddOn(TagHandler childAddOn) {
+		this.childAddOns.add(childAddOn);
 	}
 
 	void addOption(OptionTagHandler option) {

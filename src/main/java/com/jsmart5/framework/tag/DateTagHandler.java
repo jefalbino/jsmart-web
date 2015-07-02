@@ -19,6 +19,8 @@
 package com.jsmart5.framework.tag;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -72,9 +74,13 @@ public final class DateTagHandler extends TagHandler {
 	
 	private boolean disabled;
 
-	private TagHandler childAddOn;
+	private List<TagHandler> childAddOns;
 	
 	private FormatTagHandler format;
+
+    public DateTagHandler() {
+        childAddOns = new ArrayList<TagHandler>(2);
+    }
 
 	@Override
 	public void validateTag() throws JspException {
@@ -145,9 +151,16 @@ public final class DateTagHandler extends TagHandler {
 		}
 		
 		if (leftAddOn != null) {
-			if (childAddOn != null && leftAddOn.equalsIgnoreCase(childAddOn.getId())) {
-				inputGroup.addTag(childAddOn.executeTag());
-			} else {
+            boolean foundAddOn = false;
+
+            for (int i = 0; i < childAddOns.size(); i++) {
+                if (leftAddOn.equalsIgnoreCase(childAddOns.get(i).getId())) {
+                    inputGroup.addTag(childAddOns.get(i).executeTag());
+                    foundAddOn = true;
+                    break;
+                }
+            }
+			if (!foundAddOn) {
 				Div div = new Div();
 				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
 					.addText(getTagValue(leftAddOn));
@@ -223,9 +236,16 @@ public final class DateTagHandler extends TagHandler {
 		}
 
 		if (rightAddOn != null) {
-			if (childAddOn != null && rightAddOn.equalsIgnoreCase(childAddOn.getId())) {
-				inputGroup.addTag(childAddOn.executeTag());
-			} else {
+            boolean foundAddOn = false;
+
+            for (int i = 0; i < childAddOns.size(); i++) {
+                if (rightAddOn.equalsIgnoreCase(childAddOns.get(i).getId())) {
+                    inputGroup.addTag(childAddOns.get(i).executeTag());
+                    foundAddOn = true;
+                    break;
+                }
+            }
+			if (!foundAddOn) {
 				Div div = new Div();
 				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
 					.addText(getTagValue(rightAddOn));
@@ -268,8 +288,8 @@ public final class DateTagHandler extends TagHandler {
 		appendDocScript(script);
 	}
 
-	void setChildAddOn(TagHandler childAddOn) {
-		this.childAddOn = childAddOn;
+	void addChildAddOn(TagHandler childAddOn) {
+		this.childAddOns.add(childAddOn);
 	}
 
 	void setFormat(FormatTagHandler format) {
