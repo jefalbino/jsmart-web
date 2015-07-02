@@ -1668,147 +1668,147 @@ var Jsmart5 = (function() {
 			validateElement.find('em[vldt-ref]').remove();
 	
 			validateElement.find('*[vldt-req]').each(function(index) {
-				var name = $(this).attr("name");
 
-				if (name) {
-					var text = $(this).attr('vldt-text');
-					var look = 'has-' + $(this).attr('vldt-look');
-					var regex = $(this).attr('vldt-regex');
-					var value = getElementParam($(this), true);
+                var text = $(this).attr('vldt-text');
+                var look = 'has-' + $(this).attr('vldt-look');
+                var regex = $(this).attr('vldt-regex');
+                var value = getElementParam($(this), true);
 
-					var textLook = 'text-' + $(this).attr('vldt-look');
-					if (textLook.indexOf('error') >= 0) {
-						textLook = 'text-danger';
-					}
-					textLook += ' ' + validateTextStyle;
-					
-					if (regex && regex.length > 0) {
-						regex = new RegExp(regex, "i");
-					}
+                var textLook = 'text-' + $(this).attr('vldt-look');
+                if (textLook.indexOf('error') >= 0) {
+                    textLook = 'text-danger';
+                }
+                textLook += ' ' + validateTextStyle;
 
-					if ($(this).is('input') && $(this).attr('checkgroup')) {
-						if (!contains(checkgroups, name)) {
-							checkgroups[checkgroups.length] = name;
+                if (regex && regex.length > 0) {
+                    regex = new RegExp(regex, "i");
+                }
 
-                            // If checkgroup has label or it is inside rest or form we need to use the form-group class
-							if ($(this).closest('div.form-group').length > 0) {
-							    $(this).closest('div.form-group').removeClass(look);
-							} else {
-							    $(this).closest('div[checkgroup]').removeClass(look);
-							}
-	
-							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
-								
-								if ($(this).closest('div[checkgroup]').attr('inline')) {
-									textLook = textLook.replace(validateTextStyle, validateGroupStyle);
-								}
-								addValidate($(this), text, 'checkgroup', look, textLook);
-								validated = false;
-							}
-						}
-					} else if ($(this).is('input') && $(this).attr('radiogroup')) {
-						if (!contains(checkgroups, name)) {
-							checkgroups[checkgroups.length] = name;
+                if ($(this).is('input') && $(this).attr('checkgroup')) {
+                    var name = $(this).attr("name");
 
-                            // If radiogroup has label or it is inside rest or form we need to use the form-group class
-                            if ($(this).closest('div.form-group').length > 0) {
-                                $(this).closest('div.form-group').removeClass(look);
-                            } else {
-                                $(this).closest('div[radiogroup]').removeClass(look);
+                    if (name && !contains(checkgroups, name)) {
+                        checkgroups[checkgroups.length] = name;
+
+                        // If checkgroup has label or it is inside rest or form we need to use the form-group class
+                        if ($(this).closest('div.form-group').length > 0) {
+                            $(this).closest('div.form-group').removeClass(look);
+                        } else {
+                            $(this).closest('div[checkgroup]').removeClass(look);
+                        }
+
+                        if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
+
+                            if ($(this).closest('div[checkgroup]').attr('inline')) {
+                                textLook = textLook.replace(validateTextStyle, validateGroupStyle);
+                            }
+                            addValidate($(this), text, 'checkgroup', look, textLook);
+                            validated = false;
+                        }
+                    }
+                } else if ($(this).is('input') && $(this).attr('radiogroup')) {
+                    var name = $(this).attr("name");
+
+                    if (name && !contains(checkgroups, name)) {
+                        checkgroups[checkgroups.length] = name;
+
+                        // If radiogroup has label or it is inside rest or form we need to use the form-group class
+                        if ($(this).closest('div.form-group').length > 0) {
+                            $(this).closest('div.form-group').removeClass(look);
+                        } else {
+                            $(this).closest('div[radiogroup]').removeClass(look);
+                        }
+
+                        if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
+
+                            if ($(this).closest('div[radiogroup]').attr('inline')) {
+                                textLook = textLook.replace(validateTextStyle, validateGroupStyle);
+                            }
+                            addValidate($(this), text, 'radiogroup', look, textLook);
+                            validated = false;
+                        }
+                    }
+                } else if ($(this).is('input:checkbox')) {
+
+                    $(this).closest('div.checkbox').removeClass(look);
+
+                    if (value.length == 0 || !value[0].value || value[0].value == 'false') {
+                        addValidate($(this), text, 'checkbox', look, textLook);
+                        validated = false;
+                    }
+                } else {
+                    var type = $(this).closest('div.form-group').length > 0 ? 'form-group' :
+                               $(this).closest('div.input-group').length > 0 ? 'input-group' : 'default';
+
+                    if (type == 'form-group') {
+                        $(this).closest('div.form-group').removeClass(look);
+
+                    } else if (type == 'input-group') {
+                         $(this).closest('div.input-group').removeClass(look);
+
+                    } else {
+                        $(this).removeClass(look);
+                    }
+
+                    if ($(this).is('input:file')) {
+                        if ($(this)[0].files.length > 0) {
+
+                            var file = $(this)[0].files[0];
+                            var fileSize = file.size || file.fileSize;
+                            fileSize = parseInt(fileSize);
+
+                            var minLength = $(this).attr('vldt-min-l');
+                            if (minLength && fileSize < minLength) {
+                                addValidate($(this), text, type, look, textLook);
+                                validated = false;
                             }
 
-							if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
-								
-								if ($(this).closest('div[radiogroup]').attr('inline')) {
-									textLook = textLook.replace(validateTextStyle, validateGroupStyle);
-								}
-								addValidate($(this), text, 'radiogroup', look, textLook);
-								validated = false;
-							}
-						}
-	
-					} else if ($(this).is('input:checkbox')) {
+                            var maxLength = $(this).attr('vldt-max-l');
+                            if (maxLength && fileSize > maxLength) {
+                                addValidate($(this), text, type, look, textLook);
+                                validated = false;
+                            }
 
-						$(this).closest('div.checkbox').removeClass(look);
+                            if (regex && !regex.test(value[0].value)) {
+                                addValidate($(this), text, type, look, textLook);
+                                validated = false;
+                            }
 
-						if (value.length == 0 || !value[0].value || value[0].value == 'false') {
-							addValidate($(this), text, 'checkbox', look, textLook);
-							validated = false;
-						}
-					} else {
-						var type = $(this).closest('div.form-group').length > 0 ? 'form-group' :
-								   $(this).closest('div.input-group').length > 0 ? 'input-group' : 'default';
+                        } else {
+                            addValidate($(this), text, type, look, textLook);
+                            validated = false;
+                        }
 
-						if (type == 'form-group') {
-							$(this).closest('div.form-group').removeClass(look);
+                    } else if (value.length > 0 && value[0].value && value[0].value.length > 0) {
 
-						} else if (type == 'input-group') {
-							 $(this).closest('div.input-group').removeClass(look);
+                        if (isString(value[0].value) && $.trim(value[0].value).length == 0) {
+                            addValidate($(this), text, type, look, textLook);
+                            validated = false;
 
-						} else {
-							$(this).removeClass(look);
-						}
+                        } else {
+                            var minLength = $(this).attr('vldt-min-l');
+                            if (minLength && value[0].value.length < minLength) {
+                                addValidate($(this), text, type, look, textLook);
+                                validated = false;
+                            }
 
-						if ($(this).is('input:file')) {
-							if ($(this)[0].files.length > 0) {
+                            var maxLength = $(this).attr('vldt-max-l');
+                            if (maxLength && value[0].value.length > maxLength) {
+                                addValidate($(this), text, type, look, textLook);
+                                validated = false;
+                            }
+                        }
 
-								var file = $(this)[0].files[0];
-								var fileSize = file.size || file.fileSize;
-								fileSize = parseInt(fileSize);
+                        if (regex && !regex.test(value[0].value)) {
+                            addValidate($(this), text, type, look, textLook);
+                            validated = false;
+                        }
 
-								var minLength = $(this).attr('vldt-min-l');
-								if (minLength && fileSize < minLength) {
-									addValidate($(this), text, type, look, textLook);
-									validated = false;
-								}
-								
-								var maxLength = $(this).attr('vldt-max-l');
-								if (maxLength && fileSize > maxLength) {
-									addValidate($(this), text, type, look, textLook);
-									validated = false;
-								}
-								
-								if (regex && !regex.test(value[0].value)) {
-									addValidate($(this), text, type, look, textLook);
-									validated = false;
-								}
-
-							} else {
-								addValidate($(this), text, type, look, textLook);
-								validated = false;
-							}
-
-						} else if (value.length > 0 && value[0].value && value[0].value.length > 0) {
-
-							if (isString(value[0].value) && $.trim(value[0].value).length == 0) {
-								addValidate($(this), text, type, look, textLook);
-								validated = false;
-	
-							} else {
-								var minLength = $(this).attr('vldt-min-l');
-								if (minLength && value[0].value.length < minLength) {
-									addValidate($(this), text, type, look, textLook);
-									validated = false;
-								}
-	
-								var maxLength = $(this).attr('vldt-max-l');
-								if (maxLength && value[0].value.length > maxLength) {
-									addValidate($(this), text, type, look, textLook);
-									validated = false;
-								}
-							}
-
-							if (regex && !regex.test(value[0].value)) {
-								addValidate($(this), text, type, look, textLook);
-								validated = false;
-							}
-
-						} else {
-							addValidate($(this), text, type, look, textLook);
-							validated = false;
-						}
-					}
-				}
+                    } else {
+                        addValidate($(this), text, type, look, textLook);
+                        validated = false;
+                    }
+                }
 			});
 		}
 		return validated;
