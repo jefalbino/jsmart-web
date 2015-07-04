@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.el.ExpressionFactory;
+import javax.servlet.AsyncContext;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -483,19 +484,19 @@ public final class WebContext implements Serializable {
         return context != null ? context.responseWritten : false;
     }
 
-    public static void writeResponseAsString(String responseVal) throws IOException {
+    public static void writeResponseAsString(String response) throws IOException {
         WebContext context = getCurrentInstance();
-        if (context != null) {
+        if (context != null && response != null) {
             context.responseWritten = true;
             PrintWriter writer = context.response.getWriter();
-            writer.write(responseVal);
+            writer.write(response);
             writer.flush();
         }
     }
 
     public static void writeResponseAsJson(Object object) throws IOException {
         WebContext context = getCurrentInstance();
-        if (context != null) {
+        if (context != null && object != null) {
             context.responseWritten = true;
             context.response.setContentType("application/json");
             PrintWriter writer = context.response.getWriter();
@@ -506,7 +507,7 @@ public final class WebContext implements Serializable {
 
     public static void writeResponseAsXml(Object object) throws IOException, JAXBException {
         WebContext context = getCurrentInstance();
-        if (context != null) {
+        if (context != null && object != null) {
             context.responseWritten = true;
             context.response.setContentType("application/xml");
             PrintWriter writer = context.response.getWriter();
@@ -518,14 +519,22 @@ public final class WebContext implements Serializable {
         }
     }
 
-    public static void writeResponseAsEventStream(final String event, final String data, final Long retry) throws IOException {
-        WebContext context = getCurrentInstance();
-        if (context != null) {
-            context.responseWritten = true;
-            context.response.setContentType("text/event-stream");
-            PrintWriter printWriter = context.response.getWriter();
+    public static void writeResponseAsEventStream(final AsyncContext asyncContext, final String event,
+            final String data) throws IOException {
+        writeResponseAsEventStream(asyncContext, event, data, null);
+    }
 
-            printWriter.write("retry:" + retry + "\n");
+    public static void writeResponseAsEventStream(final AsyncContext asyncContext, final String event, final String data,
+            final Long retry) throws IOException {
+        if (asyncContext != null && event != null && data != null) {
+
+            HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
+            response.setContentType("text/event-stream");
+            PrintWriter printWriter = response.getWriter();
+
+            if (retry != null) {
+                printWriter.write("retry:" + retry + "\n");
+            }
             printWriter.write("event:" + event + "\n");
             printWriter.write("data:" + data + "\n\n");
             printWriter.flush();
@@ -534,7 +543,8 @@ public final class WebContext implements Serializable {
 
     public static void writeResponseAsFileStream(final File file, final int bufferSize) throws IOException {
         WebContext context = getCurrentInstance();
-        if (context != null) {
+        if (context != null && file != null && bufferSize > 0) {
+
             context.responseWritten = true;
             context.response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
             context.response.addHeader("Content-Length", Long.toString(file.length()));
