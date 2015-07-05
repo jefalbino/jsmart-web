@@ -180,6 +180,14 @@ var Jsmart5 = (function() {
 
 		asyncevent: function(map) {
 		    doAsyncEvent(map);
+		},
+
+		showLoad: function(id) {
+		    appendLoadIcon({id: id, tag: 'ajax'});
+		},
+
+		hideLoad: function(id) {
+		    removeLoadIcon({id: id, tag: 'ajax'});
 		}
 	};
 
@@ -205,9 +213,16 @@ var Jsmart5 = (function() {
                 return;
             }
 
+            // Validate form before creating ajax request
+            var closestForm = el.closest('form');
+            if (closestForm && closestForm.length > 0) {
+                if (!doValidate($(closestForm).attr('id'))) {
+                    return;
+                }
+            }
+
 			if (map.method) {
 				var options = getAjaxOptions(map);
-				var closestForm = el.closest('form');
 				var elParam = getElementParam(el, false);
 				var dlgParam = getDelegateParam(el, map);
 
@@ -219,10 +234,6 @@ var Jsmart5 = (function() {
 					}
 
 					if (closestForm && closestForm.length > 0) {
-						if (!doValidate($(closestForm).attr('id'))) {
-							return;
-						}
-
 						if (map.tag && (map.tag == 'checkbox' || map.tag == 'select' || map.tag == 'checkgroup' 
 								|| map.tag == 'radiogroup')) {
 							if (elParam.length > 0 && elParam[0].value == null) {

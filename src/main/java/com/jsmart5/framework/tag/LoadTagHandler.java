@@ -42,11 +42,26 @@ public final class LoadTagHandler extends TagHandler {
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
-
-			((TagHandler) parent).setLoadTag(this);
+		if (parent instanceof AutoCompleteTagHandler) {
+			((AutoCompleteTagHandler) parent).setLoadTag(this);
 			return false;
-		}
+
+		} else if (parent instanceof ButtonTagHandler) {
+            ((ButtonTagHandler) parent).setLoadTag(this);
+            return false;
+
+        } else if (parent instanceof LinkTagHandler) {
+            ((LinkTagHandler) parent).setLoadTag(this);
+            return false;
+
+        } else if (parent instanceof ListTagHandler) {
+            ((ListTagHandler) parent).setLoadTag(this);
+            return false;
+
+        } else if (parent instanceof TableTagHandler) {
+            ((TableTagHandler) parent).setLoadTag(this);
+            return false;
+        }
 		return true;
 	}
 
