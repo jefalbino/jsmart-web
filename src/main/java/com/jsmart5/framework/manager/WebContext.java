@@ -520,11 +520,11 @@ public final class WebContext implements Serializable {
     }
 
     public static void writeResponseAsEventStream(final AsyncContext asyncContext, final String event,
-            final String data) throws IOException {
+            final Object data) throws IOException {
         writeResponseAsEventStream(asyncContext, event, data, null);
     }
 
-    public static void writeResponseAsEventStream(final AsyncContext asyncContext, final String event, final String data,
+    public static void writeResponseAsEventStream(final AsyncContext asyncContext, final String event, final Object data,
             final Long retry) throws IOException {
         if (asyncContext != null && event != null && data != null) {
 
