@@ -844,11 +844,11 @@ var Jsmart5 = (function() {
 	function doSetDate(id, time) {
         var hidden = $(getId(id + '-date'));
         if (hidden && hidden.length > 0) {
-            $(getId(id)).data('DateTimePicker').date(time ? new Date(time) : null);
+            $(getId(id)).data('DateTimePicker').date(time ? new Date(parseInt(time)) : null);
         } else {
             hidden = $(getId(id + '-wrap-date'));
             if (hidden && hidden.length > 0) {
-                $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(time) : null);
+                $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(parseInt(time)) : null);
             }
         }
 	}
