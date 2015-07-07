@@ -150,6 +150,14 @@ var Jsmart5 = (function() {
 			doDate(map);
 		},
 
+		setdate: function(id, time) {
+		    doSetDate(id, time);
+		},
+
+		getdate: function(id) {
+            return doGetDate(id);
+        },
+
 		table: function(tr, map) {
 			doTable(tr, map);
 		},
@@ -821,7 +829,30 @@ var Jsmart5 = (function() {
 			el.find('>a').addClass('js5-carousel-control');
 		}
 	}
-	
+
+	function doGetDate(id) {
+        var hidden = $(getId(id + '-date'));
+        if (!hidden || hidden.length == 0) {
+            hidden = $(getId(id + '-wrap-date'));
+        }
+        if (hidden && hidden.length > 0) {
+            return hidden.val();
+        }
+        return null;
+    }
+
+	function doSetDate(id, time) {
+        var hidden = $(getId(id + '-date'));
+        if (hidden && hidden.length > 0) {
+            $(getId(id)).data('DateTimePicker').date(time ? new Date(time) : null);
+        } else {
+            hidden = $(getId(id + '-wrap-date'));
+            if (hidden && hidden.length > 0) {
+                $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(time) : null);
+            }
+        }
+	}
+
 	function doDate(map) {
 		var dateOptions = {};
 		dateOptions.showTodayButton = true;
