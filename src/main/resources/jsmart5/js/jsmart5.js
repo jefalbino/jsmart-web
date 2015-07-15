@@ -142,6 +142,14 @@ var Jsmart5 = (function() {
 		    doListUpdate(id, map, template);
 		},
 
+		listGet: function(id, map) {
+		    return doListGet(id, map);
+		},
+
+		listGetAll: function(id, map) {
+		    return doListGetAll(id, map);
+		},
+
 		listRemove: function(id, map) {
             doListRemove(id, map);
 		},
@@ -495,7 +503,7 @@ var Jsmart5 = (function() {
 	
 					var options = getAjaxOptions(map);
 					options.data = postParam;
-	
+
 					if (closestForm && closestForm.length > 0) {
 						$(closestForm).ajaxSubmit(options);
 					} else {
@@ -515,34 +523,15 @@ var Jsmart5 = (function() {
 
 	        var item = list.find('*[row-template="' + template + '"]:hidden').clone();
 	        if (item && item.length > 0) {
-	            item.attr('id', null).css({'display': 'block'});
-
-	            var doMapContent = function(item, obj) {
-	                if (obj.key && obj.value) {
-                        item.attr(obj.key, obj.value);
-                    } else if (obj.id) {
-                        if (obj.text) {
-                            item.find(getId(obj.id)).text(obj.text);
-                        }
-                        if (obj.attr) {
-                            if ($.isArray(obj.attr)) {
-                                for (var i = 0; i < obj.attr.length; i++) {
-                                    item.find(getId(obj.id)).attr(obj.attr[i].key, obj.attr[i].value);
-                                }
-                            } else {
-                                item.find(getId(obj.id)).attr(obj.attr.key, obj.attr.value);
-                            }
-                        }
-                    }
-	            };
+	            item.attr('row-id', item.attr('id')).attr('id', null).css({'display': 'block'});
 
 	            if (map) {
                     if ($.isArray(map)) {
                         for (var i = 0; i < map.length; i++) {
-                            doMapContent(item, map[i]);
+                            handleListUpdate(item, map[i]);
                         }
                     } else {
-                        doMapContent(item, map);
+                        handleListUpdate(item, map);
                     }
 	            }
 
@@ -557,14 +546,128 @@ var Jsmart5 = (function() {
 	    }
 	}
 
-	function doListUpdate(id, map, template) {
+	function doListUpdate(id, map) {
+        var list = $(getId(id));
+        if (list && list.length > 0 && map) {
+            var item = list.find('*[' + map.key + '="' + map.value + '"]:visible');
+            if (item && item.length > 0) {
 
+                if ($.isArray(map)) {
+                    for (var i = 0; i < map.length; i++) {
+                        handleListUpdate(item, map[i]);
+                    }
+                } else {
+                    handleListUpdate(item, map);
+                }
+            }
+        }
 	}
+
+    function handleListUpdate(item, obj) {
+        if (obj.key && obj.value) {
+            item.attr(obj.key, obj.value);
+
+        } else if (obj.id) {
+            if (obj.text) {
+                item.find(getId(obj.id)).text(obj.text);
+            }
+            if (obj.attr) {
+                if ($.isArray(obj.attr)) {
+                    for (var i = 0; i < obj.attr.length; i++) {
+                        item.find(getId(obj.id)).attr(obj.attr[i].key, obj.attr[i].value);
+                    }
+                } else {
+                    item.find(getId(obj.id)).attr(obj.attr.key, obj.attr.value);
+                }
+            }
+        }
+    }
+
+	function doListGet(id, map) {
+	    var ret = [];
+        var list = $(getId(id));
+
+        if (list && list.length > 0 && map) {
+            var item = list.find('*[' + map.key + '="' + map.value + '"]:visible');
+            if (item && item.length > 0) {
+
+                if ($.isArray(map)) {
+                    // Returns an array
+                    for (var i = 0; i < map.length; i++) {
+                        ret[ret.length] = handleListGetContent(item, map[i]);
+                    }
+                } else {
+                    // Returns a map
+                    ret = handleListGetContent(item, map);
+                }
+            }
+        }
+        return ret;
+	}
+
+	function doListGetAll(id, map) {
+        var ret = [];
+        var list = $(getId(id));
+
+        if (list && list.length > 0 && map) {
+            list.find('*[' + map.key + ']:visible').each(function() {
+                var item = $(this);
+
+                if ($.isArray(map)) {
+                    var itemArray = [];
+                    for (var i = 0; i < map.length; i++) {
+                        itemArray[itemArray.length] = handleListGetContent(item, map[i]);
+                    }
+                    ret[ret.length] = {
+                        key: item.attr(map.key),
+                        value: itemArray
+                    };
+                } else {
+                    ret[ret.length] = {
+                        key: item.attr(map.key),
+                        value: handleListGetContent(item, map)
+                    };
+                }
+            });
+        }
+        return ret;
+    }
+
+    function handleListGetContent(item, obj) {
+        var map = {};
+        if (obj.key) {
+            map.key = item.attr(obj.key);
+
+        } else if (obj.id) {
+            map.id = obj.id;
+
+            if (obj.text) {
+                map.text = item.find(getId(obj.id)).text();
+            }
+            if (obj.attr) {
+                map.attr = [];
+                if ($.isArray(obj.attr)) {
+                    for (var i = 0; i < obj.attr.length; i++) {
+                        map.attr[map.attr.length] = {
+                            key: obj.attr[i].key,
+                            value: item.find(getId(obj.id)).attr(obj.attr[i].key)
+                        };
+                    }
+                } else {
+                    map.attr[map.attr.length] = {
+                        key: obj.attr.key,
+                        value: item.find(getId(obj.id)).attr(obj.attr.key)
+                    };
+                }
+            }
+        }
+        return map;
+    };
 
 	function doListRemove(id, map) {
 	    var list = $(getId(id));
         if (list && list.length > 0 && map) {
-            var item = list.find('*[' + map.key + '="' + map.value + '"]');
+            var item = list.find('*[' + map.key + '="' + map.value + '"]:visible');
             if (item && item.length > 0) {
                 item.remove();
             }
