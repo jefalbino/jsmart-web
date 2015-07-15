@@ -133,7 +133,31 @@ var Jsmart5 = (function() {
 		listscroll: function(map) {
 			doListScroll(map);
 		},
-		
+
+		listAdd: function(id, map, template) {
+            doListAdd(id, map, template);
+		},
+
+		listUpdate: function(id, map, template) {
+		    doListUpdate(id, map, template);
+		},
+
+		listRemove: function(id, map) {
+            doListRemove(id, map);
+		},
+
+		listRemoveAll: function(id) {
+            doListRemoveAll(id);
+		},
+
+		listShowLoad: function(id) {
+		    doListShowLoad(id);
+		},
+
+		listHideLoad: function(id) {
+		    doListHideLoad(id);
+		},
+
 		tab: function(map) {
 			doTab(map);
 		},
@@ -150,11 +174,11 @@ var Jsmart5 = (function() {
 			doDate(map);
 		},
 
-		setdate: function(id, time) {
+		setDate: function(id, time) {
 		    doSetDate(id, time);
 		},
 
-		getdate: function(id) {
+		getDate: function(id) {
             return doGetDate(id);
         },
 
@@ -416,20 +440,18 @@ var Jsmart5 = (function() {
 					} else {
 						postParam = $.param(postParam);			
 					}
-	
-					var refreshClone = null
-					var hiddenRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
+
+					var refreshClone = ul.find('span[' + refreshIcon + ']').closest('li').clone();
 	
 					// Append loading icon on list if it was configured
-					if (hiddenRefresh && hiddenRefresh.length > 0) {
-						refreshClone = hiddenRefresh.clone();
+					if (refreshClone && refreshClone.length > 0) {
 						ul.append(refreshClone);
 						refreshClone.slideDown('fast');
 					}
 					
 					// Remove scroll-active and refreshing icon
 					map.complete = function() {
-						if (refreshClone) {
+						if (refreshClone && refreshClone.length > 0) {
 						    refreshClone.slideUp('fast', function() {
 						        refreshClone.remove();
 						        ul.removeAttr('scroll-active');
@@ -460,7 +482,7 @@ var Jsmart5 = (function() {
 									if (ul.find('a').length > 0) {
 										ul.append(newUl.find('a'));
 									} else {
-										if (refreshClone) {
+										if (refreshClone && refreshClone.length > 0) {
 											ul.append(newUl.find('li').not(':first'));
 										} else {
 											ul.append(newUl.find('li'));
@@ -483,7 +505,108 @@ var Jsmart5 = (function() {
 			}
 		});
 	}
-	
+
+	function doListAdd(id, map, template) {
+	    var list = $(getId(id));
+	    if (list && list.length > 0) {
+	        if (!template) {
+	            template = 0;
+	        }
+
+	        var item = list.find('*[row-template="' + template + '"]:hidden').clone();
+	        if (item && item.length > 0) {
+	            item.attr('id', null).css({'display': 'block'});
+
+	            var doMapContent = function(item, obj) {
+	                if (obj.key && obj.value) {
+                        item.attr(obj.key, obj.value);
+                    } else if (obj.id) {
+                        if (obj.text) {
+                            item.find(getId(obj.id)).text(obj.text);
+                        }
+                        if (obj.attr) {
+                            if ($.isArray(obj.attr)) {
+                                for (var i = 0; i < obj.attr.length; i++) {
+                                    item.find(getId(obj.id)).attr(obj.attr[i].key, obj.attr[i].value);
+                                }
+                            } else {
+                                item.find(getId(obj.id)).attr(obj.attr.key, obj.attr.value);
+                            }
+                        }
+                    }
+	            };
+
+	            if (map) {
+                    if ($.isArray(map)) {
+                        for (var i = 0; i < map.length; i++) {
+                            doMapContent(item, map[i]);
+                        }
+                    } else {
+                        doMapContent(item, map);
+                    }
+	            }
+
+                // Always insert at the end of last template item
+	            var last = list.find('*[row-template="' + template + '"]:visible').last();
+	            if (last && last.length > 0) {
+	                last.after(item);
+	            } else {
+	                list.find('*[row-template="' + template + '"]:hidden').after(item);
+	            }
+	        }
+	    }
+	}
+
+	function doListUpdate(id, map, template) {
+
+	}
+
+	function doListRemove(id, map) {
+	    var list = $(getId(id));
+        if (list && list.length > 0 && map) {
+            var item = list.find('*[' + map.key + '="' + map.value + '"]');
+            if (item && item.length > 0) {
+                item.remove();
+            }
+        }
+	}
+
+	function doListRemoveAll(id) {
+	    var list = $(getId(id));
+	    if (list && list.length > 0) {
+	        list.find('*[row-template]:visible').each(function() {
+	            $(this).remove();
+	        });
+	    }
+	}
+
+	function doListShowLoad(id) {
+        var list = $(getId(id));
+        if (list && list.length > 0) {
+            var refreshClone = list.find('span[' + refreshIcon + ']').closest('li').clone();
+
+            // Append loading icon on list if it was configured
+            if (refreshClone && refreshClone.length > 0) {
+                list.append(refreshClone);
+                refreshClone.slideDown('fast');
+            }
+        }
+	}
+
+	function doListHideLoad(id) {
+        var list = $(getId(id));
+        if (list && list.length > 0) {
+            var refreshClone = list.find('span[' + refreshIcon + ']').closest('li:visible');
+
+            // Remove loading icon from list if it was configured
+	        if (refreshClone && refreshClone.length > 0) {
+                refreshClone.slideUp('fast', function() {
+                    refreshClone.remove();
+                });
+            }
+        }
+	}
+
 	function doTable(tr, map) {
 		if (tr && tr.length > 0) {
 
@@ -700,12 +823,10 @@ var Jsmart5 = (function() {
 			postParam = $.param(postParam);			
 		}
 
-		var refreshClone = null
-		var hiddenRefresh = tbody.find('span[' + refreshIcon + ']').closest('tr');
+		var refreshClone = tbody.find('span[' + refreshIcon + ']').closest('tr').clone();
 
 		// Append loading icon on list if it was configured
-		if (hiddenRefresh && hiddenRefresh.length > 0) {
-			refreshClone = hiddenRefresh.clone();
+		if (refreshClone && refreshClone.length > 0) {
 			refreshClone.find('td').css({'display': 'block'});
 			tbody.append(refreshClone);
 			refreshClone.slideDown('fast');
@@ -713,7 +834,7 @@ var Jsmart5 = (function() {
 
 		// Remove scroll-active and refreshing icon
 		map.complete = function() {
-			if (refreshClone) {
+			if (refreshClone && refreshClone.length > 0) {
 			    refreshClone.slideUp('fast', function() {
 			        refreshClone.remove();
                     tbody.removeAttr('scroll-active');
@@ -742,7 +863,7 @@ var Jsmart5 = (function() {
 
 					// Case the returned table has last index different than current
 					if (lastIndex && (jsonParam.index - 1) != lastIndex) {
-						if (refreshClone) {
+						if (refreshClone && refreshClone.length > 0) {
 							tbody.append(newTable.find('tbody tr').not(':first'));
 						} else {
 							tbody.append(newTable.find('tbody tr'));
@@ -1154,19 +1275,17 @@ var Jsmart5 = (function() {
 						postParam = $.param(postParam);
 					}
 
-					var refreshClone = null
-					var hiddenRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
+					var refreshClone = ul.find('span[' + refreshIcon + ']').closest('li').clone();
 
 					// Append loading icon on list if it was configured
-					if (hiddenRefresh && hiddenRefresh.length > 0) {
-						refreshClone = hiddenRefresh.clone();
+					if (refreshClone && refreshClone.length > 0) {
 						ul.append(refreshClone);
 						refreshClone.slideDown('fast');
 					}
 
 					// Remove scroll-active and refreshing icon
 					map.complete = function() {
-						if (refreshClone) {
+						if (refreshClone && refreshClone.length > 0) {
 						    refreshClone.slideUp('fast', function() {
 						        refreshClone.remove();
 						        ul.removeAttr('scroll-active');

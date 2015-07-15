@@ -80,6 +80,9 @@ public final class ListTagHandler extends TagHandler {
 		if (scrollSize != null && maxHeight == null) {
 			throw InvalidAttributeException.fromConflict("list", "maxHeight", "Attribute [maxHeight] must be specified");
 		}
+        if (values != null && var == null) {
+            throw InvalidAttributeException.fromConflict("list", "var", "Attribute [var] must be specified case [values] is specified");
+        }
 	}
 
 	@SuppressWarnings("unchecked")
@@ -105,7 +108,7 @@ public final class ListTagHandler extends TagHandler {
 			.addAttribute("class", Bootstrap.LIST_GROUP)
 			.addAttribute("class", styleClass);
 
-        if (scrollSize != null) {
+        if (scrollSize != null || values == null) {
             ul.addAttribute("style", "overflow: auto;")
                     .addAttribute("scroll-size", scrollSize);
         }
@@ -121,6 +124,9 @@ public final class ListTagHandler extends TagHandler {
 			li.addTag(loadTag.executeTag());
 			ul.addTag(li);
 		}
+
+        // Append row template to be used by js functions to add, update and remove rows
+        appendRowTemplate(ul);
 
 		// Get the scroll parameters case requested by scroll list
 		Scroll scroll = null;
@@ -219,6 +225,20 @@ public final class ListTagHandler extends TagHandler {
 		}
 		return Collections.EMPTY_LIST;
 	}
+
+    private void appendRowTemplate(Tag ul) throws JspException, IOException {
+        for (int i = 0; i < rows.size(); i++) {
+            RowTagHandler row = rows.get(i);
+            row.setSelectable(selectValue != null);
+            setEvents(row);
+
+            Tag rowTag = row.executeTag();
+            rowTag.addAttribute("style", "display: none;")
+                .addAttribute("to-string", "")
+                .addAttribute("row-template", i);
+            ul.addTag(rowTag);
+        }
+    }
 
 	private StringBuilder getAjaxFunction() {
 		Ajax jsonAjax = new Ajax();

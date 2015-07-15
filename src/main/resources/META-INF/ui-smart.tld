@@ -1411,7 +1411,7 @@
         </attribute>
         <attribute>
             <name>title</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>type</name>
@@ -2413,11 +2413,11 @@
         </attribute>
         <attribute>
             <name>var</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>values</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>selectValue</name>
@@ -2783,6 +2783,10 @@
         </attribute>
         <attribute>
             <name>selector</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>orphan</name>
             <required>false</required>
         </attribute>
     </tag>
