@@ -46,12 +46,10 @@ public final class PopOverTagHandler extends TagHandler {
 
 	private String selector;
 
-    private boolean orphan;
-
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof TagHandler && !orphan) {
+		if (parent instanceof TagHandler) {
 
 			((TagHandler) parent).setPopOverTag(this);
 		}
@@ -142,8 +140,4 @@ public final class PopOverTagHandler extends TagHandler {
 	public void setSelector(String selector) {
 		this.selector = selector;
 	}
-
-    public void setOrphan(boolean orphan) {
-        this.orphan = orphan;
-    }
 }

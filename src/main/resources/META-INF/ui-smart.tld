@@ -2785,10 +2785,6 @@
             <name>selector</name>
             <required>false</required>
         </attribute>
-        <attribute>
-            <name>orphan</name>
-            <required>false</required>
-        </attribute>
     </tag>
 
     <tag>

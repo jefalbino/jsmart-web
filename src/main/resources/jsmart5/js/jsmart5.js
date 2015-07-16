@@ -521,9 +521,12 @@ var Jsmart5 = (function() {
 	            template = 0;
 	        }
 
-	        var item = list.find('*[row-template="' + template + '"]:hidden').clone();
+	        var item = list.find('li[row-template="' + template + '"], a[row-template="' + template + '"]').clone();
 	        if (item && item.length > 0) {
-	            item.attr('row-id', item.attr('id')).attr('id', null).css({'display': 'block'});
+
+	            // Update id to be row-id and row-template to be row
+	            item.attr('row-id', item.attr('id')).attr('row', item.attr('row-template'))
+	                .removeAttr('id').removeAttr('row-template').css({'display': 'block'});
 
 	            if (map) {
                     if ($.isArray(map)) {
@@ -536,11 +539,11 @@ var Jsmart5 = (function() {
 	            }
 
                 // Always insert at the end of last template item
-	            var last = list.find('*[row-template="' + template + '"]:visible').last();
+	            var last = list.find('li[row="' + template + '"], a[row="' + template + '"]').last();
 	            if (last && last.length > 0) {
 	                last.after(item);
 	            } else {
-	                list.find('*[row-template="' + template + '"]:hidden').after(item);
+	                list.find('li[row-template="' + template + '"], a[row-template="' + template + '"]').after(item);
 	            }
 	        }
 	    }
@@ -548,16 +551,16 @@ var Jsmart5 = (function() {
 
 	function doListUpdate(id, map) {
         var list = $(getId(id));
-        if (list && list.length > 0 && map) {
-            var item = list.find('*[' + map.key + '="' + map.value + '"]:visible');
+        if (list && list.length > 0 && map && map.update) {
+            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
             if (item && item.length > 0) {
 
-                if ($.isArray(map)) {
-                    for (var i = 0; i < map.length; i++) {
-                        handleListUpdate(item, map[i]);
+                if ($.isArray(map.update)) {
+                    for (var i = 0; i < map.update.length; i++) {
+                        handleListUpdate(item, map.update[i]);
                     }
                 } else {
-                    handleListUpdate(item, map);
+                    handleListUpdate(item, map.update);
                 }
             }
         }
@@ -569,15 +572,15 @@ var Jsmart5 = (function() {
 
         } else if (obj.id) {
             if (obj.text) {
-                item.find(getId(obj.id)).text(obj.text);
+                item.find('*[id="' + obj.id + '"]').text(obj.text);
             }
             if (obj.attr) {
                 if ($.isArray(obj.attr)) {
                     for (var i = 0; i < obj.attr.length; i++) {
-                        item.find(getId(obj.id)).attr(obj.attr[i].key, obj.attr[i].value);
+                        item.find('*[id="' + obj.id + '"]').attr(obj.attr[i].key, obj.attr[i].value);
                     }
                 } else {
-                    item.find(getId(obj.id)).attr(obj.attr.key, obj.attr.value);
+                    item.find('*[id="' + obj.id + '"]').attr(obj.attr.key, obj.attr.value);
                 }
             }
         }
@@ -587,18 +590,18 @@ var Jsmart5 = (function() {
 	    var ret = [];
         var list = $(getId(id));
 
-        if (list && list.length > 0 && map) {
-            var item = list.find('*[' + map.key + '="' + map.value + '"]:visible');
+        if (list && list.length > 0 && map && map.get) {
+            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
             if (item && item.length > 0) {
 
-                if ($.isArray(map)) {
+                if ($.isArray(map.get)) {
                     // Returns an array
-                    for (var i = 0; i < map.length; i++) {
-                        ret[ret.length] = handleListGetContent(item, map[i]);
+                    for (var i = 0; i < map.get.length; i++) {
+                        ret[ret.length] = handleListGetContent(item, map.get[i]);
                     }
                 } else {
                     // Returns a map
-                    ret = handleListGetContent(item, map);
+                    ret = handleListGetContent(item, map.get);
                 }
             }
         }
@@ -609,23 +612,23 @@ var Jsmart5 = (function() {
         var ret = [];
         var list = $(getId(id));
 
-        if (list && list.length > 0 && map) {
-            list.find('*[' + map.key + ']:visible').each(function() {
+        if (list && list.length > 0 && map && map.get) {
+            list.find('li[' + map.key + '], a[' + map.key + ']').each(function() {
                 var item = $(this);
 
-                if ($.isArray(map)) {
+                if ($.isArray(map.get)) {
                     var itemArray = [];
-                    for (var i = 0; i < map.length; i++) {
-                        itemArray[itemArray.length] = handleListGetContent(item, map[i]);
+                    for (var i = 0; i < map.get.length; i++) {
+                        itemArray[itemArray.length] = handleListGetContent(item, map.get[i]);
                     }
                     ret[ret.length] = {
                         key: item.attr(map.key),
-                        value: itemArray
+                        data: itemArray
                     };
                 } else {
                     ret[ret.length] = {
                         key: item.attr(map.key),
-                        value: handleListGetContent(item, map)
+                        data: handleListGetContent(item, map.get)
                     };
                 }
             });
@@ -636,28 +639,22 @@ var Jsmart5 = (function() {
     function handleListGetContent(item, obj) {
         var map = {};
         if (obj.key) {
-            map.key = item.attr(obj.key);
+            map.value = item.attr(obj.key);
 
         } else if (obj.id) {
             map.id = obj.id;
 
             if (obj.text) {
-                map.text = item.find(getId(obj.id)).text();
+                map.text = item.find('*[id="' + obj.id + '"]').text();
             }
             if (obj.attr) {
-                map.attr = [];
+                map.value = [];
                 if ($.isArray(obj.attr)) {
                     for (var i = 0; i < obj.attr.length; i++) {
-                        map.attr[map.attr.length] = {
-                            key: obj.attr[i].key,
-                            value: item.find(getId(obj.id)).attr(obj.attr[i].key)
-                        };
+                        map.value[map.value.length] = item.find('*[id="' + obj.id + '"]').attr(obj.attr[i]);
                     }
                 } else {
-                    map.attr[map.attr.length] = {
-                        key: obj.attr.key,
-                        value: item.find(getId(obj.id)).attr(obj.attr.key)
-                    };
+                    map.value = item.find('*[id="' + obj.id + '"]').attr(obj.attr);
                 }
             }
         }
@@ -667,7 +664,7 @@ var Jsmart5 = (function() {
 	function doListRemove(id, map) {
 	    var list = $(getId(id));
         if (list && list.length > 0 && map) {
-            var item = list.find('*[' + map.key + '="' + map.value + '"]:visible');
+            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
             if (item && item.length > 0) {
                 item.remove();
             }
@@ -677,7 +674,7 @@ var Jsmart5 = (function() {
 	function doListRemoveAll(id) {
 	    var list = $(getId(id));
 	    if (list && list.length > 0) {
-	        list.find('*[row-template]:visible').each(function() {
+	        list.find('li[row], a[row]').each(function() {
 	            $(this).remove();
 	        });
 	    }
@@ -1068,11 +1065,11 @@ var Jsmart5 = (function() {
 	function doSetDate(id, time) {
         var hidden = $(getId(id + '-date'));
         if (hidden && hidden.length > 0) {
-            $(getId(id)).data('DateTimePicker').date(time ? new Date(parseInt(time)) : null);
+            $(getId(id)).data('DateTimePicker').date(time && time.length > 0 ? new Date(parseInt(time)) : null);
         } else {
             hidden = $(getId(id + '-wrap-date'));
             if (hidden && hidden.length > 0) {
-                $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(parseInt(time)) : null);
+                $(getId(id + '-wrap')).data('DateTimePicker').date(time && time.length > 0 ? new Date(parseInt(time)) : null);
             }
         }
 	}
