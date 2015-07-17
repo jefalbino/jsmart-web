@@ -687,6 +687,62 @@
             <name>look</name>
             <required>false</required>
         </attribute>
+        <attribute>
+            <name>onClick</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onDblClick</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseDown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseMove</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseOver</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseOut</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onMouseUp</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyDown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyPress</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onKeyUp</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onBlur</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onChange</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onFocus</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onSelect</name>
+            <required>false</required>
+        </attribute>
     </tag>
     
     <tag>

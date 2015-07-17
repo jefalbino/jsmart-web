@@ -99,6 +99,7 @@ public final class IconTagHandler extends TagHandler {
 			.addAttribute("side", side);
 		
 		appendRefId(span, id);
+        appendEvent(span);
 		
 		String lookVal = (String) getTagValue(look);
 

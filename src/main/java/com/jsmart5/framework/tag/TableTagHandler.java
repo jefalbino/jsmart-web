@@ -127,8 +127,7 @@ public final class TableTagHandler extends TagHandler {
 
 		Table table = new Table();
 		table.addAttribute("id", id)
-			.addAttribute("style", "width: inherit;")
-			.addAttribute("class", Bootstrap.TABLE)
+            .addAttribute("class", Bootstrap.TABLE)
 			.addAttribute("class", bordered ? Bootstrap.TABLE_BORDERED : null)
 			.addAttribute("class", striped ? Bootstrap.TABLE_STRIPED : null)
 			.addAttribute("class", selectValue != null ? Bootstrap.TABLE_HOVER : null)
@@ -190,7 +189,7 @@ public final class TableTagHandler extends TagHandler {
 		if (object instanceof List<?>) {
 			Iterator<Object> iterator = ((List<Object>) object).iterator();
 
-			int scrollIndex = scroll != null ? scroll.getIndex() : 0;
+			int scrollIndex = scroll != null && scroll.getIndex() != null ? scroll.getIndex() : 0;
 			int selectIndex = scrollIndex;
 
 			while (iterator.hasNext()) {
@@ -201,12 +200,12 @@ public final class TableTagHandler extends TagHandler {
 				request.setAttribute(var, obj);
 
 				Tr tr = new Tr();
-				tr.addAttribute("scroll-index", scrollIndex);
-                tr.addAttribute("to-string", obj.toString());
+				tr.addAttribute("scroll-index", scrollIndex)
+                    .addAttribute("to-string", obj.toString())
+                    .addAttribute("table-index", selectIndex);
 
 				if (selectValue != null) {
-					tr.addAttribute("style", "cursor: pointer;")
-						.addAttribute("table-index", selectIndex);
+                    tr.addAttribute("style", "cursor: pointer;");
 				}
 
                 Object scrollLastIdVal = getTagValue(scrollLastId);
@@ -314,7 +313,7 @@ public final class TableTagHandler extends TagHandler {
 
 	@SuppressWarnings("unchecked")
 	private List<?> getTableContent(Object object, Scroll scroll, Boolean hasFilterOrSort) throws JspException {
-		int index = scroll != null ? scroll.getIndex() : 0;
+		int index = scroll != null  && scroll.getIndex() != null ? scroll.getIndex() : 0;
         Object lastId = scroll != null ? scroll.getLastId() : null;
 
 		if (object instanceof TableAdapter) {

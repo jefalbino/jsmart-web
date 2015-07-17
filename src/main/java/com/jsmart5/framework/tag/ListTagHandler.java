@@ -150,7 +150,7 @@ public final class ListTagHandler extends TagHandler {
 		if (object instanceof List<?>) {
 			Iterator<Object> iterator = ((List<Object>) object).iterator();
 
-			int scrollIndex = scroll != null ? scroll.getIndex() : 0;
+			int scrollIndex = scroll != null && scroll.getIndex() != null ? scroll.getIndex() : 0;
 			int selectIndex = scrollIndex;
 
 			while (iterator.hasNext()) {
@@ -195,7 +195,7 @@ public final class ListTagHandler extends TagHandler {
 	
 	@SuppressWarnings("unchecked")
 	private List<?> getListContent(Object object, Scroll scroll) throws JspException {
-		int index = scroll != null ? scroll.getIndex() : 0;
+		int index = scroll != null && scroll.getIndex() != null ? scroll.getIndex() : 0;
         Object lastId = scroll != null ? scroll.getLastId() : null;
 
 		if (object instanceof ListAdapter) {
