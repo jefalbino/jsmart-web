@@ -27,6 +27,9 @@ var Jsmart5 = (function() {
 	var validateTextStyle = 'js5-validate-text';
 	var validateGroupStyle = 'js5-validate-group';
 
+	// Keep track of scroll binds on table or list components with dynamic scroll, case update is done
+	var scrollBinds = {};
+
 	$(function () {
 		initCheckboxes();
 		initPopOvers();
@@ -403,6 +406,9 @@ var Jsmart5 = (function() {
 	}
 	
 	function doListScroll(map) {
+	    // Keep track of scroll map for scroll bind to reapply when updating
+	    putScrollBind(map.id, map);
+
 		$(getId(map.id)).scroll(function(e) {
 			var ul = $(this);
 			if (ul.scrollTop() + ul.outerHeight() >= ul[0].scrollHeight) {
@@ -776,6 +782,9 @@ var Jsmart5 = (function() {
 	}
 
 	function doTableScroll(map) {
+	    // Keep track of scroll map for scroll bind to reapply when updating
+        putScrollBind(map.id, map);
+
 		var table = $(getId(map.id));
 
 		var thead = table.find('thead tr');
@@ -1815,6 +1824,12 @@ var Jsmart5 = (function() {
 			for (var i = 0; i < updates.length; i++) {
 				var updateId = getId(updates[i]);
 				$(updateId).replaceWith($(a).find(updateId));
+
+				// Reapply scroll bind if it is updated
+				var scrollMap = getScrollBind(updates[i]);
+				if (scrollMap) {
+				    reapplyScrollBind(scrollMap);
+				}
 			}
 		}
 	}
@@ -2133,6 +2148,22 @@ var Jsmart5 = (function() {
 			id = '#' + $.trim(id);
 		}
 		return id;
+	}
+
+	function getScrollBind(id) {
+	    return scrollBinds[id];
+	}
+
+	function putScrollBind(id, map) {
+	    scrollBinds[id] = map;
+	}
+
+	function reapplyScrollBind(map) {
+	    if (map.tag == 'tablescroll') {
+            doTableScroll(map);
+        } else if (map.tag == 'listscroll') {
+            doListScroll(map);
+        }
 	}
 
 	function getInlineStyle(element, property) {
