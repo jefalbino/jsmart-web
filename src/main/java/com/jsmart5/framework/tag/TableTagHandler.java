@@ -208,6 +208,8 @@ public final class TableTagHandler extends TagHandler {
                     tr.addAttribute("style", "cursor: pointer;");
 				}
 
+                appendRefId(tr, id);
+
                 Object scrollLastIdVal = getTagValue(scrollLastId);
                 if (scrollLastIdVal != null) {
                     tr.addAttribute("scroll-last-id", scrollLastIdVal);

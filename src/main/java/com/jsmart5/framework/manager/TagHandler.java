@@ -542,6 +542,7 @@ public abstract class TagHandler extends SimpleTagSupport {
     protected StringBuilder getBindFunction(String id, String event, StringBuilder script) {
         StringBuilder builder = new StringBuilder();
         builder.append("$(document).on('").append(event.toLowerCase()).append("','#").append(id).append("',function(e){");
+        builder.append("e.stopPropagation();");
         builder.append(script);
         builder.append("});");
         return builder;
@@ -551,6 +552,7 @@ public abstract class TagHandler extends SimpleTagSupport {
         StringBuilder builder = new StringBuilder();
         builder.append("$(document).on('").append(event.toLowerCase()).append("','#");
         builder.append(id).append(" ").append(child).append("',function(e){");
+        builder.append("e.stopPropagation();");
         builder.append(script);
         builder.append("});");
         return builder;
