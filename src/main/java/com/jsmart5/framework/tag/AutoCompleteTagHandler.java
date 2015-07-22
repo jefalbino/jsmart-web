@@ -74,6 +74,8 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     private String placeHolder;
 
+    private String inputText;
+
     private String label;
 
     private String leftAddOn;
@@ -351,7 +353,11 @@ public final class AutoCompleteTagHandler extends TagHandler {
 	                    row.setScrollIndex(scrollIndex);
 
 	                    Tag rowTag = row.executeTag();
-	                    rowTag.addAttribute("to-string", obj.toString());
+                        if (inputText != null) {
+                            rowTag.addAttribute("to-string", getTagValue(inputText));
+                        } else {
+                            rowTag.addAttribute("to-string", obj.toString());
+                        }
 
                         Object scrollLastIdVal = getTagValue(scrollLastId);
                         if (scrollLastIdVal != null) {
@@ -514,6 +520,10 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public void setInputText(String inputText) {
+        this.inputText = inputText;
     }
 
     public void setLeftAddOn(String leftAddOn) {

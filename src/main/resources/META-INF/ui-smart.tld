@@ -3776,6 +3776,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>inputText</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>leftAddOn</name>
             <required>false</required>
         </attribute>
