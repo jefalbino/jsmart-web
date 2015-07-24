@@ -314,8 +314,8 @@ public final class ButtonTagHandler extends TagHandler {
 
             if (!args.isEmpty()) {
                 String argName = getTagName(J_SBMT_ARGS, action);
-                for (Object arg : args) {
-                    jsonAjax.addArg(new Param(argName, arg));
+                for (Object arg : args.keySet()) {
+                    jsonAjax.addArg(new Param(argName, arg, args.get(arg)));
                 }
             }
 		} else if (update != null) {

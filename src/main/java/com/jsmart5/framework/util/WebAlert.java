@@ -34,6 +34,19 @@ public final class WebAlert {
 		this.type = type;
 	}
 
+    public WebAlert(AlertType type, String title, String message) {
+        this.type = type;
+        this.title = title;
+        this.message = message;
+    }
+
+    public WebAlert(AlertType type, String title, String message, String titleIcon) {
+        this.type = type;
+        this.title = title;
+        this.message = message;
+        this.titleIcon = titleIcon;
+    }
+
 	public AlertType getType() {
 		return type;
 	}

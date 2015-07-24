@@ -78,7 +78,7 @@ public final class FunctionTagHandler extends TagHandler {
 
 		if (!args.isEmpty()) {
 			String actionName = getTagName(J_SBMT_ARGS, action);
-			input.addUniqueAttribute(actionName, getJsonHtmlValue(args));
+			input.addUniqueAttribute(actionName, getJsonHtmlValue(args.keySet()));
 		}
 
 		for (String param : params.keySet()) {
@@ -111,7 +111,10 @@ public final class FunctionTagHandler extends TagHandler {
 
 			if (!args.isEmpty()) {
 				String name = getTagName(J_SBMT_ARGS, action);
-				jsonAjax.addArg(new Param(name, null));
+
+                for (Object arg : args.keySet()) {
+                    jsonAjax.addArg(new Param(name, arg, args.get(arg)));
+                }
 			}
 		} else if (update != null) {
 			jsonAjax.setMethod("get");

@@ -30,7 +30,7 @@ public class Scroll {
 
 	private Integer order;
 
-    private Object lastId;
+    private Object offset;
 
 	private Map<String, String> filters;
 
@@ -66,12 +66,12 @@ public class Scroll {
 		this.order = order;
 	}
 
-    public Object getLastId() {
-        return lastId;
+    public Object getOffset() {
+        return offset;
     }
 
-    public void setLastId(String lastId) {
-        this.lastId = lastId;
+    public void setOffset(String offset) {
+        this.offset = offset;
     }
 
     public Map<String, String> getFilters() {

@@ -193,6 +193,14 @@ var Jsmart5 = (function() {
             return doGetDate(id);
         },
 
+        getCheckGroup: function(id) {
+            return doGetCheckGroup(id);
+        },
+
+        setCheckGroup: function(id, array) {
+            doSetCheckGroup(id, array);
+        },
+
 		table: function(tr, map) {
 			doTable(tr, map);
 		},
@@ -437,7 +445,7 @@ var Jsmart5 = (function() {
 					var jsonParam = {};
 					jsonParam.size = ul.attr('scroll-size');
 					jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
-					jsonParam.lastId = lastChild.attr('scroll-last-id');
+					jsonParam.offset = lastChild.attr('scroll-offset');
 	
 					for (var i = 0; i < postParam.length; i++) {
 						// Look for J_SCROLL parameter to send scroll values
@@ -736,7 +744,7 @@ var Jsmart5 = (function() {
 
 			jsonParam.size = tr.closest('tbody').attr('scroll-size');
 			jsonParam.index = tr.attr('scroll-index');
-			jsonParam.lastId = tr.attr('scroll-last-id');
+			jsonParam.offset = tr.attr('scroll-offset');
 			
 			var sortSpan = thead.find('span[sort-active]');
 			if (sortSpan && sortSpan.length > 0) {
@@ -1060,6 +1068,29 @@ var Jsmart5 = (function() {
 		}
 	}
 
+	function doGetCheckGroup(id) {
+	    var ret = [];
+	    var checkgroup = $(getId(id));
+        if (checkgroup && checkgroup.length > 0) {
+            checkgroup.find('input:checked').each(function() {
+                ret[ret.length] = $(this).val();
+            });
+        }
+        return ret;
+	}
+
+	function doSetCheckGroup(id, array) {
+	    var checkgroup = $(getId(id));
+	    if (checkgroup && checkgroup.length > 0) {
+            checkgroup.find('input:checkbox').removeAttr('checked').each(function() {
+                if (contains(array, $(this).val())) {
+                    $(this).attr('checked', true);
+                    $(this).click();
+                }
+            });
+	    }
+	}
+
 	function doGetDate(id) {
         var hidden = $(getId(id + '-date'));
         if (!hidden || hidden.length == 0) {
@@ -1366,7 +1397,7 @@ var Jsmart5 = (function() {
 					var jsonParam = {};
 					jsonParam.size = ul.attr('scroll-size');
 					jsonParam.index = parseInt(lastChild.attr('list-index')) + 1;
-					jsonParam.lastId = lastChild.attr('scroll-last-id');
+					jsonParam.offset = lastChild.attr('scroll-offset');
 
 					for (var i = 0; i < postParam.length; i++) {
 						// Look for J_SCROLL parameter to send scroll values
@@ -1674,7 +1705,12 @@ var Jsmart5 = (function() {
 		
 		if (map.args) {
 			for (var i = 0; i < map.args.length; i++) {
-				if (map.args[i].value !== undefined) {
+			    if (map.args[i].bind !== undefined) {
+			        var name = $.trim(map.args[i].name);
+			        var elParam = getElementParam($(getId(map.args[i].bind)), false);
+                    params.push({name: name, value: (elParam.length > 0 ? elParam[0].value : null)});
+
+			    } else if (map.args[i].value !== undefined) {
 					var name = $.trim(map.args[i].name);
 					params.push({name: name, value: map.args[i].value});
 				}
@@ -1707,7 +1743,7 @@ var Jsmart5 = (function() {
 		
 		if (map.args) {
 			for (var i = 0; i < map.args.length; i++) {
-				if (map.args[i].value === undefined) {
+				if (map.args[i].value === undefined && map.args[i].bind === undefined) {
 					var name = $.trim(map.args[i].name);
 					var value = el.attr(name);
 					if (value && value.length > 0) {
@@ -1805,7 +1841,6 @@ var Jsmart5 = (function() {
 				elParams.push({name: name, value: $(el).val(), array: false});
 			}
 		}
-
 		return elParams;
 	}
 

@@ -108,7 +108,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     protected final Map<String, Object> params;
 
-    protected List<Object> args;
+    protected final Map<Object, String> args;
 
     protected ValidateTagHandler validatorTag;
 
@@ -169,7 +169,7 @@ public abstract class TagHandler extends SimpleTagSupport {
         iconTags = new ArrayList<IconTagHandler>(2);
         bindTags = new ArrayList<BindTagHandler>(2);
         params = new LinkedHashMap<String, Object>(3);
-        args = new ArrayList<Object>(3);
+        args = new LinkedHashMap<Object, String>(3);
     }
 
     protected void clearTagParameters() {
@@ -246,11 +246,11 @@ public abstract class TagHandler extends SimpleTagSupport {
         return params;
     }
 
-    public void addArg(Object arg) {
-        this.args.add(arg);
+    public void addArg(Object arg, String bind) {
+        this.args.put(arg, bind);
     }
 
-    public List<Object> getArgs() {
+    public Map<Object, String> getArgs() {
         return args;
     }
 
@@ -671,7 +671,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 
                 if (!ajaxTag.args.isEmpty()) {
                     String actionName = getTagName(J_SBMT_ARGS, ajaxTag.getAction());
-                    tag.addUniqueAttribute(actionName, getJsonHtmlValue(ajaxTag.args));
+                    tag.addUniqueAttribute(actionName, getJsonHtmlValue(ajaxTag.args.keySet()));
                 }
             }
         } else {

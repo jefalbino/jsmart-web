@@ -65,7 +65,7 @@ public final class TableTagHandler extends TagHandler {
 
 	private Integer scrollSize;
 
-    private String scrollLastId;
+    private String scrollOffset;
 
 	private String maxHeight;
 	
@@ -166,6 +166,8 @@ public final class TableTagHandler extends TagHandler {
 			tbody.addTag(tr);
 		}
 
+        appendColumnTemplate(tbody);
+
 		// Get the scroll parameters case requested by scroll table
 		Scroll scroll = null;
 		boolean hasFilterOrSort = hasFilterOrSort();
@@ -201,7 +203,6 @@ public final class TableTagHandler extends TagHandler {
 
 				Tr tr = new Tr();
 				tr.addAttribute("scroll-index", scrollIndex)
-                    .addAttribute("to-string", obj.toString())
                     .addAttribute("table-index", selectIndex);
 
 				if (selectValue != null) {
@@ -210,14 +211,12 @@ public final class TableTagHandler extends TagHandler {
 
                 appendRefId(tr, id);
 
-                Object scrollLastIdVal = getTagValue(scrollLastId);
-                if (scrollLastIdVal != null) {
-                    tr.addAttribute("scroll-last-id", scrollLastIdVal);
+                Object scrollOffsetVal = getTagValue(scrollOffset);
+                if (scrollOffsetVal != null) {
+                    tr.addAttribute("scroll-offset", scrollOffsetVal);
                 }
 
 				appendEvent(tr);
-				appendAjax(id);
-				appendBind(id);
 
 				for (ColumnTagHandler column : columns) {
 					tr.addTag(column.executeTag());
@@ -228,6 +227,10 @@ public final class TableTagHandler extends TagHandler {
 				request.removeAttribute(var);
 			}
 		}
+
+        // Must be outside the looping case the initial table has no items
+        appendAjax(id);
+        appendBind(id);
 
 		// Call after reading the column inner tag headers
 		thead.addTag(addHeaderColumns());
@@ -252,12 +255,27 @@ public final class TableTagHandler extends TagHandler {
 
 		return div;
 	}
-	
+
+    private void appendColumnTemplate(Tag tbody) throws JspException, IOException {
+        Tr tr = new Tr();
+        tr.addAttribute("style", "display: none;")
+                .addAttribute("row-template", "0");
+        appendRefId(tr, id);
+        appendEvent(tr);
+
+        for (ColumnTagHandler column : columns) {
+            tr.addTag(column.executeTag());
+        }
+        tbody.addTag(tr);
+    }
+
 	private Tag addHeaderColumns() throws JspException, IOException {
 		Tr tr = new Tr();
 
 		for (ColumnTagHandler column : columns) {
 			Th th = new Th();
+            th.addAttribute("style", column.style)
+                .addAttribute("class", column.styleClass);
 
 			if (column.getFilterBy() != null) {
 				Div div = new Div();
@@ -316,7 +334,7 @@ public final class TableTagHandler extends TagHandler {
 	@SuppressWarnings("unchecked")
 	private List<?> getTableContent(Object object, Scroll scroll, Boolean hasFilterOrSort) throws JspException {
 		int index = scroll != null  && scroll.getIndex() != null ? scroll.getIndex() : 0;
-        Object lastId = scroll != null ? scroll.getLastId() : null;
+        Object offset = scroll != null ? scroll.getOffset() : null;
 
 		if (object instanceof TableAdapter) {
 			if (scrollSize == null) {
@@ -335,7 +353,7 @@ public final class TableTagHandler extends TagHandler {
 			}
 
 			TableAdapter<Object> tableAdapter = (TableAdapter<Object>) object;
-			return tableAdapter.load(index, lastId, scrollSize, sort, order, filters);
+			return tableAdapter.load(index, offset, scrollSize, sort, order, filters);
 
 		} else if (object instanceof List) {
 			if (hasFilterOrSort) {
@@ -458,8 +476,8 @@ public final class TableTagHandler extends TagHandler {
 		this.scrollSize = scrollSize;
 	}
 
-    public void setScrollLastId(String scrollLastId) {
-        this.scrollLastId = scrollLastId;
+    public void setScrollOffset(String scrollOffset) {
+        this.scrollOffset = scrollOffset;
     }
 
     public void setMaxHeight(String maxHeight) {

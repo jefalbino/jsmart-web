@@ -1403,7 +1403,11 @@
         <body-content>empty</body-content>
         <attribute>
             <name>value</name>
-            <required>true</required>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>bindTo</name>
+            <required>false</required>
         </attribute>
     </tag>
 
@@ -1768,7 +1772,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>scrollLastId</name>
+            <name>scrollOffset</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2484,7 +2488,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>scrollLastId</name>
+            <name>scrollOffset</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3804,7 +3808,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>scrollLastId</name>
+            <name>scrollOffset</name>
             <required>false</required>
         </attribute>
         <attribute>

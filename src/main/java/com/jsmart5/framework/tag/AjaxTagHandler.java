@@ -115,8 +115,8 @@ public final class AjaxTagHandler extends TagHandler {
 			}
 
 			if (!hasDelegate) {
-				for (Object arg : args) {
-					jsonAjax.addArg(new Param(argName, arg));
+				for (Object arg : args.keySet()) {
+					jsonAjax.addArg(new Param(argName, arg, args.get(arg)));
 				}
 			} else {
 				// Do not place parameter value on json ajax because it depends on each tag

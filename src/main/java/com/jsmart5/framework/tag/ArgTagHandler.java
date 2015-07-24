@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
+import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 
@@ -30,18 +31,20 @@ public final class ArgTagHandler extends TagHandler {
 
 	private Object value;
 
+    private String bindTo;
+
 	@Override
 	public void validateTag() throws JspException {
-		// DO NOTHING
+		if (value == null && (bindTo == null || bindTo.trim().isEmpty())) {
+            throw InvalidAttributeException.fromConflict("arg", "value", "Attribute [value] must be specified");
+        }
 	}
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
 		if (parent instanceof TagHandler) {
-
-			Object obj = getTagValue(value);
-			((TagHandler) parent).addArg(obj);
+			((TagHandler) parent).addArg(getTagValue(value), (String) getTagValue(bindTo));
 		}
 		return false;
 	}
@@ -56,4 +59,7 @@ public final class ArgTagHandler extends TagHandler {
 		this.value = value;
 	}
 
+    public void setBindTo(String bindTo) {
+        this.bindTo = bindTo;
+    }
 }

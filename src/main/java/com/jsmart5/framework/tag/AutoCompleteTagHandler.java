@@ -54,7 +54,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     private Integer scrollSize;
 
-    private String scrollLastId;
+    private String scrollOffset;
 
     private String maxHeight;
 
@@ -359,9 +359,9 @@ public final class AutoCompleteTagHandler extends TagHandler {
                             rowTag.addAttribute("to-string", obj.toString());
                         }
 
-                        Object scrollLastIdVal = getTagValue(scrollLastId);
-                        if (scrollLastIdVal != null) {
-                            rowTag.addAttribute("scroll-last-id", scrollLastIdVal);
+                        Object scrollOffsetVal = getTagValue(scrollOffset);
+                        if (scrollOffsetVal != null) {
+                            rowTag.addAttribute("scroll-offset", scrollOffsetVal);
                         }
 	                    ul.addTag(rowTag);
 	                }
@@ -380,7 +380,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
     @SuppressWarnings("unchecked")
     private List<?> getListContent(Object object, Scroll scroll) throws JspException {
         int index = scroll != null ? scroll.getIndex() : 0;
-        Object lastId = scroll != null ? scroll.getLastId() : null;
+        Object offset = scroll != null ? scroll.getOffset() : null;
 
         if (object instanceof ListAdapter) {
             if (scrollSize == null) {
@@ -389,7 +389,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
             }
 
             ListAdapter<Object> adapter = (ListAdapter<Object>) object;
-            return adapter.load(index, lastId, scrollSize);
+            return adapter.load(index, offset, scrollSize);
 
         } else if (object instanceof List) {
             List<Object> list = (List<Object>) object;
@@ -490,8 +490,8 @@ public final class AutoCompleteTagHandler extends TagHandler {
         this.scrollSize = scrollSize;
     }
 
-    public void setScrollLastId(String scrollLastId) {
-        this.scrollLastId = scrollLastId;
+    public void setScrollOffset(String scrollOffset) {
+        this.scrollOffset = scrollOffset;
     }
 
     public void setMinLength(Integer minLength) {

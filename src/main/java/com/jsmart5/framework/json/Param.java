@@ -24,14 +24,22 @@ public final class Param {
 
 	private Object value;
 
+    // It does not work with delegate for any iterable component
+    private String bind;
+
 	public Param() {
-		
 	}
 
 	public Param(String name, Object value) {
 		this.name = name;
 		this.value = value;
 	}
+
+    public Param(String name, Object value, String bind) {
+        this.name = name;
+        this.value = value;
+        this.bind = bind;
+    }
 
 	public String getName() {
 		return name;
@@ -49,4 +57,11 @@ public final class Param {
 		this.value = value;
 	}
 
+    public String getBind() {
+        return bind;
+    }
+
+    public void setBind(String bind) {
+        this.bind = bind;
+    }
 }

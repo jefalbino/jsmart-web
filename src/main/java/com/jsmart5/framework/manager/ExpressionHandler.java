@@ -185,13 +185,13 @@ public enum ExpressionHandler {
 					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
 					scroll = GSON.fromJson(scrollParam, Scroll.class);
 
-					list = ((ListAdapter) object).load(scroll.getIndex(), scroll.getLastId(), scroll.getSize());
+					list = ((ListAdapter) object).load(scroll.getIndex(), scroll.getOffset(), scroll.getSize());
 
 				} else if (object instanceof TableAdapter) {
 					String scrollParam = request.getParameter(TagHandler.J_SCROLL + jParam);
 					scroll = GSON.fromJson(scrollParam, Scroll.class);
 
-					list = ((TableAdapter) object).load(scroll.getIndex(), scroll.getLastId(), scroll.getSize(),
+					list = ((TableAdapter) object).load(scroll.getIndex(), scroll.getOffset(), scroll.getSize(),
 							scroll.getSort(), scroll.getOrder(), scroll.getFilters());
 
 				} else if (object instanceof List<?>) {
