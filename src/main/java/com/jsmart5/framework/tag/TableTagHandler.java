@@ -209,7 +209,9 @@ public final class TableTagHandler extends TagHandler {
                     tr.addAttribute("style", "cursor: pointer;");
 				}
 
-                appendRefId(tr, id);
+                // Only needs to set the role-delegate case bind or ajax is included inside table,
+                // otherwise the table row does not need an id
+                appendRefId(tr, id, true);
 
                 Object scrollOffsetVal = getTagValue(scrollOffset);
                 if (scrollOffsetVal != null) {

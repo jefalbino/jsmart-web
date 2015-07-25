@@ -648,9 +648,15 @@ public abstract class TagHandler extends SimpleTagSupport {
     }
 
     protected void appendRefId(Tag tag, String id) {
+        appendRefId(tag, id, false);
+    }
+
+    protected void appendRefId(Tag tag, String id, Boolean isParent) {
 
         if (ajaxTags.isEmpty() && bindTags.isEmpty()) {
-            tag.addAttribute("id", id);
+            if (!isParent) {
+                tag.addAttribute("id", id);
+            }
             return;
         }
 

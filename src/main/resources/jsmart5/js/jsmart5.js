@@ -1084,8 +1084,7 @@ var Jsmart5 = (function() {
 	    if (checkgroup && checkgroup.length > 0) {
             checkgroup.find('input:checkbox').removeAttr('checked').each(function() {
                 if (contains(array, $(this).val())) {
-                    $(this).attr('checked', true);
-                    $(this).click();
+                    $(this).prop('checked', true);
                 }
             });
 	    }
@@ -1105,11 +1104,17 @@ var Jsmart5 = (function() {
 	function doSetDate(id, time) {
         var hidden = $(getId(id + '-date'));
         if (hidden && hidden.length > 0) {
-            $(getId(id)).data('DateTimePicker').date(time && time.length > 0 ? new Date(parseInt(time)) : null);
+            if (time && isString(time)) {
+                time = parseInt(time);
+            }
+            $(getId(id)).data('DateTimePicker').date(time ? new Date(time) : null);
         } else {
             hidden = $(getId(id + '-wrap-date'));
             if (hidden && hidden.length > 0) {
-                $(getId(id + '-wrap')).data('DateTimePicker').date(time && time.length > 0 ? new Date(parseInt(time)) : null);
+                if (time && isString(time)) {
+                    time = parseInt(time);
+                }
+                $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(time) : null);
             }
         }
 	}
