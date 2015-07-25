@@ -617,6 +617,24 @@
         </attribute>
     </tag>
 
+    <tag>
+        <name>forajax</name>
+        <tag-class>com.jsmart5.framework.tag.ForAjaxTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>true</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+    </tag>
+
 	<tag>
         <name>function</name>
         <tag-class>com.jsmart5.framework.tag.FunctionTagHandler</tag-class>

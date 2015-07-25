@@ -262,7 +262,7 @@ public final class TableTagHandler extends TagHandler {
         Tr tr = new Tr();
         tr.addAttribute("style", "display: none;")
                 .addAttribute("row-template", "0");
-        appendRefId(tr, id);
+        appendRefId(tr, id, true);
         appendEvent(tr);
 
         for (ColumnTagHandler column : columns) {
