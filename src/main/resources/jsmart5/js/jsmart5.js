@@ -391,6 +391,9 @@ var Jsmart5 = (function() {
 			jsonParam.size = li.closest('ul').attr('scroll-size');
 			jsonParam.index = li.attr('scroll-index');
 
+			var prevScroll = li.closest('ul').find('*[scroll-index="' + (parseInt(jsonParam.index) - parseInt(jsonParam.size)) + '"]:last');
+			jsonParam.offset = prevScroll && prevScroll.length > 0 ? prevScroll.attr('scroll-offset') : null;
+
 			for (var i = 0; i < postParam.length; i++) {
 				// Look for J_SEL_VAL parameter to send the index clicked
 				if (postParam[i].name.indexOf(tagInit + tagJSelVal) >= 0) {
@@ -751,7 +754,9 @@ var Jsmart5 = (function() {
 
 			jsonParam.size = tr.closest('tbody').attr('scroll-size');
 			jsonParam.index = tr.attr('scroll-index');
-			jsonParam.offset = tr.attr('scroll-offset');
+
+			var prevScroll = tr.closest('tbody').find('tr[scroll-index="' + (parseInt(jsonParam.index) - parseInt(jsonParam.size)) + '"]:last');
+			jsonParam.offset = prevScroll && prevScroll.length > 0 ? prevScroll.attr('scroll-offset') : null;
 			
 			var sortSpan = thead.find('span[sort-active]');
 			if (sortSpan && sortSpan.length > 0) {
@@ -929,6 +934,7 @@ var Jsmart5 = (function() {
 		} else {
 			var lastChild = tbody.find('tr:last-child');		
 			jsonParam.index = parseInt(lastChild.attr('table-index')) + 1;
+			jsonParam.offset = lastChild.attr('scroll-offset');
 		}
 
 		for (var i = 0; i < postParam.length; i++) {
