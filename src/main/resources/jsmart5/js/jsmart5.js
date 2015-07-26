@@ -23,7 +23,11 @@ var Jsmart5 = (function() {
 	var tagJSelVal = '006_';
 	var modalOpen = 'open()';
 	var modalHide = 'close()';
-	var refreshIcon = 'refresh-icon';
+	var roleLoad = 'role-load';
+	var roleLoadContent = 'role-load-content';
+	var roleEmpty = 'role-empty';
+	var roleTemplate = 'role-template';
+	var roleAutoLoad = 'role-auto-load';
 	var validateTextStyle = 'js5-validate-text';
 	var validateGroupStyle = 'js5-validate-group';
 
@@ -37,6 +41,7 @@ var Jsmart5 = (function() {
 		initCheckboxes();
 		initPopOvers();
 		initTooltips();
+		initRoleEmpty();
 	});
 	
 	function initPopOvers() {
@@ -107,6 +112,33 @@ var Jsmart5 = (function() {
 		});
 	}
 
+	function initRoleEmpty() {
+	    $('li[' + roleEmpty + '], tr[' + roleEmpty + ']').each(function(index) {
+
+            // Check empty content for list components
+	        var ul = $(this).closest('ul');
+	        if (ul && ul.length > 0) {
+	            if (ul.find('li:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0
+	                 && ul.find('a:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+                return;
+	        }
+
+            // Check empty content for table components
+	        var tbody = $(this).closest('tbody');
+	        if (tbody && tbody.length > 0) {
+	            if (tbody.find('tr:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0) {
+                    $(this).find('td').show();
+                } else {
+                    $(this).find('td').hide();
+                }
+	        }
+	    });
+	}
+
 	/******************************************************
 	 * PUBLIC INTERFACE
 	 ******************************************************/
@@ -144,38 +176,6 @@ var Jsmart5 = (function() {
 			doListScroll(map);
 		},
 
-		listAdd: function(id, map, template) {
-            doListAdd(id, map, template);
-		},
-
-		listUpdate: function(id, map, template) {
-		    doListUpdate(id, map, template);
-		},
-
-		listGet: function(id, map) {
-		    return doListGet(id, map);
-		},
-
-		listGetAll: function(id, map) {
-		    return doListGetAll(id, map);
-		},
-
-		listRemove: function(id, map) {
-            doListRemove(id, map);
-		},
-
-		listRemoveAll: function(id) {
-            doListRemoveAll(id);
-		},
-
-		listShowLoad: function(id) {
-		    doListShowLoad(id);
-		},
-
-		listHideLoad: function(id) {
-		    doListHideLoad(id);
-		},
-
 		tab: function(map) {
 			doTab(map);
 		},
@@ -191,22 +191,6 @@ var Jsmart5 = (function() {
 		date: function(map) {
 			doDate(map);
 		},
-
-		setDate: function(id, time) {
-		    doSetDate(id, time);
-		},
-
-		getDate: function(id) {
-            return doGetDate(id);
-        },
-
-        getCheckGroup: function(id) {
-            return doGetCheckGroup(id);
-        },
-
-        setCheckGroup: function(id, array) {
-            doSetCheckGroup(id, array);
-        },
 
 		table: function(tr, map) {
 			doTable(tr, map);
@@ -240,12 +224,64 @@ var Jsmart5 = (function() {
 		    doAsyncEvent(map);
 		},
 
+		/******************************************************
+         * JS NOT INTEGRATED FUNCTIONS
+         ******************************************************/
+
+        listAdd: function(id, map, template) {
+            doListAdd(id, map, template);
+        },
+
+        listUpdate: function(id, map, template) {
+            doListUpdate(id, map, template);
+        },
+
+        listGet: function(id, map) {
+            return doListGet(id, map);
+        },
+
+        listGetAll: function(id, map) {
+            return doListGetAll(id, map);
+        },
+
+        listRemove: function(id, map) {
+            doListRemove(id, map);
+        },
+
+        listRemoveAll: function(id) {
+            doListRemoveAll(id);
+        },
+
+        setDate: function(id, time) {
+            doSetDate(id, time);
+        },
+
+        getDate: function(id) {
+            return doGetDate(id);
+        },
+
+        getCheckGroup: function(id) {
+            return doGetCheckGroup(id);
+        },
+
+        setCheckGroup: function(id, array) {
+            doSetCheckGroup(id, array);
+        },
+
 		showLoad: function(id) {
-		    appendLoadIcon({id: id, tag: 'ajax'});
+		    doShowLoad(id);
 		},
 
 		hideLoad: function(id) {
-		    removeLoadIcon({id: id, tag: 'ajax'});
+		    doHideLoad(id);
+		},
+
+		showEmpty: function(id) {
+		    doShowEmpty(id);
+		},
+
+		hideEmpty: function(id) {
+		    doHideEmpty(id);
 		}
 	};
 
@@ -473,19 +509,19 @@ var Jsmart5 = (function() {
 						postParam = $.param(postParam);			
 					}
 
-					var refreshClone = ul.find('span[' + refreshIcon + ']').closest('li').clone();
+					var liLoad = ul.find('li[' + roleLoad + ']').clone();
 	
 					// Append loading icon on list if it was configured
-					if (refreshClone && refreshClone.length > 0) {
-						ul.append(refreshClone);
-						refreshClone.slideDown('fast');
+					if (liLoad && liLoad.length > 0) {
+						ul.append(liLoad);
+						liLoad.slideDown('fast');
 					}
 					
 					// Remove scroll-active and refreshing icon
 					map.complete = function() {
-						if (refreshClone && refreshClone.length > 0) {
-						    refreshClone.slideUp('fast', function() {
-						        refreshClone.remove();
+						if (liLoad && liLoad.length > 0) {
+						    liLoad.slideUp('fast', function() {
+						        liLoad.remove();
 						        ul.removeAttr('scroll-active');
 						    });
 						} else {
@@ -514,7 +550,7 @@ var Jsmart5 = (function() {
 									if (ul.find('a').length > 0) {
 										ul.append(newUl.find('a'));
 									} else {
-										if (refreshClone && refreshClone.length > 0) {
+										if (liLoad && liLoad.length > 0) {
 											ul.append(newUl.find('li').not(':first'));
 										} else {
 											ul.append(newUl.find('li'));
@@ -545,12 +581,12 @@ var Jsmart5 = (function() {
 	            template = 0;
 	        }
 
-	        var item = list.find('li[row-template="' + template + '"], a[row-template="' + template + '"]').clone();
+	        var item = list.find('li[' + roleTemplate + '="' + template + '"], a[' + roleTemplate + '="' + template + '"]').clone();
 	        if (item && item.length > 0) {
 
-	            // Update id to be row-id and row-template to be row
-	            item.attr('row-id', item.attr('id')).attr('row', item.attr('row-template'))
-	                .removeAttr('id').removeAttr('row-template').css({'display': 'block'});
+	            // Update id to be row-id and role-template to be row
+	            item.attr('row-id', item.attr('id')).attr('row', item.attr(roleTemplate))
+	                .removeAttr('id').removeAttr(roleTemplate).css({'display': 'block'});
 
 	            if (map) {
                     if ($.isArray(map)) {
@@ -567,7 +603,7 @@ var Jsmart5 = (function() {
 	            if (last && last.length > 0) {
 	                last.after(item);
 	            } else {
-	                list.find('li[row-template="' + template + '"], a[row-template="' + template + '"]').after(item);
+	                list.find('li[' + roleTemplate + '="' + template + '"], a[' + roleTemplate + '="' + template + '"]').after(item);
 	            }
 	        }
 	    }
@@ -704,38 +740,11 @@ var Jsmart5 = (function() {
 	    }
 	}
 
-	function doListShowLoad(id) {
-        var list = $(getId(id));
-        if (list && list.length > 0) {
-            var refreshClone = list.find('span[' + refreshIcon + ']').closest('li').clone();
-
-            // Append loading icon on list if it was configured
-            if (refreshClone && refreshClone.length > 0) {
-                list.append(refreshClone);
-                refreshClone.slideDown('fast');
-            }
-        }
-	}
-
-	function doListHideLoad(id) {
-        var list = $(getId(id));
-        if (list && list.length > 0) {
-            var refreshClone = list.find('span[' + refreshIcon + ']').closest('li:visible');
-
-            // Remove loading icon from list if it was configured
-	        if (refreshClone && refreshClone.length > 0) {
-                refreshClone.slideUp('fast', function() {
-                    refreshClone.remove();
-                });
-            }
-        }
-	}
-
 	function doTable(tr, map) {
 		if (tr && tr.length > 0) {
 
-			var refreshTr = tr.find('span[' + refreshIcon + ']');
-			if (refreshTr && refreshTr.length > 0) {
+			var spanLoad = tr.find('span[' + roleLoadContent + ']');
+			if (spanLoad && spanLoad.length > 0) {
 				return;
 			}
 
@@ -953,20 +962,20 @@ var Jsmart5 = (function() {
 			postParam = $.param(postParam);			
 		}
 
-		var refreshClone = tbody.find('span[' + refreshIcon + ']').closest('tr').clone();
+		var trLoad = tbody.find('tr[' + roleLoad + ']').clone();
 
-		// Append loading icon on list if it was configured
-		if (refreshClone && refreshClone.length > 0) {
-			refreshClone.find('td').css({'display': 'block'});
-			tbody.append(refreshClone);
-			refreshClone.slideDown('fast');
+		// Append loading icon on table if it was configured
+		if (trLoad && trLoad.length > 0) {
+			trLoad.find('td').css({'display': 'block'});
+			tbody.append(trLoad);
+			trLoad.slideDown('fast');
 		}
 
 		// Remove scroll-active and refreshing icon
 		map.complete = function() {
-			if (refreshClone && refreshClone.length > 0) {
-			    refreshClone.slideUp('fast', function() {
-			        refreshClone.remove();
+			if (trLoad && trLoad.length > 0) {
+			    trLoad.slideUp('fast', function() {
+			        trLoad.remove();
                     tbody.removeAttr('scroll-active');
 			    });
 			} else {
@@ -993,7 +1002,7 @@ var Jsmart5 = (function() {
 
 					// Case the returned table has last index different than current
 					if (lastIndex && (jsonParam.index - 1) != lastIndex) {
-						if (refreshClone && refreshClone.length > 0) {
+						if (trLoad && trLoad.length > 0) {
 							tbody.append(newTable.find('tbody tr').not(':first'));
 						} else {
 							tbody.append(newTable.find('tbody tr'));
@@ -1079,57 +1088,6 @@ var Jsmart5 = (function() {
 			el.find('>ol li.active').addClass('js5-carousel-indicator-active');
 			el.find('>a').addClass('js5-carousel-control');
 		}
-	}
-
-	function doGetCheckGroup(id) {
-	    var ret = [];
-	    var checkgroup = $(getId(id));
-        if (checkgroup && checkgroup.length > 0) {
-            checkgroup.find('input:checked').each(function() {
-                ret[ret.length] = $(this).val();
-            });
-        }
-        return ret;
-	}
-
-	function doSetCheckGroup(id, array) {
-	    var checkgroup = $(getId(id));
-	    if (checkgroup && checkgroup.length > 0) {
-            checkgroup.find('input:checkbox').removeAttr('checked').each(function() {
-                if (array && contains(array, $(this).val())) {
-                    $(this).prop('checked', true);
-                }
-            });
-	    }
-	}
-
-	function doGetDate(id) {
-        var hidden = $(getId(id + '-date'));
-        if (!hidden || hidden.length == 0) {
-            hidden = $(getId(id + '-wrap-date'));
-        }
-        if (hidden && hidden.length > 0) {
-            return hidden.val();
-        }
-        return null;
-    }
-
-	function doSetDate(id, time) {
-        var hidden = $(getId(id + '-date'));
-        if (hidden && hidden.length > 0) {
-            if (time && isString(time)) {
-                time = parseInt(time);
-            }
-            $(getId(id)).data('DateTimePicker').date(time ? new Date(time) : null);
-        } else {
-            hidden = $(getId(id + '-wrap-date'));
-            if (hidden && hidden.length > 0) {
-                if (time && isString(time)) {
-                    time = parseInt(time);
-                }
-                $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(time) : null);
-            }
-        }
 	}
 
 	function doDate(map) {
@@ -1290,10 +1248,10 @@ var Jsmart5 = (function() {
 
 	function doAutoComplete(map, evt) {
 		var input = $(getId(map.id));
-		var inputRefresh = $('span[auto-refresh-id="' + map.id + '"]');
+		var inputLoad = $('span[' + roleAutoLoad + '="' + map.id + '"]');
 		
 		var ul = $('ul[auto-list-id="' + map.id + '"]');
-		var ulRefresh = ul.find('span[' + refreshIcon + ']').closest('li');
+		var liLoad = ul.find('li[' + roleLoad + ']');
 		
 		var timer = input.attr('timeout-id');
 		if (timer && timer.length > 0) {
@@ -1311,7 +1269,7 @@ var Jsmart5 = (function() {
 		var topUl = input.position().top + input.outerHeight(true) + 5;
 		var widthUl = input.outerWidth();
 
-		var leftRefresh = input.outerWidth() - inputRefresh.outerWidth() - 10;
+		var leftRefresh = input.outerWidth() - inputLoad.outerWidth() - 10;
 		var topRefresh = input.position().top + ((input.height()) / 2);
 
 		var inputGroup = input.closest('div.input-group');
@@ -1325,8 +1283,8 @@ var Jsmart5 = (function() {
 
 		timer = setTimeout(function() {
 		
-		    inputRefresh.css({'left': leftRefresh, 'top': topRefresh});
-		    inputRefresh.show();
+		    inputLoad.css({'left': leftRefresh, 'top': topRefresh});
+		    inputLoad.show();
 		
 		    var postParam = getAjaxParams(map);
 		    var closestForm = input.closest('form');
@@ -1353,8 +1311,8 @@ var Jsmart5 = (function() {
 
 				// Empty list but include the load if it was present
 				ul.empty();
-				if (ulRefresh && ulRefresh.length > 0) {
-				    ul.append(ulRefresh);
+				if (liLoad && liLoad.length > 0) {
+				    ul.append(liLoad);
 				}
 				ul.append($(data).find('ul[auto-list-id="' + map.id + '"] a'));
 				
@@ -1371,7 +1329,7 @@ var Jsmart5 = (function() {
 			}
 			
 			map.completeHandler = function(xhr, status) {
-			    inputRefresh.hide();
+			    inputLoad.hide();
 			}
 
 		    var options = getAjaxOptions(map);
@@ -1433,19 +1391,19 @@ var Jsmart5 = (function() {
 						postParam = $.param(postParam);
 					}
 
-					var refreshClone = ul.find('span[' + refreshIcon + ']').closest('li').clone();
+					var liLoad = ul.find('li[' + roleLoad + ']').clone();
 
 					// Append loading icon on list if it was configured
-					if (refreshClone && refreshClone.length > 0) {
-						ul.append(refreshClone);
-						refreshClone.slideDown('fast');
+					if (liLoad && liLoad.length > 0) {
+						ul.append(liLoad);
+						liLoad.slideDown('fast');
 					}
 
 					// Remove scroll-active and refreshing icon
 					map.complete = function() {
-						if (refreshClone && refreshClone.length > 0) {
-						    refreshClone.slideUp('fast', function() {
-						        refreshClone.remove();
+						if (liLoad && liLoad.length > 0) {
+						    liLoad.slideUp('fast', function() {
+						        liLoad.remove();
 						        ul.removeAttr('scroll-active');
 						    });
 						} else {
@@ -1887,15 +1845,18 @@ var Jsmart5 = (function() {
 				var updateId = getId($.trim(updates[i]));
 				$(updateId).replaceWith($(a).find(updateId));
 
-				// Reapply scroll bind if it is updated
+				// Re-Apply scroll bind if it is updated
 				var scrollMap = getScrollBind($.trim(updates[i]));
 				if (scrollMap) {
-				    reapplyScrollBind(scrollMap);
+				    reApplyScrollBind(scrollMap);
 				}
 			}
+
+			// May reset empty content for list and table components
+			initRoleEmpty();
 		}
 	}
-	
+
 	function doExecute(func, a, b, c) {
 		var showModals = [];
 		var hideModals = [];
@@ -1965,17 +1926,17 @@ var Jsmart5 = (function() {
 		if (map.tag && (map.tag == 'button' || map.tag == 'link' || map.tag == 'ajax')) {
 			var el = $(getId(map.id));
 
-			var hiddenRefresh = el.find('span[' + refreshIcon + ']');
-			if (hiddenRefresh && hiddenRefresh.length > 0) {
+			var spanLoad = el.find('span[' + roleLoadContent + ']');
+			if (spanLoad && spanLoad.length > 0) {
 
 				var leftIcon = el.find('span.glyphicon[side="left"]:first');
 				if (leftIcon && leftIcon.length > 0) {
 					leftIcon.hide();
 				}
 
-				var refreshClone = hiddenRefresh.clone();
-				refreshClone.css({'margin-right': '4px'});
-				el.prepend(refreshClone.show());
+				var spanLoadClone = spanLoad.clone();
+				spanLoadClone.css({'margin-right': '4px'});
+				el.prepend(spanLoadClone.show());
 			}
 		}
 	}
@@ -1984,10 +1945,10 @@ var Jsmart5 = (function() {
 		if (map.tag && (map.tag == 'button' || map.tag == 'link' || map.tag == 'ajax')) {
 			var el = $(getId(map.id));
 			
-			var refreshClone = el.find('span[' + refreshIcon + ']:first');
-			if (refreshClone && refreshClone.length > 0) {
+			var spanLoad = el.find('span[' + roleLoadContent + ']:first');
+			if (spanLoad && spanLoad.length > 0) {
 				
-				refreshClone.remove();
+				spanLoad.remove();
 
 				var leftIcon = el.find('span.glyphicon[side="left"]:first');
 				if (leftIcon && leftIcon.length > 0) {
@@ -2202,6 +2163,167 @@ var Jsmart5 = (function() {
 	}
 
 	/******************************************************
+	 * EXPOSED FUNCTIONS
+	 ******************************************************/
+
+    function doShowLoad(id) {
+        var el = $(getId(id));
+        if (!el || el.length == 0) {
+            return;
+        }
+
+        if (el.is('ul')) {
+            var liLoad = el.find('li[' + roleLoad + ']').clone();
+            // Append loading icon on list if it was configured
+            if (liLoad && liLoad.length > 0) {
+                el.append(liLoad);
+                liLoad.slideDown('fast');
+            }
+            return;
+        }
+
+        if (el.is('table')) {
+            var trLoad = el.find('tbody tr[' + roleLoad + ']').clone();
+            // Append loading icon on table if it was configured
+            if (trLoad && trLoad.length > 0) {
+                trLoad.find('td').css({'display': 'block'});
+                el.find('tbody').append(trLoad);
+                trLoad.slideDown('fast');
+            }
+            return;
+        }
+
+        appendLoadIcon({id: id, tag: 'ajax'});
+    }
+
+    function doHideLoad(id) {
+        var el = $(getId(id));
+        if (!el || el.length == 0) {
+            return;
+        }
+
+        if (el.is('ul')) {
+            var liLoad = el.find('li[' + roleLoad + ']:visible');
+            // Remove loading icon from list if it was configured
+            if (liLoad && liLoad.length > 0) {
+                liLoad.slideUp('fast', function() {
+                    liLoad.remove();
+                });
+            }
+            return;
+        }
+
+        if (el.is('table')) {
+            var trLoad = el.find('tbody tr[' + roleLoad + ']:visible');
+            if (trLoad && trLoad.length > 0) {
+                trLoad.slideUp('fast', function() {
+                    trLoad.remove();
+                });
+            }
+            return;
+        }
+
+        removeLoadIcon({id: id, tag: 'ajax'});
+    }
+
+    function doShowEmpty(id) {
+        var el = $(getId(id));
+        if (!el || el.length == 0) {
+            return;
+        }
+
+        if (el.is('ul')) {
+            var liEmpty = el.find('li[' + roleEmpty + ']');
+            if (liEmpty && liEmpty.length > 0) {
+                liEmpty.show();
+            }
+            return;
+        }
+
+        if (el.is('table')) {
+            var trEmpty = el.find('tbody tr[' + roleEmpty + ']');
+            if (trEmpty && trEmpty.length > 0) {
+                trEmpty.find('td').show();
+            }
+            return;
+        }
+    }
+
+    function doHideEmpty(id) {
+        var el = $(getId(id));
+        if (!el || el.length == 0) {
+            return;
+        }
+
+        if (el.is('ul')) {
+            var liEmpty = el.find('li[' + roleEmpty + ']:visible');
+            if (liEmpty && liEmpty.length > 0) {
+                liEmpty.hide();
+            }
+            return;
+        }
+
+        if (el.is('table')) {
+            var trEmpty = el.find('tbody tr[' + roleEmpty + ']:visible');
+            if (trEmpty && trEmpty.length > 0) {
+                trEmpty.find('td').hide();
+            }
+            return;
+        }
+    }
+
+    function doGetCheckGroup(id) {
+	    var ret = [];
+	    var checkgroup = $(getId(id));
+        if (checkgroup && checkgroup.length > 0) {
+            checkgroup.find('input:checked').each(function() {
+                ret[ret.length] = $(this).val();
+            });
+        }
+        return ret;
+	}
+
+	function doSetCheckGroup(id, array) {
+	    var checkgroup = $(getId(id));
+	    if (checkgroup && checkgroup.length > 0) {
+            checkgroup.find('input:checkbox').removeAttr('checked').each(function() {
+                if (array && contains(array, $(this).val())) {
+                    $(this).prop('checked', true);
+                }
+            });
+	    }
+	}
+
+	function doGetDate(id) {
+        var hidden = $(getId(id + '-date'));
+        if (!hidden || hidden.length == 0) {
+            hidden = $(getId(id + '-wrap-date'));
+        }
+        if (hidden && hidden.length > 0) {
+            return hidden.val();
+        }
+        return null;
+    }
+
+	function doSetDate(id, time) {
+        var hidden = $(getId(id + '-date'));
+        if (hidden && hidden.length > 0) {
+            if (time && isString(time)) {
+                time = parseInt(time);
+            }
+            $(getId(id)).data('DateTimePicker').date(time ? new Date(time) : null);
+        } else {
+            hidden = $(getId(id + '-wrap-date'));
+            if (hidden && hidden.length > 0) {
+                if (time && isString(time)) {
+                    time = parseInt(time);
+                }
+                $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(time) : null);
+            }
+        }
+	}
+
+	/******************************************************
 	 * GENERAL FUNCTIONS
 	 ******************************************************/
 
@@ -2220,7 +2342,7 @@ var Jsmart5 = (function() {
 	    scrollBinds[id] = map;
 	}
 
-	function reapplyScrollBind(map) {
+	function reApplyScrollBind(map) {
 	    if (map.tag == 'tablescroll') {
             doTableScroll(map);
         } else if (map.tag == 'listscroll') {

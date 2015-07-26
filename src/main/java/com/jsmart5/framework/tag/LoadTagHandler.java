@@ -95,7 +95,7 @@ public final class LoadTagHandler extends TagHandler {
 		appendRefId(header, id);
 
 		Span span = new Span();
-		span.addAttribute("refresh-icon", "")
+		span.addAttribute("role-load-content", "")
 			.addAttribute("class", Bootstrap.GLYPHICON)
 			.addAttribute("class", Bootstrap.GLYPHICON_ANIMATE)
 			.addAttribute("aria-hidden", "true");

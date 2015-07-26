@@ -241,8 +241,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
         appendEvent(input);
 
         Span span = new Span();
-        span.addAttribute("auto-refresh-id", id)
-            .addAttribute("refresh-icon", "")
+        span.addAttribute("role-auto-load", id)
             .addAttribute("class", Bootstrap.GLYPHICON)
             .addAttribute("class", Bootstrap.GLYPHICON_REFRESH)
             .addAttribute("class", Bootstrap.GLYPHICON_ANIMATE)
@@ -312,8 +311,9 @@ public final class AutoCompleteTagHandler extends TagHandler {
         if (loadTag != null) {
             Li li = new Li();
             li.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
-                    .addAttribute("style", "display: none;")
-                    .addAttribute("style", "text-align: center;");
+                .addAttribute("role-load", "")
+                .addAttribute("style", "display: none;")
+                .addAttribute("style", "text-align: center;");
 
             li.addTag(loadTag.executeTag());
             ul.addTag(li);

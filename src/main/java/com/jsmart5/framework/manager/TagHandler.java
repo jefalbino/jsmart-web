@@ -43,13 +43,7 @@ import com.jsmart5.framework.config.Constants;
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Bind;
-import com.jsmart5.framework.tag.AjaxTagHandler;
-import com.jsmart5.framework.tag.BindTagHandler;
-import com.jsmart5.framework.tag.IconTagHandler;
-import com.jsmart5.framework.tag.LoadTagHandler;
-import com.jsmart5.framework.tag.PopOverTagHandler;
-import com.jsmart5.framework.tag.TooltipTagHandler;
-import com.jsmart5.framework.tag.ValidateTagHandler;
+import com.jsmart5.framework.tag.*;
 import com.jsmart5.framework.tag.html.DocScript;
 import com.jsmart5.framework.tag.html.Script;
 import com.jsmart5.framework.tag.html.Tag;
@@ -113,6 +107,8 @@ public abstract class TagHandler extends SimpleTagSupport {
     protected ValidateTagHandler validatorTag;
 
     protected LoadTagHandler loadTag;
+
+    protected EmptyTagHandler emptyTag;
 
     protected PopOverTagHandler popOverTag;
 
@@ -260,6 +256,10 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     public void setLoadTag(LoadTagHandler loadTag) {
         this.loadTag = loadTag;
+    }
+
+    public void setEmptyTag(EmptyTagHandler emptyTag) {
+        this.emptyTag = emptyTag;
     }
 
     public void setPopOverTag(PopOverTagHandler popOverTag) {

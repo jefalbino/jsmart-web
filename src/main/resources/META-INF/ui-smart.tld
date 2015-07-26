@@ -2670,6 +2670,24 @@
     </tag>
 
     <tag>
+        <name>empty</name>
+        <tag-class>com.jsmart5.framework.tag.EmptyTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>upload</name>
         <tag-class>com.jsmart5.framework.tag.UploadTagHandler</tag-class>
         <body-content>scriptless</body-content>

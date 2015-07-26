@@ -117,13 +117,29 @@ public final class ListTagHandler extends TagHandler {
 
 		if (loadTag != null) {
 			Li li = new Li();
-			li.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
+			li.addAttribute("role-load", "")
+                .addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
 				.addAttribute("style", "display: none;")
-				.addAttribute("style", "text-align: center;");
+				.addAttribute("style", "text-align: center;")
+                .addAttribute("style", "border: 1px solid transparent;");
 
 			li.addTag(loadTag.executeTag());
 			ul.addTag(li);
 		}
+
+        if (emptyTag != null) {
+            Li li = new Li();
+            li.addAttribute("id", emptyTag.id)
+                .addAttribute("role-empty", "")
+                .addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
+                .addAttribute("style", "display: none; text-align: center;")
+                .addAttribute("style", "border: 1px solid transparent;")
+                .addAttribute("style", getTagValue(emptyTag.style))
+                .addAttribute("class", getTagValue(emptyTag.styleClass));
+
+            li.addText(emptyTag.getContent());
+            ul.addTag(li);
+        }
 
         // Append row template to be used by js functions to add, update and remove rows
         appendRowTemplate(ul);
@@ -232,7 +248,7 @@ public final class ListTagHandler extends TagHandler {
 
             Tag rowTag = row.executeTag();
             rowTag.addAttribute("style", "display: none;")
-                .addAttribute("row-template", i);
+                .addAttribute("role-template", i);
             ul.addTag(rowTag);
         }
     }

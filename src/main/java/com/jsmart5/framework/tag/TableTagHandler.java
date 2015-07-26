@@ -156,15 +156,35 @@ public final class TableTagHandler extends TagHandler {
 
 		if (loadTag != null) {
 			Tr tr = new Tr();
-			Td td = new Td();
-			td.addAttribute("style", "display: none;")
-				.addAttribute("style", "text-align: center;")
-				.addAttribute("colspan", columns.size())
+            tr.addAttribute("style", "border: 1px solid transparent;")
+                .addAttribute("role-load", "");
+
+            Td td = new Td();
+            td.addAttribute("style", "display: none;")
+                .addAttribute("style", "text-align: center;")
+                .addAttribute("colspan", columns.size())
 				.addTag(loadTag.executeTag());
 
 			tr.addTag(td);
 			tbody.addTag(tr);
 		}
+
+        if (emptyTag != null) {
+            Tr tr = new Tr();
+            tr.addAttribute("role-empty", "")
+                .addAttribute("style", "border: 1px solid transparent;");
+
+            Td td = new Td();
+            td.addAttribute("id", emptyTag.id)
+                .addAttribute("style", "display: none; border: none; cursor: default;")
+                .addAttribute("style", getTagValue(emptyTag.style))
+                .addAttribute("class", getTagValue(emptyTag.styleClass))
+                .addAttribute("colspan", columns.size())
+                .addText(emptyTag.getContent());
+
+            tr.addTag(td);
+            tbody.addTag(tr);
+        }
 
         appendColumnTemplate(tbody);
 
@@ -261,7 +281,7 @@ public final class TableTagHandler extends TagHandler {
     private void appendColumnTemplate(Tag tbody) throws JspException, IOException {
         Tr tr = new Tr();
         tr.addAttribute("style", "display: none;")
-                .addAttribute("row-template", "0");
+                .addAttribute("role-template", "0");
         appendRefId(tr, id, true);
         appendEvent(tr);
 
