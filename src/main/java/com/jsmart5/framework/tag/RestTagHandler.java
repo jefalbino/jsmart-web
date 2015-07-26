@@ -104,9 +104,9 @@ public final class RestTagHandler extends TagHandler {
             rest.addAttribute("class", Bootstrap.FORM_INLINE);
         }
 
-        rest.addAttribute("class", styleClass)
-            .addAttribute("style", style)
-            .addText(sw.toString());
+        rest.addAttribute("class", getTagValue(styleClass))
+            .addAttribute("style", getTagValue(style))
+                .addText(sw.toString());
 
         if (!beforeRest.isEmpty()) {
             Set set = new Set();

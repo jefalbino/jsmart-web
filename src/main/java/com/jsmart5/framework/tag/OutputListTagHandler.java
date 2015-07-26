@@ -52,7 +52,7 @@ public final class OutputListTagHandler extends TagHandler {
 
 		Ul ul = new Ul();
 		ul.addAttribute("id", id)
-			.addAttribute("style", style);
+			.addAttribute("style", getTagValue(style));
 		
 		String lookVal = (String) getTagValue(look);
 
@@ -73,7 +73,7 @@ public final class OutputListTagHandler extends TagHandler {
 		ul.addAttribute("class", inline ? Bootstrap.LIST_INLINE : null);
 
 		// Add the style class at last
-		ul.addAttribute("class", styleClass);
+		ul.addAttribute("class", getTagValue(styleClass));
 
 		Object obj = getTagValue(values);
 		if (obj != null) {

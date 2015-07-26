@@ -87,7 +87,7 @@ public final class TextAreaTagHandler extends TagHandler {
 
 		TextArea textArea = new TextArea();
 		textArea.addAttribute("name", name)
-			 .addAttribute("style", style)
+			 .addAttribute("style", getTagValue(style))
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("rows", rows)
 			 .addAttribute("cols", cols)
@@ -101,7 +101,7 @@ public final class TextAreaTagHandler extends TagHandler {
 		appendRefId(textArea, id);
 		
 		// Add the style class at last
-		textArea.addAttribute("class", styleClass);
+		textArea.addAttribute("class", getTagValue(styleClass));
 
 		appendValidator(textArea);
 		appendRest(textArea, name);

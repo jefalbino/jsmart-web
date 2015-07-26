@@ -48,10 +48,10 @@ public final class BadgeTagHandler extends TagHandler {
 		setRandomId("badge");
 
 		Span span = new Span();
-		span.addAttribute("style", style)
+		span.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.BADGE)
-			.addAttribute("class", styleClass)
-			.addText(getTagValue(label));
+			.addAttribute("class", getTagValue(styleClass))
+                .addText(getTagValue(label));
 
 		appendTooltip(span);
 		appendPopOver(span);

@@ -114,8 +114,8 @@ public final class HeaderTagHandler extends TagHandler {
 			header = new Tag(Output.H3.name().toLowerCase());
 		}
 		
-		header.addAttribute("style", style)
-			.addAttribute("class", styleClass);
+		header.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass));
 		
 		appendRefId(header, id);
 

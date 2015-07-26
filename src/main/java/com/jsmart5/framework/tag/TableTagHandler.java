@@ -122,8 +122,8 @@ public final class TableTagHandler extends TagHandler {
 
 		Div div = new Div();
 		div.addAttribute("class", Bootstrap.TABLE_RESPONSIVE)
-			.addAttribute("style", style)
-			.addAttribute("class", styleClass);
+			.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass));
 
 		Table table = new Table();
 		table.addAttribute("id", id)
@@ -276,8 +276,8 @@ public final class TableTagHandler extends TagHandler {
 
 		for (ColumnTagHandler column : columns) {
 			Th th = new Th();
-            th.addAttribute("style", column.style)
-                .addAttribute("class", column.styleClass);
+            th.addAttribute("style", getTagValue(column.style))
+                .addAttribute("class", getTagValue(column.styleClass));
 
 			if (column.getFilterBy() != null) {
 				Div div = new Div();

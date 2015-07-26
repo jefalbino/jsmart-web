@@ -196,11 +196,11 @@ public final class DateTagHandler extends TagHandler {
 
 		// Add the style class at last
 		if (inputGroup != null) {
-			inputGroup.addAttribute("style", style)
-				.addAttribute("class", styleClass);
+			inputGroup.addAttribute("style", getTagValue(style))
+				.addAttribute("class", getTagValue(styleClass));
 		} else {
-			input.addAttribute("style", style)
-				.addAttribute("class", styleClass);
+			input.addAttribute("style", getTagValue(style))
+				.addAttribute("class", getTagValue(styleClass));
 		}
 
 		Object dateValue = getTagValue(value);

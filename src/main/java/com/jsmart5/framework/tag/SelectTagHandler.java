@@ -174,11 +174,11 @@ public final class SelectTagHandler extends TagHandler {
 
 		// Add the style class at last
 		if (inputGroup != null) {
-			inputGroup.addAttribute("style", style)
-				.addAttribute("class", styleClass);
+			inputGroup.addAttribute("style", getTagValue(style))
+				.addAttribute("class", getTagValue(styleClass));
 		} else {
-			select.addAttribute("style", style)
-				.addAttribute("class", styleClass);
+			select.addAttribute("style", getTagValue(style))
+				.addAttribute("class", getTagValue(styleClass));
 		}
 
 		appendValidator(select);

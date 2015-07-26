@@ -122,8 +122,8 @@ public final class RadioGroupTagHandler extends TagHandler {
         for (CheckTagHandler check : checks) {
 
             check.setCheckIndex(checkIndex++);
-            check.setStyle(style);
-            check.setStyleClass(styleClass);
+            check.setStyle((String) getTagValue(style));
+            check.setStyleClass((String) getTagValue(styleClass));
             check.setInline(inline);
             check.setRest(rest);
             check.setValidatorTag(validatorTag);

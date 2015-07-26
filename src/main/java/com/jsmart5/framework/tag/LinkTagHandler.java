@@ -121,7 +121,7 @@ public final class LinkTagHandler extends TagHandler {
 		}
 		
 		A link = new A();
-		link.addAttribute("style", style)
+		link.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.BUTTON)
 			.addAttribute("tabindex", tabIndex)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
@@ -226,7 +226,7 @@ public final class LinkTagHandler extends TagHandler {
 		}
 
 		// Add the style class at last
-		link.addAttribute("class", styleClass);
+		link.addAttribute("class", getTagValue(styleClass));
 		
 		if (action != null) {
 			appendDocScript(getFunction(url));

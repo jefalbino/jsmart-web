@@ -154,7 +154,7 @@ public final class ButtonTagHandler extends TagHandler {
 		}
 
 		Button button = new Button();
-		button.addAttribute("style", style)
+		button.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.BUTTON)
 			.addAttribute("tabindex", tabIndex)
 			.addAttribute("disabled", disabled ? "disabled" : null);
@@ -238,7 +238,7 @@ public final class ButtonTagHandler extends TagHandler {
 		}
 
 		// Add the style class at last
-		button.addAttribute("class", styleClass);
+		button.addAttribute("class", getTagValue(styleClass));
 
 		appendEvent(button);
 

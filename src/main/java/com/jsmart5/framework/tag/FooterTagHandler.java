@@ -77,10 +77,10 @@ public final class FooterTagHandler extends TagHandler {
 			footer.addAttribute("class", Bootstrap.PANEL_FOOTER);
 		}
 
-		footer.addAttribute("style", style)
-			.addAttribute("class", styleClass)
-			.addText(getTagValue(title))
-			.addText(sw.toString());
+		footer.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass))
+                .addText(getTagValue(title))
+                .addText(sw.toString());
 		
 		if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
 			appendAjax(parent.getId());

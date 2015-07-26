@@ -84,9 +84,9 @@ public final class CheckboxTagHandler extends TagHandler {
 
 		Label lb = new Label();
 		lb.addTag(input)
-			.addAttribute("style", style)
-			.addAttribute("class", styleClass)
-			.addText(getTagValue(label));
+			.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass))
+                .addText(getTagValue(label));
 
 		Div div = new Div();
 		div.addAttribute("class", Bootstrap.CHECKBOX)

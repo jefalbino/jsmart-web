@@ -63,7 +63,7 @@ public final class LabelTagHandler extends TagHandler {
         }
 
 		Span span = new Span();
-		span.addAttribute("style", style)
+		span.addAttribute("style", getTagValue(style))
 			.addAttribute("for", getTagValue(target))
 			.addAttribute("class", Bootstrap.LABEL)
             .addText(text);
@@ -97,7 +97,7 @@ public final class LabelTagHandler extends TagHandler {
 		}
 
 		// Add the style class at last
-		span.addAttribute("class", styleClass);
+		span.addAttribute("class", getTagValue(styleClass));
 
 		appendEvent(span);
 		appendAjax(id);

@@ -48,9 +48,9 @@ public final class AccordionTagHandler extends TagHandler {
 
 		Div div = new Div();
 		div.addAttribute("id", id)
-			.addAttribute("style", style)
+			.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.PANEL_GROUP)
-			.addAttribute("class", styleClass)
+			.addAttribute("class", getTagValue(styleClass))
 			.addAttribute("role", "tablist")
 			.addAttribute("aria-multiselectable", "true");
 		

@@ -157,11 +157,11 @@ public final class ProgressBarTagHandler extends TagHandler {
 		}
 
 		if (progress != null) {
-			progress.addAttribute("class", styleClass)
-				.addAttribute("style", style);
+			progress.addAttribute("class", getTagValue(styleClass))
+				.addAttribute("style", getTagValue(style));
 		} else {
-			bar.addAttribute("class", styleClass)
-				.addAttribute("style", style);
+			bar.addAttribute("class", getTagValue(styleClass))
+				.addAttribute("style", getTagValue(style));
 		}
 
 		appendEvent(bar);

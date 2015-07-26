@@ -127,7 +127,7 @@ public final class OutputTagHandler extends TagHandler {
 			tag =  new Span();
 		}
 
-		tag.addAttribute("style", style);
+		tag.addAttribute("style", getTagValue(style));
 
 		appendRefId(tag, id);
         appendEvent(tag);
@@ -172,7 +172,7 @@ public final class OutputTagHandler extends TagHandler {
 		}
 
 		// Add the style class at last
-		tag.addAttribute("class", styleClass);
+		tag.addAttribute("class", getTagValue(styleClass));
 
 		if (target != null && (Output.LABEL.equalsIgnoreCase(type) || Output.OUTPUT.equalsIgnoreCase(type))) {
 			tag.addAttribute("for", getTagValue(target));

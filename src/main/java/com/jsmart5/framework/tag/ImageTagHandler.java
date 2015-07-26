@@ -72,7 +72,7 @@ public final class ImageTagHandler extends TagHandler {
 		String nameValue = (String) getTagValue(name);
 
 		Image image = new Image();
-		image.addAttribute("style", style)
+		image.addAttribute("style", getTagValue(style))
 			.addAttribute("width", width)
 			.addAttribute("height", height);
 		
@@ -101,7 +101,7 @@ public final class ImageTagHandler extends TagHandler {
 		}
 		
 		// Add the style class at last
-		image.addAttribute("class", styleClass);
+		image.addAttribute("class", getTagValue(styleClass));
 
 		appendEvent(image);
 

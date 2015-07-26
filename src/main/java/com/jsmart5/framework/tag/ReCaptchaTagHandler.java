@@ -202,8 +202,8 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		}
 		
 		// Add the style class at last
-		inputGroup.addAttribute("style", style)
-			.addAttribute("class", styleClass);
+		inputGroup.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass));
 		
 		appendValidator(input);
 

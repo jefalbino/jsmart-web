@@ -31,7 +31,7 @@ var Jsmart5 = (function() {
 	var scrollBinds = {};
 
 	// List of div ids which hold values to be carried to server for every ajax request
-	var forAjax = [];
+	var ajaxAttached = [];
 
 	$(function () {
 		initCheckboxes();
@@ -116,8 +116,8 @@ var Jsmart5 = (function() {
 			doAjax(map, el);
 		},
 
-		forajax: function(id) {
-		    forAjax[forAjax.length] = id;
+		ajaxattach: function(id) {
+		    ajaxAttached[ajaxAttached.length] = id;
 		},
 		
 		bind: function(map) {
@@ -1738,8 +1738,8 @@ var Jsmart5 = (function() {
 			}
 		}
 
-        for (var i = 0; i < forAjax.length; i++) {
-            $(getId(forAjax[i])).find('*[name^="' + tagInit + '"]').each(function() {
+        for (var i = 0; i < ajaxAttached.length; i++) {
+            $(getId(ajaxAttached[i])).find('*[name^="' + tagInit + '"]').each(function() {
                 var elParam = getElementParam($(this), false);
                 for (var i = 0; i < elParam.length; i++) {
                     params.push({name: elParam[i].name, value: elParam[i].value});
@@ -1878,11 +1878,11 @@ var Jsmart5 = (function() {
 			var updates = update.split(',');
 
 			for (var i = 0; i < updates.length; i++) {
-				var updateId = getId(updates[i]);
+				var updateId = getId($.trim(updates[i]));
 				$(updateId).replaceWith($(a).find(updateId));
 
 				// Reapply scroll bind if it is updated
-				var scrollMap = getScrollBind(updates[i]);
+				var scrollMap = getScrollBind($.trim(updates[i]));
 				if (scrollMap) {
 				    reapplyScrollBind(scrollMap);
 				}

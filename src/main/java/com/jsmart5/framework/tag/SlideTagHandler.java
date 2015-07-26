@@ -84,9 +84,9 @@ public final class SlideTagHandler extends TagHandler {
 
 		Div div = new Div();
 		div.addAttribute("id", id)
-			.addAttribute("style", style)
+			.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.ITEM)
-			.addAttribute("class", styleClass);
+			.addAttribute("class", getTagValue(styleClass));
 
 		if (active) {
 			div.addAttribute("class", Bootstrap.ACTIVE);

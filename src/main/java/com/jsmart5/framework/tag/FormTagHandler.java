@@ -86,7 +86,7 @@ public final class FormTagHandler extends TagHandler {
 		form.addAttribute("id", id)
 			.addAttribute("method", method != null ? method : Method.POST.name().toLowerCase())
 			.addAttribute("enctype", enctype)
-			.addAttribute("style", style);
+			.addAttribute("style", getTagValue(style));
 
 		if (Position.HORIZONTAL.equalsIgnoreCase(position)) {
 			form.addAttribute("class", Bootstrap.FORM_HORIZONTAL);
@@ -95,7 +95,7 @@ public final class FormTagHandler extends TagHandler {
 		}
 		
 		// Add the style class at last
-		form.addAttribute("class", styleClass);
+		form.addAttribute("class", getTagValue(styleClass));
 
 		FieldSet fieldSet = null;
 		if (disabled) {

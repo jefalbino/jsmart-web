@@ -92,7 +92,7 @@ public final class IconTagHandler extends TagHandler {
 		setRandomId("icon");
 
 		Span span = new Span();
-		span.addAttribute("style", style)
+		span.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.GLYPHICON)
 			.addAttribute("class", getTagValue(name))
 			.addAttribute("aria-hidden", "true")
@@ -116,7 +116,7 @@ public final class IconTagHandler extends TagHandler {
 		}
 		
 		// At last place the style class
-		span.addAttribute("class", styleClass);
+		span.addAttribute("class", getTagValue(styleClass));
 
 		appendAjax(id);
 		appendBind(id);

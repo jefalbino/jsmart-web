@@ -68,7 +68,7 @@ public final class PanelTagHandler extends TagHandler {
 
 		Div panel = new Div();
 		panel.addAttribute("id", id)
-			.addAttribute("style", style)
+			.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.PANEL);
 
 		String lookVal = (String) getTagValue(look);
@@ -88,7 +88,7 @@ public final class PanelTagHandler extends TagHandler {
 		}
 		
 		// Add the style class at last
-		panel.addAttribute("class", styleClass);
+		panel.addAttribute("class", getTagValue(styleClass));
 
 		appendEvent(panel);
 

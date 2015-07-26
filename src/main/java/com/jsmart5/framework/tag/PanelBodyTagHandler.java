@@ -72,10 +72,10 @@ public final class PanelBodyTagHandler extends TagHandler {
 
 		content.addAttribute("id", id)
 			.addAttribute("align", align)
-			.addAttribute("style", style)
+			.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.PANEL_BODY)
-			.addAttribute("class", styleClass)
-			.addText(sw.toString());
+			.addAttribute("class", getTagValue(styleClass))
+                .addText(sw.toString());
 
 		appendEvent(content);
 

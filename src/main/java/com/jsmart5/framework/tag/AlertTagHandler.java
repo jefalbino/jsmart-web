@@ -76,7 +76,7 @@ public final class AlertTagHandler extends TagHandler {
 
 		Div div = new Div();
 		div.addAttribute("id", id)
-			.addAttribute("style", style)
+			.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.ALERT)
 			.addAttribute("class", Bootstrap.FADE)
 			.addAttribute("class", Bootstrap.IN)
@@ -115,7 +115,7 @@ public final class AlertTagHandler extends TagHandler {
 		}
 
 		// At last add the custom style
-		div.addAttribute("class", styleClass);
+		div.addAttribute("class", getTagValue(styleClass));
 
 		if (firstAlert.getTitleIcon() != null) {
 			header = new HeaderTagHandler();

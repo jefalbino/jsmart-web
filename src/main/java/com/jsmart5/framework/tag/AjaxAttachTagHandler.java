@@ -27,9 +27,9 @@ import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static com.jsmart5.framework.tag.js.JsConstants.JSMART_FOR_AJAX;
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_AJAX_ATTACH;
 
-public class ForAjaxTagHandler extends TagHandler {
+public class AjaxAttachTagHandler extends TagHandler {
 
     @Override
     public void validateTag() throws JspException {
@@ -47,12 +47,12 @@ public class ForAjaxTagHandler extends TagHandler {
 
         Div div = new Div();
         div.addAttribute("id", id)
-            .addAttribute("class", styleClass)
+            .addAttribute("class", getTagValue(styleClass))
             .addAttribute("style", "display: none;")
-            .addAttribute("style", style);
+            .addAttribute("style", getTagValue(style));
 
         div.addText(sw.toString());
-        appendDocScript(new StringBuilder(JSMART_FOR_AJAX.format(id)));
+        appendDocScript(new StringBuilder(JSMART_AJAX_ATTACH.format(id)));
         return div;
     }
 

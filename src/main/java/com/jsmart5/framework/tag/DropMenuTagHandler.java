@@ -93,7 +93,7 @@ public final class DropMenuTagHandler extends TagHandler {
 		Ul ul = new Ul();
 		ul.addAttribute("id", id)
 			.addAttribute("role", "menu")
-			.addAttribute("style", style)
+			.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.DROPDOWN_MENU);
 		
 		if (Align.RIGHT.equalsIgnoreCase(align)) {
@@ -101,7 +101,7 @@ public final class DropMenuTagHandler extends TagHandler {
 		}
 		
 		// At last place the style class
-		ul.addAttribute("class", styleClass);
+		ul.addAttribute("class", getTagValue(styleClass));
 
 		for (DropActionTagHandler dropAction : dropActions) {
 

@@ -22,7 +22,7 @@ public enum JsConstants {
 
 	JSMART_VALIDATE("Jsmart5.validate", "('%s');"),
 	JSMART_AJAX("Jsmart5.ajax", "(%s,$(this));"),
-    JSMART_FOR_AJAX("Jsmart5.forajax", "('%s');"),
+    JSMART_AJAX_ATTACH("Jsmart5.ajaxattach", "('%s');"),
 	JSMART_BIND("Jsmart5.bind", "(%s);"),
 	JSMART_MODAL("Jsmart5.modal", "('%s');"),
 	JSMART_LIST("Jsmart5.list", "($(this),%s);"),

@@ -103,10 +103,10 @@ public final class ListTagHandler extends TagHandler {
 
 		Ul ul = new Ul();
 		ul.addAttribute("id", id)
-			.addAttribute("style", style)
+			.addAttribute("style", getTagValue(style))
 			.addAttribute("style", maxHeight != null ? "max-height: " + maxHeight + ";" : null)
 			.addAttribute("class", Bootstrap.LIST_GROUP)
-			.addAttribute("class", styleClass);
+			.addAttribute("class", getTagValue(styleClass));
 
         if (scrollSize != null || values == null) {
             ul.addAttribute("style", "overflow: auto;")

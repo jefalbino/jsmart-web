@@ -71,9 +71,9 @@ public final class ProgressGroupTagHandler extends TagHandler {
 
 		Div group = new Div();
 		group.addAttribute("id", id)
-				.addAttribute("style", style)
+				.addAttribute("style", getTagValue(style))
 				.addAttribute("class", Bootstrap.PROGRESS)
-				.addAttribute("class", styleClass);
+				.addAttribute("class", getTagValue(styleClass));
 		
 		// Save the differences to calculate the relation
 		int total = 0;

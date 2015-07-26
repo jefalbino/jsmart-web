@@ -62,9 +62,9 @@ public final class ColumnTagHandler extends TagHandler {
 
 		Td td = new Td();
 		td.addAttribute("id", id)
-			.addAttribute("style", style)
-			.addAttribute("class", styleClass)
-			.addText(sw.toString());
+			.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass))
+                .addText(sw.toString());
 		return td;
 	}
 

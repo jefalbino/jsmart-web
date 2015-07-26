@@ -318,11 +318,11 @@ public final class TabTagHandler extends TagHandler {
 
 		Div tabContent = new Div();
 		tabContent.addAttribute("id", tabPane.getId())
-			.addAttribute("style", tabPane.getStyle())
+			.addAttribute("style", getTagValue(tabPane.getStyle()))
 			.addAttribute("role", "tabpanel")
 			.addAttribute("class", Bootstrap.TAB_PANE)
 			.addAttribute("class", fade ? Bootstrap.FADE : null)
-			.addAttribute("class", tabPane.getStyleClass());
+			.addAttribute("class", getTagValue(tabPane.getStyleClass()));
 		
 		// Include the tab values 
 		if (tabVal == null) {

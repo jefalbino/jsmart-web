@@ -80,7 +80,7 @@ public final class ModalTagHandler extends TagHandler {
 		
 		Div modalDialog = new Div();
 		modalDialog.addAttribute("class", Bootstrap.MODAL_DIALOG)
-			.addAttribute("style", style);
+			.addAttribute("style", getTagValue(style));
 		
 		if (Size.SMALL.equalsIgnoreCase(size)) {
 			modalDialog.addAttribute("class", Bootstrap.MODAL_SMALL);
@@ -89,13 +89,13 @@ public final class ModalTagHandler extends TagHandler {
 		}
 
 		// At last place the custom style
-		modalDialog.addAttribute("class", styleClass);
+		modalDialog.addAttribute("class", getTagValue(styleClass));
 		modal.addTag(modalDialog);
 		
 		Div modalContent = new Div();
 		modalContent.addAttribute("class", Bootstrap.MODAL_CONTENT)
-			.addAttribute("style", style)
-			.addAttribute("class", styleClass);
+			.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass));
 		modalDialog.addTag(modalContent);
 
 		if (header != null) {

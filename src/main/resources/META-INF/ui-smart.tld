@@ -618,8 +618,8 @@
     </tag>
 
     <tag>
-        <name>forajax</name>
-        <tag-class>com.jsmart5.framework.tag.ForAjaxTagHandler</tag-class>
+        <name>ajaxattach</name>
+        <tag-class>com.jsmart5.framework.tag.AjaxAttachTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>

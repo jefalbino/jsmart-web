@@ -59,10 +59,10 @@ public final class OptionTagHandler extends TagHandler {
 
 		Option option = new Option();
 		option.addAttribute("id", id)
-			.addAttribute("style", style)
-			.addAttribute("class", styleClass)
+			.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass))
 			.addAttribute("disabled", disabled ? "disabled" : null)
-			.addText(getTagValue(label));
+                .addText(getTagValue(label));
 
 		Object object = getTagValue(value);
 		option.addAttribute("value", object)

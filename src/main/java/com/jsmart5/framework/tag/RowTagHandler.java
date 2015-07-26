@@ -88,10 +88,9 @@ public final class RowTagHandler extends TagHandler {
 
 		setRandomId("row");
 
-		tag.addAttribute("style", style)
+		tag.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
-			.addAttribute("class", styleClass)
 			.addAttribute("list-index", selectIndex)
 			.addAttribute("scroll-index", scrollIndex);
 		
@@ -110,7 +109,7 @@ public final class RowTagHandler extends TagHandler {
 		}
 
 		// At last place the style class
-		tag.addAttribute("class", styleClass);
+		tag.addAttribute("class", getTagValue(styleClass));
 
 		appendEvent(tag);
 

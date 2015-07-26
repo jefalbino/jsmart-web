@@ -76,7 +76,7 @@ public final class CheckTagHandler extends TagHandler {
 		Div div = null;
 
 		Label lb = new Label();
-		lb.addAttribute("style", style);
+		lb.addAttribute("style", getTagValue(style));
 		
 		if (inline) {
 			lb.addAttribute("class", CHECKBOX.equals(type) ? Bootstrap.CHECKBOX_INLINE : Bootstrap.RADION_INLINE);
@@ -87,7 +87,7 @@ public final class CheckTagHandler extends TagHandler {
 				.addTag(lb);
 		}
 
-		lb.addAttribute("class", styleClass);
+		lb.addAttribute("class", getTagValue(styleClass));
 
 		Input input = new Input();
 		input.addAttribute("type", type)
