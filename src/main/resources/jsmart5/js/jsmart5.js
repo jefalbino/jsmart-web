@@ -268,6 +268,10 @@ var Jsmart5 = (function() {
             doSetCheckGroup(id, array);
         },
 
+        setProgressBar(id, value) {
+            doSetProgressBar(id, value);
+        },
+
 		showLoad: function(id) {
 		    doShowLoad(id);
 		},
@@ -2370,6 +2374,86 @@ var Jsmart5 = (function() {
             }
         }
 	}
+
+	function doSetProgressBar(id, value) {
+	    var div = $(getId(id));
+        var bars = div.find('div[role="progressbar"]');
+
+        if (bars && bars.length > 0) {
+            for (var i = 0; i < bars.length; i++) {
+                var bar = $(bars[index]);
+                if (handleSetBar(bar, value, parseInt(bar.attr('role-relation'))) == false) {
+                    return;
+                }
+            }
+        } else {
+            handleSetBar(bar);
+        }
+	}
+
+	function handleSetBar(bar, value, relation) {
+
+        var value = parseInt(bar.attr('aria-valuenow'));
+        var minValue = parseInt(bar.attr('aria-valuemin'));
+        var maxValue = parseInt(bar.attr('aria-valuemax'));
+
+        if (value && isString(value)) {
+            value = parseInt(value);
+        }
+
+        // Keep the constraints valid
+        if (value) {
+
+            if (value < minValue) {
+                value = minValue;
+            }
+            if (value > maxValue) {
+                value = maxValue;
+            }
+            bar.attr('aria-valuenow', value);
+
+            if (input && input.length > 0) {
+                input.val(value);
+            }
+        }
+
+	}
+//	var input = null;
+//    		var name = bar.attr('name');
+//
+//    		if (name && name.length > 0) {
+//    			input = $('input[name="' + name + '"]');
+//    		}
+//
+//
+//
+//    		var callback = window[map.onInterval];
+//
+//    		if (typeof callback === 'function') {
+//    			value = callback(bar, value, minValue, maxValue);
+//
+//
+//    		}
+//
+//    		// Get the value back case it is changed by callback
+//    		value = parseInt(bar.attr('aria-valuenow'));
+//
+//    		var percent = ((100 * (value - minValue) / (maxValue - minValue)) | 0);
+//
+//    		// Calculate the percentage related to its relation
+//    		if (relation) {
+//    			percent = ((percent * relation / 100) | 0);
+//    		}
+//
+//    		bar.css({'width': percent + '%'});
+//
+//    		// Check if progress bar is using label before updating it
+//    		if (bar.text().indexOf('%') >= 0) {
+//    			bar.text(percent + '%');
+//    		}
+//
+//    		return value >= maxValue;
+//    		}
 
 	/******************************************************
 	 * GENERAL FUNCTIONS

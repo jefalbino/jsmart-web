@@ -137,6 +137,7 @@ public final class ProgressBarTagHandler extends TagHandler {
 			.addAttribute("aria-valuenow", intValue)
 			.addAttribute("aria-valuemin", intMinValue)
 			.addAttribute("aria-valuemax", intMaxValue)
+            .addAttribute("role-relation", relation)
 			.addAttribute("style", "width:" + percent + "%;");
 
 		if (minWidth != null) {
