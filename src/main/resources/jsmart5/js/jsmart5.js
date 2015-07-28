@@ -34,6 +34,9 @@ var Jsmart5 = (function() {
 	// Keep track of scroll binds on table or list components with dynamic scroll, case update is done
 	var scrollBinds = {};
 
+    // Keep track of Ajax XHR case it needs to be aborted by application
+    var ajaxPool = {};
+
 	// List of div ids which hold values to be carried to server for every ajax request
 	var ajaxAttached = [];
 
@@ -228,6 +231,10 @@ var Jsmart5 = (function() {
          * JS NOT INTEGRATED FUNCTIONS
          ******************************************************/
 
+        abortRequest: function(id) {
+            doAbortAjax(id);
+        },
+
         listAdd: function(id, map, template) {
             doListAdd(id, map, template);
         },
@@ -268,7 +275,7 @@ var Jsmart5 = (function() {
             doSetCheckGroup(id, array);
         },
 
-        setProgressBar(id, value) {
+        setProgressBar: function(id, value) {
             doSetProgressBar(id, value);
         },
 
@@ -362,7 +369,14 @@ var Jsmart5 = (function() {
 			}
 		}
 	}
-	
+
+	function doAbortAjax(id) {
+        var xhr = ajaxPool[id];
+        if (xhr) {
+            xhr.abort();
+        }
+	}
+
 	function doBind(map) {
 		if (map.timeout && map.timeout > 0) {
 			var timeout = map.timeout;
@@ -1151,18 +1165,15 @@ var Jsmart5 = (function() {
 
 		if (bars && bars.length > 0) {
 			var index = 0;
-
 			var intervalId = setInterval(function() {
-				var bar = $(bars[index]);
-				
-				if (handleProgressBar(bar, map, map.relation[index])) {
 
-					if (index == bars.length -1) {
-						clearInterval(div.attr('interval-id'));
-					} else {
-						index++;
-					}
-				}
+				var bar = $(bars[index]);
+				var filled = handleProgressBar(bar, map, map.relation[index]);
+
+                if (filled && index == bars.length -1) {
+                    clearInterval(div.attr('interval-id'));
+                }
+                index = (index == bars.length -1) ? 0 : index + 1;
 			}, map.interval);
 
 			div.attr('interval-id', intervalId);
@@ -1252,7 +1263,6 @@ var Jsmart5 = (function() {
 		if (bar.text().indexOf('%') >= 0) {
 			bar.text(percent + '%');
 		}
-
 		return value >= maxValue;
 	}
 
@@ -1641,12 +1651,12 @@ var Jsmart5 = (function() {
 			type: map.method, 
 			url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
 			beforeSend: function (xhr, settings) {
+                ajaxPool[map.id] = xhr;
 				appendLoadIcon(map);
 				doHeaders(map, xhr, settings);
 				doExecute(map.before, xhr, settings);
 			},
 			success: function (data, status, xhr) {
-
 				var reset = xhr.getResponseHeader("Reset-Ajax"); 
 				if (reset && reset.length > 0) {
 					$(location).attr('href', $(location).attr('href'));
@@ -1674,6 +1684,7 @@ var Jsmart5 = (function() {
 				showOnConsole(error);
 			},
 			complete: function (xhr, status) {
+			    delete ajaxPool[map.id];
 				removeLoadIcon(map);
 				doExecute(map.completeHandler, xhr, status);
 				doExecute(map.complete, xhr, status);
@@ -2381,79 +2392,58 @@ var Jsmart5 = (function() {
 
         if (bars && bars.length > 0) {
             for (var i = 0; i < bars.length; i++) {
-                var bar = $(bars[index]);
-                if (handleSetBar(bar, value, parseInt(bar.attr('role-relation'))) == false) {
-                    return;
-                }
+                var bar = $(bars[i]);
+                handleSetBar(bar, value, parseInt(bar.attr('role-relation')));
             }
         } else {
-            handleSetBar(bar);
+            handleSetBar(div, value);
         }
 	}
 
 	function handleSetBar(bar, value, relation) {
+	    if (value === undefined) {
+	        return;
+	    }
 
-        var value = parseInt(bar.attr('aria-valuenow'));
+        if (isString(value)) {
+            value = parseInt(value);
+        }
         var minValue = parseInt(bar.attr('aria-valuemin'));
         var maxValue = parseInt(bar.attr('aria-valuemax'));
 
-        if (value && isString(value)) {
-            value = parseInt(value);
+        var input = null;
+        var name = bar.attr('name');
+        if (name && name.length > 0) {
+            input = $('input[name="' + name + '"]');
         }
 
         // Keep the constraints valid
-        if (value) {
+        if (value < minValue) {
+            value = minValue;
+        }
+        if (value > maxValue) {
+            value = maxValue;
+        }
+        bar.attr('aria-valuenow', value);
 
-            if (value < minValue) {
-                value = minValue;
-            }
-            if (value > maxValue) {
-                value = maxValue;
-            }
-            bar.attr('aria-valuenow', value);
-
-            if (input && input.length > 0) {
-                input.val(value);
-            }
+        if (input && input.length > 0) {
+            input.val(value);
         }
 
+        var percent = ((100 * (value - minValue) / (maxValue - minValue)) | 0);
+
+        // Calculate the percentage related to its relation
+        if (relation) {
+            percent = ((percent * relation / 100) | 0);
+        }
+
+        bar.css({'width': percent + '%'});
+
+        // Check if progress bar is using label before updating it
+        if (bar.text().indexOf('%') >= 0) {
+            bar.text(percent + '%');
+        }
 	}
-//	var input = null;
-//    		var name = bar.attr('name');
-//
-//    		if (name && name.length > 0) {
-//    			input = $('input[name="' + name + '"]');
-//    		}
-//
-//
-//
-//    		var callback = window[map.onInterval];
-//
-//    		if (typeof callback === 'function') {
-//    			value = callback(bar, value, minValue, maxValue);
-//
-//
-//    		}
-//
-//    		// Get the value back case it is changed by callback
-//    		value = parseInt(bar.attr('aria-valuenow'));
-//
-//    		var percent = ((100 * (value - minValue) / (maxValue - minValue)) | 0);
-//
-//    		// Calculate the percentage related to its relation
-//    		if (relation) {
-//    			percent = ((percent * relation / 100) | 0);
-//    		}
-//
-//    		bar.css({'width': percent + '%'});
-//
-//    		// Check if progress bar is using label before updating it
-//    		if (bar.text().indexOf('%') >= 0) {
-//    			bar.text(percent + '%');
-//    		}
-//
-//    		return value >= maxValue;
-//    		}
 
 	/******************************************************
 	 * GENERAL FUNCTIONS
