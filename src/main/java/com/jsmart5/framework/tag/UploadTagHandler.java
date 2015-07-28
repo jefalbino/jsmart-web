@@ -58,6 +58,8 @@ public final class UploadTagHandler extends TagHandler {
 	private boolean readOnly;
 
 	private boolean autoFocus;
+
+    private String onUpload;
 	
 	private List<TagHandler> childAddOns;
 
@@ -161,8 +163,9 @@ public final class UploadTagHandler extends TagHandler {
 			 .addAttribute("disabled", disabled ? "disabled" : null)
 			 .addAttribute("placeholder", getTagValue(placeHolder))
 			 .addAttribute("datatype", Type.FILE.name().toLowerCase())
-			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
-		
+			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
+             .addAttribute("onupload", onUpload);
+
 		appendRefId(input, id);
 		
 		input.addAttribute("value", getTagValue(value));
@@ -277,4 +280,8 @@ public final class UploadTagHandler extends TagHandler {
 	public void setAutoFocus(boolean autoFocus) {
 		this.autoFocus = autoFocus;
 	}
+
+    public void setOnUpload(String onUpload) {
+        this.onUpload = onUpload;
+    }
 }

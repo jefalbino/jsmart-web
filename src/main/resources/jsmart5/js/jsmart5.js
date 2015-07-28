@@ -308,9 +308,9 @@ var Jsmart5 = (function() {
             }
 
             // Validate form before creating ajax request
-            var closestForm = el.closest('form');
-            if (closestForm && closestForm.length > 0) {
-                if (!doValidate($(closestForm).attr('id'))) {
+            var form = el.closest('form');
+            if (form && form.length > 0) {
+                if (!doValidate($(form).attr('id'))) {
                     return;
                 }
             }
@@ -327,7 +327,7 @@ var Jsmart5 = (function() {
 						postParam.push({name: dlgParam[i].name, value: dlgParam[i].value});
 					}
 
-					if (closestForm && closestForm.length > 0) {
+					if (form && form.length > 0) {
 						if (map.tag && (map.tag == 'checkbox' || map.tag == 'select' || map.tag == 'checkgroup' 
 								|| map.tag == 'radiogroup')) {
 							if (elParam.length > 0 && elParam[0].value == null) {
@@ -343,8 +343,11 @@ var Jsmart5 = (function() {
 					options.data = postParam;
 				}
 
-				if (map.method == 'post' && closestForm && closestForm.length > 0) {
-					$(closestForm).ajaxSubmit(options);
+				if (map.method == 'post' && form && form.length > 0) {
+				    // Bind custom upload event handling case registered by upload component
+                    options = bindOnUpload(options, form);
+
+					$(form).ajaxSubmit(options);
 				} else {
 					$.ajax(options);
 				}
@@ -413,6 +416,9 @@ var Jsmart5 = (function() {
                     options.data = getRestXmlBody(rest);
                 }
             }
+
+            // Bind custom upload event handling case registered by upload component
+            options = bindOnUpload(options, rest);
             $.ajax(options);
         }
 	}
@@ -421,7 +427,7 @@ var Jsmart5 = (function() {
 		if (li && li.length > 0) {
 			var postParam = getAjaxParams(map);
 			var options = getAjaxOptions(map);
-			var closestForm = $(li).closest('form');
+			var form = $(li).closest('form');
 			
 			var jsonParam = {};
 			jsonParam.size = li.closest('ul').attr('scroll-size');
@@ -442,8 +448,8 @@ var Jsmart5 = (function() {
 				}
 			}
 
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
+			if (form && form.length > 0) {
+				if (!doValidate($(form).attr('id'))) {
 					return;
 				}
 			} else {
@@ -451,8 +457,8 @@ var Jsmart5 = (function() {
 			}
 			options.data = postParam;
 
-			if (closestForm && closestForm.length > 0) {
-				$(closestForm).ajaxSubmit(options);
+			if (form && form.length > 0) {
+				$(form).ajaxSubmit(options);
 			} else {
 				$.ajax(options);
 			}
@@ -479,7 +485,7 @@ var Jsmart5 = (function() {
 					ul.attr('scroll-active', 'true');
 	
 					var postParam = getAjaxParams(map);
-					var closestForm = $(ul).closest('form');
+					var form = $(ul).closest('form');
 	
 					var lastChild = null;
 					if (ul.find('>a').length > 0) {
@@ -501,8 +507,8 @@ var Jsmart5 = (function() {
 						}
 					}
 	
-					if (closestForm && closestForm.length > 0) {
-						if (!doValidate($(closestForm).attr('id'))) {
+					if (form && form.length > 0) {
+						if (!doValidate($(form).attr('id'))) {
 							return;
 						}
 					} else {
@@ -564,8 +570,8 @@ var Jsmart5 = (function() {
 					var options = getAjaxOptions(map);
 					options.data = postParam;
 
-					if (closestForm && closestForm.length > 0) {
-						$(closestForm).ajaxSubmit(options);
+					if (form && form.length > 0) {
+						$(form).ajaxSubmit(options);
 					} else {
 						$.ajax(options);
 					}
@@ -755,7 +761,7 @@ var Jsmart5 = (function() {
 
 			var postParam = getAjaxParams(map);
 			var options = getAjaxOptions(map);
-			var closestForm = $(tr).closest('form');
+			var form = $(tr).closest('form');
 			
 			// Table adapter parameters
 			var jsonParam = {};
@@ -793,8 +799,8 @@ var Jsmart5 = (function() {
 				}
 			}
 
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
+			if (form && form.length > 0) {
+				if (!doValidate($(form).attr('id'))) {
 					return;
 				}
 			} else {
@@ -802,8 +808,8 @@ var Jsmart5 = (function() {
 			}
 			options.data = postParam;
 
-			if (closestForm && closestForm.length > 0) {
-				$(closestForm).ajaxSubmit(options);
+			if (form && form.length > 0) {
+				$(form).ajaxSubmit(options);
 			} else {
 				$.ajax(options);
 			}
@@ -933,7 +939,7 @@ var Jsmart5 = (function() {
 		tbody.attr('scroll-active', 'true');
 		
 		var postParam = getAjaxParams(map);
-		var closestForm = $(tbody).closest('form');
+		var form = $(tbody).closest('form');
 
 		// Set the jsonParam values as size and index
 		jsonParam.size = tbody.attr('scroll-size');
@@ -954,8 +960,8 @@ var Jsmart5 = (function() {
 			}
 		}
 
-		if (closestForm && closestForm.length > 0) {
-			if (!doValidate($(closestForm).attr('id'))) {
+		if (form && form.length > 0) {
+			if (!doValidate($(form).attr('id'))) {
 				return;
 			}
 		} else {
@@ -1015,8 +1021,8 @@ var Jsmart5 = (function() {
 		var options = getAjaxOptions(map);
 		options.data = postParam;
 
-		if (closestForm && closestForm.length > 0) {
-			$(closestForm).ajaxSubmit(options);
+		if (form && form.length > 0) {
+			$(form).ajaxSubmit(options);
 		} else {
 			$.ajax(options);
 		}
@@ -1051,13 +1057,13 @@ var Jsmart5 = (function() {
 
 			var postParam = getAjaxParams(map);
 			var options = getAjaxOptions(map);
-			var closestForm = li.closest('form');
+			var form = li.closest('form');
 
 			// Set the hidden input value
 			postParam[0].value = tabInput.val();
 
-			if (closestForm && closestForm.length > 0) {
-				if (!doValidate($(closestForm).attr('id'))) {
+			if (form && form.length > 0) {
+				if (!doValidate($(form).attr('id'))) {
 					return;
 				}
 			} else {
@@ -1066,8 +1072,8 @@ var Jsmart5 = (function() {
 
 			options.data = postParam;
 
-			if (closestForm && closestForm.length > 0) {
-				$(closestForm).ajaxSubmit(options);
+			if (form && form.length > 0) {
+				$(form).ajaxSubmit(options);
 			} else {
 				$.ajax(options);
 			}
@@ -1287,13 +1293,13 @@ var Jsmart5 = (function() {
 		    inputLoad.show();
 		
 		    var postParam = getAjaxParams(map);
-		    var closestForm = input.closest('form');
+		    var form = input.closest('form');
 		
 		    // Push the input content so we send the value to be auto completed
 		    postParam.push({name: input.attr('name'), value: input.val()});
 		
-		    if (closestForm && closestForm.length > 0) {
-		        if (!doValidate($(closestForm).attr('id'))) {
+		    if (form && form.length > 0) {
+		        if (!doValidate($(form).attr('id'))) {
 		            return;
 		        }
 		    } else {
@@ -1335,8 +1341,8 @@ var Jsmart5 = (function() {
 		    var options = getAjaxOptions(map);
 		    options.data = postParam;
 		
-		    if (closestForm && closestForm.length > 0) {
-		        $(closestForm).ajaxSubmit(options);
+		    if (form && form.length > 0) {
+		        $(form).ajaxSubmit(options);
 		    } else {
 		        $.ajax(options);
 		    }
@@ -1362,7 +1368,7 @@ var Jsmart5 = (function() {
 					ul.attr('scroll-active', 'true');
 
 					var postParam = getAjaxParams(map);
-					var closestForm = $(ul).closest('form');
+					var form = $(ul).closest('form');
 
 					// Push the input content so we send the value to be auto completed
 					var input = $(getId(map.id));
@@ -1383,8 +1389,8 @@ var Jsmart5 = (function() {
 						}
 					}
 
-					if (closestForm && closestForm.length > 0) {
-						if (!doValidate($(closestForm).attr('id'))) {
+					if (form && form.length > 0) {
+						if (!doValidate($(form).attr('id'))) {
 							return;
 						}
 					} else {
@@ -1434,8 +1440,8 @@ var Jsmart5 = (function() {
 					var options = getAjaxOptions(map);
 					options.data = postParam;
 
-					if (closestForm && closestForm.length > 0) {
-						$(closestForm).ajaxSubmit(options);
+					if (form && form.length > 0) {
+						$(form).ajaxSubmit(options);
 					} else {
 						$.ajax(options);
 					}
@@ -1466,8 +1472,8 @@ var Jsmart5 = (function() {
                         source.addEventListener(map.events[i].event, eventListener,
                                 map.events[i].capture != null ? map.events[i].capture : false);
                     } else {
-                        showOnConsole('Found error on async [' + map.id + ']. The [' + map.events[i].execute + '] execute attribute is '
-                                        + 'not a function. Please provide a function with event parameter');
+                        showOnConsole('Found error on async [' + map.id + ']. The [' + map.events[i].execute + '] '
+                                    + 'execute attribute is not a function. Please provide a function with event parameter');
                     }
                 }
             }
@@ -1477,7 +1483,7 @@ var Jsmart5 = (function() {
                 if (typeof onStart === 'function') {
                     onStart(source, map.id);
                 } else {
-                    showOnConsole('Found error on async [' + map.id + ']. The [' + map.start + ' is not a function');
+                    showOnConsole('Found error on async [' + map.id + ']. The [' + map.start + '] is not a function');
                 }
             }
 	    }
@@ -1828,6 +1834,48 @@ var Jsmart5 = (function() {
 		}
 		return elParams;
 	}
+
+	function bindOnUpload(options, parent) {
+	    var customXhr = $.ajaxSettings.xhr();
+
+        parent.find('input:file').each(function() {
+
+            var upload = $(this).attr('onupload');
+            if (upload && upload.length > 0) {
+
+                var onUpload = window[upload];
+                if (typeof onUpload === 'function') {
+
+                    // Case parent is form the ajax will be done by jquery-form plugin
+                    if (parent.is('form')) {
+                        options.uploadProgress = onUpload;
+                    } else {
+                        // Case pure ajax we need to expose the upload header for event handling
+                        if (customXhr.upload) {
+                            customXhr.upload.addEventListener('progress', function (evt) {
+
+                                var percent = 0;
+                                var position = evt.loaded || evt.position; /* event.position is deprecated */
+                                var total = evt.total;
+
+                                if (evt.lengthComputable) {
+                                    percent = Math.ceil(position / total * 100);
+                                }
+                                onUpload(evt, position, total, percent);
+                            }, false);
+
+                            options.xhr = function() {
+                                return customXhr;
+                            };
+                        }
+                    }
+                } else {
+                    showOnConsole('Found error on ajax request. The [' + upload + '] is not a function');
+                }
+            }
+        });
+        return options;
+    }
 
 	function doHeaders(map, xhr, settings) {
 		var values = map.id;

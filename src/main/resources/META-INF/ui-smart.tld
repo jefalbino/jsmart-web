@@ -2744,6 +2744,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>onUpload</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>onClick</name>
             <required>false</required>
         </attribute>
