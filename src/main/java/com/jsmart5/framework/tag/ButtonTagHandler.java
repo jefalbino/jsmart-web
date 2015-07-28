@@ -116,8 +116,10 @@ public final class ButtonTagHandler extends TagHandler {
 	public Tag executeTag() throws JspException, IOException {
 
 		JspTag parent = getParent();
-		boolean inputAddOn = parent instanceof InputTagHandler || parent instanceof AutoCompleteTagHandler
-                || parent instanceof DateTagHandler || parent instanceof SelectTagHandler;
+		boolean inputAddOn = parent instanceof InputTagHandler
+                || parent instanceof AutoCompleteTagHandler
+                || parent instanceof DateTagHandler || parent instanceof SelectTagHandler
+                || parent instanceof UploadTagHandler;
 
 		// Just to call nested tags
 		JspFragment body = getJspBody();

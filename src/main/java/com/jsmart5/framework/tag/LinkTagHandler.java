@@ -272,6 +272,13 @@ public final class LinkTagHandler extends TagHandler {
 			jsonAjax.setMethod("post");
 			jsonAjax.setAction(getTagName(J_SBMT, action));
 
+            if (!args.isEmpty()) {
+                String argName = getTagName(J_SBMT_ARGS, action);
+                for (Object arg : args.keySet()) {
+                    jsonAjax.addArg(new Param(argName, arg, args.get(arg)));
+                }
+            }
+
 			if (update == null && onError == null && onSuccess == null && onComplete == null) {
 				jsonAjax.setUrl(url);
 			}

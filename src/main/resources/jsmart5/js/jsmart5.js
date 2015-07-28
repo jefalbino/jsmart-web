@@ -113,13 +113,13 @@ var Jsmart5 = (function() {
 	}
 
 	function initRoleEmpty() {
-	    $('li[' + roleEmpty + '], tr[' + roleEmpty + ']').each(function(index) {
+	    $('ul>li[' + roleEmpty + '], tbody>tr[' + roleEmpty + ']').each(function(index) {
 
             // Check empty content for list components
 	        var ul = $(this).closest('ul');
 	        if (ul && ul.length > 0) {
-	            if (ul.find('li:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0
-	                 && ul.find('a:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0) {
+	            if (ul.find('>li:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0
+	                 && ul.find('>a:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0) {
                     $(this).show();
                 } else {
                     $(this).hide();
@@ -130,7 +130,7 @@ var Jsmart5 = (function() {
             // Check empty content for table components
 	        var tbody = $(this).closest('tbody');
 	        if (tbody && tbody.length > 0) {
-	            if (tbody.find('tr:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0) {
+	            if (tbody.find('>tr:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0) {
                     $(this).find('td').show();
                 } else {
                     $(this).find('td').hide();
