@@ -482,10 +482,10 @@ var Jsmart5 = (function() {
 					var closestForm = $(ul).closest('form');
 	
 					var lastChild = null;
-					if (ul.find('a').length > 0) {
-						lastChild = ul.find('a:last-child');
+					if (ul.find('>a').length > 0) {
+						lastChild = ul.find('>a:last-child');
 					} else {
-						lastChild = ul.find('li:last-child');
+						lastChild = ul.find('>li:last-child');
 					}
 	
 					var jsonParam = {};
@@ -509,7 +509,7 @@ var Jsmart5 = (function() {
 						postParam = $.param(postParam);			
 					}
 
-					var liLoad = ul.find('li[' + roleLoad + ']').clone();
+					var liLoad = ul.find('>li[' + roleLoad + ']').clone();
 	
 					// Append loading icon on list if it was configured
 					if (liLoad && liLoad.length > 0) {
@@ -536,10 +536,10 @@ var Jsmart5 = (function() {
 						if (newUl && newUl.length > 0) {
 	
 							var lastChild = null
-							if (newUl.find('a').length > 0) {
-								lastChild = newUl.find('a:last-child');
+							if (newUl.find('>a').length > 0) {
+								lastChild = newUl.find('>a:last-child');
 							} else {
-								lastChild = newUl.find('li:last-child');
+								lastChild = newUl.find('>li:last-child');
 							}
 	
 							if (lastChild && lastChild.length > 0) {
@@ -547,13 +547,13 @@ var Jsmart5 = (function() {
 	
 								// Case the returned ul has last index different than current
 								if (lastIndex && (jsonParam.index - 1) != lastIndex) {
-									if (ul.find('a').length > 0) {
-										ul.append(newUl.find('a'));
+									if (ul.find('>a').length > 0) {
+										ul.append(newUl.find('>a'));
 									} else {
 										if (liLoad && liLoad.length > 0) {
-											ul.append(newUl.find('li').not(':first'));
+											ul.append(newUl.find('>li').not(':first'));
 										} else {
-											ul.append(newUl.find('li'));
+											ul.append(newUl.find('>li'));
 										}
 									}
 								}
@@ -759,12 +759,12 @@ var Jsmart5 = (function() {
 			
 			// Table adapter parameters
 			var jsonParam = {};
-			var thead = tr.closest('table').find('thead tr');
+			var thead = tr.closest('table').find('thead>tr');
 
 			jsonParam.size = tr.closest('tbody').attr('scroll-size');
 			jsonParam.index = tr.attr('scroll-index');
 
-			var prevScroll = tr.closest('tbody').find('tr[scroll-index="' + (parseInt(jsonParam.index) - parseInt(jsonParam.size)) + '"]:last');
+			var prevScroll = tr.closest('tbody').find('>tr[scroll-index="' + (parseInt(jsonParam.index) - parseInt(jsonParam.size)) + '"]:last');
 			jsonParam.offset = prevScroll && prevScroll.length > 0 ? prevScroll.attr('scroll-offset') : null;
 			
 			var sortSpan = thead.find('span[sort-active]');
@@ -816,8 +816,8 @@ var Jsmart5 = (function() {
 
 		var table = $(getId(map.id));
 
-		var thead = table.find('thead tr');
-		table.find('tbody tr:last').find('td').each(function(index) {
+		var thead = table.find('thead>tr');
+		table.find('tbody>tr:last').find('td').each(function(index) {
 			thead.children().eq(index).css({'width': $(this).width()});
 		});
 
@@ -830,7 +830,7 @@ var Jsmart5 = (function() {
 
 					// Table adapter parameters
 					var jsonParam = {};
-					var thead = tbody.closest('table').find('thead tr');
+					var thead = tbody.closest('table').find('thead>tr');
 					var sortSpan = thead.find('span[sort-active]');
 	
 					if (sortSpan && sortSpan.length > 0) {
@@ -941,7 +941,7 @@ var Jsmart5 = (function() {
 		if (reset) {
 			jsonParam.index = 0;
 		} else {
-			var lastChild = tbody.find('tr:last-child');		
+			var lastChild = tbody.find('>tr:last-child');
 			jsonParam.index = parseInt(lastChild.attr('table-index')) + 1;
 			jsonParam.offset = lastChild.attr('scroll-offset');
 		}
@@ -962,7 +962,7 @@ var Jsmart5 = (function() {
 			postParam = $.param(postParam);			
 		}
 
-		var trLoad = tbody.find('tr[' + roleLoad + ']').clone();
+		var trLoad = tbody.find('>tr[' + roleLoad + ']').clone();
 
 		// Append loading icon on table if it was configured
 		if (trLoad && trLoad.length > 0) {
@@ -990,12 +990,12 @@ var Jsmart5 = (function() {
 
 				// Case reset replace the tbody content
 				if (reset) {
-					tbody.empty().append(newTable.find('tbody tr'));
+					tbody.empty().append(newTable.find('tbody>tr'));
 					return;
 				}
 
 				// Case not reset it will append the result on tbody
-				var lastChild = newTable.find('tbody tr:last-child');
+				var lastChild = newTable.find('tbody>tr:last-child');
 
 				if (lastChild && lastChild.length > 0) {
 					var lastIndex = lastChild.attr('table-index')
@@ -1003,9 +1003,9 @@ var Jsmart5 = (function() {
 					// Case the returned table has last index different than current
 					if (lastIndex && (jsonParam.index - 1) != lastIndex) {
 						if (trLoad && trLoad.length > 0) {
-							tbody.append(newTable.find('tbody tr').not(':first'));
+							tbody.append(newTable.find('tbody>tr').not(':first'));
 						} else {
-							tbody.append(newTable.find('tbody tr'));
+							tbody.append(newTable.find('tbody>tr'));
 						}
 					}
 				}
@@ -1251,7 +1251,7 @@ var Jsmart5 = (function() {
 		var inputLoad = $('span[' + roleAutoLoad + '="' + map.id + '"]');
 		
 		var ul = $('ul[auto-list-id="' + map.id + '"]');
-		var liLoad = ul.find('li[' + roleLoad + ']');
+		var liLoad = ul.find('>li[' + roleLoad + ']');
 		
 		var timer = input.attr('timeout-id');
 		if (timer && timer.length > 0) {
@@ -1368,7 +1368,7 @@ var Jsmart5 = (function() {
 					var input = $(getId(map.id));
 					postParam.push({name: input.attr('name'), value: input.val()});
 
-					var lastChild = ul.find('a:last-child');
+					var lastChild = ul.find('>a:last-child');
 
 					var jsonParam = {};
 					jsonParam.size = ul.attr('scroll-size');
@@ -1391,7 +1391,7 @@ var Jsmart5 = (function() {
 						postParam = $.param(postParam);
 					}
 
-					var liLoad = ul.find('li[' + roleLoad + ']').clone();
+					var liLoad = ul.find('>li[' + roleLoad + ']').clone();
 
 					// Append loading icon on list if it was configured
 					if (liLoad && liLoad.length > 0) {
@@ -1416,7 +1416,7 @@ var Jsmart5 = (function() {
 						var newUl = $(data).find('ul[auto-list-id="' + map.id + '"]');
 
                         if (newUl && newUl.length > 0) {
-							var lastChild = newUl.find('a:last-child');
+							var lastChild = newUl.find('>a:last-child');
 
 							if (lastChild && lastChild.length > 0) {
 								var lastIndex = lastChild.attr('list-index')
@@ -2173,7 +2173,7 @@ var Jsmart5 = (function() {
         }
 
         if (el.is('ul')) {
-            var liLoad = el.find('li[' + roleLoad + ']').clone();
+            var liLoad = el.find('>li[' + roleLoad + ']').clone();
             // Append loading icon on list if it was configured
             if (liLoad && liLoad.length > 0) {
                 el.append(liLoad);
@@ -2183,7 +2183,7 @@ var Jsmart5 = (function() {
         }
 
         if (el.is('table')) {
-            var trLoad = el.find('tbody tr[' + roleLoad + ']').clone();
+            var trLoad = el.find('tbody>tr[' + roleLoad + ']').clone();
             // Append loading icon on table if it was configured
             if (trLoad && trLoad.length > 0) {
                 trLoad.find('td').css({'display': 'block'});
@@ -2203,7 +2203,7 @@ var Jsmart5 = (function() {
         }
 
         if (el.is('ul')) {
-            var liLoad = el.find('li[' + roleLoad + ']:visible');
+            var liLoad = el.find('>li[' + roleLoad + ']:visible');
             // Remove loading icon from list if it was configured
             if (liLoad && liLoad.length > 0) {
                 liLoad.slideUp('fast', function() {
@@ -2214,7 +2214,7 @@ var Jsmart5 = (function() {
         }
 
         if (el.is('table')) {
-            var trLoad = el.find('tbody tr[' + roleLoad + ']:visible');
+            var trLoad = el.find('tbody>tr[' + roleLoad + ']:visible');
             if (trLoad && trLoad.length > 0) {
                 trLoad.slideUp('fast', function() {
                     trLoad.remove();
