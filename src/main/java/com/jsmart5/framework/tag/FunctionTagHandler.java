@@ -51,6 +51,15 @@ public final class FunctionTagHandler extends TagHandler {
 
 	private String onComplete;
 
+    private StringBuilder functionArgs;
+
+    private StringBuilder functionVars;
+
+    public FunctionTagHandler() {
+        functionArgs = new StringBuilder();
+        functionVars = new StringBuilder();
+    }
+
 	@Override
 	public void validateTag() throws JspException {
 		if (timeout != null && timeout < 0) {
@@ -89,7 +98,7 @@ public final class FunctionTagHandler extends TagHandler {
 		StringBuilder builder = new StringBuilder();
 		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
 
-		appendFunction(getFunction(name, builder));
+		appendFunction(getFunction(name, functionArgs.toString(), functionVars.toString(), builder));
 
 		return input;
 	}
@@ -136,6 +145,14 @@ public final class FunctionTagHandler extends TagHandler {
 		}
 		return jsonAjax;
 	}
+
+    void appendFunctionArg(String functionArg) {
+        if (functionArgs.length() != 0) {
+            functionArgs.append(",");
+        }
+        functionArgs.append(functionArg);
+        functionVars.append(JSMART_FUNCTION_VAR.format(functionArg, functionArg));
+    }
 
 	public void setName(String name) {
 		this.name = name;

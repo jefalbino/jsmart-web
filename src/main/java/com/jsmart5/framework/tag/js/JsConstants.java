@@ -38,7 +38,8 @@ public enum JsConstants {
 	JSMART_TABLEHEADER("Jsmart5.tableheader", "(%s);"),
 	JSMART_AUTOCOMPLETE("Jsmart5.autocplt", "(%s,e);"),
 	JSMART_AUTOCPLTSCROLL("Jsmart5.autocpltscroll", "(%s);"),
-    JSMART_ASYNCEVENT("Jsmart5.asyncevent", "(%s);");
+    JSMART_ASYNCEVENT("Jsmart5.asyncevent", "(%s);"),
+    JSMART_FUNCTION_VAR("Jsmart5.fnvar", "('%s',%s);");
 
 	private String name;
 

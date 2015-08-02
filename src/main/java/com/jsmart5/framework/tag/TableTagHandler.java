@@ -104,6 +104,11 @@ public final class TableTagHandler extends TagHandler {
 		}
 	}
 
+    @Override
+    protected boolean checkTagExecution() {
+        return shallExecuteTag();
+    }
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Tag executeTag() throws JspException, IOException {

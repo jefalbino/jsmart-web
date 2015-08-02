@@ -29,6 +29,8 @@ import com.jsmart5.framework.tag.html.Tag;
 
 public final class ArgTagHandler extends TagHandler {
 
+    private String name;
+
 	private Object value;
 
     private String bindTo;
@@ -36,16 +38,27 @@ public final class ArgTagHandler extends TagHandler {
 	@Override
 	public void validateTag() throws JspException {
 		if (value == null && (bindTo == null || bindTo.trim().isEmpty())) {
-            throw InvalidAttributeException.fromConflict("arg", "value", "Attribute [value] must be specified");
+            if (getParent() instanceof FunctionTagHandler) {
+                if (name == null || name.trim().isEmpty()) {
+                    throw InvalidAttributeException.fromConflict("arg", "name", "Attribute [name] must be specified for function arguments");
+                }
+            } else {
+                throw InvalidAttributeException.fromConflict("arg", "value", "Attribute [value] must be specified");
+            }
         }
 	}
 
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
-			((TagHandler) parent).addArg(getTagValue(value), (String) getTagValue(bindTo));
-		}
+		if (parent instanceof FunctionTagHandler && value == null && (bindTo == null || bindTo.trim().isEmpty())) {
+            FunctionTagHandler funcTagHandler = ((FunctionTagHandler) parent);
+            String nameVal = (String) getTagValue(name);
+            funcTagHandler.addArg(nameVal, null);
+            funcTagHandler.appendFunctionArg(nameVal);
+		} else {
+            ((TagHandler) parent).addArg(getTagValue(value), (String) getTagValue(bindTo));
+        }
 		return false;
 	}
 
@@ -55,7 +68,11 @@ public final class ArgTagHandler extends TagHandler {
 		return null;
 	}
 
-	public void setValue(Object value) {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setValue(Object value) {
 		this.value = value;
 	}
 

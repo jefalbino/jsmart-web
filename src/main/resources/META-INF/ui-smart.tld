@@ -1420,6 +1420,10 @@
         <tag-class>com.jsmart5.framework.tag.ArgTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
+            <name>name</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>value</name>
             <required>false</required>
         </attribute>

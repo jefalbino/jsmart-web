@@ -40,6 +40,9 @@ var Jsmart5 = (function() {
 	// List of div ids which hold values to be carried to server for every ajax request
 	var ajaxAttached = [];
 
+	// Keep the function vars to allow function components declare arguments and be accessed via js
+	var functionVars = [];
+
 	$(function () {
 		initCheckboxes();
 		initPopOvers();
@@ -154,7 +157,11 @@ var Jsmart5 = (function() {
 		ajaxattach: function(id) {
 		    ajaxAttached[ajaxAttached.length] = id;
 		},
-		
+
+		fnvar: function(id, value) {
+		    functionVars[id] = value;
+		},
+
 		bind: function(map) {
 			doBind(map);
 		},
@@ -1708,8 +1715,14 @@ var Jsmart5 = (function() {
                     params.push({name: name, value: (elParam.length > 0 ? elParam[0].value : null)});
 
 			    } else if (map.args[i].value !== undefined) {
-					var name = $.trim(map.args[i].name);
-					params.push({name: name, value: map.args[i].value});
+
+                    if (functionVars[map.args[i].value] !== undefined) {
+                        var name = $.trim(map.args[i].name);
+                        params.push({name: name, value: functionVars[map.args[i].value]});
+                    } else {
+                        var name = $.trim(map.args[i].name);
+                        params.push({name: name, value: map.args[i].value});
+                    }
 				}
 			}
 		}

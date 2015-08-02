@@ -216,18 +216,16 @@ public abstract class TagHandler extends SimpleTagSupport {
     // Only execute this tag if it is not Ajax request or if this tag id is present on update component request
     // TODO: Problem to update inner tags inside modal, alert, tab, panel, authorize. Ex: button not appearing inside alert after update
     protected boolean checkTagExecution() {
-//		if (id == null) {
-//			return true;
-//		}
-//		HttpServletRequest request = getRequest();
-//
-//		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-//			String updateVals = request.getHeader("Update-Ajax");
-//			if (updateVals == null) {
-//				return true;
-//			}
-//			return updateVals.contains(id);
-//		}
+        return true;
+    }
+
+    // Only applied for List and Table
+    protected boolean shallExecuteTag() {
+        final HttpServletRequest request = getRequest();
+		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+			final String update = request.getHeader("Update-Ajax");
+			return update != null && update.contains(id);
+		}
         return true;
     }
 
@@ -531,9 +529,10 @@ public abstract class TagHandler extends SimpleTagSupport {
         return GSON.toJson(object).replace("\"", "'");
     }
 
-    protected StringBuilder getFunction(String name, StringBuilder script) {
+    protected StringBuilder getFunction(String name, String arguments, String vars, StringBuilder script) {
         StringBuilder builder = new StringBuilder();
-        builder.append("function").append(" ").append(name).append("()").append("{");
+        builder.append("function").append(" ").append(name).append("(").append(arguments).append(")").append("{");
+        builder.append(vars);
         builder.append(script);
         builder.append("};");
         return builder;
