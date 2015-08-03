@@ -50,6 +50,7 @@ import com.jsmart5.framework.annotation.WebBean;
 import com.jsmart5.framework.util.WebAlert;
 import com.jsmart5.framework.util.WebAlert.AlertType;
 import com.jsmart5.framework.util.WebUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * This class represents the context of the request being currently processed and it allows {@link WebBean}
@@ -449,6 +450,22 @@ public final class WebContext implements Serializable {
 		}
 		throw new RuntimeException("ReCaptcha not found on this submit. Plase make sure the recaptcha tag is included on submitted form");
 	}
+
+    public static String escapeString(String value) {
+        if (value != null) {
+            value = StringEscapeUtils.escapeJavaScript(value);
+            value = StringEscapeUtils.escapeHtml(value);
+        }
+        return value;
+    }
+
+    public static String unescapeString(String value) {
+        if (value != null) {
+            value = StringEscapeUtils.unescapeHtml(value);
+            value = StringEscapeUtils.unescapeJavaScript(value);
+        }
+        return value;
+    }
 
     public static String getContentAsString() throws IOException {
         WebContext context = getCurrentInstance();
