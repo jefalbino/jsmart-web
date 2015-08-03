@@ -46,6 +46,8 @@ import com.jsmart5.framework.tag.util.RefAction;
 
 public final class ButtonTagHandler extends TagHandler {
 
+    private String onForm;
+
 	private String look;
 
 	private String label;
@@ -303,6 +305,7 @@ public final class ButtonTagHandler extends TagHandler {
 	private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
+        jsonAjax.setForm(onForm);
 		jsonAjax.setTag("button");
 
         // Params must be considered regardless the action for rest purpose
@@ -359,7 +362,11 @@ public final class ButtonTagHandler extends TagHandler {
 		this.dropMenu = dropMenu;
 	}
 
-	public void setLook(String look) {
+    public void setOnForm(String onForm) {
+        this.onForm = onForm;
+    }
+
+    public void setLook(String look) {
 		this.look = look;
 	}
 

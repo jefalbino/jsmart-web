@@ -72,6 +72,10 @@
             <required>false</required>
 		</attribute>
         <attribute>
+            <name>onForm</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>label</name>
             <required>false</required>        
         </attribute>
@@ -458,6 +462,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>onForm</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>label</name>
             <required>false</required>
         </attribute>
@@ -583,6 +591,10 @@
         <name>ajax</name>
         <tag-class>com.jsmart5.framework.tag.AjaxTagHandler</tag-class>
         <body-content>scriptless</body-content>
+        <attribute>
+            <name>onForm</name>
+            <required>false</required>
+        </attribute>
         <attribute>
             <name>event</name>
             <required>true</required>

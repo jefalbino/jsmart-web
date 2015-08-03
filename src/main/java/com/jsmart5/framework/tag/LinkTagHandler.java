@@ -44,7 +44,9 @@ import com.jsmart5.framework.util.WebUtils;
 import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class LinkTagHandler extends TagHandler {
-	
+
+    private String onForm;
+
 	private String look;
 
 	private String label;
@@ -260,7 +262,8 @@ public final class LinkTagHandler extends TagHandler {
 	@SuppressWarnings("unchecked")
 	private StringBuilder getFunction(String url) {
 		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
+        jsonAjax.setId(id);
+        jsonAjax.setForm(onForm);
 		jsonAjax.setTag("link");
 
         // Params must be considered regardless the action for rest purpose
@@ -321,7 +324,11 @@ public final class LinkTagHandler extends TagHandler {
 		this.dropMenu = dropMenu;
 	}
 
-	public void setLook(String look) {
+    public void setOnForm(String onForm) {
+        this.onForm = onForm;
+    }
+
+    public void setLook(String look) {
 		this.look = look;
 	}
 

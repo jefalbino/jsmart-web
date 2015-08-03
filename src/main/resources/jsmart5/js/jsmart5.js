@@ -326,7 +326,7 @@ var Jsmart5 = (function() {
             }
 
             // Validate form before creating ajax request
-            var form = el.closest('form');
+            var form = (map.form && $.trim(map.form).length > 0) ? $(getId(map.form)) : el.closest('form');
             if (form && form.length > 0) {
                 if (!doValidate($(form).attr('id'))) {
                     return;

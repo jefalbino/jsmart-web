@@ -37,6 +37,8 @@ import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class AjaxTagHandler extends TagHandler {
 
+    private String onForm;
+
 	private String event;
 
 	private String action;
@@ -91,6 +93,7 @@ public final class AjaxTagHandler extends TagHandler {
 	private Ajax getJsonAjax(String id, boolean hasDelegate) {
 		Ajax jsonAjax = new Ajax();
 		jsonAjax.setId(id);
+        jsonAjax.setForm(onForm);
 		jsonAjax.setTimeout(timeout);
 		jsonAjax.setTag("ajax");
 
@@ -188,7 +191,11 @@ public final class AjaxTagHandler extends TagHandler {
 		return null;
 	}
 
-	public void setEvent(String event) {
+    public void setOnForm(String onForm) {
+        this.onForm = onForm;
+    }
+
+    public void setEvent(String event) {
 		this.event = event;
 	}
 

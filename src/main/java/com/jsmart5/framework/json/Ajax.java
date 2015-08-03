@@ -24,6 +24,8 @@ import java.util.List;
 public final class Ajax {
 
 	private String id;
+
+    private String form;
 	
 	private String tag;
 
@@ -57,7 +59,15 @@ public final class Ajax {
 		this.id = id;
 	}
 
-	public String getTag() {
+    public String getForm() {
+        return form;
+    }
+
+    public void setForm(String form) {
+        this.form = form;
+    }
+
+    public String getTag() {
 		return tag;
 	}
 
