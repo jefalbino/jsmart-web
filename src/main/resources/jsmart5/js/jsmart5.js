@@ -21,8 +21,8 @@ var Jsmart5 = (function() {
 	var tagInit = "j0";
 	var tagJScroll = '010_';
 	var tagJSelVal = '006_';
-	var modalOpen = 'open()';
-	var modalHide = 'close()';
+	var modalShow = 'show()';
+	var modalHide = 'hide()';
 	var roleLoad = 'role-load';
 	var roleLoadContent = 'role-load-content';
 	var roleEmpty = 'role-empty';
@@ -262,8 +262,8 @@ var Jsmart5 = (function() {
             doListRemove(id, map);
         },
 
-        listRemoveAll: function(id) {
-            doListRemoveAll(id);
+        clear: function(id) {
+            doClear(id);
         },
 
         setDate: function(id, time) {
@@ -603,172 +603,6 @@ var Jsmart5 = (function() {
 				}, 50);
 			}
 		});
-	}
-
-	function doListAdd(id, map, template) {
-	    var list = $(getId(id));
-	    if (list && list.length > 0) {
-	        if (!template) {
-	            template = 0;
-	        }
-
-	        var item = list.find('li[' + roleTemplate + '="' + template + '"], a[' + roleTemplate + '="' + template + '"]').clone();
-	        if (item && item.length > 0) {
-
-	            // Update id to be row-id and role-template to be row
-	            item.attr('row-id', item.attr('id')).attr('row', item.attr(roleTemplate))
-	                .removeAttr('id').removeAttr(roleTemplate).css({'display': 'block'});
-
-	            if (map) {
-                    if ($.isArray(map)) {
-                        for (var i = 0; i < map.length; i++) {
-                            handleListUpdate(item, map[i]);
-                        }
-                    } else {
-                        handleListUpdate(item, map);
-                    }
-	            }
-
-                // Always insert at the end of last template item
-	            var last = list.find('li[row="' + template + '"], a[row="' + template + '"]').last();
-	            if (last && last.length > 0) {
-	                last.after(item);
-	            } else {
-	                list.find('li[' + roleTemplate + '="' + template + '"], a[' + roleTemplate + '="' + template + '"]').after(item);
-	            }
-	        }
-	    }
-	}
-
-	function doListUpdate(id, map) {
-        var list = $(getId(id));
-        if (list && list.length > 0 && map && map.update) {
-            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
-            if (item && item.length > 0) {
-
-                if ($.isArray(map.update)) {
-                    for (var i = 0; i < map.update.length; i++) {
-                        handleListUpdate(item, map.update[i]);
-                    }
-                } else {
-                    handleListUpdate(item, map.update);
-                }
-            }
-        }
-	}
-
-    function handleListUpdate(item, obj) {
-        if (obj.key && obj.value) {
-            item.attr(obj.key, obj.value);
-
-        } else if (obj.id) {
-            if (obj.text) {
-                item.find('*[id="' + obj.id + '"]').text(obj.text);
-            }
-            if (obj.attr) {
-                if ($.isArray(obj.attr)) {
-                    for (var i = 0; i < obj.attr.length; i++) {
-                        item.find('*[id="' + obj.id + '"]').attr(obj.attr[i].key, obj.attr[i].value);
-                    }
-                } else {
-                    item.find('*[id="' + obj.id + '"]').attr(obj.attr.key, obj.attr.value);
-                }
-            }
-        }
-    }
-
-	function doListGet(id, map) {
-	    var ret = [];
-        var list = $(getId(id));
-
-        if (list && list.length > 0 && map && map.get) {
-            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
-            if (item && item.length > 0) {
-
-                if ($.isArray(map.get)) {
-                    // Returns an array
-                    for (var i = 0; i < map.get.length; i++) {
-                        ret[ret.length] = handleListGetContent(item, map.get[i]);
-                    }
-                } else {
-                    // Returns a map
-                    ret = handleListGetContent(item, map.get);
-                }
-            }
-        }
-        return ret;
-	}
-
-	function doListGetAll(id, map) {
-        var ret = [];
-        var list = $(getId(id));
-
-        if (list && list.length > 0 && map && map.get) {
-            list.find('li[' + map.key + '], a[' + map.key + ']').each(function() {
-                var item = $(this);
-
-                if ($.isArray(map.get)) {
-                    var itemArray = [];
-                    for (var i = 0; i < map.get.length; i++) {
-                        itemArray[itemArray.length] = handleListGetContent(item, map.get[i]);
-                    }
-                    ret[ret.length] = {
-                        key: item.attr(map.key),
-                        data: itemArray
-                    };
-                } else {
-                    ret[ret.length] = {
-                        key: item.attr(map.key),
-                        data: handleListGetContent(item, map.get)
-                    };
-                }
-            });
-        }
-        return ret;
-    }
-
-    function handleListGetContent(item, obj) {
-        var map = {};
-        if (obj.key) {
-            map.value = item.attr(obj.key);
-
-        } else if (obj.id) {
-            map.id = obj.id;
-
-            if (obj.text) {
-                map.text = item.find('*[id="' + obj.id + '"]').text();
-            }
-            if (obj.attr) {
-                map.value = [];
-                if ($.isArray(obj.attr)) {
-                    for (var i = 0; i < obj.attr.length; i++) {
-                        map.value[map.value.length] = item.find('*[id="' + obj.id + '"]').attr(obj.attr[i]);
-                    }
-                } else {
-                    map.value = item.find('*[id="' + obj.id + '"]').attr(obj.attr);
-                }
-            }
-        }
-        return map;
-    };
-
-	function doListRemove(id, map) {
-	    var list = $(getId(id));
-        if (list && list.length > 0 && map) {
-            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
-            if (item && item.length > 0) {
-                item.remove();
-            }
-        }
-	}
-
-	function doListRemoveAll(id) {
-	    var list = $(getId(id));
-	    if (list && list.length > 0) {
-	        list.find('li[row], a[row]').each(function() {
-	            $(this).remove();
-	        });
-	    }
 	}
 
 	function doTable(tr, map) {
@@ -1946,7 +1780,7 @@ var Jsmart5 = (function() {
 			var funcs = func.split(';');
 	
 			for (var i = 0; i < funcs.length; i++) {
-				if (funcs[i].indexOf(modalOpen) >= 0) {
+				if (funcs[i].indexOf(modalShow) >= 0) {
 					showModals.push(funcs[i].substring(0, funcs[i].indexOf('.')));
 	
 				} else if (funcs[i].indexOf(modalHide) >= 0) {
@@ -2242,6 +2076,163 @@ var Jsmart5 = (function() {
 	 * EXPOSED FUNCTIONS
 	 ******************************************************/
 
+    function doListAdd(id, map, template) {
+        var list = $(getId(id));
+        if (list && list.length > 0) {
+            if (!template) {
+                template = 0;
+            }
+
+            var item = list.find('li[' + roleTemplate + '="' + template + '"], a[' + roleTemplate + '="' + template + '"]').clone();
+            if (item && item.length > 0) {
+
+                // Update id to be row-id and role-template to be row
+                item.attr('row-id', item.attr('id')).attr('row', item.attr(roleTemplate))
+                    .removeAttr('id').removeAttr(roleTemplate).css({'display': 'block'});
+
+                if (map) {
+                     if ($.isArray(map)) {
+                         for (var i = 0; i < map.length; i++) {
+                             handleListUpdate(item, map[i]);
+                         }
+                     } else {
+                         handleListUpdate(item, map);
+                     }
+                }
+
+                 // Always insert at the end of last template item
+                var last = list.find('li[row="' + template + '"], a[row="' + template + '"]').last();
+                if (last && last.length > 0) {
+                    last.after(item);
+                } else {
+                    list.find('li[' + roleTemplate + '="' + template + '"], a[' + roleTemplate + '="' + template + '"]').after(item);
+                }
+            }
+        }
+    }
+
+    function doListUpdate(id, map) {
+        var list = $(getId(id));
+        if (list && list.length > 0 && map && map.update) {
+            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
+            if (item && item.length > 0) {
+
+                if ($.isArray(map.update)) {
+                    for (var i = 0; i < map.update.length; i++) {
+                        handleListUpdate(item, map.update[i]);
+                    }
+                } else {
+                    handleListUpdate(item, map.update);
+                }
+            }
+        }
+    }
+
+    function handleListUpdate(item, obj) {
+        if (obj.key && obj.value) {
+            item.attr(obj.key, obj.value);
+
+        } else if (obj.id) {
+            if (obj.text) {
+                item.find('*[id="' + obj.id + '"]').text(obj.text);
+            }
+            if (obj.attr) {
+                if ($.isArray(obj.attr)) {
+                    for (var i = 0; i < obj.attr.length; i++) {
+                        item.find('*[id="' + obj.id + '"]').attr(obj.attr[i].key, obj.attr[i].value);
+                    }
+                } else {
+                    item.find('*[id="' + obj.id + '"]').attr(obj.attr.key, obj.attr.value);
+                }
+            }
+        }
+    }
+
+    function doListGet(id, map) {
+        var ret = [];
+        var list = $(getId(id));
+
+        if (list && list.length > 0 && map && map.get) {
+            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
+            if (item && item.length > 0) {
+
+                if ($.isArray(map.get)) {
+                    // Returns an array
+                    for (var i = 0; i < map.get.length; i++) {
+                        ret[ret.length] = handleListGetContent(item, map.get[i]);
+                    }
+                } else {
+                    // Returns a map
+                    ret = handleListGetContent(item, map.get);
+                }
+            }
+        }
+        return ret;
+    }
+
+    function doListGetAll(id, map) {
+        var ret = [];
+        var list = $(getId(id));
+
+        if (list && list.length > 0 && map && map.get) {
+            list.find('li[' + map.key + '], a[' + map.key + ']').each(function() {
+                var item = $(this);
+
+                if ($.isArray(map.get)) {
+                    var itemArray = [];
+                    for (var i = 0; i < map.get.length; i++) {
+                        itemArray[itemArray.length] = handleListGetContent(item, map.get[i]);
+                    }
+                    ret[ret.length] = {
+                        key: item.attr(map.key),
+                        data: itemArray
+                    };
+                } else {
+                    ret[ret.length] = {
+                        key: item.attr(map.key),
+                        data: handleListGetContent(item, map.get)
+                    };
+                }
+            });
+        }
+        return ret;
+     }
+
+    function handleListGetContent(item, obj) {
+        var map = {};
+        if (obj.key) {
+            map.value = item.attr(obj.key);
+
+        } else if (obj.id) {
+            map.id = obj.id;
+
+            if (obj.text) {
+                map.text = item.find('*[id="' + obj.id + '"]').text();
+            }
+            if (obj.attr) {
+                map.value = [];
+                if ($.isArray(obj.attr)) {
+                    for (var i = 0; i < obj.attr.length; i++) {
+                        map.value[map.value.length] = item.find('*[id="' + obj.id + '"]').attr(obj.attr[i]);
+                    }
+                } else {
+                    map.value = item.find('*[id="' + obj.id + '"]').attr(obj.attr);
+                }
+            }
+        }
+        return map;
+     }
+
+    function doListRemove(id, map) {
+        var list = $(getId(id));
+        if (list && list.length > 0 && map) {
+            var item = list.find('li[' + map.key + '="' + map.value + '"], a[' + map.key + '="' + map.value + '"]');
+            if (item && item.length > 0) {
+                item.remove();
+            }
+        }
+    }
+
     function doShowLoad(id) {
         var el = $(getId(id));
         if (!el || el.length == 0) {
@@ -2346,6 +2337,25 @@ var Jsmart5 = (function() {
             }
             return;
         }
+    }
+
+    function doClear(id) {
+        var el = $(getId(id));
+        if (!el || el.length == 0) {
+            return;
+        }
+
+        if (el.is('ul')) {
+            el.find('>li:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').remove();
+            el.find('>a:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').remove();
+            return;
+        }
+
+        if (el.is('table')) {
+            el.find('tbody>tr:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').remove();
+            return;
+        }
+        el.remove();
     }
 
     function doGetCheckGroup(id) {
