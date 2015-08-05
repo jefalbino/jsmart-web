@@ -793,7 +793,7 @@
 		</attribute>
         <attribute>
             <name>label</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
     </tag>
 

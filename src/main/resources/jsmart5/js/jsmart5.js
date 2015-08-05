@@ -2129,14 +2129,17 @@ var Jsmart5 = (function() {
     }
 
     function handleListUpdate(item, obj) {
-        if (obj.key && obj.value) {
+        if (obj.key !== undefined && obj.value !== undefined) {
             item.attr(obj.key, obj.value);
 
-        } else if (obj.id) {
-            if (obj.text) {
+        } else if (obj.id !== undefined) {
+            if (obj.value !== undefined) {
+                doListWizardSet(item.find('*[id="' + obj.id + '"]'), obj.value);
+            }
+            if (obj.text !== undefined) {
                 item.find('*[id="' + obj.id + '"]').text(obj.text);
             }
-            if (obj.attr) {
+            if (obj.attr !== undefined) {
                 if ($.isArray(obj.attr)) {
                     for (var i = 0; i < obj.attr.length; i++) {
                         item.find('*[id="' + obj.id + '"]').attr(obj.attr[i].key, obj.attr[i].value);
@@ -2230,6 +2233,16 @@ var Jsmart5 = (function() {
             if (item && item.length > 0) {
                 item.remove();
             }
+        }
+    }
+
+    function doListWizardSet(obj, value) {
+        if (obj.attr('role') == 'progressbar') {
+            doSetProgressBar(null, value, obj);
+        } else if (obj.attr('checkgroup')) {
+            doSetCheckGroup(null, value, obj);
+        } else {
+            obj.val(value);
         }
     }
 
@@ -2369,8 +2382,8 @@ var Jsmart5 = (function() {
         return ret;
 	}
 
-	function doSetCheckGroup(id, array) {
-	    var checkgroup = $(getId(id));
+	function doSetCheckGroup(id, array, obj) {
+	    var checkgroup = obj !== undefined ? obj : $(getId(id));
 	    if (checkgroup && checkgroup.length > 0) {
             checkgroup.find('input:checkbox').removeAttr('checked').each(function() {
                 if (array && contains(array, $(this).val())) {
@@ -2409,8 +2422,8 @@ var Jsmart5 = (function() {
         }
 	}
 
-	function doSetProgressBar(id, value) {
-	    var div = $(getId(id));
+	function doSetProgressBar(id, value, obj) {
+	    var div = obj !== undefined ? obj : $(getId(id));
         var bars = div.find('div[role="progressbar"]');
 
         if (bars && bars.length > 0) {
@@ -2418,7 +2431,7 @@ var Jsmart5 = (function() {
                 var bar = $(bars[i]);
                 handleSetBar(bar, value, parseInt(bar.attr('role-relation')));
             }
-        } else {
+        } else if (div.attr('role') == 'progressbar') {
             handleSetBar(div, value);
         }
 	}

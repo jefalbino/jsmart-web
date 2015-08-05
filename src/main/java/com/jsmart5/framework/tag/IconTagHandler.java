@@ -91,10 +91,15 @@ public final class IconTagHandler extends TagHandler {
 
 		setRandomId("icon");
 
-		Span span = new Span();
-		span.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.GLYPHICON)
-			.addAttribute("class", getTagValue(name))
+        Span span = new Span();
+
+        String iconName = (String) getTagValue(name);
+        if (iconName != null && iconName.startsWith(Bootstrap.GLYPHICON)) {
+            span.addAttribute("class", Bootstrap.GLYPHICON);
+        }
+
+        span.addAttribute("class", iconName)
+            .addAttribute("style", getTagValue(style))
 			.addAttribute("aria-hidden", "true")
 			.addAttribute("side", side);
 		
