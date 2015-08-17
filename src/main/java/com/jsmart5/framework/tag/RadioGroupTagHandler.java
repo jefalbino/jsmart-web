@@ -127,7 +127,7 @@ public final class RadioGroupTagHandler extends TagHandler {
             check.setInline(inline);
             check.setRest(rest);
             check.setValidatorTag(validatorTag);
-            check.setName(selectValue);
+            check.setName(selectValue != null ? selectValue : id);
             check.setType(CheckTagHandler.RADIO);
             setEvents(check);
 

@@ -127,7 +127,7 @@ public final class CheckGroupTagHandler extends TagHandler {
             check.setInline(inline);
             check.setValidatorTag(validatorTag);
             check.setRest(rest);
-            check.setName(selectValues);
+            check.setName(selectValues != null ? selectValues : id);
             check.setType(CheckTagHandler.CHECKBOX);
             setEvents(check);
 
