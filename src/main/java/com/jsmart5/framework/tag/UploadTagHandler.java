@@ -155,7 +155,7 @@ public final class UploadTagHandler extends TagHandler {
 			.addAttribute("name", name);
 
 		Input input = new Input();
-		input.addAttribute("name", name.replace(J_FILE, J_PART))
+		input.addAttribute("name", name != null ? name.replace(J_FILE, J_PART) : null)
 			 .addAttribute("type", Type.FILE.name().toLowerCase())
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
