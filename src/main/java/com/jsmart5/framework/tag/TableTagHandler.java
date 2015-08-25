@@ -150,8 +150,8 @@ public final class TableTagHandler extends TagHandler {
 
 		THead thead = new THead();
 		TBody tbody = new TBody();
-		tbody.addAttribute("scroll-size", scrollSize)
-			.addAttribute("style", "width: inherit;");
+		tbody.addAttribute("scroll-size", scrollSize);
+			//.addAttribute("style", "width: inherit;");
 
 		if (maxHeight != null) {
 			tbody.addAttribute("style", "height: " + maxHeight + ";")
