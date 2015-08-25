@@ -162,7 +162,7 @@ public final class TableTagHandler extends TagHandler {
 		if (loadTag != null) {
 			Tr tr = new Tr();
             tr.addAttribute("style", "border: 1px solid transparent;")
-                .addAttribute("role-load", "");
+                .addAttribute("role-load", "true");
 
             Td td = new Td();
             td.addAttribute("style", "display: none;")
@@ -176,7 +176,7 @@ public final class TableTagHandler extends TagHandler {
 
         if (emptyTag != null) {
             Tr tr = new Tr();
-            tr.addAttribute("role-empty", "")
+            tr.addAttribute("role-empty", "true")
                 .addAttribute("style", "border: 1px solid transparent;");
 
             Td td = new Td();

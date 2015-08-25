@@ -138,6 +138,7 @@ var Jsmart5 = (function() {
 	        if (tbody && tbody.length > 0) {
 	            if (tbody.find('>tr:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0) {
                     $(this).find('td').show();
+                    $(this).width(tbody.closest('table').width());
                 } else {
                     $(this).find('td').hide();
                 }
@@ -608,11 +609,13 @@ var Jsmart5 = (function() {
 	function doTable(tr, map) {
 		if (tr && tr.length > 0) {
 
+            if (tr.attr(roleEmpty) || tr.attr(roleLoad)) {
+                return;
+            }
 			var spanLoad = tr.find('span[' + roleLoadContent + ']');
 			if (spanLoad && spanLoad.length > 0) {
 				return;
 			}
-
 			var headTr = tr.find('th');
 			if (headTr && headTr.length > 0) {
 				return;
@@ -719,7 +722,7 @@ var Jsmart5 = (function() {
 
 	function doTableHeader(map) {
 		// For sorting
-		$(document).on('click', getId(map.id) + ' span', function(e) {
+		$(document).on('click', getId(map.id) + ' span[sort-by]', function(e) {
 
 			var sortActive = $(this).attr('sort-active');
 			if (sortActive && sortActive.length > 0) {

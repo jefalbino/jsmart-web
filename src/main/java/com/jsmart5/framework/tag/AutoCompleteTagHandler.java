@@ -311,7 +311,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
         if (loadTag != null) {
             Li li = new Li();
             li.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
-                .addAttribute("role-load", "")
+                .addAttribute("role-load", "true")
                 .addAttribute("style", "display: none;")
                 .addAttribute("style", "text-align: center;");
 

@@ -122,7 +122,7 @@ public final class ListTagHandler extends TagHandler {
 
 		if (loadTag != null) {
 			Li li = new Li();
-			li.addAttribute("role-load", "")
+			li.addAttribute("role-load", "true")
                 .addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
 				.addAttribute("style", "display: none;")
 				.addAttribute("style", "text-align: center;")
@@ -135,7 +135,7 @@ public final class ListTagHandler extends TagHandler {
         if (emptyTag != null) {
             Li li = new Li();
             li.addAttribute("id", emptyTag.id)
-                .addAttribute("role-empty", "")
+                .addAttribute("role-empty", "true")
                 .addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
                 .addAttribute("style", "display: none; text-align: center;")
                 .addAttribute("style", "border: 1px solid transparent;")
