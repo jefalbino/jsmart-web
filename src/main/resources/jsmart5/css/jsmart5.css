@@ -121,6 +121,10 @@
 	display: inline-table;
 }
 
+.js5-table-scroll tr[role-empty]:hover, .js5-table-scroll tr[role-load]:hover {
+    background: none !important;
+}
+
 .js5-table-scroll td, .js5-table-scroll th {
 	text-align: left;
 }

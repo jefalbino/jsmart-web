@@ -136,9 +136,10 @@ var Jsmart5 = (function() {
             // Check empty content for table components
 	        var tbody = $(this).closest('tbody');
 	        if (tbody && tbody.length > 0) {
+	            $(this).width(tbody.closest('table').width());
+
 	            if (tbody.find('>tr:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0) {
                     $(this).find('td').show();
-                    $(this).width(tbody.closest('table').width());
                 } else {
                     $(this).find('td').hide();
                 }
@@ -856,9 +857,12 @@ var Jsmart5 = (function() {
 			var newTable = $(data).find(getId(map.id));
 			if (newTable && newTable.length > 0) {
 
-				// Case reset replace the tbody content
 				if (reset) {
+				    // Case reset replace the tbody content
 					tbody.empty().append(newTable.find('tbody>tr'));
+
+					// Reset tbody width based on table
+                    tbody.find('>tr').width(tbody.closest('table').width());
 					return;
 				}
 
@@ -877,6 +881,9 @@ var Jsmart5 = (function() {
 						}
 					}
 				}
+
+				// Reset tbody width based on table
+                tbody.find('>tr').width(tbody.closest('table').width());
 			}
 		};
 
