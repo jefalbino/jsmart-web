@@ -60,7 +60,7 @@ public final class TooltipTagHandler extends TagHandler {
 			throw InvalidAttributeException.fromPossibleValues("tooltip", "side", Side.getValues());
 		}
 		if (event != null && !TipEvent.validate(event)) {
-			throw InvalidAttributeException.fromPossibleValues("tooltip", "event", Side.getValues());
+			throw InvalidAttributeException.fromPossibleValues("tooltip", "event", TipEvent.getValues());
 		}
 	}
 

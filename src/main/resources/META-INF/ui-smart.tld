@@ -3352,11 +3352,11 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>tabStyle</name>
+            <name>navStyle</name>
             <required>false</required>
         </attribute>
         <attribute>
-            <name>tabClass</name>
+            <name>navClass</name>
             <required>false</required>
         </attribute>
         <attribute>

@@ -62,7 +62,7 @@ public final class PopOverTagHandler extends TagHandler {
 			throw InvalidAttributeException.fromPossibleValues("popover", "side", Side.getValues());
 		}
 		if (event != null && !TipEvent.validate(event)) {
-			throw InvalidAttributeException.fromPossibleValues("popover", "event", Side.getValues());
+			throw InvalidAttributeException.fromPossibleValues("popover", "event", TipEvent.getValues());
 		}
 	}
 

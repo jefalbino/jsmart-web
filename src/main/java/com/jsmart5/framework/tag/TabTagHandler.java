@@ -46,9 +46,9 @@ import static com.jsmart5.framework.tag.js.JsConstants.*;
 
 public final class TabTagHandler extends TagHandler {
 	
-	private String tabStyle;
+	private String navStyle;
 
-	private String tabClass;
+	private String navClass;
 
 	private String tabValue;
 
@@ -100,8 +100,8 @@ public final class TabTagHandler extends TagHandler {
 
 		Div tab = new Div();
 		tab.addAttribute("id", id)
-			.addAttribute("style", style)
-			.addAttribute("class", styleClass)
+			.addAttribute("style", getTagValue(style))
+			.addAttribute("class", getTagValue(styleClass))
 			.addAttribute("role", "tabpanel");
 
 		appendEvent(tab);
@@ -117,7 +117,7 @@ public final class TabTagHandler extends TagHandler {
 		Ul ul = new Ul();
 		ul.addAttribute("role", "tablist")
 			.addAttribute("class", Bootstrap.NAV)
-			.addAttribute("style", tabStyle);
+			.addAttribute("style", getTagValue(navStyle));
 
 		if (pills == null) {
 			ul.addAttribute("class", Bootstrap.NAV_TABS);
@@ -133,7 +133,7 @@ public final class TabTagHandler extends TagHandler {
 		}
 		
 		// At last the custom style class
-		ul.addAttribute("class", tabClass);
+		ul.addAttribute("class", getTagValue(navClass));
 
 		Div content = new Div();
 		content.addAttribute("class", Bootstrap.TAB_CONTENT);
@@ -159,8 +159,8 @@ public final class TabTagHandler extends TagHandler {
 			li.addAttribute("id", liId)
 				.addAttribute("role", "presentation")
 				.addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
-				.addAttribute("style", tabPane.getTabStyle())
-				.addAttribute("class", tabPane.getTabClass());
+				.addAttribute("style", getTagValue(tabPane.getTabStyle()))
+				.addAttribute("class", getTagValue(tabPane.getTabClass()));
 
 			appendAjax(tabPane, liId);
 			appendBind(tabPane, liId);
@@ -385,12 +385,12 @@ public final class TabTagHandler extends TagHandler {
 		tabPanes.add(tabItem);
 	}
 
-	public void setTabStyle(String tabStyle) {
-		this.tabStyle = tabStyle;
+	public void setNavStyle(String navStyle) {
+		this.navStyle = navStyle;
 	}
 
-	public void setTabClass(String tabClass) {
-		this.tabClass = tabClass;
+	public void setNavClass(String navClass) {
+		this.navClass = navClass;
 	}
 
 	public void setTabValue(String tabValue) {

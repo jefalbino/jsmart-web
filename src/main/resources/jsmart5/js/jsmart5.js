@@ -1018,19 +1018,21 @@ var Jsmart5 = (function() {
 			var index = 0;
 			var intervalId = setInterval(function() {
 
-				var bar = $(bars[index]);
-				var filled = handleProgressBar(bar, map, map.relation[index]);
+                var bar = $(bars[index]);
+                if (handleProgressBar(bar, map, map.relation[index])) {
 
-                if (filled && index == bars.length -1) {
-                    clearInterval(div.attr('interval-id'));
+                    if (index == bars.length -1) {
+                        clearInterval(div.attr('interval-id'));
+                    } else {
+                        index++;
+                    }
                 }
-                index = (index == bars.length -1) ? 0 : index + 1;
-			}, map.interval);
+            }, map.interval);
 
 			div.attr('interval-id', intervalId);
 		}
 	}
-	
+
 	function doProgressBar(map) {
 		var bar = $(getId(map.id));
 		var intervalId = setInterval(function() {
