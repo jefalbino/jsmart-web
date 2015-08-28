@@ -65,8 +65,14 @@ public final class IconTagHandler extends TagHandler {
 			return false;
 
 		} else if (parent instanceof TabPaneTagHandler) {
-			((TabPaneTagHandler) parent).addIconTag(this);
-			return false;
+            TabPaneTagHandler tabPaneTag = (TabPaneTagHandler) parent;
+
+            // Consider only the first child icon tag as tabpane icon,
+            // otherwise let it be executed as any other tabpane content
+            if (tabPaneTag.getIconTags().isEmpty()) {
+                tabPaneTag.addIconTag(this);
+                return false;
+            }
 		}
 		return true;
 	}
