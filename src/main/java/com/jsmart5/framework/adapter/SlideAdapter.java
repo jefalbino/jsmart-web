@@ -32,32 +32,36 @@ public final class SlideAdapter {
 		return image;
 	}
 
-	public void setImage(ImageAdapter image) {
+	public SlideAdapter setImage(ImageAdapter image) {
 		this.image = image;
+        return this;
 	}
 
 	public HeaderAdapter getHeader() {
 		return header;
 	}
 
-	public void setHeader(HeaderAdapter header) {
+	public SlideAdapter setHeader(HeaderAdapter header) {
 		this.header = header;
+        return this;
 	}
 
 	public boolean isActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public SlideAdapter setActive(boolean active) {
 		this.active = active;
+        return this;
 	}
 
 	public String getLabel() {
 		return label;
 	}
 
-	public void setLabel(String label) {
+	public SlideAdapter setLabel(String label) {
 		this.label = label;
+        return this;
 	}
 
 }

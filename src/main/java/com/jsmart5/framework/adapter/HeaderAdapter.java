@@ -34,24 +34,27 @@ public final class HeaderAdapter {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public HeaderAdapter setTitle(String title) {
 		this.title = title;
+        return this;
 	}
 
 	public String getIcon() {
 		return icon;
 	}
 
-	public void setIcon(String icon) {
+	public HeaderAdapter setIcon(String icon) {
 		this.icon = icon;
+        return this;
 	}
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public HeaderAdapter setType(String type) {
 		this.type = type;
+        return this;
 	}
 
 }

@@ -94,7 +94,7 @@ public final class CarouselTagHandler extends TagHandler {
 		}
 
 		if (timeout != null) {
-			div.addAttribute("data-interval", timeout == 0 ? "false" : timeout * 1000);
+			div.addAttribute("data-interval", timeout == 0 ? "false" : timeout);
 		}
 
 		Ol ol = new Ol();

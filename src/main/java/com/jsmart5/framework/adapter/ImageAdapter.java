@@ -43,40 +43,45 @@ public final class ImageAdapter {
 		return lib;
 	}
 
-	public void setLib(String lib) {
+	public ImageAdapter setLib(String lib) {
 		this.lib = lib;
+        return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public ImageAdapter setName(String name) {
 		this.name = name;
+        return this;
 	}
 
 	public String getAlt() {
 		return alt;
 	}
 
-	public void setAlt(String alt) {
+	public ImageAdapter setAlt(String alt) {
 		this.alt = alt;
+        return this;
 	}
 
 	public String getWidth() {
 		return width;
 	}
 
-	public void setWidth(String width) {
+	public ImageAdapter setWidth(String width) {
 		this.width = width;
+        return this;
 	}
 
 	public String getHeight() {
 		return height;
 	}
 
-	public void setHeight(String height) {
+	public ImageAdapter setHeight(String height) {
 		this.height = height;
+        return this;
 	}
 
 }
