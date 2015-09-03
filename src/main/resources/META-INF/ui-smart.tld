@@ -342,6 +342,10 @@
             <required>true</required>
 		</attribute>
         <attribute>
+            <name>outcome</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>action</name>
             <required>false</required>
 		</attribute>

@@ -39,6 +39,7 @@ import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
+import com.jsmart5.framework.util.WebUtils;
 
 public final class DropMenuTagHandler extends TagHandler {
 
@@ -150,8 +151,28 @@ public final class DropMenuTagHandler extends TagHandler {
 				dividerLi.addAttribute("class", Bootstrap.DIVIDER);
 				ul.addTag(dividerLi);
 			}
-			
-			appendDocScript(getFunction(dropAction));
+
+            StringBuilder urlParams = new StringBuilder("?");
+            for (String key : dropAction.getParams().keySet()) {
+                urlParams.append(key + "=" + dropAction.getParams().get(key) + "&");
+            }
+
+            String url = "";
+
+            String outcomeVal = WebUtils.decodePath((String) getTagValue(dropAction.getOutcome()));
+            if (outcomeVal != null) {
+                url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal)
+                        + urlParams.substring(0, urlParams.length() -1);
+            }
+
+            String href = "#";
+            if (dropAction.getAction() == null && !url.isEmpty()) {
+                href = (!url.startsWith("http") && !url.startsWith("mailto") && !url.startsWith("#") ?
+                        getRequest().getContextPath() + "/" : "") + url;
+                a.addAttribute("href", href);
+            } else {
+                appendDocScript(getFunction(dropAction));
+            }
 		}
 
 		return ul;

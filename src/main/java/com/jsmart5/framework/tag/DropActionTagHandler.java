@@ -37,6 +37,8 @@ public class DropActionTagHandler extends TagHandler {
 	
 	private boolean disabled;
 
+    private String outcome;
+
 	private String action;
 
 	private String update;
@@ -109,7 +111,15 @@ public class DropActionTagHandler extends TagHandler {
 		this.disabled = disabled;
 	}
 
-	String getAction() {
+    String getOutcome() {
+        return outcome;
+    }
+
+    public void setOutcome(String outcome) {
+        this.outcome = outcome;
+    }
+
+    String getAction() {
 		return action;
 	}
 

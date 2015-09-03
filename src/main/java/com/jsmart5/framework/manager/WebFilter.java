@@ -171,7 +171,6 @@ public final class WebFilter implements Filter {
 		}
 
 		if (html == null || html.trim().isEmpty()) {
-			responseWrapper.setStatus(HttpServletResponse.SC_NO_CONTENT);
 			return;
 		}
 
