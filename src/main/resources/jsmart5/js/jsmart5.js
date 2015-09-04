@@ -177,7 +177,7 @@ var Jsmart5 = (function() {
 		},
 		
 		modal: function(id) {
-			openModal(id);
+			doShowModal(id);
 		},
 
 		list: function(li, map) {
@@ -295,6 +295,14 @@ var Jsmart5 = (function() {
 		hideLoad: function(id) {
 		    doHideLoad(id);
 		},
+
+		showModal: function(id) {
+            doShowModal(id);
+        },
+
+        hideModal: function(id) {
+            doHideModal(id);
+        },
 
 		showEmpty: function(id) {
 		    doShowEmpty(id);
@@ -1827,10 +1835,10 @@ var Jsmart5 = (function() {
 		}
 		
 		for (var i = 0; i < hideModals.length; i++) {
-			hideModal(hideModals[i]);
+			doHideModal(hideModals[i]);
 		}
 		for (var i = 0; i < showModals.length; i++) {
-			openModal(showModals[i]);
+			doShowModal(showModals[i]);
 		}
 		return showModals;
 	}
@@ -2076,11 +2084,11 @@ var Jsmart5 = (function() {
 	 * MODAL FUNCTIONS
 	 ******************************************************/
 	
-	function openModal(id) {
+	function doShowModal(id) {
 		$(getId(id)).modal('show');
 	}
 		
-	function hideModal(id) {
+	function doHideModal(id) {
 		$(getId(id)).modal('hide');
 	}
 

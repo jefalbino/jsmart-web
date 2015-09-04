@@ -132,6 +132,9 @@ public final class IconTagHandler extends TagHandler {
 		appendAjax(id);
 		appendBind(id);
 
+        appendTooltip(span);
+        appendPopOver(span);
+
 		return span;
 	}
 
