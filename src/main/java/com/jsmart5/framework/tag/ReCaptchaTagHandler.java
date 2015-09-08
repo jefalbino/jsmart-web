@@ -56,7 +56,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
 	
 	private boolean disabled;
 
-	private String placeHolder;
+	private String placeholder;
 
 	private String locale;
 
@@ -189,7 +189,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
-			 .addAttribute("placeholder", getTagValue(placeHolder))
+			 .addAttribute("placeholder", getTagValue(placeholder))
 			 .addAttribute("datatype", Type.TEXT.name().toLowerCase())
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
 		
@@ -352,8 +352,8 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		this.disabled = disabled;
 	}
 
-	public void setPlaceHolder(String placeHolder) {
-		this.placeHolder = placeHolder;
+	public void setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
 	}
 
 	public void setLocale(String locale) {

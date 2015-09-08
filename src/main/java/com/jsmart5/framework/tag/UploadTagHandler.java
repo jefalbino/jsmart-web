@@ -53,7 +53,7 @@ public final class UploadTagHandler extends TagHandler {
 	
 	private String rightAddOn;
 
-	private String placeHolder;
+	private String placeholder;
 	
 	private boolean readOnly;
 
@@ -161,7 +161,7 @@ public final class UploadTagHandler extends TagHandler {
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
-			 .addAttribute("placeholder", getTagValue(placeHolder))
+			 .addAttribute("placeholder", getTagValue(placeholder))
 			 .addAttribute("datatype", Type.FILE.name().toLowerCase())
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
              .addAttribute("onupload", onUpload);
@@ -269,8 +269,8 @@ public final class UploadTagHandler extends TagHandler {
 		this.rightAddOn = rightAddOn;
 	}
 
-	public void setPlaceHolder(String placeHolder) {
-		this.placeHolder = placeHolder;
+	public void setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
 	}
 
 	public void setReadOnly(boolean readOnly) {

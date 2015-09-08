@@ -64,7 +64,7 @@ public final class DateTagHandler extends TagHandler {
 
 	private Integer tabIndex;
 	
-	private String placeHolder;
+	private String placeholder;
 
 	private String label;
 	
@@ -182,7 +182,7 @@ public final class DateTagHandler extends TagHandler {
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
-			 .addAttribute("placeholder", getTagValue(placeHolder))
+			 .addAttribute("placeholder", getTagValue(placeholder))
 			 .addAttribute("datatype", Type.TEXT.name().toLowerCase())
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
 
@@ -340,8 +340,8 @@ public final class DateTagHandler extends TagHandler {
 		this.tabIndex = tabIndex;
 	}
 
-	public void setPlaceHolder(String placeHolder) {
-		this.placeHolder = placeHolder;
+	public void setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
 	}
 
 	public void setLabel(String label) {

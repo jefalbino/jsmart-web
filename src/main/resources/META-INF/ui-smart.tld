@@ -1038,7 +1038,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>placeHolder</name>
+            <name>placeholder</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -1184,7 +1184,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>placeHolder</name>
+            <name>placeholder</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -1966,6 +1966,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>disabled</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>inline</name>
             <required>false</required>
         </attribute>
@@ -2081,6 +2085,10 @@
         </attribute>
         <attribute>
             <name>align</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>disabled</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2752,7 +2760,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>placeHolder</name>
+            <name>placeholder</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -2996,7 +3004,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>placeHolder</name>
+            <name>placeholder</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3168,7 +3176,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>placeHolder</name>
+            <name>placeholder</name>
             <required>false</required>
         </attribute>
         <attribute>
@@ -3832,7 +3840,7 @@
             <required>false</required>
         </attribute>
         <attribute>
-            <name>placeHolder</name>
+            <name>placeholder</name>
             <required>false</required>
         </attribute>
         <attribute>

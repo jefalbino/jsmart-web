@@ -60,6 +60,8 @@ public final class RadioGroupTagHandler extends TagHandler {
 
     private String onComplete;
 
+    private boolean disabled;
+
     protected final List<CheckTagHandler> checks;
 
     public RadioGroupTagHandler() {
@@ -125,6 +127,7 @@ public final class RadioGroupTagHandler extends TagHandler {
             check.setStyle((String) getTagValue(style));
             check.setStyleClass((String) getTagValue(styleClass));
             check.setInline(inline);
+            check.setDisabled(disabled);
             check.setRest(rest);
             check.setValidatorTag(validatorTag);
             check.setName(selectValue != null ? selectValue : id);
@@ -207,6 +210,10 @@ public final class RadioGroupTagHandler extends TagHandler {
 
     public void setAlign(String align) {
         this.align = align;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public void setInline(boolean inline) {

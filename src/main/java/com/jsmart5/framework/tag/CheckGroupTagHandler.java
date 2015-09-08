@@ -60,6 +60,8 @@ public final class CheckGroupTagHandler extends TagHandler {
 
     private String onComplete;
 
+    private boolean disabled;
+
     protected final List<CheckTagHandler> checks;
 
     public CheckGroupTagHandler() {
@@ -127,6 +129,7 @@ public final class CheckGroupTagHandler extends TagHandler {
             check.setInline(inline);
             check.setValidatorTag(validatorTag);
             check.setRest(rest);
+            check.setDisabled(disabled);
             check.setName(selectValues != null ? selectValues : id);
             check.setType(CheckTagHandler.CHECKBOX);
             setEvents(check);
@@ -211,6 +214,10 @@ public final class CheckGroupTagHandler extends TagHandler {
 
     public void setInline(boolean inline) {
         this.inline = inline;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public void setUpdate(String update) {

@@ -54,7 +54,7 @@ public final class InputTagHandler extends TagHandler {
 
 	private String mask;
 
-	private String placeHolder;
+	private String placeholder;
 
 	private String label;
 	
@@ -187,7 +187,7 @@ public final class InputTagHandler extends TagHandler {
 			 .addAttribute("maxlength", length)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
-			 .addAttribute("placeholder", getTagValue(placeHolder))
+			 .addAttribute("placeholder", getTagValue(placeholder))
 			 .addAttribute("datatype", type != null ? type : Type.TEXT.name().toLowerCase())
 			 .addAttribute("pattern", pattern)
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
@@ -301,8 +301,8 @@ public final class InputTagHandler extends TagHandler {
 		this.mask = mask;
 	}
 
-	public void setPlaceHolder(String placeHolder) {
-		this.placeHolder = placeHolder;
+	public void setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
 	}
 
 	public void setLabel(String label) {

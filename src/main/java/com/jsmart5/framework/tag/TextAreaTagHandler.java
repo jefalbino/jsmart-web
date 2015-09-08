@@ -47,7 +47,7 @@ public final class TextAreaTagHandler extends TagHandler {
 
 	private boolean disabled;
 
-	private String placeHolder;
+	private String placeholder;
 
 	private Integer tabIndex;
 
@@ -95,7 +95,7 @@ public final class TextAreaTagHandler extends TagHandler {
 			 .addAttribute("maxlength", length)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
 			 .addAttribute("disabled", disabled ? "disabled" : null)
-			 .addAttribute("placeholder", getTagValue(placeHolder))
+			 .addAttribute("placeholder", getTagValue(placeholder))
 			 .addText(getTagValue(value));
 		
 		appendRefId(textArea, id);
@@ -148,8 +148,8 @@ public final class TextAreaTagHandler extends TagHandler {
 		this.disabled = disabled;
 	}
 
-	public void setPlaceHolder(String placeHolder) {
-		this.placeHolder = placeHolder;
+	public void setPlaceholder(String placeholder) {
+		this.placeholder = placeholder;
 	}
 
 	public void setTabIndex(Integer tabIndex) {

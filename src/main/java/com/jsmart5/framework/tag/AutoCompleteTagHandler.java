@@ -72,7 +72,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     private String mask;
 
-    private String placeHolder;
+    private String placeholder;
 
     private String inputText;
 
@@ -212,7 +212,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
                 .addAttribute("maxlength", length)
                 .addAttribute("readonly", readOnly ? readOnly : null)
                 .addAttribute("disabled", disabled ? "disabled" : null)
-                .addAttribute("placeholder", getTagValue(placeHolder))
+                .addAttribute("placeholder", getTagValue(placeholder))
                 .addAttribute("datatype", Type.TEXT.name().toLowerCase())
                 .addAttribute("autofocus", autoFocus ? autoFocus : null)
                 .addAttribute("data-mask", mask)
@@ -514,8 +514,8 @@ public final class AutoCompleteTagHandler extends TagHandler {
         this.mask = mask;
     }
 
-    public void setPlaceHolder(String placeHolder) {
-        this.placeHolder = placeHolder;
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
     }
 
     public void setLabel(String label) {

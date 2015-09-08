@@ -284,6 +284,14 @@ var Jsmart5 = (function() {
             doSetCheckGroup(id, array);
         },
 
+        getRadioGroup: function(id) {
+            return doGetRadioGroup(id);
+        },
+
+        setRadioGroup: function(id, value) {
+            doSetRadioGroup(id, value);
+        },
+
         setProgressBar: function(id, value) {
             doSetProgressBar(id, value);
         },
@@ -1856,9 +1864,13 @@ var Jsmart5 = (function() {
 		if (map.tag && (map.tag == 'button' || map.tag == 'link' || map.tag == 'ajax')) {
 			var el = $(getId(map.id));
 
-			var spanLoad = el.find('span[' + roleLoadContent + ']');
-			if (spanLoad && spanLoad.length > 0) {
+			var spanLoad = el.find('>span[' + roleLoadContent + ']');
+			if (spanLoad.length > 0) {
+			    return;
+			}
 
+			spanLoad = el.find('span[' + roleLoadContent + ']');
+			if (spanLoad.length > 0) {
 				var leftIcon = el.find('span.glyphicon[side="left"]:first');
 				if (leftIcon && leftIcon.length > 0) {
 					leftIcon.hide();
@@ -1874,17 +1886,12 @@ var Jsmart5 = (function() {
 	function removeLoadIcon(map) {
 		if (map.tag && (map.tag == 'button' || map.tag == 'link' || map.tag == 'ajax')) {
 			var el = $(getId(map.id));
-			
-			var spanLoad = el.find('span[' + roleLoadContent + ']:first');
-			if (spanLoad && spanLoad.length > 0) {
-				
-				spanLoad.remove();
+			el.find('>span[' + roleLoadContent + ']').remove();
 
-				var leftIcon = el.find('span.glyphicon[side="left"]:first');
-				if (leftIcon && leftIcon.length > 0) {
-					leftIcon.show();
-				}
-			}
+            var leftIcon = el.find('span.glyphicon[side="left"]:first');
+            if (leftIcon && leftIcon.length > 0) {
+                leftIcon.show();
+            }
 		}
 	}
 
@@ -2407,6 +2414,28 @@ var Jsmart5 = (function() {
 	    if (checkgroup && checkgroup.length > 0) {
             checkgroup.find('input:checkbox').removeAttr('checked').each(function() {
                 if (array && contains(array, $(this).val())) {
+                    $(this).prop('checked', true);
+                }
+            });
+	    }
+	}
+
+    function doGetRadioGroup(id) {
+        var radiogroup = $(getId(id));
+        if (radiogroup && radiogroup.length > 0) {
+            var input = radiogroup.find('input:checked');
+            if (input && input.length > 0) {
+                return input.val();
+            }
+        }
+        return null;
+    }
+
+    function doSetRadioGroup(id, value) {
+	    var radiogroup = $(getId(id));
+	    if (radiogroup && radiogroup.length > 0) {
+            radiogroup.find('input:radio').removeAttr('checked').each(function() {
+                if ($(this).val() == value) {
                     $(this).prop('checked', true);
                 }
             });
