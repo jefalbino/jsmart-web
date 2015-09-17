@@ -18,6 +18,8 @@
 
 package com.jsmart5.framework.util;
 
+import com.jsmart5.framework.manager.WebContext;
+
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
@@ -28,8 +30,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import com.jsmart5.framework.manager.WebContext;
 
 /**
  * This class represents the container of text resources mapped on configuration file
@@ -48,9 +48,9 @@ public enum WebText {
 
 	private final SmartTextControl control = new SmartTextControl();
 
-	private Set<String> resources = new HashSet<String>();
+    private static Locale defaultLocale;
 
-	private Locale defaultLocale;
+	private Set<String> resources = new HashSet<String>();
 
 	public void init(String[] messageFiles, String defaultLocale) {
 		if (messageFiles != null) {
@@ -87,7 +87,11 @@ public enum WebText {
 	public static String getString(final String res, final String key) {
 		try {
 			if (containsResource(res)) {
-				return ResourceBundle.getBundle(res, WebContext.getLocale(), TEXTS.control).getString(key);
+                Locale locale = WebContext.getLocale();
+                if (locale == null && defaultLocale != null) {
+                    locale = defaultLocale;
+                }
+				return ResourceBundle.getBundle(res, (locale != null ? locale : Locale.getDefault()), TEXTS.control).getString(key);
 			} else {
 				LOGGER.log(Level.INFO, "Resource " + res + " not found!");
 			}

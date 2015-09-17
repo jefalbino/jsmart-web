@@ -135,6 +135,7 @@
 
 .js5-table-header-filter-by {
 	font-weight: normal;
+	width: calc(100% - 25px);
 }
 
 .js5-table-header-sort-by {

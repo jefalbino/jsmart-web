@@ -18,14 +18,13 @@
 
 package com.jsmart5.framework.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @XmlRootElement(name = "web-config")
@@ -85,7 +84,7 @@ public final class ConfigContent {
 
     public void setWelcomeUrl(String welcomeUrl) {
         if (welcomeUrl != null && !welcomeUrl.trim().isEmpty()) {
-            this.welcomeUrl = welcomeUrl;
+            this.welcomeUrl = welcomeUrl.trim();
         }
     }
 
@@ -99,7 +98,7 @@ public final class ConfigContent {
             if (!assetsUrl.endsWith("/")) {
                 assetsUrl += "/";
             }
-            this.assetsUrl = assetsUrl;
+            this.assetsUrl = assetsUrl.trim();
         }
     }
 
@@ -112,7 +111,7 @@ public final class ConfigContent {
 	public UrlPattern getUrlPattern(String url) {
 		if (url != null && !url.trim().isEmpty() && urlPatterns != null) {
 			for (UrlPattern urlPattern : urlPatterns) {
-				if (urlPattern.getUrl().equals(url)) {
+				if (urlPattern.getUrl().equals(url.trim())) {
 					return urlPattern;
 				}
 			}
@@ -206,7 +205,7 @@ public final class ConfigContent {
 
 	public void setDefaultLocale(String defaultLocale) {
 		if (defaultLocale != null && !defaultLocale.trim().isEmpty()) {
-			this.defaultLocale = defaultLocale;
+			this.defaultLocale = defaultLocale.trim();
 		}
 	}
 

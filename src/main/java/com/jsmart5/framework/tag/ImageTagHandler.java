@@ -18,11 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
@@ -32,6 +27,10 @@ import com.jsmart5.framework.tag.html.Image;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Type;
 import com.jsmart5.framework.util.WebImage;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import java.io.IOException;
 
 public final class ImageTagHandler extends TagHandler {
 
@@ -79,7 +78,7 @@ public final class ImageTagHandler extends TagHandler {
 		appendRefId(image, id);
 
 		if (libValue != null) {
-			image.addAttribute("src",  WebImage.getImage(libValue, nameValue));
+			image.addAttribute("src", WebImage.getImage(libValue, nameValue));
 		} else {
 			image.addAttribute("src", nameValue);
 		}
