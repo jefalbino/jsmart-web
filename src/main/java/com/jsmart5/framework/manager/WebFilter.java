@@ -270,15 +270,15 @@ public final class WebFilter implements Filter {
 	}
 
 	private void initHeaders() {
+        String assetsUrl = CONFIG.getContent().getAssetsUrl();
 		Headers jsonHeaders = GSON.fromJson(convertResourceToString(FILTER_HEADERS), Headers.class);
 
-		for (String style : jsonHeaders.getStyles()) {
-			headerStyles.append(style);
-		}
-
-		for (String script : jsonHeaders.getScripts()) {
-			headerScripts.append(script);
-		}
+        for (String style : jsonHeaders.getStyles()) {
+            headerStyles.append(String.format(style, assetsUrl != null ? assetsUrl : ""));
+        }
+        for (String script : jsonHeaders.getScripts()) {
+            headerScripts.append(String.format(script, assetsUrl != null ? assetsUrl : ""));
+        }
 	}
 
 	@SuppressWarnings("resource")
@@ -290,6 +290,12 @@ public final class WebFilter implements Filter {
 
 	private void initResources(FilterConfig config) {
 		try {
+            if (CONFIG.getContent().getAssetsUrl() != null) {
+                LOGGER.log(Level.INFO, "Using external assets, please provide the jsmart5 assets content at "
+                        + CONFIG.getContent().getAssetsUrl());
+                return;
+            }
+
 			ServletContext context = config.getServletContext();
 			Set<String> libs = context.getResourcePaths(LIB_FILE_PATH);
 

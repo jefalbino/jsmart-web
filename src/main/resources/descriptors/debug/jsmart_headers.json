@@ -1,16 +1,16 @@
 {
 	"styles": [
-		"<link rel=\"stylesheet\" type=\"text/css\" href=\"jsmart5/bootstrap-3.3.2/css/bootstrap.css\"/>",
-		"<link rel=\"stylesheet\" type=\"text/css\" href=\"jsmart5/bootstrap-datetime-4.7.14/css/bootstrap-datetime.css\"/>",
-		"<link rel=\"stylesheet\" type=\"text/css\" href=\"jsmart5/css/jsmart5.css\"/>"
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart5/bootstrap-3.3.2/css/bootstrap.css\"/>",
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart5/bootstrap-datetime-4.7.14/css/bootstrap-datetime.css\"/>",
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart5/css/jsmart5.css\"/>"
 	],
 	"scripts": [
-		"<script type=\"text/javascript\" src=\"jsmart5/jquery-1.11.2/jquery-1.11.2.js\"></script>",
-		"<script type=\"text/javascript\" src=\"jsmart5/jquery-form-3.51.0/jquery.form-3.51.0.js\"></script>",
-		"<script type=\"text/javascript\" src=\"jsmart5/momentjs-2.9.0/js/moment-locales.js\"></script>",
-		"<script type=\"text/javascript\" src=\"jsmart5/bootstrap-3.3.2/js/bootstrap.js\"></script>",
-		"<script type=\"text/javascript\" src=\"jsmart5/bootstrap-3.3.2/js/bootstrap-input-mask.js\"></script>",
-		"<script type=\"text/javascript\" src=\"jsmart5/bootstrap-datetime-4.7.14/js/bootstrap-datetime.js\"></script>",
-		"<script type=\"text/javascript\" src=\"jsmart5/js/jsmart5.js\"></script>"
+		"<script type=\"text/javascript\" src=\"%sjsmart5/jquery-1.11.2/jquery-1.11.2.js\"></script>",
+		"<script type=\"text/javascript\" src=\"%sjsmart5/jquery-form-3.51.0/jquery.form-3.51.0.js\"></script>",
+		"<script type=\"text/javascript\" src=\"%sjsmart5/momentjs-2.9.0/js/moment-locales.js\"></script>",
+		"<script type=\"text/javascript\" src=\"%sjsmart5/bootstrap-3.3.2/js/bootstrap.js\"></script>",
+		"<script type=\"text/javascript\" src=\"%sjsmart5/bootstrap-3.3.2/js/bootstrap-input-mask.js\"></script>",
+		"<script type=\"text/javascript\" src=\"%sjsmart5/bootstrap-datetime-4.7.14/js/bootstrap-datetime.js\"></script>",
+		"<script type=\"text/javascript\" src=\"%sjsmart5/js/jsmart5.js\"></script>"
 	]
 }

@@ -39,6 +39,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.DateTime;
 
 import com.google.gson.Gson;
@@ -280,7 +281,11 @@ public enum ExpressionHandler {
 
 				if (values != null) {
 					for (String val : values) {
-						list.add(unescape ? val : escapeValue(val));
+                        try {
+                            list.add(NumberUtils.createNumber(val));
+                        } catch (NumberFormatException e) {
+                            list.add(unescape ? val : escapeValue(val));
+                        }
 					}
 				}
 

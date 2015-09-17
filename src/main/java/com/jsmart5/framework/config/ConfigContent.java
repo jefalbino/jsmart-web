@@ -36,6 +36,8 @@ public final class ConfigContent {
 
     private String welcomeUrl;
 
+    private String assetsUrl;
+
 	private SecureMethod[] secureMethods;
 
 	private int sessionTimeout;
@@ -84,6 +86,20 @@ public final class ConfigContent {
     public void setWelcomeUrl(String welcomeUrl) {
         if (welcomeUrl != null && !welcomeUrl.trim().isEmpty()) {
             this.welcomeUrl = welcomeUrl;
+        }
+    }
+
+    @XmlElement(name = "assets-url")
+    public String getAssetsUrl() {
+        return assetsUrl;
+    }
+
+    public void setAssetsUrl(String assetsUrl) {
+        if (assetsUrl != null && !assetsUrl.trim().isEmpty()) {
+            if (!assetsUrl.endsWith("/")) {
+                assetsUrl += "/";
+            }
+            this.assetsUrl = assetsUrl;
         }
     }
 
