@@ -92,11 +92,11 @@ public enum WebImage {
                 internalImg = internalImgs.get(name);
 			}
 
-            if (internalImg != null) {
-                return internalImg;
-
-            } else if (assetsUrl != null) {
+            if (assetsUrl != null) {
                 return externalImg;
+
+            } else if (internalImg != null) {
+                return internalImg;
             }
 		}
 		return null;

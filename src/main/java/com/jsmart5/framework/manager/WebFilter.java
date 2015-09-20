@@ -293,7 +293,6 @@ public final class WebFilter implements Filter {
             if (CONFIG.getContent().getAssetsUrl() != null) {
                 LOGGER.log(Level.INFO, "Using external assets, please provide the jsmart5 assets content at "
                         + CONFIG.getContent().getAssetsUrl());
-                return;
             }
 
 			ServletContext context = config.getServletContext();
@@ -335,6 +334,11 @@ public final class WebFilter implements Filter {
                         String index = writer.toString().replace("{0}", CONFIG.getContent().getWelcomeUrl());
                         copyFileResource(new ByteArrayInputStream(index.getBytes(ENCODING)), file.getRelativePath(), context);
                     }
+                }
+
+                // Do not copy anything if assets-url was provided
+                if (CONFIG.getContent().getAssetsUrl() != null) {
+                    continue;
                 }
 
                 // Copy js, css and font resources to specific location
