@@ -18,12 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
@@ -33,6 +27,11 @@ import com.jsmart5.framework.tag.html.Section;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Type;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import java.io.IOException;
+import java.io.StringWriter;
 
 public final class PanelBodyTagHandler extends TagHandler {
 

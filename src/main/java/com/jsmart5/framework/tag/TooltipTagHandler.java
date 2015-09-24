@@ -18,19 +18,18 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Side;
 import com.jsmart5.framework.tag.type.TipEvent;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import java.io.IOException;
+import java.io.StringWriter;
 
 public final class TooltipTagHandler extends TagHandler {
 

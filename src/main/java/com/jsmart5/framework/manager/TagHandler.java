@@ -18,6 +18,32 @@
 
 package com.jsmart5.framework.manager;
 
+import com.google.gson.Gson;
+import com.jsmart5.framework.config.Constants;
+import com.jsmart5.framework.exception.InvalidAttributeException;
+import com.jsmart5.framework.json.Ajax;
+import com.jsmart5.framework.json.Bind;
+import com.jsmart5.framework.tag.AjaxTagHandler;
+import com.jsmart5.framework.tag.BindTagHandler;
+import com.jsmart5.framework.tag.EmptyTagHandler;
+import com.jsmart5.framework.tag.IconTagHandler;
+import com.jsmart5.framework.tag.LoadTagHandler;
+import com.jsmart5.framework.tag.PopOverTagHandler;
+import com.jsmart5.framework.tag.TooltipTagHandler;
+import com.jsmart5.framework.tag.ValidateTagHandler;
+import com.jsmart5.framework.tag.html.DocScript;
+import com.jsmart5.framework.tag.html.Script;
+import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.util.EventAction;
+import com.jsmart5.framework.tag.util.RefAction;
+import com.jsmart5.framework.util.WebAlert;
+import com.jsmart5.framework.util.WebText;
+import com.jsmart5.framework.util.WebUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -33,28 +59,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-
-import com.google.gson.Gson;
-import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.exception.InvalidAttributeException;
-import com.jsmart5.framework.json.Ajax;
-import com.jsmart5.framework.json.Bind;
-import com.jsmart5.framework.tag.*;
-import com.jsmart5.framework.tag.html.DocScript;
-import com.jsmart5.framework.tag.html.Script;
-import com.jsmart5.framework.tag.html.Tag;
-import com.jsmart5.framework.tag.util.EventAction;
-import com.jsmart5.framework.tag.util.RefAction;
-import com.jsmart5.framework.util.WebAlert;
-import com.jsmart5.framework.util.WebUtils;
-
-import com.jsmart5.framework.util.WebText;
-import static com.jsmart5.framework.manager.ExpressionHandler.*;
-import static com.jsmart5.framework.manager.BeanHandler.*;
+import static com.jsmart5.framework.manager.BeanHandler.HANDLER;
+import static com.jsmart5.framework.manager.ExpressionHandler.EXPRESSIONS;
 import static com.jsmart5.framework.tag.js.JsConstants.JSMART_AJAX;
 import static com.jsmart5.framework.tag.js.JsConstants.JSMART_BIND;
 

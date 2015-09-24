@@ -18,17 +18,7 @@
 
 package com.jsmart5.framework.filter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.GZIPOutputStream;
+import com.jsmart5.framework.config.ContentEncode;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -43,23 +33,30 @@ import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
 
-import com.jsmart5.framework.config.ContentEncode;
-
-import static com.jsmart5.framework.config.Config.*;
-import static com.jsmart5.framework.manager.BeanHandler.*;
+import static com.jsmart5.framework.config.Config.CONFIG;
+import static com.jsmart5.framework.manager.BeanHandler.HANDLER;
 
 public final class EncodeFilter implements Filter {
 
 	private static final Logger LOGGER = Logger.getLogger(EncodeFilter.class.getPackage().getName());
-
 
 	private static final String ACCEPT_ENCODING = "Accept-Encoding";
 
 	private static final String CONTENT_ENCODING = "Content-Encoding";
 
 	private static final String VARY = "Vary";
-
 
 	private static final String GZIP = "gzip";
 

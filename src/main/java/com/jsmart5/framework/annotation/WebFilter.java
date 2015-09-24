@@ -18,21 +18,20 @@
 
 package com.jsmart5.framework.annotation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.annotation.WebInitParam;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * The {@link SmartFilter} annotation is used on classes to declare {@link Filter} 
+ * The {@link WebFilter} annotation is used on classes to declare {@link Filter}
  * instance. The class must implement {@link Filter}.
  * <br>
- * The classes annotated with {@link SmartFilter} allow dependency injection.
+ * The classes annotated with {@link WebFilter} allow dependency injection.
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SmartFilter {
+public @interface WebFilter {
 
 	/**
 	 * The name of the filter.

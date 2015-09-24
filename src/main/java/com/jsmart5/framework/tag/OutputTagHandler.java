@@ -18,14 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
-import javax.xml.soap.Text;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
@@ -35,6 +27,12 @@ import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Case;
 import com.jsmart5.framework.tag.type.Look;
 import com.jsmart5.framework.tag.type.Output;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import java.io.IOException;
+import java.io.StringWriter;
 
 public final class OutputTagHandler extends TagHandler {
 

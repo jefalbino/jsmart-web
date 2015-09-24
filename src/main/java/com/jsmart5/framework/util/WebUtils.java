@@ -18,12 +18,12 @@
 
 package com.jsmart5.framework.util;
 
+import org.apache.commons.codec.binary.Base32;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Random;
-
-import org.apache.commons.codec.binary.Base32;
 
 public final class WebUtils {
 

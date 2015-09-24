@@ -18,13 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
-
 import com.jsmart5.framework.exception.ConstraintTagException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
@@ -32,6 +25,12 @@ import com.jsmart5.framework.tag.css.JSmart5;
 import com.jsmart5.framework.tag.html.Div;
 import com.jsmart5.framework.tag.html.P;
 import com.jsmart5.framework.tag.html.Tag;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import java.io.IOException;
+import java.io.StringWriter;
 
 public final class SlideTagHandler extends TagHandler {
 

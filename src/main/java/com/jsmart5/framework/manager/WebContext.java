@@ -18,15 +18,14 @@
 
 package com.jsmart5.framework.manager;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.google.gson.Gson;
+import com.jsmart5.framework.annotation.WebBean;
+import com.jsmart5.framework.util.WebAlert;
+import com.jsmart5.framework.util.WebAlert.AlertType;
+import com.jsmart5.framework.util.WebUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 
+import javax.annotation.PostConstruct;
 import javax.el.ExpressionFactory;
 import javax.servlet.AsyncContext;
 import javax.servlet.Servlet;
@@ -38,19 +37,23 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspApplicationContext;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
-
-import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
-import com.google.gson.Gson;
-import com.jsmart5.framework.annotation.WebBean;
-import com.jsmart5.framework.util.WebAlert;
-import com.jsmart5.framework.util.WebAlert.AlertType;
-import com.jsmart5.framework.util.WebUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class represents the context of the request being currently processed and it allows {@link WebBean}
@@ -66,7 +69,7 @@ public final class WebContext implements Serializable {
 
 	private static final JspFactory JSP_FACTORY = JspFactory.getDefaultFactory();
 
-	private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<Thread, WebContext>();
+	private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<>();
 
     private static final Gson gson = new Gson();
 
@@ -88,9 +91,9 @@ public final class WebContext implements Serializable {
 
 	private PageContext pageContext;
 
-	private Map<String, List<WebAlert>> alerts = new LinkedHashMap<String, List<WebAlert>>();
+	private Map<String, List<WebAlert>> alerts = new LinkedHashMap<>();
 
-	private Map<String, Object> mappedValues = new ConcurrentHashMap<String, Object>();
+	private Map<String, Object> mappedValues = new ConcurrentHashMap<>();
 
     private Map<String, String> queryParams;
 

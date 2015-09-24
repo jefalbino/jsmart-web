@@ -18,16 +18,15 @@
 
 package com.jsmart5.framework.tag;
 
+import com.jsmart5.framework.manager.TagHandler;
+import com.jsmart5.framework.tag.html.Tag;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
-import com.jsmart5.framework.manager.TagHandler;
-import com.jsmart5.framework.tag.html.Tag;
 
 public final class TextTagHandler extends TagHandler {
 	

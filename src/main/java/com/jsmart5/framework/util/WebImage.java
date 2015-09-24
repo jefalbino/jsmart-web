@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import static com.jsmart5.framework.config.Config.*;
+import static com.jsmart5.framework.config.Config.CONFIG;
 
 /**
  * This class represents the container of image paths packed inside the project.

@@ -18,12 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Progress;
 import com.jsmart5.framework.manager.TagHandler;
@@ -33,6 +27,11 @@ import com.jsmart5.framework.tag.html.Input;
 import com.jsmart5.framework.tag.html.Set;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Look;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import java.io.IOException;
 
 import static com.jsmart5.framework.tag.js.JsConstants.JSMART_PROGRESSBAR;
 

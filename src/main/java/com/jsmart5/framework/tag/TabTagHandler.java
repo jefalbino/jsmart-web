@@ -18,14 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Param;
@@ -42,7 +34,15 @@ import com.jsmart5.framework.tag.type.Align;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Type;
 
-import static com.jsmart5.framework.tag.js.JsConstants.*;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_TAB;
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_TABPANE;
 
 public final class TabTagHandler extends TagHandler {
 	

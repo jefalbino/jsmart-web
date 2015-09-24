@@ -18,14 +18,13 @@
 
 package com.jsmart5.framework.manager;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 final class TagEncrypter {
 

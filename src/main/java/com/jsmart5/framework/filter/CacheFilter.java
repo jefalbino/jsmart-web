@@ -18,7 +18,7 @@
 
 package com.jsmart5.framework.filter;
 
-import java.io.IOException;
+import com.jsmart5.framework.config.CachePattern;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -29,10 +29,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-import com.jsmart5.framework.config.CachePattern;
-
-import static com.jsmart5.framework.config.Config.*;
+import static com.jsmart5.framework.config.Config.CONFIG;
 
 public final class CacheFilter implements Filter {
 

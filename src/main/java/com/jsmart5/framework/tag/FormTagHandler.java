@@ -18,14 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
@@ -38,7 +30,14 @@ import com.jsmart5.framework.tag.type.Method;
 import com.jsmart5.framework.tag.type.Position;
 import com.jsmart5.framework.tag.type.Size;
 
-import static com.jsmart5.framework.tag.js.JsConstants.*;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_VALIDATE;
 
 public final class FormTagHandler extends TagHandler {
 

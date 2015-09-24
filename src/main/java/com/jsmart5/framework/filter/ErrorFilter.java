@@ -18,9 +18,7 @@
 
 package com.jsmart5.framework.filter;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.jsmart5.framework.config.ErrorPage;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,10 +29,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import com.jsmart5.framework.config.ErrorPage;
-
-import static com.jsmart5.framework.config.Config.*;
+import static com.jsmart5.framework.config.Config.CONFIG;
 
 public final class ErrorFilter implements Filter {
 

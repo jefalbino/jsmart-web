@@ -18,6 +18,22 @@
 
 package com.jsmart5.framework.manager;
 
+import com.google.gson.Gson;
+import com.jsmart5.framework.adapter.ListAdapter;
+import com.jsmart5.framework.adapter.TableAdapter;
+import com.jsmart5.framework.config.Constants;
+import com.jsmart5.framework.json.Scroll;
+import com.jsmart5.framework.util.WebText;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.joda.time.DateTime;
+
+import javax.el.ELContext;
+import javax.el.MethodExpression;
+import javax.el.PropertyNotWritableException;
+import javax.el.ValueExpression;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -31,28 +47,10 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.el.ELContext;
-import javax.el.MethodExpression;
-import javax.el.PropertyNotWritableException;
-import javax.el.ValueExpression;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.joda.time.DateTime;
-
-import com.google.gson.Gson;
-import com.jsmart5.framework.adapter.ListAdapter;
-import com.jsmart5.framework.adapter.TableAdapter;
-
-import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.json.Scroll;
-
-import com.jsmart5.framework.util.WebText;
-import static com.jsmart5.framework.config.Config.*;
-import static com.jsmart5.framework.config.Constants.*;
-import static com.jsmart5.framework.manager.BeanHandler.*;
+import static com.jsmart5.framework.config.Config.CONFIG;
+import static com.jsmart5.framework.config.Constants.EL_SEPARATOR;
+import static com.jsmart5.framework.config.Constants.JSP_EL;
+import static com.jsmart5.framework.manager.BeanHandler.HANDLER;
 
 public enum ExpressionHandler {
 
@@ -467,7 +465,7 @@ public enum ExpressionHandler {
 
 	String decodeUrl(String value) {
 		try {
-			return URLDecoder.decode(value, WebFilter.ENCODING);
+			return URLDecoder.decode(value, FilterControl.ENCODING);
 		} catch (UnsupportedEncodingException ex) {
 			ex.printStackTrace();
 		}

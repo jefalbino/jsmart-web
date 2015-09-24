@@ -18,11 +18,11 @@
 
 package com.jsmart5.framework.config;
 
+import com.jsmart5.framework.util.WebUtils;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import com.jsmart5.framework.util.WebUtils;
 
 public final class UrlPattern {
 

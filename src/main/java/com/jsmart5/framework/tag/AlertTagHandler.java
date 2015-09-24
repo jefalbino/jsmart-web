@@ -18,15 +18,8 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.List;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
-import com.jsmart5.framework.manager.WebContext;
 import com.jsmart5.framework.manager.TagHandler;
+import com.jsmart5.framework.manager.WebContext;
 import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.A;
 import com.jsmart5.framework.tag.html.Button;
@@ -36,7 +29,13 @@ import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.util.WebAlert;
 
-import static com.jsmart5.framework.util.WebAlert.*;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.List;
+
+import static com.jsmart5.framework.util.WebAlert.AlertType;
 
 public final class AlertTagHandler extends TagHandler {
 

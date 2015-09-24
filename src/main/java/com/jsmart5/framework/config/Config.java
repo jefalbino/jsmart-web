@@ -18,15 +18,14 @@
 
 package com.jsmart5.framework.config;
 
+import javax.servlet.ServletContext;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.servlet.ServletContext;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 
 
 public enum Config {

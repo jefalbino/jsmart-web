@@ -18,15 +18,16 @@
 
 package com.jsmart5.framework.manager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.EventListener;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.jsmart5.framework.annotation.WebFilter;
+import com.jsmart5.framework.annotation.WebServlet;
+import com.jsmart5.framework.config.Constants;
+import com.jsmart5.framework.config.InitParam;
+import com.jsmart5.framework.config.SecureMethod;
+import com.jsmart5.framework.config.UploadConfig;
+import com.jsmart5.framework.config.UrlPattern;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -45,22 +46,23 @@ import javax.servlet.annotation.ServletSecurity.EmptyRoleSemantic;
 import javax.servlet.annotation.ServletSecurity.TransportGuarantee;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.EventListener;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import com.jsmart5.framework.config.*;
-import org.springframework.web.context.ContextLoader;
-
-import com.jsmart5.framework.annotation.SmartFilter;
-import com.jsmart5.framework.annotation.SmartServlet;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
-
-import static com.jsmart5.framework.config.Config.*;
-import static com.jsmart5.framework.manager.BeanHandler.*;
-import static com.jsmart5.framework.util.WebImage.*;
-import static com.jsmart5.framework.util.WebText.*;
+import static com.jsmart5.framework.config.Config.CONFIG;
+import static com.jsmart5.framework.manager.BeanHandler.HANDLER;
+import static com.jsmart5.framework.util.WebImage.IMAGES;
+import static com.jsmart5.framework.util.WebText.TEXTS;
 
 @WebListener
-public final class ContainerListener implements ServletContextListener {
+public final class ContextControl implements ServletContextListener {
 
 	private static final List<String> METHODS = Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE");
 
@@ -93,30 +95,30 @@ public final class ContainerListener implements ServletContextListener {
 	        TEXTS.init(CONFIG.getContent().getMessageFiles(), CONFIG.getContent().getDefaultLocale());
 	        HANDLER.init(servletContext);
 
-	        // WebServlet -> @MultipartConfig @WebServlet(name = "WebServlet", displayName = "WebServlet", loadOnStartup = 1)
-	        Servlet webServlet = servletContext.createServlet((Class<? extends Servlet>) Class.forName("com.jsmart5.framework.manager.WebServlet"));
-	        ServletRegistration.Dynamic servletReg = (ServletRegistration.Dynamic) servletContext.addServlet("WebServlet", webServlet);
-	        servletReg.setAsyncSupported(true);
-	        servletReg.setLoadOnStartup(1);
+	        // ServletControl -> @MultipartConfig @WebServlet(name = "ServletControl", displayName = "ServletControl", loadOnStartup = 1)
+	        Servlet servletControl = servletContext.createServlet((Class<? extends Servlet>) Class.forName("com.jsmart5.framework.manager.ServletControl"));
+	        ServletRegistration.Dynamic servletControlReg = (ServletRegistration.Dynamic) servletContext.addServlet("ServletControl", servletControl);
+            servletControlReg.setAsyncSupported(true);
+            servletControlReg.setLoadOnStartup(1);
 
-	        // WebServlet Initial Parameters
+	        // ServletControl Initial Parameters
 	        InitParam[] initParams = CONFIG.getContent().getInitParams();
 	        if (initParams != null) {
 	        	for (InitParam initParam : initParams) {
-	        		servletReg.setInitParameter(initParam.getName(), initParam.getValue());
+                    servletControlReg.setInitParameter(initParam.getName(), initParam.getValue());
 	        	}
 	        }
 
-	        // MultiPart to allow file upload on WebServlet 
+	        // MultiPart to allow file upload on ServletControl
 	        MultipartConfigElement multipartElement = getServletMultipartElement();
 	        if (multipartElement != null) {
-	        	servletReg.setMultipartConfig(multipartElement);
+                servletControlReg.setMultipartConfig(multipartElement);
 	        }
 
-	        // Security constraint to WebServlet
+	        // Security constraint to ServletControl
 	        ServletSecurityElement servletSecurityElement = getServletSecurityElement(servletContext);
 	        if (servletSecurityElement != null) {
-	        	servletReg.setServletSecurity(servletSecurityElement);
+                servletControlReg.setServletSecurity(servletSecurityElement);
 	        }
 
 	        // TODO: Fix problem related to authentication by container to use SSL dynamically (Maybe create more than one servlet for secure and non-secure patterns)
@@ -125,9 +127,9 @@ public final class ContainerListener implements ServletContextListener {
 	        // servletReg.setRunAsRole("admin");
 	        // servletContext.declareRoles("admin");
 
-	        // WebServlet URL mapping
+	        // ServletControl URL mapping
 	        String[] servletMapping = getServletMapping();
-	        servletReg.addMapping(servletMapping);
+            servletControlReg.addMapping(servletMapping);
 
 	        // ErrorFilter -> @WebFilter(urlPatterns = {"/*"})
 	        Filter errorFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.filter.ErrorFilter"));
@@ -155,63 +157,66 @@ public final class ContainerListener implements ServletContextListener {
 
 	        // Add custom filters defined by client
 	        for (String filterName : sortCustomFilters()) {
-	        	Filter customFilter = servletContext.createFilter((Class<? extends Filter>) HANDLER.smartFilters.get(filterName));
+	        	Filter customFilter = servletContext.createFilter((Class<? extends Filter>) HANDLER.webFilters.get(filterName));
 	        	HANDLER.executeInjection(customFilter);
 
-	        	SmartFilter smartFilter = customFilter.getClass().getAnnotation(SmartFilter.class);
+	        	WebFilter webFilter = customFilter.getClass().getAnnotation(WebFilter.class);
      	        FilterRegistration.Dynamic customFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter(filterName, customFilter);
 
-     	        if (smartFilter.initParams() != null) {
-     	        	for (WebInitParam initParam : smartFilter.initParams()) {
+     	        if (webFilter.initParams() != null) {
+     	        	for (WebInitParam initParam : webFilter.initParams()) {
      	        		customFilterReg.setInitParameter(initParam.name(), initParam.value());
      	        	}
      	        }
-
-     	        customFilterReg.setAsyncSupported(smartFilter.asyncSupported());
-     	        customFilterReg.addMappingForUrlPatterns(EnumSet.copyOf(Arrays.asList(smartFilter.dispatcherTypes())), true,
-                        smartFilter.urlPatterns());
+     	        customFilterReg.setAsyncSupported(webFilter.asyncSupported());
+     	        customFilterReg.addMappingForUrlPatterns(EnumSet.copyOf(Arrays.asList(webFilter.dispatcherTypes())), true,
+                        webFilter.urlPatterns());
 	        }
 
-	        // WebFilter -> @WebFilter(servletNames = {"WebServlet"})
-	        Filter webFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.WebFilter"));
-	        FilterRegistration.Dynamic webFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("WebFilter", webFilter);
+	        // FilterControl -> @WebFilter(servletNames = {"ServletControl"})
+	        Filter filterControl = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.FilterControl"));
+	        FilterRegistration.Dynamic filterControlReg = (FilterRegistration.Dynamic) servletContext.addFilter("FilterControl", filterControl);
 
-	        webFilterReg.setAsyncSupported(true);
-	        webFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE), true, "WebServlet");
+            filterControlReg.setAsyncSupported(true);
+            filterControlReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR,
+	        		DispatcherType.INCLUDE), true, "ServletControl");
 
-	        // OutputFilter -> @WebFilter(servletNames = {"WebServlet"})
+	        // OutputFilter -> @WebFilter(servletNames = {"ServletControl"})
 	        Filter outputFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.OutputFilter"));
 	        FilterRegistration.Dynamic outputFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("OutputFilter", outputFilter);
 
 	        outputFilterReg.setAsyncSupported(true);
 	        outputFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR, 
-	        		DispatcherType.INCLUDE), true, "WebServlet");
+	        		DispatcherType.INCLUDE), true, "ServletControl");
 
-            // AsyncFilter -> @WebFilter(servletNames = {"WebServlet"})
+            // AsyncFilter -> @WebFilter(servletNames = {"ServletControl"})
             // Filter used case AsyncContext is dispatched internally by AsyncBean implementation
             Filter asyncFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmart5.framework.manager.AsyncFilter"));
             FilterRegistration.Dynamic asyncFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("AsyncFilter", asyncFilter);
 
             asyncFilterReg.setAsyncSupported(true);
-            asyncFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.ASYNC), true, "WebServlet");
+            asyncFilterReg.addMappingForServletNames(EnumSet.of(DispatcherType.ASYNC), true, "ServletControl");
 
-	        // SessionControl - > @WebListener
-	        EventListener smartSessionListener = servletContext.createListener((Class<? extends EventListener>) Class.forName("com.jsmart5.framework.manager.SessionControl"));
-	        servletContext.addListener(smartSessionListener);
+            // SessionControl -> @WebListener
+	        EventListener sessionListener = servletContext.createListener((Class<? extends EventListener>) Class.forName("com.jsmart5.framework.manager.SessionControl"));
+	        servletContext.addListener(sessionListener);
 
-	        // Custom SmartServlet -> Custom Servlets created by application
-	        for (String servletName : HANDLER.smartServlets.keySet()) {
-	        	Servlet customServlet = servletContext.createServlet((Class<? extends Servlet>) HANDLER.smartServlets.get(servletName));
+            // RequestControl -> @WebListener
+            EventListener requestListener = servletContext.createListener((Class<? extends EventListener>) Class.forName("com.jsmart5.framework.manager.RequestControl"));
+            servletContext.addListener(requestListener);
+
+	        // Custom WebServlet -> Custom Servlets created by application
+	        for (String servletName : HANDLER.webServlets.keySet()) {
+	        	Servlet customServlet = servletContext.createServlet((Class<? extends Servlet>) HANDLER.webServlets.get(servletName));
 	        	HANDLER.executeInjection(customServlet);
 
-	        	SmartServlet smartServlet = customServlet.getClass().getAnnotation(SmartServlet.class);
+	        	WebServlet webServlet = customServlet.getClass().getAnnotation(WebServlet.class);
 	        	ServletRegistration.Dynamic customReg = (ServletRegistration.Dynamic) servletContext.addServlet(servletName, customServlet);
 
-	        	customReg.setLoadOnStartup(smartServlet.loadOnStartup());
-	        	customReg.setAsyncSupported(smartServlet.asyncSupported());
+	        	customReg.setLoadOnStartup(webServlet.loadOnStartup());
+	        	customReg.setAsyncSupported(webServlet.asyncSupported());
 
-	        	WebInitParam[] customInitParams = smartServlet.initParams();
+	        	WebInitParam[] customInitParams = webServlet.initParams();
 	        	if (customInitParams != null) {
 	        		for (WebInitParam customInitParam : customInitParams) {
 	        			customReg.setInitParameter(customInitParam.name(), customInitParam.value());
@@ -219,7 +224,7 @@ public final class ContainerListener implements ServletContextListener {
 	        	}
 
 		        // Add mapping url for custom servlet
-		        customReg.addMapping(smartServlet.urlPatterns());
+		        customReg.addMapping(webServlet.urlPatterns());
 
 		        if (customServlet.getClass().isAnnotationPresent(MultipartConfig.class)) {
 		        	customReg.setMultipartConfig(new MultipartConfigElement(customServlet.getClass().getAnnotation(MultipartConfig.class)));
@@ -253,17 +258,16 @@ public final class ContainerListener implements ServletContextListener {
 
 	private List<String> sortCustomFilters() {
 		// Sort the custom filter by the order specified
-        List<String> customFilters = new ArrayList<String>(HANDLER.smartFilters.keySet());
+        List<String> customFilters = new ArrayList<String>(HANDLER.webFilters.keySet());
         Collections.sort(customFilters, new Comparator<String>() {
 
 			@Override
 			public int compare(String filterNameOne, String filterNameTwo) {
-				SmartFilter smartFilterOne = HANDLER.smartFilters.get(filterNameOne).getAnnotation(SmartFilter.class);
-				SmartFilter smartFilterTwo = HANDLER.smartFilters.get(filterNameTwo).getAnnotation(SmartFilter.class);
-				return Integer.compare(smartFilterOne.order(), smartFilterTwo.order());
+				WebFilter webFilterOne = HANDLER.webFilters.get(filterNameOne).getAnnotation(WebFilter.class);
+				WebFilter webFilterTwo = HANDLER.webFilters.get(filterNameTwo).getAnnotation(WebFilter.class);
+				return Integer.compare(webFilterOne.order(), webFilterTwo.order());
 			}
         });
-
         return customFilters;
 	}
 

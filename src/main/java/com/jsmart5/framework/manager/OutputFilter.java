@@ -18,9 +18,6 @@
 
 package com.jsmart5.framework.manager;
 
-import java.io.IOException;
-import java.util.regex.Matcher;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,12 +26,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+import java.util.regex.Matcher;
 
-import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.manager.ExpressionHandler;
-import com.jsmart5.framework.manager.WebContext;
-
-import static com.jsmart5.framework.manager.ExpressionHandler.*;
+import static com.jsmart5.framework.manager.ExpressionHandler.EXPRESSIONS;
 
 public final class OutputFilter implements Filter {
 

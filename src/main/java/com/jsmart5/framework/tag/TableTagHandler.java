@@ -18,17 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
 import com.jsmart5.framework.adapter.TableAdapter;
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
@@ -51,7 +40,19 @@ import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.tag.type.Type;
 
-import static com.jsmart5.framework.tag.js.JsConstants.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_TABLE;
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_TABLEHEADER;
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_TABLESCROLL;
 
 public final class TableTagHandler extends TagHandler {
 

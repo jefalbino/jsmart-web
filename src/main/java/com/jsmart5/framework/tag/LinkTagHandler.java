@@ -18,13 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Stack;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Param;
@@ -41,7 +34,13 @@ import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.tag.util.RefAction;
 import com.jsmart5.framework.util.WebUtils;
 
-import static com.jsmart5.framework.tag.js.JsConstants.*;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Stack;
+
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_AJAX;
 
 public final class LinkTagHandler extends TagHandler {
 

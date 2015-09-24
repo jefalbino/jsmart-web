@@ -18,11 +18,10 @@
 
 package com.jsmart5.framework.exception;
 
-import java.text.MessageFormat;
+import com.google.common.collect.Lists;
 
 import javax.servlet.jsp.JspException;
-
-import com.google.common.collect.Lists;
+import java.text.MessageFormat;
 
 public class InvalidAttributeException extends JspException {
 

@@ -18,23 +18,22 @@
 
 package com.jsmart5.framework.manager;
 
+import com.jsmart5.framework.config.Constants;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.listener.WebSessionListener;
-
-import static com.jsmart5.framework.config.Config.*;
-import static com.jsmart5.framework.manager.BeanHandler.*;
+import static com.jsmart5.framework.config.Config.CONFIG;
+import static com.jsmart5.framework.manager.BeanHandler.HANDLER;
 
 public final class SessionControl implements HttpSessionListener {
 
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-		synchronized (session) {
 
+		synchronized (session) {
 			session.setAttribute(Constants.SESSION_RESET_ATTR, "#");
 			HANDLER.instantiateAuthBean(session);
 
@@ -42,10 +41,9 @@ public final class SessionControl implements HttpSessionListener {
 				session.setMaxInactiveInterval(CONFIG.getContent().getSessionTimeout() * 60);
 			}
 
-			// Call registered SmartSessionListeners
-			for (WebSessionListener sessionListener : HANDLER.sessionListeners) {
+			for (HttpSessionListener sessionListener : HANDLER.sessionListeners) {
 				HANDLER.executeInjection(sessionListener);
-				sessionListener.sessionCreated(session);
+				sessionListener.sessionCreated(event);
 			}
 		}
 	}
@@ -53,11 +51,10 @@ public final class SessionControl implements HttpSessionListener {
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-		synchronized (session) {
 
-			// Call registered SmartSessionListeners
-			for (WebSessionListener sessionListener : HANDLER.sessionListeners) {
-				sessionListener.sessionDestroyed(session);
+		synchronized (session) {
+			for (HttpSessionListener sessionListener : HANDLER.sessionListeners) {
+				sessionListener.sessionDestroyed(event);
 			}
 			HANDLER.finalizeBeans(session);
 		}

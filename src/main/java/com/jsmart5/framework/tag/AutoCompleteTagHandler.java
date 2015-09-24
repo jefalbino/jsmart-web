@@ -18,16 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import static com.jsmart5.framework.tag.js.JsConstants.*;
-
-import java.io.IOException;
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
-
 import com.jsmart5.framework.adapter.ListAdapter;
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.json.Ajax;
@@ -36,11 +26,30 @@ import com.jsmart5.framework.json.Scroll;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.css.JSmart5;
-import com.jsmart5.framework.tag.html.*;
+import com.jsmart5.framework.tag.html.Div;
+import com.jsmart5.framework.tag.html.Input;
+import com.jsmart5.framework.tag.html.Label;
+import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Set;
+import com.jsmart5.framework.tag.html.Span;
+import com.jsmart5.framework.tag.html.Tag;
+import com.jsmart5.framework.tag.html.Ul;
 import com.jsmart5.framework.tag.type.Event;
 import com.jsmart5.framework.tag.type.Size;
 import com.jsmart5.framework.tag.type.Type;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_AUTOCOMPLETE;
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_AUTOCPLTSCROLL;
 
 public final class AutoCompleteTagHandler extends TagHandler {
 

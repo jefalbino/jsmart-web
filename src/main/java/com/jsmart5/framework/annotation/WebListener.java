@@ -21,42 +21,13 @@ package com.jsmart5.framework.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import javax.servlet.Servlet;
-import javax.servlet.annotation.WebInitParam;
-import javax.servlet.http.HttpServlet;
-
 /**
- * The {@link SmartServlet} annotation is used on classes to declare {@link Servlet} 
- * instance. The class must extends {@link HttpServlet}.
+ * The {@link WebListener} annotation is used on classes implementing {@link javax.servlet.http.HttpSessionListener},
+ * {@link javax.servlet.ServletRequestListener} or {@link javax.servlet.ServletContextListener} interfaces.
  * <br>
- * The classes annotated with {@link SmartServlet} allow dependency injection.
+ * The classes annotated with {@link WebListener} allow dependency injection.
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SmartServlet {
-
-	/**
-	 * The name of the servlet.
-	 */
-	String name() default "";
-
-	/**
-	 * The URL patterns of the servlet.
-	 */
-	String[] urlPatterns();
-
-	/**
-	 * The init parameters of the servlet.
-	 */
-	WebInitParam[] initParams() default {};
-
-	/**
-	 * The load-on-startup order of the servlet.
-	 */
-	int loadOnStartup() default -1;
-
-	/**
-	 * Declares whether the servlet supports asynchronous operation mode.
-	 */
-	boolean asyncSupported() default false;
+public @interface WebListener {
 
 }

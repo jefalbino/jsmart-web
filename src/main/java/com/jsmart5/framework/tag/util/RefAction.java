@@ -18,11 +18,11 @@
 
 package com.jsmart5.framework.tag.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.jsmart5.framework.json.Ajax;
 import com.jsmart5.framework.json.Bind;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RefAction {
 

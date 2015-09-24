@@ -18,6 +18,48 @@
 
 package com.jsmart5.framework.manager;
 
+import com.jsmart5.framework.annotation.AsyncBean;
+import com.jsmart5.framework.annotation.AuthenticateBean;
+import com.jsmart5.framework.annotation.AuthenticateField;
+import com.jsmart5.framework.annotation.AuthorizeAccess;
+import com.jsmart5.framework.annotation.ExecuteAccess;
+import com.jsmart5.framework.annotation.PostPreset;
+import com.jsmart5.framework.annotation.PostSubmit;
+import com.jsmart5.framework.annotation.PreSubmit;
+import com.jsmart5.framework.annotation.QueryParam;
+import com.jsmart5.framework.annotation.RequestPath;
+import com.jsmart5.framework.annotation.ScopeType;
+import com.jsmart5.framework.annotation.Unescape;
+import com.jsmart5.framework.annotation.WebBean;
+import com.jsmart5.framework.annotation.WebFilter;
+import com.jsmart5.framework.annotation.WebListener;
+import com.jsmart5.framework.annotation.WebServlet;
+import com.jsmart5.framework.config.Constants;
+import com.jsmart5.framework.config.UrlPattern;
+import com.jsmart5.framework.listener.WebAsyncListener;
+import com.jsmart5.framework.util.WebUtils;
+import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import javax.naming.Binding;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingEnumeration;
+import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequestListener;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -41,37 +83,12 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingEnumeration;
-
-import javax.servlet.Filter;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import com.jsmart5.framework.annotation.*;
-import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.config.UrlPattern;
-import com.jsmart5.framework.listener.WebAsyncListener;
-import com.jsmart5.framework.listener.WebContextListener;
-import com.jsmart5.framework.listener.WebSessionListener;
-import com.jsmart5.framework.util.WebUtils;
-import org.reflections.Reflections;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Controller;
-
-import static com.jsmart5.framework.config.Config.*;
-import static com.jsmart5.framework.config.Constants.*;
-import static com.jsmart5.framework.manager.ExpressionHandler.*;
+import static com.jsmart5.framework.config.Config.CONFIG;
+import static com.jsmart5.framework.config.Constants.EL_SEPARATOR;
+import static com.jsmart5.framework.config.Constants.PATH_SEPARATOR;
+import static com.jsmart5.framework.config.Constants.REQUEST_USER_ACCESS;
+import static com.jsmart5.framework.manager.ExpressionHandler.EL_PATTERN;
+import static com.jsmart5.framework.manager.ExpressionHandler.EXPRESSIONS;
 
 public enum BeanHandler {
 
@@ -89,35 +106,37 @@ public enum BeanHandler {
 
     private static final Pattern PATH_BEAN_ALL_PATTERN = Pattern.compile("(.*)/\\*");
 
-    Map<String, Class<?>> webBeans;
+    Map<String, Class<?>> webBeans = new ConcurrentHashMap<>();
 
-    Map<String, Class<?>> authBeans;
+    Map<String, Class<?>> authBeans = new ConcurrentHashMap<>();
 
-    Map<String, Class<?>> asyncBeans;
+    Map<String, Class<?>> asyncBeans = new ConcurrentHashMap<>();
 
-    Map<String, Class<?>> smartServlets;
+    Map<String, Class<?>> webServlets = new ConcurrentHashMap<>();
 
-    Map<String, Class<?>> smartFilters;
+    Map<String, Class<?>> webFilters = new ConcurrentHashMap<>();
 
-    Map<String, Class<?>> requestPaths;
+    Map<String, Class<?>> requestPaths = new ConcurrentHashMap<>();
 
-    Set<WebContextListener> contextListeners;
+    Set<ServletContextListener> contextListeners = new HashSet<>();
 
-    Set<WebSessionListener> sessionListeners;
+    Set<HttpSessionListener> sessionListeners = new HashSet<>();
 
-    private Map<String, String> forwardPaths;
+    Set<ServletRequestListener> requestListeners = new HashSet<>();
+
+    private Map<String, String> forwardPaths = new HashMap<>();
+
+    private Map<Class<?>, String> jndiMapping = new ConcurrentHashMap<>();
+
+    private Map<Class<?>, Field[]> mappedBeanFields = new ConcurrentHashMap<>();
+
+    private Map<Class<?>, Method[]> mappedBeanMethods = new ConcurrentHashMap<>();
+
+    private Map<String, JspPageBean> jspPageBeans = new ConcurrentHashMap<>();
 
     private InitialContext initialContext;
 
     private ApplicationContext springContext;
-
-    private Map<Class<?>, String> jndiMapping = new ConcurrentHashMap<Class<?>, String>();
-
-    private Map<Class<?>, Field[]> mappedBeanFields = new ConcurrentHashMap<Class<?>, Field[]>();
-
-    private Map<Class<?>, Method[]> mappedBeanMethods = new ConcurrentHashMap<Class<?>, Method[]>();
-
-    private Map<String, JspPageBean> jspPageBeans = new ConcurrentHashMap<String, JspPageBean>();
 
     void init(ServletContext context) {
         checkWebXmlPath(context);
@@ -133,18 +152,19 @@ public enum BeanHandler {
             authBeans.clear();
             webBeans.clear();
             asyncBeans.clear();
-            smartServlets.clear();
-            smartFilters.clear();
+            webServlets.clear();
+            webFilters.clear();
             requestPaths.clear();
             contextListeners.clear();
             sessionListeners.clear();
+            requestListeners.clear();
             forwardPaths.clear();
             jspPageBeans.clear();
             jndiMapping.clear();
             initialContext = null;
             springContext = null;
         } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failure to destroy SmartHandler: " + ex.getMessage());
+            LOGGER.log(Level.INFO, "Failure to destroy BeanHandler: " + ex.getMessage());
         }
     }
 
@@ -408,7 +428,7 @@ public enum BeanHandler {
         return authBean.name();
     }
 
-    private String getClassName(com.jsmart5.framework.annotation.SmartServlet servlet, Class<?> servletClass) {
+    private String getClassName(WebServlet servlet, Class<?> servletClass) {
         if (servlet.name() == null || servlet.name().trim().isEmpty()) {
             String servletName = servletClass.getSimpleName();
             return getClassName(servletName);
@@ -416,7 +436,7 @@ public enum BeanHandler {
         return servlet.name();
     }
 
-    private String getClassName(SmartFilter filter, Class<?> filterClass) {
+    private String getClassName(WebFilter filter, Class<?> filterClass) {
         if (filter.name() == null || filter.name().trim().isEmpty()) {
             String filterName = filterClass.getSimpleName();
             return getClassName(filterName);
@@ -535,6 +555,10 @@ public enum BeanHandler {
                 }
             }
         }
+    }
+
+    void finalizeBeans(Object bean) {
+
     }
 
     void finalizeBeans(String path, HttpSession session) {
@@ -891,15 +915,6 @@ public enum BeanHandler {
 
     private void initAnnotatedBeans(ServletContext context) {
 
-        webBeans = new ConcurrentHashMap<String, Class<?>>();
-        authBeans = new ConcurrentHashMap<String, Class<?>>();
-        asyncBeans = new ConcurrentHashMap<String, Class<?>>();
-        smartServlets = new ConcurrentHashMap<String, Class<?>>();
-        smartFilters = new ConcurrentHashMap<String, Class<?>>();
-        requestPaths = new ConcurrentHashMap<String, Class<?>>();
-        contextListeners = new HashSet<WebContextListener>();
-        sessionListeners = new HashSet<WebSessionListener>();
-
         if (CONFIG.getContent().getPackageScan() == null) {
             LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML + " file! Skipping package scanning.");
             return;
@@ -989,59 +1004,66 @@ public enum BeanHandler {
             asyncBeans.put(path, clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(SmartServlet.class);
+        annotations = reflections.getTypesAnnotatedWith(WebServlet.class);
         for (Class<?> clazz : annotations) {
-            SmartServlet servlet = clazz.getAnnotation(SmartServlet.class);
-            LOGGER.log(Level.INFO, "Mapping SmartServlet class: " + clazz);
+            WebServlet servlet = clazz.getAnnotation(WebServlet.class);
+            LOGGER.log(Level.INFO, "Mapping com.jsmart5.framework.annotation.WebServlet class: " + clazz);
 
             if (!HttpServlet.class.isAssignableFrom(clazz)) {
-                throw new RuntimeException("Mapped SmartServlet class [" + clazz + "] must extends " +
+                throw new RuntimeException("Mapped com.jsmart5.framework.annotation.WebServlet class [" + clazz + "] must extends " +
                         "javax.servlet.http.HttpServlet class");
             }
 
             setBeanFields(clazz);
             setBeanMethods(clazz);
-            smartServlets.put(getClassName(servlet, clazz), clazz);
+            webServlets.put(getClassName(servlet, clazz), clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(SmartFilter.class);
+        annotations = reflections.getTypesAnnotatedWith(WebFilter.class);
         for (Class<?> clazz : annotations) {
-            SmartFilter filter = clazz.getAnnotation(SmartFilter.class);
-            LOGGER.log(Level.INFO, "Mapping SmartFilter class: " + clazz);
+            WebFilter filter = clazz.getAnnotation(WebFilter.class);
+            LOGGER.log(Level.INFO, "Mapping com.jsmart5.framework.annotation.WebFilter class: " + clazz);
 
             if (!Filter.class.isAssignableFrom(clazz)) {
-                throw new RuntimeException("Mapped SmartFilter class [" + clazz + "] must implement " +
-                        "javax.servlet.Filter interface");
+                throw new RuntimeException("Mapped com.jsmart5.framework.annotation.WebFilter class [" + clazz + "] " +
+                        "must implement javax.servlet.Filter interface");
             }
 
             setBeanFields(clazz);
             setBeanMethods(clazz);
-            smartFilters.put(getClassName(filter, clazz), clazz);
+            webFilters.put(getClassName(filter, clazz), clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(SmartListener.class);
+        annotations = reflections.getTypesAnnotatedWith(WebListener.class);
         for (Class<?> clazz : annotations) {
             try {
                 Object listenerObj = clazz.newInstance();
-                if (WebContextListener.class.isInstance(listenerObj)) {
-                    LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
+                if (ServletContextListener.class.isInstance(listenerObj)) {
+                    LOGGER.log(Level.INFO, "Mapping ServletContextListener class [" + clazz + "]");
                     setBeanFields(clazz);
                     setBeanMethods(clazz);
-                    contextListeners.add((WebContextListener) listenerObj);
+                    contextListeners.add((ServletContextListener) listenerObj);
 
-                } else if (WebSessionListener.class.isInstance(listenerObj)) {
-                    LOGGER.log(Level.INFO, "Mapping SmartListener class [" + clazz + "]");
+                } else if (HttpSessionListener.class.isInstance(listenerObj)) {
+                    LOGGER.log(Level.INFO, "Mapping HttpSessionListener class [" + clazz + "]");
                     setBeanFields(clazz);
                     setBeanMethods(clazz);
-                    sessionListeners.add((WebSessionListener) listenerObj);
+                    sessionListeners.add((HttpSessionListener) listenerObj);
+
+                } else if (ServletRequestListener.class.isInstance(listenerObj)) {
+                    LOGGER.log(Level.INFO, "Mapping ServletRequestListener class [" + clazz + "]");
+                    setBeanFields(clazz);
+                    setBeanMethods(clazz);
+                    requestListeners.add((ServletRequestListener) listenerObj);
 
                 } else {
-                    throw new RuntimeException("Mapped SmartListener class [" + clazz + "] must implement " +
-                            "com.jsmart5.framework.listener.WebContextListener or " +
-                            "com.jsmart5.framework.listener.WebSessionListener interface");
+                    throw new RuntimeException("Mapped com.jsmart5.framework.annotation.WebListener class [" + clazz + "] " +
+                            "must implement javax.servlet.ServletContextListener, " +
+                            "javax.servlet.http.HttpSessionListener or javax.servlet.ServletRequestListener interface");
                 }
             } catch (Exception ex) {
-                LOGGER.log(Level.INFO, "SmartListener class [" + clazz.getName() + "] could not be instantiated!");
+                LOGGER.log(Level.INFO, "com.jsmart5.framework.annotation.WebListener class [" + clazz.getName() + "] " +
+                        "could not be instantiated!");
             }
         }
 
@@ -1054,17 +1076,17 @@ public enum BeanHandler {
         if (asyncBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");
         }
-        if (smartServlets.isEmpty()) {
-            LOGGER.log(Level.INFO, "SmartServlets were not mapped!");
+        if (webServlets.isEmpty()) {
+            LOGGER.log(Level.INFO, "WebServlets were not mapped!");
         }
-        if (smartFilters.isEmpty()) {
-            LOGGER.log(Level.INFO, "SmartFilters were not mapped!");
+        if (webFilters.isEmpty()) {
+            LOGGER.log(Level.INFO, "WebFilters were not mapped!");
         }
         if (requestPaths.isEmpty()) {
             LOGGER.log(Level.INFO, "RequestPaths were not mapped!");
         }
-        if (contextListeners.isEmpty() && sessionListeners.isEmpty()) {
-            LOGGER.log(Level.INFO, "SmartListeners were not mapped!");
+        if (contextListeners.isEmpty() && sessionListeners.isEmpty() && requestListeners.isEmpty()) {
+            LOGGER.log(Level.INFO, "WebListeners were not mapped!");
         }
     }
 
@@ -1091,7 +1113,6 @@ public enum BeanHandler {
     }
 
     private void initForwardPaths(ServletContext servletContext) {
-        forwardPaths = new HashMap<String, String>();
         lookupInResourcePath(servletContext, PATH_SEPARATOR);
         overrideForwardPaths();
     }

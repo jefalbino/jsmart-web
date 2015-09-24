@@ -18,13 +18,6 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-
 import com.jsmart5.framework.exception.ConstraintTagException;
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
@@ -36,7 +29,14 @@ import com.jsmart5.framework.tag.html.Li;
 import com.jsmart5.framework.tag.html.Ol;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
-import static com.jsmart5.framework.tag.js.JsConstants.*;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.jsmart5.framework.tag.js.JsConstants.JSMART_CAROUSEL;
 
 public final class CarouselTagHandler extends TagHandler {
 

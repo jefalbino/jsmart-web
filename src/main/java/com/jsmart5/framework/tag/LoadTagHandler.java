@@ -18,18 +18,17 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Output;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import java.io.IOException;
 
 public final class LoadTagHandler extends TagHandler {
 

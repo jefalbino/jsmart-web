@@ -18,21 +18,19 @@
 
 package com.jsmart5.framework.tag;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspTag;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Type;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public final class FormatTagHandler extends TagHandler {
 	

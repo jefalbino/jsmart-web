@@ -18,9 +18,8 @@
 
 package com.jsmart5.framework.exception;
 
-import java.text.MessageFormat;
-
 import javax.servlet.jsp.JspException;
+import java.text.MessageFormat;
 
 public class ConstraintTagException extends JspException {
 

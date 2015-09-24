@@ -18,30 +18,33 @@
 
 package com.jsmart5.framework.manager;
 
-import java.io.IOException;
-
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.jsmart5.framework.config.Constants;
-import com.jsmart5.framework.listener.WebContextListener;
 import com.jsmart5.framework.listener.WebAsyncListener;
 import com.jsmart5.framework.listener.WebAsyncListener.Reason;
 import com.jsmart5.framework.util.WebUtils;
 
-import static com.jsmart5.framework.manager.BeanHandler.*;
+import javax.servlet.AsyncContext;
+import javax.servlet.AsyncEvent;
+import javax.servlet.AsyncListener;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public final class WebServlet extends HttpServlet {
+import static com.jsmart5.framework.manager.BeanHandler.HANDLER;
+
+public final class ServletControl extends HttpServlet {
 
     private static final long serialVersionUID = -4462762772195421585L;
 
-    private static final Logger LOGGER = Logger.getLogger(WebServlet.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(ServletControl.class.getPackage().getName());
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
@@ -49,17 +52,17 @@ public final class WebServlet extends HttpServlet {
         WebContext.setServlet(this);
 
         // Call registered WebContextListeners
-        for (WebContextListener contextListener : HANDLER.contextListeners) {
+        for (ServletContextListener contextListener : HANDLER.contextListeners) {
             HANDLER.executeInjection(contextListener);
-            contextListener.contextInitialized(servletConfig.getServletContext());
+            contextListener.contextInitialized(new ServletContextEvent(servletConfig.getServletContext()));
         }
     }
 
     @Override
     public void destroy() {
         // Call registered WebContextListeners
-        for (WebContextListener contextListener : HANDLER.contextListeners) {
-            contextListener.contextDestroyed(getServletContext());
+        for (ServletContextListener contextListener : HANDLER.contextListeners) {
+            contextListener.contextDestroyed(new ServletContextEvent(getServletContext()));
         }
         super.destroy();
     }

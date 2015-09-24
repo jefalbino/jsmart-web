@@ -18,14 +18,17 @@
 
 package com.jsmart5.framework.manager;
 
-import java.io.*;
-import java.util.Iterator;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.gson.Gson;
+import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
+import com.jsmart5.framework.config.HtmlCompress;
+import com.jsmart5.framework.json.Headers;
+import com.jsmart5.framework.json.Resources;
+import com.jsmart5.framework.tag.html.DocScript;
+import com.jsmart5.framework.tag.html.Head;
+import com.jsmart5.framework.tag.html.Script;
+import org.apache.commons.io.IOUtils;
+import org.reflections.vfs.Vfs;
+import org.reflections.vfs.Vfs.Dir;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -40,26 +43,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.jsmart5.framework.config.Constants;
-import org.apache.commons.io.IOUtils;
-import org.reflections.vfs.Vfs;
-import org.reflections.vfs.Vfs.Dir;
+import static com.jsmart5.framework.config.Config.CONFIG;
+import static com.jsmart5.framework.config.Constants.FILTER_HEADERS;
+import static com.jsmart5.framework.config.Constants.FILTER_RESOURCES;
+import static com.jsmart5.framework.config.Constants.INDEX_JSP;
+import static com.jsmart5.framework.config.Constants.LIB_FILE_PATH;
+import static com.jsmart5.framework.config.Constants.LIB_JAR_FILE_PATTERN;
+import static com.jsmart5.framework.config.Constants.PATH_SEPARATOR;
+import static com.jsmart5.framework.config.Constants.REQUEST_PAGE_DOC_SCRIPT_ATTR;
+import static com.jsmart5.framework.config.Constants.REQUEST_PAGE_SCRIPT_ATTR;
+import static com.jsmart5.framework.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
+import static com.jsmart5.framework.config.Constants.SESSION_RESET_ATTR;
+import static com.jsmart5.framework.manager.BeanHandler.HANDLER;
 
-import com.google.gson.Gson;
-import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
-import com.jsmart5.framework.config.HtmlCompress;
-import com.jsmart5.framework.json.Headers;
-import com.jsmart5.framework.json.Resources;
-import com.jsmart5.framework.tag.html.Head;
-import com.jsmart5.framework.tag.html.DocScript;
-import com.jsmart5.framework.tag.html.Script;
-
-import static com.jsmart5.framework.config.Config.*;
-import static com.jsmart5.framework.config.Constants.*;
-import static com.jsmart5.framework.manager.BeanHandler.*;
-
-public final class WebFilter implements Filter {
+public final class FilterControl implements Filter {
 
 	public static final String ENCODING = "UTF-8";
 
@@ -67,7 +81,7 @@ public final class WebFilter implements Filter {
 
 	private static final Gson GSON = new Gson();
 
-	private static final Logger LOGGER = Logger.getLogger(WebFilter.class.getPackage().getName());
+	private static final Logger LOGGER = Logger.getLogger(FilterControl.class.getPackage().getName());
 
 	private static final Pattern HTML_PATTERN = Pattern.compile("(<html.*?>)");
 
@@ -283,7 +297,7 @@ public final class WebFilter implements Filter {
 
 	@SuppressWarnings("resource")
 	private String convertResourceToString(String resource) {
-		InputStream is = WebFilter.class.getClassLoader().getResourceAsStream(resource);
+		InputStream is = FilterControl.class.getClassLoader().getResourceAsStream(resource);
 		Scanner scanner = new Scanner(is).useDelimiter("\\A");
 		return scanner.hasNext() ? scanner.next() : "";
 	}
