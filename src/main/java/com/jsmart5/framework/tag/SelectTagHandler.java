@@ -44,8 +44,6 @@ public final class SelectTagHandler extends TagHandler {
 
 	private boolean multiple;
 
-	private boolean disabled;
-
 	private Integer tabIndex;
 	
 	private String label;
@@ -162,7 +160,7 @@ public final class SelectTagHandler extends TagHandler {
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("name", name)
 			 .addAttribute("tabindex", tabIndex)
-			 .addAttribute("disabled", disabled ? "disabled" : null)
+			 .addAttribute("disabled", isDisabled() ? "disabled" : null)
 			 .addAttribute("multiple", multiple ? "multiple" : null);
 		
 		if (Size.SMALL.equalsIgnoreCase(size)) {
@@ -276,10 +274,6 @@ public final class SelectTagHandler extends TagHandler {
 
 	public void setMultiple(boolean multiple) {
 		this.multiple = multiple;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	public void setTabIndex(Integer tabIndex) {

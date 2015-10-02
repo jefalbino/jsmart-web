@@ -76,8 +76,6 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     private static final String J_TAG_INIT = "j0";
 
-    protected static final int DEFAULT_VALUE = -1;
-
     protected static final String J_TAG = J_TAG_INIT + "001_";
 
     protected static final String J_SBMT = J_TAG_INIT + "002_";
@@ -138,6 +136,8 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     public String styleClass;
 
+    public boolean disabled;
+
     public String onClick;
 
     public String onDblClick;
@@ -167,11 +167,11 @@ public abstract class TagHandler extends SimpleTagSupport {
     public String onSelect;
 
     public TagHandler() {
-        ajaxTags = new ArrayList<AjaxTagHandler>(2);
-        iconTags = new ArrayList<IconTagHandler>(2);
-        bindTags = new ArrayList<BindTagHandler>(2);
-        params = new LinkedHashMap<String, Object>(3);
-        args = new LinkedHashMap<Object, String>(3);
+        ajaxTags = new ArrayList<>(2);
+        iconTags = new ArrayList<>(2);
+        bindTags = new ArrayList<>(2);
+        params = new LinkedHashMap<>(3);
+        args = new LinkedHashMap<>(3);
     }
 
     protected void clearTagParameters() {
@@ -340,6 +340,14 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     public void setStyleClass(String styleClass) {
         this.styleClass = styleClass;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
     }
 
     protected void setEvents(TagHandler tag) {

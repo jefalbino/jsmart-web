@@ -35,8 +35,6 @@ public final class OptionTagHandler extends TagHandler {
 
 	private Object value;
 
-	private boolean disabled;
-
 	@Override
 	public boolean beforeTag() throws JspException, IOException {
 		JspTag parent = getParent();
@@ -60,7 +58,7 @@ public final class OptionTagHandler extends TagHandler {
 		option.addAttribute("id", id)
 			.addAttribute("style", getTagValue(style))
 			.addAttribute("class", getTagValue(styleClass))
-			.addAttribute("disabled", disabled ? "disabled" : null)
+			.addAttribute("disabled", isDisabled() ? "disabled" : null)
                 .addText(getTagValue(label));
 
 		Object object = getTagValue(value);
@@ -100,10 +98,6 @@ public final class OptionTagHandler extends TagHandler {
 
 	public void setValue(Object value) {
 		this.value = value;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 }

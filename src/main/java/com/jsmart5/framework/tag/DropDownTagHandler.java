@@ -37,8 +37,6 @@ public final class DropDownTagHandler extends TagHandler {
 	
 	private boolean navbar;
 	
-	private boolean disabled;
-	
 	private DropMenuTagHandler dropMenu;
 
 	@Override
@@ -63,6 +61,8 @@ public final class DropDownTagHandler extends TagHandler {
 		} else {
 			dropDown = new Div();
 		}
+
+        boolean disabled = isDisabled();
 
 		dropDown.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.DROPDOWN)
@@ -125,10 +125,6 @@ public final class DropDownTagHandler extends TagHandler {
 
 	public void setNavbar(boolean navbar) {
 		this.navbar = navbar;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 }

@@ -71,8 +71,6 @@ public final class DateTagHandler extends TagHandler {
 	private String leftAddOn;
 	
 	private String rightAddOn;
-	
-	private boolean disabled;
 
 	private List<TagHandler> childAddOns;
 	
@@ -181,7 +179,7 @@ public final class DateTagHandler extends TagHandler {
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
-			 .addAttribute("disabled", disabled ? "disabled" : null)
+			 .addAttribute("disabled", isDisabled() ? "disabled" : null)
 			 .addAttribute("placeholder", getTagValue(placeholder))
 			 .addAttribute("datatype", Type.TEXT.name().toLowerCase())
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
@@ -354,10 +352,6 @@ public final class DateTagHandler extends TagHandler {
 
 	public void setRightAddOn(String rightAddOn) {
 		this.rightAddOn = rightAddOn;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 }

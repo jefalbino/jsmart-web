@@ -73,7 +73,7 @@ public final class HeaderTagHandler extends TagHandler {
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
-		TagHandler parent = (TagHandler) getParent();
+		JspTag parent = getParent();
 
 		JspFragment body = getJspBody();
 		if (body != null) {
@@ -135,8 +135,9 @@ public final class HeaderTagHandler extends TagHandler {
 		}
 		
 		if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
-			appendAjax(parent.getId());
-			appendBind(parent.getId());
+            String tagId = ((TagHandler) parent).getId();
+			appendAjax(tagId);
+			appendBind(tagId);
 		} else {
 			appendAjax(id);
 			appendBind(id);

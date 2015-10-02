@@ -55,7 +55,7 @@ public final class FooterTagHandler extends TagHandler {
 	@Override
 	public Tag executeTag() throws JspException, IOException {
 
-		TagHandler parent = (TagHandler) getParent();
+        JspTag parent = getParent();
 
 		StringWriter sw = new StringWriter();
 		JspFragment body = getJspBody();
@@ -82,8 +82,9 @@ public final class FooterTagHandler extends TagHandler {
                 .addText(sw.toString());
 		
 		if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
-			appendAjax(parent.getId());
-			appendBind(parent.getId());
+            String tagId = ((TagHandler) parent).getId();
+			appendAjax(tagId);
+			appendBind(tagId);
 		} else {
 			appendAjax(id);
 			appendBind(id);

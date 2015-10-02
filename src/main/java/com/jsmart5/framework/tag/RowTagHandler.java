@@ -36,8 +36,6 @@ public final class RowTagHandler extends TagHandler {
 	
 	private String look;
 
-	private boolean disabled;
-
 	private boolean selectable;
 
 	private Integer selectIndex;
@@ -89,7 +87,7 @@ public final class RowTagHandler extends TagHandler {
 
 		tag.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
-			.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
+			.addAttribute("class", isDisabled() ? Bootstrap.DISABLED : null)
 			.addAttribute("list-index", selectIndex)
 			.addAttribute("scroll-index", scrollIndex);
 		
@@ -141,10 +139,6 @@ public final class RowTagHandler extends TagHandler {
 
 	public void setLook(String look) {
 		this.look = look;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 }

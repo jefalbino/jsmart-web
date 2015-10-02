@@ -91,8 +91,6 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     private String rightAddOn;
 
-    private boolean disabled;
-
     private String update;
 
     private String beforeSend;
@@ -220,7 +218,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
                 .addAttribute("tabindex", tabIndex)
                 .addAttribute("maxlength", length)
                 .addAttribute("readonly", readOnly ? readOnly : null)
-                .addAttribute("disabled", disabled ? "disabled" : null)
+                .addAttribute("disabled", isDisabled() ? "disabled" : null)
                 .addAttribute("placeholder", getTagValue(placeholder))
                 .addAttribute("datatype", Type.TEXT.name().toLowerCase())
                 .addAttribute("autofocus", autoFocus ? autoFocus : null)
@@ -541,10 +539,6 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
     public void setRightAddOn(String rightAddOn) {
         this.rightAddOn = rightAddOn;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 
     public void setUpdate(String update) {

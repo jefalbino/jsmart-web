@@ -41,8 +41,6 @@ public final class CheckboxTagHandler extends TagHandler {
 
 	private String label;
 
-	private boolean disabled;
-
 	private Integer tabIndex;
 	
 	private String update;
@@ -72,6 +70,7 @@ public final class CheckboxTagHandler extends TagHandler {
 		setRandomId("checkbox");
 
         String name = getTagName(J_TAG, value);
+        boolean disabled = isDisabled();
 
 		Input input = new Input();
 		input.addAttribute("type", "checkbox")
@@ -162,10 +161,6 @@ public final class CheckboxTagHandler extends TagHandler {
 
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	public void setTabIndex(Integer tabIndex) {

@@ -52,8 +52,6 @@ public final class ReCaptchaTagHandler extends TagHandler {
 	private Integer tabIndex;
 
 	private boolean autoFocus;
-	
-	private boolean disabled;
 
 	private String placeholder;
 
@@ -181,6 +179,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		formGroup.addTag(inputGroup);
 
         String name = getTagName(J_CAPTCHA, fakeTagName(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME));
+        boolean disabled = isDisabled();
 
 		Input input = new Input();
 		input.addAttribute("name", name)
@@ -212,12 +211,12 @@ public final class ReCaptchaTagHandler extends TagHandler {
 
 		inputGroup.addTag(input);
 
-		inputGroup.addTag(getAddOnButton("glyphicon-refresh", "Recaptcha.reload()", null));
+		inputGroup.addTag(getAddOnButton("glyphicon-refresh", "Recaptcha.reload()", null, disabled));
 		if (audioLabel != null) {
-			inputGroup.addTag(getAddOnButton("glyphicon-headphones", "Recaptcha.switch_type('audio')", "recaptcha_only_if_image"));
-			inputGroup.addTag(getAddOnButton("glyphicon-eye-open", "Recaptcha.switch_type('image')", "recaptcha_only_if_audio"));
+			inputGroup.addTag(getAddOnButton("glyphicon-headphones", "Recaptcha.switch_type('audio')", "recaptcha_only_if_image", disabled));
+			inputGroup.addTag(getAddOnButton("glyphicon-eye-open", "Recaptcha.switch_type('image')", "recaptcha_only_if_audio", disabled));
 		}
-		inputGroup.addTag(getAddOnButton("glyphicon-info-sign", "Recaptcha.showhelp()", null));
+		inputGroup.addTag(getAddOnButton("glyphicon-info-sign", "Recaptcha.showhelp()", null, disabled));
 
 		appendAjax(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME);
 		appendBind(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME);
@@ -308,7 +307,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
 		return formGroup;
 	}
 
-	private A getAddOnButton(final String icon, final String script, final String style) throws JspException, IOException {
+	private A getAddOnButton(final String icon, final String script, final String style, final boolean disabled) throws JspException, IOException {
 		A a = new A();
 		a.addAttribute("class", Bootstrap.BUTTON)
 			.addAttribute("class", Bootstrap.BUTTON_DEFAULT)
@@ -345,10 +344,6 @@ public final class ReCaptchaTagHandler extends TagHandler {
 
 	public void setAutoFocus(boolean autoFocus) {
 		this.autoFocus = autoFocus;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	public void setPlaceholder(String placeholder) {

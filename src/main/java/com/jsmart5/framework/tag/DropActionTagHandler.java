@@ -33,8 +33,6 @@ public class DropActionTagHandler extends TagHandler {
 	private boolean divider;
 
 	private String label;
-	
-	private boolean disabled;
 
     private String outcome;
 
@@ -100,14 +98,6 @@ public class DropActionTagHandler extends TagHandler {
 
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	boolean isDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
     String getOutcome() {

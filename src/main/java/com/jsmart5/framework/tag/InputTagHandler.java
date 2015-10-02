@@ -69,8 +69,6 @@ public final class InputTagHandler extends TagHandler {
 
 	private Integer stepValue;
 
-	private boolean disabled;
-
 	private List<TagHandler> childAddOns;
 
     public InputTagHandler() {
@@ -185,7 +183,7 @@ public final class InputTagHandler extends TagHandler {
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("maxlength", length)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
-			 .addAttribute("disabled", disabled ? "disabled" : null)
+			 .addAttribute("disabled", isDisabled() ? "disabled" : null)
 			 .addAttribute("placeholder", getTagValue(placeholder))
 			 .addAttribute("datatype", type != null ? type : Type.TEXT.name().toLowerCase())
 			 .addAttribute("pattern", pattern)
@@ -334,10 +332,6 @@ public final class InputTagHandler extends TagHandler {
 
 	public void setStepValue(Integer stepValue) {
 		this.stepValue = stepValue;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 }

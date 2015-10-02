@@ -36,8 +36,6 @@ public final class TabPaneTagHandler extends TagHandler {
 
 	private String value;
 
-	private boolean disabled;
-
 	private String tabStyle;
 
 	private String tabClass;
@@ -121,14 +119,6 @@ public final class TabPaneTagHandler extends TagHandler {
 
 	public void setTabClass(String tabClass) {
 		this.tabClass = tabClass;
-	}
-
-	boolean isDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	boolean hasDivider() {

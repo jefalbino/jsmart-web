@@ -71,8 +71,6 @@ public final class LinkTagHandler extends TagHandler {
 	private Integer tabIndex;
 	
 	private String size;
-	
-	private boolean disabled;
 
 	private DropMenuTagHandler dropMenu;
 
@@ -120,6 +118,8 @@ public final class LinkTagHandler extends TagHandler {
 				linkGroup.addAttribute("class", Bootstrap.DROPUP);
 			}
 		}
+
+        boolean disabled = isDisabled();
 		
 		A link = new A();
 		link.addAttribute("style", getTagValue(style))
@@ -373,10 +373,6 @@ public final class LinkTagHandler extends TagHandler {
 
 	public void setTabIndex(Integer tabIndex) {
 		this.tabIndex = tabIndex;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	public void setSize(String size) {

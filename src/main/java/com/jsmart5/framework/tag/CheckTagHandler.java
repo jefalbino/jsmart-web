@@ -39,8 +39,6 @@ public final class CheckTagHandler extends TagHandler {
 	private Object value;
 
 	private String label;
-	
-	private boolean disabled;
 
 	private String type;
 
@@ -75,6 +73,8 @@ public final class CheckTagHandler extends TagHandler {
 
 		Label lb = new Label();
 		lb.addAttribute("style", getTagValue(style));
+
+        boolean disabled = isDisabled();
 		
 		if (inline) {
 			lb.addAttribute("class", CHECKBOX.equals(type) ? Bootstrap.CHECKBOX_INLINE : Bootstrap.RADION_INLINE);
@@ -167,10 +167,6 @@ public final class CheckTagHandler extends TagHandler {
 
 	public void setValue(Object value) {
 		this.value = value;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 }

@@ -45,8 +45,6 @@ public final class FormTagHandler extends TagHandler {
 	
 	private String enctype;
 	
-	private boolean disabled;
-	
 	private String position;
 	
 	private String size;
@@ -97,7 +95,7 @@ public final class FormTagHandler extends TagHandler {
 		form.addAttribute("class", getTagValue(styleClass));
 
 		FieldSet fieldSet = null;
-		if (disabled) {
+		if (isDisabled()) {
 			fieldSet = new FieldSet();
 			fieldSet.addAttribute("disabled", "disabled");
 			form.addTag(fieldSet);
@@ -136,10 +134,6 @@ public final class FormTagHandler extends TagHandler {
 
 	public void setEnctype(String enctype) {
 		this.enctype = enctype;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	public void setPosition(String position) {

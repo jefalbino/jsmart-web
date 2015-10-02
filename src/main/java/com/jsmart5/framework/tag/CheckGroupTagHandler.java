@@ -59,8 +59,6 @@ public final class CheckGroupTagHandler extends TagHandler {
 
     private String onComplete;
 
-    private boolean disabled;
-
     protected final List<CheckTagHandler> checks;
 
     public CheckGroupTagHandler() {
@@ -213,10 +211,6 @@ public final class CheckGroupTagHandler extends TagHandler {
 
     public void setInline(boolean inline) {
         this.inline = inline;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 
     public void setUpdate(String update) {

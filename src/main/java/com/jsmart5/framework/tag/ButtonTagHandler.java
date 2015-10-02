@@ -73,8 +73,6 @@ public final class ButtonTagHandler extends TagHandler {
 
 	private boolean reset;
 
-	private boolean disabled;
-
 	private DropMenuTagHandler dropMenu;
 
 	@Override
@@ -155,6 +153,8 @@ public final class ButtonTagHandler extends TagHandler {
 				buttonGroup.addAttribute("class", Bootstrap.DROPUP);
 			}
 		}
+
+        boolean disabled = isDisabled();
 
 		Button button = new Button();
 		button.addAttribute("style", getTagValue(style))
@@ -411,10 +411,6 @@ public final class ButtonTagHandler extends TagHandler {
 
 	public void setTabIndex(Integer tabIndex) {
 		this.tabIndex = tabIndex;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	public void setReset(boolean reset) {

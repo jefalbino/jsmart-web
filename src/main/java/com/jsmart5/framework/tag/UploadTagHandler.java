@@ -46,8 +46,6 @@ public final class UploadTagHandler extends TagHandler {
 
 	private Integer tabIndex;
 	
-	private boolean disabled;
-	
 	private String leftAddOn;
 	
 	private String rightAddOn;
@@ -159,7 +157,7 @@ public final class UploadTagHandler extends TagHandler {
 			 .addAttribute("class", Bootstrap.FORM_CONTROL)
 			 .addAttribute("tabindex", tabIndex)
 			 .addAttribute("readonly", readOnly ? readOnly : null)
-			 .addAttribute("disabled", disabled ? "disabled" : null)
+			 .addAttribute("disabled", isDisabled() ? "disabled" : null)
 			 .addAttribute("placeholder", getTagValue(placeholder))
 			 .addAttribute("datatype", Type.FILE.name().toLowerCase())
 			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
@@ -254,10 +252,6 @@ public final class UploadTagHandler extends TagHandler {
 
 	public void setTabIndex(Integer tabIndex) {
 		this.tabIndex = tabIndex;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	public void setLeftAddOn(String leftAddOn) {
