@@ -318,6 +318,10 @@ var Jsmart5 = (function() {
 
 		hideEmpty: function(id) {
 		    doHideEmpty(id);
+		},
+
+		isEmpty: function(id) {
+		    return doIsEmpty(id);
 		}
 	};
 
@@ -2377,6 +2381,23 @@ var Jsmart5 = (function() {
             }
             return;
         }
+    }
+
+    function doIsEmpty(id) {
+        var el = $(getId(id));
+        if (!el || el.length == 0) {
+            return false;
+        }
+
+        if (el.is('ul')) {
+            return el.find('>li:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0
+                    && el.find('>a:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0
+        }
+
+        if (el.is('table')) {
+            return el.find('tbody').find('>tr:not([' + roleLoad + '],[' + roleTemplate + '],[' + roleEmpty + '])').length == 0;
+        }
+        return false;
     }
 
     function doClear(id) {

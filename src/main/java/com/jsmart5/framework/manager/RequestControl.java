@@ -18,6 +18,8 @@
 
 package com.jsmart5.framework.manager;
 
+import org.springframework.web.context.request.RequestContextListener;
+
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 
@@ -25,8 +27,12 @@ import static com.jsmart5.framework.manager.BeanHandler.HANDLER;
 
 public class RequestControl implements ServletRequestListener {
 
+    private RequestContextListener requestContextListener = new RequestContextListener();
+
     @Override
     public void requestInitialized(ServletRequestEvent event) {
+        requestContextListener.requestInitialized(event);
+
         for (ServletRequestListener requestListener : HANDLER.requestListeners) {
             HANDLER.executeInjection(requestListener);
             requestListener.requestInitialized(event);
@@ -35,6 +41,8 @@ public class RequestControl implements ServletRequestListener {
 
     @Override
     public void requestDestroyed(ServletRequestEvent event) {
+        requestContextListener.requestDestroyed(event);
+
         for (ServletRequestListener requestListener : HANDLER.requestListeners) {
             requestListener.requestDestroyed(event);
         }
