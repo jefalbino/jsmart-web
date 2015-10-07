@@ -833,7 +833,7 @@ public enum BeanHandler {
             }
 
             // Check mapped urls
-            com.jsmart5.framework.config.UrlPattern urlPattern = CONFIG.getContent().getUrlPattern(path);
+            UrlPattern urlPattern = CONFIG.getContent().getUrlPattern(path);
             if (urlPattern != null && urlPattern.getAccess() != null) {
 
                 for (String access : urlPattern.getAccess()) {
@@ -1122,7 +1122,7 @@ public enum BeanHandler {
     }
 
     private void overrideForwardPaths() {
-        for (com.jsmart5.framework.config.UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
 
             if (urlPattern.getJsp() != null && !urlPattern.getJsp().trim().isEmpty()) {
                 String prevJsp = forwardPaths.put(urlPattern.getUrl(), urlPattern.getJsp());
@@ -1242,10 +1242,12 @@ public enum BeanHandler {
     }
 
     private void initJspPageBeans(ServletContext context) {
-        for (com.jsmart5.framework.config.UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
-            JspPageBean jspPageBean = new JspPageBean();
-            readJspPageResource(context, urlPattern.getUrl(), jspPageBean);
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+
             String path = getCleanPath(urlPattern.getUrl());
+            JspPageBean jspPageBean = new JspPageBean();
+
+            readJspPageResource(context, path, jspPageBean);
             jspPageBeans.put(path, jspPageBean);
         }
     }
