@@ -288,10 +288,10 @@ public final class FilterControl implements Filter {
 		Headers jsonHeaders = GSON.fromJson(convertResourceToString(FILTER_HEADERS), Headers.class);
 
         for (String style : jsonHeaders.getStyles()) {
-            headerStyles.append(String.format(style, assetsUrl != null ? assetsUrl : ""));
+            headerStyles.append(String.format(style, assetsUrl != null ? assetsUrl : "/"));
         }
         for (String script : jsonHeaders.getScripts()) {
-            headerScripts.append(String.format(script, assetsUrl != null ? assetsUrl : ""));
+            headerScripts.append(String.format(script, assetsUrl != null ? assetsUrl : "/"));
         }
 	}
 

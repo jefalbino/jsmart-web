@@ -994,12 +994,8 @@ public enum BeanHandler {
             setBeanFields(clazz);
             setBeanMethods(clazz);
 
-            String path = asyncBean.asyncPath();
+            String path = getCleanPath(asyncBean.asyncPath());
 
-            Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
-            if (matcher.find()) {
-                path = matcher.group(1);
-            }
             path = matchUrlPattern(path);
             asyncBeans.put(path, clazz);
         }
@@ -1108,6 +1104,14 @@ public enum BeanHandler {
     public String getForwardPath(String path) {
         if (path != null) {
             return forwardPaths.get(path);
+        }
+        return path;
+    }
+
+    private String getCleanPath(String path) {
+        Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
+        if (matcher.find()) {
+            path = matcher.group(1);
         }
         return path;
     }
@@ -1241,7 +1245,8 @@ public enum BeanHandler {
         for (com.jsmart5.framework.config.UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
             JspPageBean jspPageBean = new JspPageBean();
             readJspPageResource(context, urlPattern.getUrl(), jspPageBean);
-            jspPageBeans.put(urlPattern.getUrl(), jspPageBean);
+            String path = getCleanPath(urlPattern.getUrl());
+            jspPageBeans.put(path, jspPageBean);
         }
     }
 
