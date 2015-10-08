@@ -20,6 +20,8 @@ package com.jsmart5.framework.tag.css;
 
 public final class JSmart5 {
 
+    public static final String ICON = "js5-icon";
+
 	public static final String VALIDATE_TEXT = "js5-validate-text";
 	
 	public static final String VALIDATE_GROUP = "js5-validate-group";
@@ -61,8 +63,8 @@ public final class JSmart5 {
     public static final String RADIO_GROUP_IN_COLUMN = "js5-radio-group-in-column";
 
     public static final String BUTTON_DROPDOWN_TOGGLE = "js5-btn-dropdown-toggle";
-	
-	private JSmart5() {
-		// DO NOTHING
-	}
+
+    private JSmart5() {
+        // DO NOTHING
+    }
 }

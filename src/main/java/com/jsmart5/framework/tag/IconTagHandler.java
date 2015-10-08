@@ -21,6 +21,7 @@ package com.jsmart5.framework.tag;
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
+import com.jsmart5.framework.tag.css.JSmart5;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Align;
@@ -97,6 +98,7 @@ public final class IconTagHandler extends TagHandler {
 		setRandomId("icon");
 
         Span span = new Span();
+        span.addAttribute("class", JSmart5.ICON);
 
         String iconName = (String) getTagValue(name);
         if (iconName != null && iconName.startsWith(Bootstrap.GLYPHICON)) {

@@ -1875,7 +1875,7 @@ var Jsmart5 = (function() {
 
 			spanLoad = el.find('span[' + roleLoadContent + ']');
 			if (spanLoad.length > 0) {
-				var leftIcon = el.find('span.glyphicon[side="left"]:first');
+				var leftIcon = el.find('span.js5-icon[side="left"]:first');
 				if (leftIcon && leftIcon.length > 0) {
 					leftIcon.hide();
 				}
@@ -1892,7 +1892,7 @@ var Jsmart5 = (function() {
 			var el = $(getId(map.id));
 			el.find('>span[' + roleLoadContent + ']').remove();
 
-            var leftIcon = el.find('span.glyphicon[side="left"]:first');
+            var leftIcon = el.find('span.js5-icon[side="left"]:first');
             if (leftIcon && leftIcon.length > 0) {
                 leftIcon.show();
             }

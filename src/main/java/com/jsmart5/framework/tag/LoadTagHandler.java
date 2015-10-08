@@ -21,6 +21,7 @@ package com.jsmart5.framework.tag;
 import com.jsmart5.framework.exception.InvalidAttributeException;
 import com.jsmart5.framework.manager.TagHandler;
 import com.jsmart5.framework.tag.css.Bootstrap;
+import com.jsmart5.framework.tag.css.JSmart5;
 import com.jsmart5.framework.tag.html.Span;
 import com.jsmart5.framework.tag.html.Tag;
 import com.jsmart5.framework.tag.type.Output;
@@ -95,6 +96,7 @@ public final class LoadTagHandler extends TagHandler {
 
 		Span span = new Span();
 		span.addAttribute("role-load-content", "")
+            .addAttribute("class", JSmart5.ICON)
 			.addAttribute("class", Bootstrap.GLYPHICON)
 			.addAttribute("class", Bootstrap.GLYPHICON_ANIMATE)
 			.addAttribute("aria-hidden", "true");

@@ -249,6 +249,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
 
         Span span = new Span();
         span.addAttribute("role-auto-load", id)
+            .addAttribute("class", JSmart5.ICON)
             .addAttribute("class", Bootstrap.GLYPHICON)
             .addAttribute("class", Bootstrap.GLYPHICON_REFRESH)
             .addAttribute("class", Bootstrap.GLYPHICON_ANIMATE)
