@@ -244,20 +244,20 @@ var JSmart5 = (function() {
             doAbortAjax(id);
         },
 
-        templateCreate: function(id, template) {
-            return doComponentCreate(id, template);
+        createRow: function(id, template) {
+            return doCreateRow(id, template);
         },
 
-        templateGet: function(id, key) {
-            return doComponentGet(id, key);
+        getRow: function(id, key) {
+            return doGetRow(id, key);
         },
 
-        templateGetAll: function(id, template) {
-            return doComponentGetAll(id, template);
+        getAllRows: function(id, template) {
+            return doGetAllRows(id, template);
         },
 
-        templateRemove: function(id, key) {
-            return doComponentRemove(id, key);
+        removeRow: function(id, key) {
+            return doRemoveRow(id, key);
         },
 
         clear: function(id) {
@@ -2103,7 +2103,7 @@ var JSmart5 = (function() {
      * EXPOSED FUNCTIONS
      ******************************************************/
 
-    function doComponentCreate(id, map, template) {
+    function doCreateRow(id, map, template) {
         var element = $(getId(id));
 
         if (element && element.length > 0) {
@@ -2134,7 +2134,7 @@ var JSmart5 = (function() {
         return null;
     }
 
-    function doComponentGet(id, key) {
+    function doGetRow(id, key) {
         var element = $(getId(id));
         if (element && element.length > 0 && key) {
 
@@ -2146,7 +2146,7 @@ var JSmart5 = (function() {
         return null;
     }
 
-    function doComponentGetAll(id, template) {
+    function doGetAllRows(id, template) {
         var items = [];
         var element = $(getId(id));
 
@@ -2164,7 +2164,7 @@ var JSmart5 = (function() {
         return items;
      }
 
-    function doComponentRemove(id, key) {
+    function doRemoveRow(id, key) {
         var element = $(getId(id));
         if (element && element.length > 0 && key) {
 
