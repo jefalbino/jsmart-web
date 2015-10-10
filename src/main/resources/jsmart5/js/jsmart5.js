@@ -2103,7 +2103,7 @@ var JSmart5 = (function() {
      * EXPOSED FUNCTIONS
      ******************************************************/
 
-    function doCreateRow(id, map, template) {
+    function doCreateRow(id, template) {
         var element = $(getId(id));
 
         if (element && element.length > 0) {
