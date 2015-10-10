@@ -46,7 +46,11 @@ public final class ModalTagHandler extends TagHandler {
 
 	private String onShow;
 
+    private String onShown;
+
 	private String onHide;
+
+    private String onHidden;
 
 	private HeaderTagHandler header;
 
@@ -129,9 +133,15 @@ public final class ModalTagHandler extends TagHandler {
 		if (onShow != null) {
 			appendDocScript(getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
 		}
+        if (onShown != null) {
+            appendDocScript(getBindFunction(id, "shown.bs.modal", new StringBuilder(onShown)));
+        }
 		if (onHide != null) {
 			appendDocScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
 		}
+        if (onHidden != null) {
+            appendDocScript(getBindFunction(id, "hidden.bs.modal", new StringBuilder(onHidden)));
+        }
 
 		Object openedVal = getTagValue(opened);
 		if (openedVal != null && Boolean.parseBoolean(openedVal.toString())) {
@@ -164,12 +174,20 @@ public final class ModalTagHandler extends TagHandler {
 		this.fade = fade;
 	}
 
-	public void setOnShow(String onShow) {
-		this.onShow = onShow;
-	}
+    public void setOnShow(String onShow) {
+        this.onShow = onShow;
+    }
 
-	public void setOnHide(String onHide) {
-		this.onHide = onHide;
-	}
+    public void setOnShown(String onShown) {
+        this.onShown = onShown;
+    }
+
+    public void setOnHide(String onHide) {
+        this.onHide = onHide;
+    }
+
+    public void setOnHidden(String onHidden) {
+        this.onHidden = onHidden;
+    }
 
 }

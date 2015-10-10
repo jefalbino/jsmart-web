@@ -59,8 +59,12 @@ public final class TabTagHandler extends TagHandler {
 	private boolean fade;
 	
 	private String onShow;
+
+    private String onShown;
 	
 	private String onHide;
+
+    private String onHidden;
 	
 	private String update;
 	
@@ -246,9 +250,15 @@ public final class TabTagHandler extends TagHandler {
 		if (onShow != null) {
 			appendDocScript(getBindFunction(id, "show.bs.tab", new StringBuilder(onShow)));
 		}
+        if (onShown != null) {
+            appendDocScript(getBindFunction(id, "shown.bs.tab", new StringBuilder(onShown)));
+        }
 		if (onHide != null) {
 			appendDocScript(getBindFunction(id, "hide.bs.tab", new StringBuilder(onHide)));
 		}
+        if (onHidden != null) {
+            appendDocScript(getBindFunction(id, "hidden.bs.tab", new StringBuilder(onHidden)));
+        }
 
 		return tab;
 	}
@@ -413,11 +423,19 @@ public final class TabTagHandler extends TagHandler {
 		this.onShow = onShow;
 	}
 
+    public void setOnShown(String onShown) {
+        this.onShown = onShown;
+    }
+
 	public void setOnHide(String onHide) {
 		this.onHide = onHide;
 	}
-	
-	public void setUpdate(String update) {
+
+    public void setOnHidden(String onHidden) {
+        this.onHidden = onHidden;
+    }
+
+    public void setUpdate(String update) {
 		this.update = update;
 	}
 

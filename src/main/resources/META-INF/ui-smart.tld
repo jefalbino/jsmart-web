@@ -1486,7 +1486,15 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>onShown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>onHide</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onHidden</name>
             <required>false</required>
         </attribute>
     </tag>
@@ -3396,7 +3404,15 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>onShown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>onHide</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onHidden</name>
             <required>false</required>
         </attribute>
         <attribute>
