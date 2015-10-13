@@ -85,7 +85,9 @@ public final class OutputTagHandler extends TagHandler {
 
 		Tag tag = null;
 
-		if (Output.LEGEND.equalsIgnoreCase(type)) {
+        if (Output.DIV.equalsIgnoreCase(type)) {
+            tag =  new Tag("div");
+        } else if (Output.LEGEND.equalsIgnoreCase(type)) {
 			tag =  new Tag("legend");
 		} else if (Output.STRONG.equalsIgnoreCase(type)) {
 			tag =  new Tag("strong");

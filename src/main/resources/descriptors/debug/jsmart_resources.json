@@ -1,8 +1,8 @@
 {
 	"resources": [
-		"jsmart5/bootstrap-3.3.2/css/*",
-		"jsmart5/bootstrap-3.3.2/fonts/*",
-		"jsmart5/bootstrap-3.3.2/js/*",
+		"jsmart5/bootstrap-3.3.5/css/*",
+		"jsmart5/bootstrap-3.3.5/fonts/*",
+		"jsmart5/bootstrap-3.3.5/js/*",
 		"jsmart5/bootstrap-datetime-4.7.14/css/*",
 		"jsmart5/bootstrap-datetime-4.7.14/js/*",
 		"jsmart5/momentjs-2.9.0/js/*",
