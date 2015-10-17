@@ -1902,12 +1902,18 @@ var JSmart5 = (function() {
     function doValidate(id) {
         var validated = true;
         if (id && id.length > 0) {
-            var validateElement = $(getId(id));
+
+            var element = $(getId(id));
+            element.find('em[vldt-ref]').remove();
+
+            var validateArray = element.find('*[vldt-req]');
+            if (!element.is('form') && element.attr('vldt-req').length > 0) {
+                validateArray = element;
+                $('em[vldt-ref="' + id + '"]').remove();
+            }
+
             var checkgroups = new Array();
-
-            validateElement.find('em[vldt-ref]').remove();
-
-            validateElement.find('*[vldt-req]').each(function(index) {
+            validateArray.each(function(index) {
 
                 var text = $(this).attr('vldt-text');
                 var look = 'has-' + $(this).attr('vldt-look');
@@ -2064,25 +2070,25 @@ var JSmart5 = (function() {
             }
 
             if (text && text.length > 0) {
-                element.closest('div[' + type + ']').after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
+                element.closest('div[' + type + ']').after($('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text));
             }
 
         } else if (type == 'checkbox') {
             element.closest('div.checkbox').addClass(look);
             if (text && text.length > 0) {
-                element.closest('div.checkbox').after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
+                element.closest('div.checkbox').after($('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text));
             }
 
         } else if (type == 'form-group' || type == 'input-group') {
             element.closest('div.' + type).addClass(look);
             if (text && text.length > 0) {
-                element.closest('div.' + type).after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
+                element.closest('div.' + type).after($('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text));
             }
 
         } else {
             element.addClass(look);
             if (text && text.length > 0) {
-                element.after($('<em vldt-ref=""></em>').addClass(textLook).text(text));
+                element.after($('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text));
             }
         }
     }
