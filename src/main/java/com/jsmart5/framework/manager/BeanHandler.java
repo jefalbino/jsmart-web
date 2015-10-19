@@ -19,9 +19,9 @@
 package com.jsmart5.framework.manager;
 
 import com.jsmart5.framework.annotation.AsyncBean;
-import com.jsmart5.framework.annotation.AuthenticateBean;
-import com.jsmart5.framework.annotation.AuthenticateField;
-import com.jsmart5.framework.annotation.AuthorizeAccess;
+import com.jsmart5.framework.annotation.AuthAccess;
+import com.jsmart5.framework.annotation.AuthBean;
+import com.jsmart5.framework.annotation.AuthField;
 import com.jsmart5.framework.annotation.ExecuteAccess;
 import com.jsmart5.framework.annotation.PostPreset;
 import com.jsmart5.framework.annotation.PostSubmit;
@@ -420,7 +420,7 @@ public enum BeanHandler {
         return webBean.name();
     }
 
-    private String getClassName(AuthenticateBean authBean, Class<?> authClass) {
+    private String getClassName(AuthBean authBean, Class<?> authClass) {
         if (authBean.name().trim().isEmpty()) {
             String beanName = authClass.getSimpleName();
             return getClassName(beanName);
@@ -459,7 +459,7 @@ public enum BeanHandler {
                         continue;
                     }
 
-                    AuthenticateBean ab = field.getType().getAnnotation(AuthenticateBean.class);
+                    AuthBean ab = field.getType().getAnnotation(AuthBean.class);
                     if (ab != null) {
                         field.setAccessible(true);
                         field.set(bean, instantiateAuthBean(getClassName(ab, field.getType()), session));
@@ -549,7 +549,7 @@ public enum BeanHandler {
                     if (bean.getClass().isAnnotationPresent(WebBean.class)) {
                         finalizeWebBean(bean, session);
 
-                    } else if (bean.getClass().isAnnotationPresent(AuthenticateBean.class)) {
+                    } else if (bean.getClass().isAnnotationPresent(AuthBean.class)) {
                         finalizeAuthBean(bean, session);
                     }
                 }
@@ -656,7 +656,7 @@ public enum BeanHandler {
                         continue;
                     }
 
-                    if (field.getType().isAnnotationPresent(AuthenticateBean.class)) {
+                    if (field.getType().isAnnotationPresent(AuthBean.class)) {
                         field.setAccessible(true);
                         field.set(bean, null);
                         continue;
@@ -738,7 +738,7 @@ public enum BeanHandler {
             LOGGER.log(Level.INFO, "Finalize injection on AuthenticationBean " + bean + " failure: " + ex.getMessage());
         }
 
-        AuthenticateBean authBean = bean.getClass().getAnnotation(AuthenticateBean.class);
+        AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
         session.removeAttribute(getClassName(authBean, bean.getClass()));
         bean = null;
     }
@@ -746,17 +746,17 @@ public enum BeanHandler {
     String checkAuthentication(String path) throws ServletException {
 
         if (authBeans.isEmpty() && !CONFIG.getContent().getSecureUrls().isEmpty()) {
-            throw new ServletException("Not found AuthenticationBean mapped in your system. Once your system has secure urls, please use @AuthenticateBean!");
+            throw new ServletException("Not found AuthenticationBean mapped in your system. Once your system has secure urls, please use @AuthBean!");
         }
 
         boolean authenticated = true;
-        AuthenticateBean authBean = null;
+        AuthBean authBean = null;
 
         HttpSession session = WebContext.getSession();
         synchronized (session) {
 
             for (String name : authBeans.keySet()) {
-                authBean = authBeans.get(name).getAnnotation(AuthenticateBean.class);
+                authBean = authBeans.get(name).getAnnotation(AuthBean.class);
                 Object bean = session.getAttribute(name);
 
                 if (bean != null) {
@@ -764,7 +764,7 @@ public enum BeanHandler {
 
                     for (Field field : getBeanFields(bean.getClass())) {
 
-                        if (field.isAnnotationPresent(AuthenticateField.class)) {
+                        if (field.isAnnotationPresent(AuthField.class)) {
                             try {
                                 foundField = true;
                                 field.setAccessible(true);
@@ -779,7 +779,7 @@ public enum BeanHandler {
                     }
 
                     if (!foundField) {
-                        throw new ServletException("None AuthenticateField found in AuthenticateBean!");
+                        throw new ServletException("None AuthField found in AuthBean!");
                     }
                 }
 
@@ -824,9 +824,9 @@ public enum BeanHandler {
 
             Collection<String> userAccess = getUserAuthorizationAccess();
 
-            AuthenticateBean authBean = null;
+            AuthBean authBean = null;
             for (String name : authBeans.keySet()) {
-                authBean = authBeans.get(name).getAnnotation(AuthenticateBean.class);
+                authBean = authBeans.get(name).getAnnotation(AuthBean.class);
 
                 // We must have only one authentication bean mapped
                 break;
@@ -865,7 +865,7 @@ public enum BeanHandler {
                     if (bean != null) {
                         for (Field field : getBeanFields(bean.getClass())) {
 
-                            if (field.isAnnotationPresent(AuthorizeAccess.class)) {
+                            if (field.isAnnotationPresent(AuthAccess.class)) {
                                 try {
                                     field.setAccessible(true);
                                     Object object = field.get(bean);
@@ -873,7 +873,7 @@ public enum BeanHandler {
                                         userAccess.addAll((Collection<String>) object);
                                     }
                                 } catch (Exception ex) {
-                                    LOGGER.log(Level.INFO, "AuthorizeAccess mapped on WebBean [" + bean + "] could not be cast to Collection<String>: " + ex.getMessage());
+                                    LOGGER.log(Level.INFO, "AuthAccess mapped on WebBean [" + bean + "] could not be cast to Collection<String>: " + ex.getMessage());
                                 }
                                 break;
                             }
@@ -941,14 +941,14 @@ public enum BeanHandler {
             webBeans.put(className, clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(AuthenticateBean.class);
+        annotations = reflections.getTypesAnnotatedWith(AuthBean.class);
         for (Class<?> clazz : annotations) {
-            AuthenticateBean authBean = clazz.getAnnotation(AuthenticateBean.class);
+            AuthBean authBean = clazz.getAnnotation(AuthBean.class);
             if (authBeans.isEmpty()) {
-                LOGGER.log(Level.INFO, "Mapping AuthenticateBean class: " + clazz);
+                LOGGER.log(Level.INFO, "Mapping AuthBean class: " + clazz);
 
                 if (!Serializable.class.isAssignableFrom(clazz)) {
-                    throw new RuntimeException("Mapped AuthenticateBean class [" + clazz + "] must implement " +
+                    throw new RuntimeException("Mapped AuthBean class [" + clazz + "] must implement " +
                             "java.io.Serializable interface");
                 }
 
@@ -958,7 +958,7 @@ public enum BeanHandler {
                 authBeans.put(className, clazz);
                 continue;
             } else {
-                LOGGER.log(Level.SEVERE, "Only one AuthenticateBean must be declared! Skipping remained ones.");
+                LOGGER.log(Level.SEVERE, "Only one AuthBean must be declared! Skipping remained ones.");
             }
         }
 
@@ -1006,8 +1006,8 @@ public enum BeanHandler {
             LOGGER.log(Level.INFO, "Mapping com.jsmart5.framework.annotation.WebServlet class: " + clazz);
 
             if (!HttpServlet.class.isAssignableFrom(clazz)) {
-                throw new RuntimeException("Mapped com.jsmart5.framework.annotation.WebServlet class [" + clazz + "] must extends " +
-                        "javax.servlet.http.HttpServlet class");
+                throw new RuntimeException("Mapped com.jsmart5.framework.annotation.WebServlet class " +
+                        "[" + clazz + "] must extends javax.servlet.http.HttpServlet class");
             }
 
             setBeanFields(clazz);
@@ -1067,7 +1067,7 @@ public enum BeanHandler {
             LOGGER.log(Level.INFO, "WebBeans were not mapped!");
         }
         if (authBeans.isEmpty()) {
-            LOGGER.log(Level.INFO, "AuthenticateBean was not mapped!");
+            LOGGER.log(Level.INFO, "AuthBean was not mapped!");
         }
         if (asyncBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");

@@ -22,17 +22,15 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.List;
 
 /**
- * The {@link AuthorizeAccess} annotation is used on a field attribute of type of {@link List}
- * of {@link String} elements to provide a list of access roles allowed by authenticated user.
+ * The {@link AuthField} annotation is used on a field attributes to indicate that
+ * those fields are used to check if the user is authenticated. 
  * <br>
- * This values are used to checked against the access roles mapped by each URL pattern 
- * on configuration file.
+ * The field must be a object.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface AuthorizeAccess {
+public @interface AuthField {
 
 }

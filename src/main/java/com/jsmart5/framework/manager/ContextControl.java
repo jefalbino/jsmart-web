@@ -70,9 +70,9 @@ public final class ContextControl implements ServletContextListener {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void contextInitialized(ServletContextEvent sce)  {
+	public void contextInitialized(ServletContextEvent event) {
 		try {
-			ServletContext servletContext = sce.getServletContext();
+			ServletContext servletContext = event.getServletContext();
 
 			CONFIG.init(servletContext);
 	        if (CONFIG.getContent() == null) {
@@ -251,9 +251,9 @@ public final class ContextControl implements ServletContextListener {
 	}
 
 	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-		HANDLER.destroy(sce.getServletContext());
-        CONTEXT_LOADER.closeWebApplicationContext(sce.getServletContext());
+	public void contextDestroyed(ServletContextEvent event) {
+		HANDLER.destroy(event.getServletContext());
+        CONTEXT_LOADER.closeWebApplicationContext(event.getServletContext());
 	}
 
 	private List<String> sortCustomFilters() {

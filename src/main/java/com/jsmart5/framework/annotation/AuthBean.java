@@ -18,19 +18,36 @@
 
 package com.jsmart5.framework.annotation;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
- * The {@link AuthenticateField} annotation is used on a field attributes to indicate that
- * those fields are used to check if the user is authenticated. 
+ * The {@link AuthBean} annotation is used on a class that contain a mechanism to
+ * authenticate the user and hold their values.
  * <br>
- * The field must be a object.
+ * The instance of class annotated with {@link AuthBean} is kept on session as
+ * long as session is valid.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface AuthenticateField {
+public @interface AuthBean {
+
+	/**
+	 * The name of the bean that can be mapped on JSP files.
+	 * <br>
+	 * Default value is the name of the class in camel case.
+	 */
+	String name() default "";
+
+	/**
+	 * The mapped path on configuration file to specify the login
+	 * path of the application case user is not authenticated.
+	 */
+	String loginPath();
+
+	/**
+	 * The mapped path on configuration file to specify the hone
+	 * path of the application case user is authenticated.
+	 */
+	String homePath();
 
 }
