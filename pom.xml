@@ -25,9 +25,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git@github.com:jefalbino/jsmartframework.git</connection>
-		<developerConnection>scm:git:git@github.com:jefalbino/jsmartframework.git</developerConnection>
-		<url>git@github.com:jefalbino/jsmartframework.git</url>
+		<connection>scm:git:git@github.com:jefalbino/jsmart-web.git</connection>
+		<developerConnection>scm:git:git@github.com:jefalbino/jsmart-web.git</developerConnection>
+		<url>git@github.com:jefalbino/jsmart-web.git</url>
 	</scm>
 
 	<dependencies>
