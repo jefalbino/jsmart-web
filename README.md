@@ -1,4 +1,4 @@
-jsmart5
+jsmart
 =======
 
-JSmart5 - Java framework for Web development
+JSmart Framework - Java framework for Web development

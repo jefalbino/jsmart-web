@@ -5,11 +5,11 @@
         version="2.0">
 
     <tlib-version>1.0</tlib-version>
-    <uri>http://jsmartframework.com/v2/jsp/taglib/jsmart5</uri>
+    <uri>http://jsmartframework.com/v2/jsp/taglib/jsmart</uri>
 
 	<tag>
 		<name>form</name>
-        <tag-class>com.jsmart5.framework.tag.FormTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.FormTagHandler</tag-class>
         <body-content>scriptless</body-content>
 		<attribute>
             <name>id</name>
@@ -47,7 +47,7 @@
 	
 	<tag>
         <name>bind</name>
-        <tag-class>com.jsmart5.framework.tag.BindTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.BindTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>event</name>
@@ -65,7 +65,7 @@
 
     <tag>
         <name>button</name>
-        <tag-class>com.jsmart5.framework.tag.ButtonTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ButtonTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -203,7 +203,7 @@
 
    	<tag>
         <name>dropdown</name>
-        <tag-class>com.jsmart5.framework.tag.DropDownTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.DropDownTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -289,7 +289,7 @@
 
     <tag>
         <name>dropmenu</name>
-        <tag-class>com.jsmart5.framework.tag.DropMenuTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.DropMenuTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -319,7 +319,7 @@
 
     <tag>
         <name>dropaction</name>
-        <tag-class>com.jsmart5.framework.tag.DropActionTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.DropActionTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -437,7 +437,7 @@
 
 	<tag>
         <name>buttongroup</name>
-        <tag-class>com.jsmart5.framework.tag.ButtonGroupTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ButtonGroupTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -459,7 +459,7 @@
 
     <tag>
         <name>link</name>
-        <tag-class>com.jsmart5.framework.tag.LinkTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.LinkTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -593,7 +593,7 @@
 
 	<tag>
         <name>ajax</name>
-        <tag-class>com.jsmart5.framework.tag.AjaxTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.AjaxTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>onForm</name>
@@ -635,7 +635,7 @@
 
     <tag>
         <name>ajaxattach</name>
-        <tag-class>com.jsmart5.framework.tag.AjaxAttachTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.AjaxAttachTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -653,7 +653,7 @@
 
 	<tag>
         <name>function</name>
-        <tag-class>com.jsmart5.framework.tag.FunctionTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.FunctionTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -695,7 +695,7 @@
     
     <tag>
         <name>icon</name>
-        <tag-class>com.jsmart5.framework.tag.IconTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.IconTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -781,7 +781,7 @@
     
     <tag>
         <name>badge</name>
-        <tag-class>com.jsmart5.framework.tag.BadgeTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.BadgeTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -803,7 +803,7 @@
 
     <tag>
         <name>image</name>
-        <tag-class>com.jsmart5.framework.tag.ImageTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ImageTagHandler</tag-class>
         <body-content>scriptless</body-content>'
         <attribute>
             <name>id</name>
@@ -909,7 +909,7 @@
     
     <tag>
         <name>label</name>
-        <tag-class>com.jsmart5.framework.tag.LabelTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.LabelTagHandler</tag-class>
         <body-content>scriptless</body-content>'
         <attribute>
             <name>id</name>
@@ -995,7 +995,7 @@
 
     <tag>
         <name>input</name>
-        <tag-class>com.jsmart5.framework.tag.InputTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.InputTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1141,7 +1141,7 @@
 
     <tag>
         <name>textarea</name>
-        <tag-class>com.jsmart5.framework.tag.TextAreaTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.TextAreaTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1255,7 +1255,7 @@
 
     <tag>
         <name>output</name>
-        <tag-class>com.jsmart5.framework.tag.OutputTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.OutputTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1361,7 +1361,7 @@
 
     <tag>
         <name>outputlist</name>
-        <tag-class>com.jsmart5.framework.tag.OutputListTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.OutputListTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>id</name>
@@ -1391,7 +1391,7 @@
 
     <tag>
         <name>format</name>
-        <tag-class>com.jsmart5.framework.tag.FormatTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.FormatTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>type</name>
@@ -1405,7 +1405,7 @@
 
     <tag>
         <name>text</name>
-        <tag-class>com.jsmart5.framework.tag.TextTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.TextTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>res</name>
@@ -1419,7 +1419,7 @@
 
     <tag>
         <name>param</name>
-        <tag-class>com.jsmart5.framework.tag.ParamTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ParamTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -1433,7 +1433,7 @@
 
     <tag>
         <name>arg</name>
-        <tag-class>com.jsmart5.framework.tag.ArgTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ArgTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -1451,7 +1451,7 @@
 
     <tag>
         <name>modal</name>
-        <tag-class>com.jsmart5.framework.tag.ModalTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ModalTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1501,7 +1501,7 @@
     
     <tag>
         <name>header</name>
-        <tag-class>com.jsmart5.framework.tag.HeaderTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.HeaderTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1527,7 +1527,7 @@
     
     <tag>
         <name>footer</name>
-        <tag-class>com.jsmart5.framework.tag.FooterTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.FooterTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1549,7 +1549,7 @@
     
     <tag>
         <name>accordion</name>
-        <tag-class>com.jsmart5.framework.tag.AccordionTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.AccordionTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1623,7 +1623,7 @@
 
     <tag>
         <name>panel</name>
-        <tag-class>com.jsmart5.framework.tag.PanelTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.PanelTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1701,7 +1701,7 @@
     
     <tag>
         <name>panelbody</name>
-        <tag-class>com.jsmart5.framework.tag.PanelBodyTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.PanelBodyTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1783,7 +1783,7 @@
 
     <tag>
         <name>table</name>
-        <tag-class>com.jsmart5.framework.tag.TableTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.TableTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1917,7 +1917,7 @@
 
     <tag>
         <name>column</name>
-        <tag-class>com.jsmart5.framework.tag.ColumnTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ColumnTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1947,7 +1947,7 @@
 
     <tag>
         <name>radiogroup</name>
-        <tag-class>com.jsmart5.framework.tag.RadioGroupTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.RadioGroupTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2069,7 +2069,7 @@
 
     <tag>
         <name>checkgroup</name>
-        <tag-class>com.jsmart5.framework.tag.CheckGroupTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.CheckGroupTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2191,7 +2191,7 @@
 
     <tag>
         <name>check</name>
-        <tag-class>com.jsmart5.framework.tag.CheckTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.CheckTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>value</name>
@@ -2209,7 +2209,7 @@
 
     <tag>
         <name>checklist</name>
-        <tag-class>com.jsmart5.framework.tag.CheckListTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.CheckListTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>values</name>
@@ -2219,7 +2219,7 @@
 
     <tag>
         <name>checkbox</name>
-        <tag-class>com.jsmart5.framework.tag.CheckboxTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.CheckboxTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2337,7 +2337,7 @@
 
     <tag>
         <name>select</name>
-        <tag-class>com.jsmart5.framework.tag.SelectTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.SelectTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2471,7 +2471,7 @@
 
     <tag>
         <name>option</name>
-        <tag-class>com.jsmart5.framework.tag.OptionTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.OptionTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>id</name>
@@ -2501,7 +2501,7 @@
 
     <tag>
         <name>options</name>
-        <tag-class>com.jsmart5.framework.tag.OptionsTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.OptionsTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>values</name>
@@ -2511,7 +2511,7 @@
 
     <tag>
         <name>list</name>
-        <tag-class>com.jsmart5.framework.tag.ListTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ListTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2629,7 +2629,7 @@
 
     <tag>
         <name>row</name>
-        <tag-class>com.jsmart5.framework.tag.RowTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.RowTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2707,7 +2707,7 @@
 
     <tag>
         <name>empty</name>
-        <tag-class>com.jsmart5.framework.tag.EmptyTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.EmptyTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2725,7 +2725,7 @@
 
     <tag>
         <name>upload</name>
-        <tag-class>com.jsmart5.framework.tag.UploadTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.UploadTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2843,7 +2843,7 @@
 
     <tag>
         <name>alert</name>
-        <tag-class>com.jsmart5.framework.tag.AlertTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.AlertTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2869,7 +2869,7 @@
     
     <tag>
         <name>tooltip</name>
-        <tag-class>com.jsmart5.framework.tag.TooltipTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.TooltipTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2895,7 +2895,7 @@
 
     <tag>
         <name>popover</name>
-        <tag-class>com.jsmart5.framework.tag.PopOverTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.PopOverTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -2925,7 +2925,7 @@
 
     <tag>
         <name>load</name>
-        <tag-class>com.jsmart5.framework.tag.LoadTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.LoadTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>id</name>
@@ -2955,13 +2955,13 @@
 
     <tag>
         <name>authorize</name>
-        <tag-class>com.jsmart5.framework.tag.AuthorizeTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.AuthorizeTagHandler</tag-class>
         <body-content>scriptless</body-content>
     </tag>
 
     <tag>
         <name>when</name>
-        <tag-class>com.jsmart5.framework.tag.WhenTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.WhenTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>access</name>
@@ -2971,13 +2971,13 @@
 
     <tag>
         <name>otherwise</name>
-        <tag-class>com.jsmart5.framework.tag.OtherwiseTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.OtherwiseTagHandler</tag-class>
         <body-content>scriptless</body-content>
     </tag>
 
 	<tag>
         <name>date</name>
-        <tag-class>com.jsmart5.framework.tag.DateTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.DateTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3119,7 +3119,7 @@
 
 	<tag>
         <name>validate</name>
-        <tag-class>com.jsmart5.framework.tag.ValidateTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ValidateTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>text</name>
@@ -3145,7 +3145,7 @@
 
 	<tag>
         <name>recaptcha</name>
-        <tag-class>com.jsmart5.framework.tag.ReCaptchaTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ReCaptchaTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3263,7 +3263,7 @@
 
 	<tag>
         <name>carousel</name>
-        <tag-class>com.jsmart5.framework.tag.CarouselTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.CarouselTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3301,7 +3301,7 @@
 
 	<tag>
 		<name>slides</name>
-		<tag-class>com.jsmart5.framework.tag.SlidesTagHandler</tag-class>
+		<tag-class>com.jsmartframework.web.tag.SlidesTagHandler</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
             <name>values</name>
@@ -3311,7 +3311,7 @@
 
 	<tag>
         <name>slide</name>
-        <tag-class>com.jsmart5.framework.tag.SlideTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.SlideTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3357,7 +3357,7 @@
 
 	<tag>
         <name>tab</name>
-        <tag-class>com.jsmart5.framework.tag.TabTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.TabTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3495,7 +3495,7 @@
 
 	<tag>
         <name>tabpane</name>
-        <tag-class>com.jsmart5.framework.tag.TabPaneTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.TabPaneTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3597,7 +3597,7 @@
     
     <tag>
         <name>progressgroup</name>
-        <tag-class>com.jsmart5.framework.tag.ProgressGroupTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ProgressGroupTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3683,7 +3683,7 @@
 
 	<tag>
         <name>progressbar</name>
-        <tag-class>com.jsmart5.framework.tag.ProgressBarTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.ProgressBarTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3805,7 +3805,7 @@
 
 	<tag>
         <name>autocomplete</name>
-        <tag-class>com.jsmart5.framework.tag.AutoCompleteTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.AutoCompleteTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -3979,7 +3979,7 @@
 
     <tag>
         <name>rest</name>
-        <tag-class>com.jsmart5.framework.tag.RestTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.RestTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -4029,7 +4029,7 @@
 
     <tag>
         <name>async</name>
-        <tag-class>com.jsmart5.framework.tag.AsyncTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.AsyncTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -4051,7 +4051,7 @@
 
     <tag>
         <name>asyncevent</name>
-        <tag-class>com.jsmart5.framework.tag.AsyncEventTagHandler</tag-class>
+        <tag-class>com.jsmartframework.web.tag.AsyncEventTagHandler</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>event</name>

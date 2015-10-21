@@ -1,8 +1,8 @@
 {
 	"styles": [
-		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart5/css/jsmart5.min.css\"/>"
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart/css/jsmart.min.css\"/>"
 	],
 	"scripts": [
-		"<script type=\"text/javascript\" src=\"%sjsmart5/js/jsmart5.min.js\"></script>"
+		"<script type=\"text/javascript\" src=\"%sjsmart/js/jsmart.min.js\"></script>"
 	]
 }

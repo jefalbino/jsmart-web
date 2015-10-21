@@ -1,0 +1,248 @@
+/*
+ * JSmart Framework - Java Web Development Framework
+ * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package com.jsmartframework.web.tag;
+
+import com.jsmartframework.web.exception.InvalidAttributeException;
+import com.jsmartframework.web.json.Ajax;
+import com.jsmartframework.web.json.Param;
+import com.jsmartframework.web.manager.TagHandler;
+import com.jsmartframework.web.tag.css.Bootstrap;
+import com.jsmartframework.web.tag.html.A;
+import com.jsmartframework.web.tag.html.Li;
+import com.jsmartframework.web.tag.html.Tag;
+import com.jsmartframework.web.tag.html.Ul;
+import com.jsmartframework.web.tag.type.Align;
+import com.jsmartframework.web.tag.type.Event;
+import com.jsmartframework.web.util.WebUtils;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
+
+public final class DropMenuTagHandler extends TagHandler {
+
+	private String align;
+	
+	private boolean dropUp;
+	
+	private boolean segmented;
+
+	private List<DropActionTagHandler> dropActions;
+
+	public DropMenuTagHandler() {
+		dropActions = new ArrayList<DropActionTagHandler>();
+	}
+
+	@Override
+	public boolean beforeTag() throws JspException, IOException {
+		JspTag parent = getParent();
+		if (parent instanceof ButtonTagHandler) {
+			((ButtonTagHandler) parent).setDropMenu(this);
+			return false;
+
+		} else if (parent instanceof LinkTagHandler) {
+			((LinkTagHandler) parent).setDropMenu(this);
+			return false;
+		
+		} else if (parent instanceof DropDownTagHandler) {
+			((DropDownTagHandler) parent).setDropMenu(this);
+			return false;
+		}
+		return false;
+	}
+
+	@Override
+	public void validateTag() throws JspException {
+		if (align != null && !Align.validateLeftRight(align)) {
+			throw InvalidAttributeException.fromPossibleValues("dropmenu", "align", Align.getLeftRightValues());
+		}
+	}
+
+	@Override
+	public Tag executeTag() throws JspException, IOException {
+
+		// Just to call nested tags
+		JspFragment body = getJspBody();
+		if (body != null) {
+			body.invoke(null);
+		}
+
+		setRandomId("dropmenu");
+
+		Ul ul = new Ul();
+		ul.addAttribute("id", id)
+			.addAttribute("role", "menu")
+			.addAttribute("style", getTagValue(style))
+			.addAttribute("class", Bootstrap.DROPDOWN_MENU);
+		
+		if (Align.RIGHT.equalsIgnoreCase(align)) {
+			ul.addAttribute("class", Bootstrap.DROPDOWN_MENU_RIGHT);
+		}
+		
+		// At last place the style class
+		ul.addAttribute("class", getTagValue(styleClass));
+
+		for (DropActionTagHandler dropAction : dropActions) {
+
+			if (dropAction.getId() == null) {
+				setRandomId(dropAction, "dropaction");
+			}
+
+			if (dropAction.getHeader() != null) {
+				Li headerLi = new Li();
+				headerLi.addAttribute("role", "presentation")
+					.addAttribute("class", Bootstrap.DROPDOWN_HEADER)
+					.addText(getTagValue(dropAction.getHeader()));
+				ul.addTag(headerLi);
+			}
+
+			Li li = new Li();
+			li.addAttribute("id", dropAction.getId())
+				.addAttribute("role", "presentation")
+				.addAttribute("class", dropAction.isDisabled() ? Bootstrap.DISABLED : null);
+			ul.addTag(li);
+
+			appendEvent(li, dropAction);
+
+			A a = new A();
+			a.addAttribute("style", "cursor: pointer;");
+			li.addTag(a);
+			
+			for (IconTagHandler iconTag : dropAction.getIconTags()) {
+				if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+					a.addTag(iconTag.executeTag());
+					a.addText(" ");
+				}
+			}
+
+			a.addText(getTagValue(dropAction.getLabel()));
+
+			for (IconTagHandler iconTag : dropAction.getIconTags()) {
+				if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+					a.addText(" ");
+					a.addTag(iconTag.executeTag());
+				}
+			}
+			
+			if (dropAction.hasDivider()) {
+				Li dividerLi = new Li();
+				dividerLi.addAttribute("class", Bootstrap.DIVIDER);
+				ul.addTag(dividerLi);
+			}
+
+            StringBuilder urlParams = new StringBuilder("?");
+            for (String key : dropAction.getParams().keySet()) {
+                urlParams.append(key + "=" + dropAction.getParams().get(key) + "&");
+            }
+
+            String url = "";
+
+            String outcomeVal = WebUtils.decodePath((String) getTagValue(dropAction.getOutcome()));
+            if (outcomeVal != null) {
+                url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal)
+                        + urlParams.substring(0, urlParams.length() -1);
+            }
+
+            String href = "#";
+            if (dropAction.getAction() == null && !url.isEmpty()) {
+                href = (!url.startsWith("http") && !url.startsWith("mailto") && !url.startsWith("#") ?
+                        getRequest().getContextPath() + "/" : "") + url;
+                a.addAttribute("href", href);
+            } else {
+                appendDocScript(getFunction(dropAction));
+            }
+		}
+
+		return ul;
+	}
+	
+	private StringBuilder getFunction(DropActionTagHandler dropAction) {
+		Ajax jsonAjax = new Ajax();
+		jsonAjax.setId(dropAction.getId());
+		jsonAjax.setTag("dropaction");
+
+        // Params must be considered regardless the action for rest purpose
+        for (String name : dropAction.getParams().keySet()) {
+            jsonAjax.addParam(new Param(name, dropAction.getParams().get(name)));
+        }
+
+		if (dropAction.getAction() != null) {
+			jsonAjax.setMethod("post");
+			jsonAjax.setAction(getTagName(J_SBMT, dropAction.getAction()));
+
+            if (!dropAction.getArgs().isEmpty()) {
+                String argName = getTagName(J_SBMT_ARGS, dropAction.getAction());
+                for (Object arg : dropAction.getArgs().keySet()) {
+                    jsonAjax.addArg(new Param(argName, arg, dropAction.getArgs().get(arg)));
+                }
+            }
+		} else if (dropAction.getUpdate() != null) {
+			jsonAjax.setMethod("get");
+		}
+		if (dropAction.getUpdate() != null) {
+			jsonAjax.setUpdate(dropAction.getUpdate().trim());
+		}
+		if (dropAction.getBeforeSend() != null) {
+			jsonAjax.setBefore((String) getTagValue(dropAction.getBeforeSend().trim()));
+		}
+		if (dropAction.getOnError() != null) {
+			jsonAjax.setError((String) getTagValue(dropAction.getOnError().trim()));
+		}
+		if (dropAction.getOnSuccess() != null) {
+			jsonAjax.setSuccess((String) getTagValue(dropAction.getOnSuccess().trim()));
+		}
+		if (dropAction.getOnComplete() != null) {
+			jsonAjax.setComplete((String) getTagValue(dropAction.getOnComplete().trim()));
+		}
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+		return getBindFunction(dropAction.getId(), Event.CLICK.name(), builder);
+	}
+
+	void addDropAction(DropActionTagHandler dropAction) {
+		this.dropActions.add(dropAction);
+	}
+
+	public void setAlign(String align) {
+		this.align = align;
+	}
+
+	boolean isDropUp() {
+		return dropUp;
+	}
+
+	public void setDropUp(boolean dropUp) {
+		this.dropUp = dropUp;
+	}
+
+	boolean isSegmented() {
+		return segmented;
+	}
+
+	public void setSegmented(boolean segmented) {
+		this.segmented = segmented;
+	}
+
+}

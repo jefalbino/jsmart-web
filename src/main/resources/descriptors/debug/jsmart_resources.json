@@ -1,14 +1,14 @@
 {
 	"resources": [
-		"jsmart5/bootstrap-3.3.5/css/*",
-		"jsmart5/bootstrap-3.3.5/fonts/*",
-		"jsmart5/bootstrap-3.3.5/js/*",
-		"jsmart5/bootstrap-datetime-4.7.14/css/*",
-		"jsmart5/bootstrap-datetime-4.7.14/js/*",
-		"jsmart5/momentjs-2.9.0/js/*",
-		"jsmart5/jquery-1.11.2/*",
-		"jsmart5/jquery-form-3.51.0/*",
-		"jsmart5/css/*",
-		"jsmart5/js/*"
+		"jsmart/bootstrap-3.3.5/css/*",
+		"jsmart/bootstrap-3.3.5/fonts/*",
+		"jsmart/bootstrap-3.3.5/js/*",
+		"jsmart/bootstrap-datetime-4.7.14/css/*",
+		"jsmart/bootstrap-datetime-4.7.14/js/*",
+		"jsmart/momentjs-2.9.0/js/*",
+		"jsmart/jquery-1.11.2/*",
+		"jsmart/jquery-form-3.51.0/*",
+		"jsmart/css/*",
+		"jsmart/js/*"
 	]
 }

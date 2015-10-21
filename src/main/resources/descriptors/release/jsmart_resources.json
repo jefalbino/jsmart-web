@@ -1,7 +1,7 @@
 {
 	"resources": [
-		"jsmart5/fonts/*",
-		"jsmart5/css/*",
-		"jsmart5/js/*"
+		"jsmart/fonts/*",
+		"jsmart/css/*",
+		"jsmart/js/*"
 	]
 }
