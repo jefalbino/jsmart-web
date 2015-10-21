@@ -50,6 +50,8 @@ public final class LinkTagHandler extends TagHandler {
 
 	private String label;
 
+    private String target;
+
 	private Integer length;
 
 	private boolean ellipsize;
@@ -125,6 +127,7 @@ public final class LinkTagHandler extends TagHandler {
 		link.addAttribute("style", getTagValue(style))
 			.addAttribute("class", Bootstrap.BUTTON)
 			.addAttribute("tabindex", tabIndex)
+            .addAttribute("target", target)
 			.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
 		
 		String lookVal = (String) getTagValue(look);
@@ -331,7 +334,11 @@ public final class LinkTagHandler extends TagHandler {
 		this.look = look;
 	}
 
-	public void setLabel(String label) {
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public void setLabel(String label) {
 		this.label = label;
 	}
 

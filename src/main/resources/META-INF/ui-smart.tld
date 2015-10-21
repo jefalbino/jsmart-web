@@ -498,6 +498,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>target</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>action</name>
             <required>false</required>
         </attribute>
