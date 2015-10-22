@@ -2122,7 +2122,7 @@ var JSmart = (function() {
             if (item && item.length > 0) {
                 // Update id to be row-id and role-template to be row
                 item.attr('row-id', item.attr('id')).attr('row-template', item.attr(roleTemplate)).removeAttr('id')
-                    .removeAttr(roleTemplate).css({'display': 'block'});
+                    .removeAttr(roleTemplate);
 
                  // Always insert at the end of last template item
                 var last = element.find('>li[row-template="' + template + '"], >a[row-template="' + template + '"], '
@@ -2133,6 +2133,15 @@ var JSmart = (function() {
                 } else {
                     element.find('>li[' + roleTemplate + '="' + template + '"], >a[' + roleTemplate + '="' + template + '"], '
                                     + 'tbody>tr[' + roleTemplate + '="' + template + '"]').after(item);
+                }
+
+                if (item.is('tr')) {
+                    item.closest('table').find('thead th').each(function (index) {
+                        item.find('td')[index].width = $(this).width();
+                    });
+                    item.css({'display': 'inline-table'});
+                } else {
+                    item.css({'display': 'block'});
                 }
             }
             return item;
