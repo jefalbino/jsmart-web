@@ -1807,11 +1807,11 @@
         </attribute>
         <attribute>
             <name>var</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>values</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>selectValue</name>
