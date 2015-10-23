@@ -48,6 +48,7 @@ var JSmart = (function() {
         initPopOvers();
         initTooltips();
         initRoleEmpty();
+        initPageAuth();
     });
 
     function initPopOvers() {
@@ -145,6 +146,11 @@ var JSmart = (function() {
                 }
             }
         });
+    }
+
+    function initPageAuth() {
+        //$('form').submit(doFormHeaders(event));
+
     }
 
     /******************************************************
@@ -567,7 +573,7 @@ var JSmart = (function() {
                     }
 
                     // Remove scroll-active and refreshing icon
-                    map.complete = function() {
+                    map.completeHandler = function() {
                         if (liLoad && liLoad.length > 0) {
                             liLoad.slideUp('fast', function() {
                                 liLoad.remove();
@@ -857,7 +863,7 @@ var JSmart = (function() {
         }
 
         // Remove scroll-active and refreshing icon
-        map.complete = function() {
+        map.completeHandler = function() {
             if (trLoad && trLoad.length > 0) {
                 trLoad.slideUp('fast', function() {
                     trLoad.remove();
@@ -1289,7 +1295,7 @@ var JSmart = (function() {
                     }
 
                     // Remove scroll-active and refreshing icon
-                    map.complete = function() {
+                    map.completeHandler = function() {
                         if (liLoad && liLoad.length > 0) {
                             liLoad.slideUp('fast', function() {
                                 liLoad.remove();
@@ -1773,6 +1779,20 @@ var JSmart = (function() {
             values += ',' + map.update;
         }
         xhr.setRequestHeader('Update-Ajax', values);
+
+        // TODO: send user and password as headers
+    }
+
+    function doFormHeaders(event) {
+//        event.preventDefault();
+//
+//        var token = $('meta[name="jsmart:csrf:token"]').attr('content');
+//        var header = $('meta[name="jsmart:csrf:header"]').attr('content');
+//
+//        var header = $('meta[name="jsmart:csrf:header"]').attr('content');
+//
+//        var form = $(this);
+
     }
 
     function doUpdate(update, a) {
