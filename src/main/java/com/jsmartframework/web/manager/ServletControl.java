@@ -18,7 +18,6 @@
 
 package com.jsmartframework.web.manager;
 
-import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.listener.WebAsyncListener;
 import com.jsmartframework.web.listener.WebAsyncListener.Reason;
 import com.jsmartframework.web.util.WebUtils;
@@ -39,6 +38,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
+import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
 
 public final class ServletControl extends HttpServlet {
 
@@ -155,8 +156,10 @@ public final class ServletControl extends HttpServlet {
             // Case is Ajax post action, let JavaScript redirect page
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 if (redirectAjax) {
-                    request.setAttribute(Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR,
+                    request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR,
                             (responsePath.startsWith("/") ? request.getContextPath() : "") + responsePath);
+                    request.setAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR,
+                            WebContext.isRedirectToWindow());
                 }
                 responsePath = path;
             }
@@ -226,8 +229,10 @@ public final class ServletControl extends HttpServlet {
 
         // Case is Ajax post action, let JavaScript redirect page
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            request.setAttribute(Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR,
+            request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR,
                     (path.startsWith("/") ? request.getContextPath() : "") + path);
+            request.setAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR,
+                    WebContext.isRedirectToWindow());
         }
 
         // Use Forward request internally case is the same page

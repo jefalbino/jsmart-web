@@ -70,6 +70,7 @@ import static com.jsmartframework.web.config.Constants.PATH_SEPARATOR;
 import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_DOC_SCRIPT_ATTR;
 import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_SCRIPT_ATTR;
 import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
+import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
 import static com.jsmartframework.web.config.Constants.SESSION_RESET_ATTR;
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
 
@@ -212,7 +213,13 @@ public final class FilterControl implements Filter {
 		// Case redirect via ajax, place tag with path to be handled by java script
     	String ajaxPath = (String) httpRequest.getAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR);
 		if (ajaxPath != null) {
-			response.addHeader("Redirect-Ajax", ajaxPath);
+            Boolean newWindow = (Boolean) httpRequest.getAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR);
+
+            if (Boolean.TRUE.equals(newWindow)) {
+                response.addHeader("New-Window-Ajax", ajaxPath);
+            } else {
+                response.addHeader("Redirect-Ajax", ajaxPath);
+            }
 		}
 
 		// Case session reset, place tag to force java script reset the page

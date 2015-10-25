@@ -126,12 +126,12 @@ public final class ConfigContent {
 			for (UrlPattern urlPattern : urlPatterns) {
 
 				if (!urlPattern.isLoggedAccess()) {
-					nonSecureUrlsOnly.add(urlPattern.getUrl());
+					nonSecureUrlsOnly.add(urlPattern.getUrl().replace("/*", ""));
 				} else {
 					if (urlPattern.getAccess() == null) {
-						nonSecureUrls.add(urlPattern.getUrl());
+						nonSecureUrls.add(urlPattern.getUrl().replace("/*", ""));
 					} else {
-						secureUrls.add(urlPattern.getUrl());
+						secureUrls.add(urlPattern.getUrl().replace("/*", ""));
 					}
 				}
 			}

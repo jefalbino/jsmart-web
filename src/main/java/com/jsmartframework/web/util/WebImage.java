@@ -113,7 +113,7 @@ public enum WebImage {
 						library = new HashMap<String, String>();
 					}
 					String[] bars = res.split("/");
-					library.put(bars[bars.length -1], res.replaceFirst("/", "").replace("WEB-INF/classes/", ""));
+					library.put(bars[bars.length -1], res.replace("WEB-INF/classes/", "/"));
 				} else {
 					lookupInResourcePath(servletContext, res);
 				}

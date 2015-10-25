@@ -18,6 +18,8 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.config.Config.CONFIG;
+
 import com.jsmartframework.web.annotation.AsyncBean;
 import com.jsmartframework.web.annotation.AuthAccess;
 import com.jsmartframework.web.annotation.AuthBean;
@@ -38,7 +40,6 @@ import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.config.UrlPattern;
 import com.jsmartframework.web.listener.WebAsyncListener;
 import com.jsmartframework.web.util.WebUtils;
-import com.jsmartframework.web.config.Config;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -739,8 +740,9 @@ public enum BeanHandler {
 
     String checkAuthentication(String path) throws ServletException {
 
-        if (authBeans.isEmpty() && !Config.CONFIG.getContent().getSecureUrls().isEmpty()) {
-            throw new ServletException("Not found AuthenticationBean mapped in your system. Once your system has secure urls, please use @AuthBean!");
+        if (authBeans.isEmpty() && !CONFIG.getContent().getSecureUrls().isEmpty()) {
+            throw new ServletException("Not found AuthenticationBean mapped in your system. Once your system " +
+                    "has secure urls, please use @AuthBean!");
         }
 
         boolean authenticated = true;
@@ -785,7 +787,7 @@ public enum BeanHandler {
         // Access secure url
         //  - User authenticated ===>>> ok redirect to path
         //  - User not authenticated ===>>> redirect to login
-        if (Config.CONFIG.getContent().containsSecureUrl(path)) {
+        if (CONFIG.getContent().containsSecureUrl(path)) {
             if (authenticated) {
                 return path;
             } else {
@@ -801,7 +803,7 @@ public enum BeanHandler {
         else {
             if (authenticated) {
                 if (authBean != null && (path.equals(WebUtils.decodePath(authBean.loginPath()))
-                        || Config.CONFIG.getContent().containsNonSecureUrlOnly(path))) {
+                        || CONFIG.getContent().containsNonSecureUrlOnly(path))) {
                     return WebUtils.decodePath(authBean.homePath());
                 } else {
                     return path;
@@ -814,7 +816,7 @@ public enum BeanHandler {
 
     @SuppressWarnings("all")
     Integer checkAuthorization(String path) {
-        if (Config.CONFIG.getContent().containsSecureUrl(path)) {
+        if (CONFIG.getContent().containsSecureUrl(path)) {
 
             Collection<String> userAccess = getUserAuthorizationAccess();
 
@@ -827,7 +829,7 @@ public enum BeanHandler {
             }
 
             // Check mapped urls
-            UrlPattern urlPattern = Config.CONFIG.getContent().getUrlPattern(path);
+            UrlPattern urlPattern = CONFIG.getContent().getUrlPattern(path);
             if (urlPattern != null && urlPattern.getAccess() != null) {
 
                 for (String access : urlPattern.getAccess()) {
@@ -909,12 +911,12 @@ public enum BeanHandler {
 
     private void initAnnotatedBeans(ServletContext context) {
 
-        if (Config.CONFIG.getContent().getPackageScan() == null) {
+        if (CONFIG.getContent().getPackageScan() == null) {
             LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML + " file! Skipping package scanning.");
             return;
         }
 
-        Object[] packages = Config.CONFIG.getContent().getPackageScan().split(",");
+        Object[] packages = CONFIG.getContent().getPackageScan().split(",");
         Reflections reflections = new Reflections(packages);
 
         Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebBean.class);
@@ -1081,15 +1083,18 @@ public enum BeanHandler {
     }
 
     private String matchUrlPattern(String path) {
-        for (UrlPattern urlPattern : Config.CONFIG.getContent().getUrlPatterns()) {
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+            if (urlPattern.getUrl().equals(path)) {
+                return urlPattern.getUrl();
+            }
+        }
 
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
             if (urlPattern.getUrl().contains("/*")) {
                 String url = urlPattern.getUrl().replace("/*", "");
-                if (path.startsWith(url)) {
+                if (path.equals(url)) {
                     return url;
                 }
-            } else if (urlPattern.getUrl().equals(path)) {
-                return urlPattern.getUrl();
             }
         }
         return path;
@@ -1116,7 +1121,7 @@ public enum BeanHandler {
     }
 
     private void overrideForwardPaths() {
-        for (UrlPattern urlPattern : Config.CONFIG.getContent().getUrlPatterns()) {
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
 
             if (urlPattern.getJsp() != null && !urlPattern.getJsp().trim().isEmpty()) {
                 String prevJsp = forwardPaths.put(urlPattern.getUrl(), urlPattern.getJsp());
@@ -1163,7 +1168,7 @@ public enum BeanHandler {
 
     private void initJndiMapping() {
         try {
-            String lookupName = Config.CONFIG.getContent().getEjbLookup();
+            String lookupName = CONFIG.getContent().getEjbLookup();
             initialContext = new InitialContext();
 
             // For glassfish implementation
@@ -1236,7 +1241,7 @@ public enum BeanHandler {
     }
 
     private void initJspPageBeans(ServletContext context) {
-        for (UrlPattern urlPattern : Config.CONFIG.getContent().getUrlPatterns()) {
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
 
             String path = getCleanPath(urlPattern.getUrl());
             JspPageBean jspPageBean = new JspPageBean();

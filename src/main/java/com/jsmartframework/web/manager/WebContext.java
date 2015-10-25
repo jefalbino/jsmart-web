@@ -86,6 +86,8 @@ public final class WebContext implements Serializable {
 
 	private String redirectTo;
 
+    private boolean redirectToWindow;
+
 	private boolean invalidate;
 
 	private PageContext pageContext;
@@ -96,12 +98,12 @@ public final class WebContext implements Serializable {
 
     private Map<String, String> queryParams;
 
-	private WebContext(final HttpServletRequest request, final HttpServletResponse response) {
+	private WebContext(HttpServletRequest request, HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
 	}
 
-	static final void setServlet(final Servlet servlet) {
+	static final void setServlet(Servlet servlet) {
 		smartServlet = servlet;
 		jspContext = JSP_FACTORY.getJspApplicationContext(servlet.getServletConfig().getServletContext());
 	}
@@ -110,7 +112,7 @@ public final class WebContext implements Serializable {
 		return THREADS.get(Thread.currentThread());
 	}
 
-	static final void initCurrentInstance(final HttpServletRequest request, final HttpServletResponse response) {
+	static final void initCurrentInstance(HttpServletRequest request, HttpServletResponse response) {
 		THREADS.put(Thread.currentThread(), new WebContext(request, response));
 	}
 
@@ -192,7 +194,7 @@ public final class WebContext implements Serializable {
         if (context.queryParams == null) {
             context.queryParams = new ConcurrentHashMap<String, String>();
 
-            final String queryParam = context.request.getQueryString();
+            String queryParam = context.request.getQueryString();
             if (queryParam == null || queryParam.trim().isEmpty()) {
                 return context.queryParams;
             }
@@ -222,6 +224,11 @@ public final class WebContext implements Serializable {
 		return context != null ? context.redirectTo : null;
 	}
 
+    static boolean isRedirectToWindow() {
+        WebContext context = getCurrentInstance();
+        return context != null ? context.redirectToWindow : false;
+    }
+
 	/**
 	 * Redirect the request to the specified link path after the current request is processed.
 	 * <br>
@@ -230,12 +237,20 @@ public final class WebContext implements Serializable {
 	 * 
 	 * @param path path mapped on configuration file or general valid URL link.
 	 */
-	public static void redirectTo(final String path) {
+	public static void redirectTo(String path) {
 		WebContext context = getCurrentInstance();
 		if (context != null) {
 			context.redirectTo = WebUtils.decodePath(path);
 		}
 	}
+
+    public static void redirectToWindow(String path) {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.redirectTo = WebUtils.decodePath(path);
+            context.redirectToWindow = true;
+        }
+    }
 
 	/**
 	 * Calling this method will cause the current {@link HttpSession} to be invalidated after the request
@@ -273,12 +288,12 @@ public final class WebContext implements Serializable {
 		return request != null ? "XMLHttpRequest".equals(request.getHeader("X-Requested-With")) : false;
 	}
 
-	static List<WebAlert> getAlerts(final String id) {
+	static List<WebAlert> getAlerts(String id) {
 		WebContext context = getCurrentInstance();
 		return context != null ? context.alerts.get(id) : null;
 	}
 
-	public static void addAlert(final String id, final WebAlert alert) {
+	public static void addAlert(String id, WebAlert alert) {
 		WebContext context = getCurrentInstance();
 		if (context != null && id != null && alert != null) {
 			List<WebAlert> alerts = context.alerts.get(id);
@@ -300,7 +315,7 @@ public final class WebContext implements Serializable {
 	 * @param id of the tag to receive the message.
 	 * @param message to be presented on the client side.
 	 */
-	public static void addInfo(final String id, final String message) {
+	public static void addInfo(String id, String message) {
 		WebAlert alert = new WebAlert(WebAlert.AlertType.INFO);
 		alert.setMessage(message);
 		addAlert(id, alert);
@@ -317,7 +332,7 @@ public final class WebContext implements Serializable {
 	 * @param id of the tag to receive the message.
 	 * @param message to be presented on the client side.
 	 */
-	public static void addWarning(final String id, final String message) {
+	public static void addWarning(String id, String message) {
 		WebAlert alert = new WebAlert(WebAlert.AlertType.WARNING);
 		alert.setMessage(message);
 		addAlert(id, alert);
@@ -334,7 +349,7 @@ public final class WebContext implements Serializable {
 	 * @param id of the tag to receive the message.
 	 * @param message to be presented on the client side.
 	 */
-	public static void addSuccess(final String id, final String message) {
+	public static void addSuccess(String id, String message) {
 		WebAlert alert = new WebAlert(WebAlert.AlertType.SUCCESS);
 		alert.setMessage(message);
 		addAlert(id, alert);
@@ -351,13 +366,13 @@ public final class WebContext implements Serializable {
 	 * @param id of the tag to receive the message.
 	 * @param message to be presented on the client side.
 	 */
-	public static void addError(final String id, final String message) {
+	public static void addError(String id, String message) {
 		WebAlert alert = new WebAlert(WebAlert.AlertType.DANGER);
 		alert.setMessage(message);
 		addAlert(id, alert);
 	}
 
-	static Object getMappedValue(final String name) {
+	static Object getMappedValue(String name) {
 		WebContext context = getCurrentInstance();
 		if (context != null) {
 			return context.mappedValues.get(name);
@@ -365,7 +380,7 @@ public final class WebContext implements Serializable {
 		return null;
 	}
 	
-	static Object removeMappedValue(final String name) {
+	static Object removeMappedValue(String name) {
 		WebContext context = getCurrentInstance();
 		if (context != null) {
 			return context.mappedValues.remove(name);
@@ -373,7 +388,7 @@ public final class WebContext implements Serializable {
 		return null;
 	}
 
-	static void addMappedValue(final String name, final Object value) {
+	static void addMappedValue(String name, Object value) {
 		WebContext context = getCurrentInstance();
 		if (context != null) {
 			context.mappedValues.put(name, value);
@@ -387,7 +402,7 @@ public final class WebContext implements Serializable {
 	 * @param name name of the attribute.
 	 * @return the {@link Object} mapped by attribute name on the current request.
 	 */
-	public static Object getAttribute(final String name) {
+	public static Object getAttribute(String name) {
 		if (name != null) {
 			HttpServletRequest request = getRequest();
 			if (request != null && request.getAttribute(name) != null) {
@@ -419,7 +434,7 @@ public final class WebContext implements Serializable {
 	 * @return <code>true</code> if the attribute is contained in one of the instances {@link HttpServletRequest}, 
 	 * {@link HttpSession} or {@link ServletContext}, <code>false</code> otherwise.
 	 */
-	public static boolean containsAttribute(final String name) {
+	public static boolean containsAttribute(String name) {
 		if (name != null) {
 			HttpServletRequest request = getRequest();
 			if (request != null && request.getAttribute(name) != null) {
@@ -440,7 +455,7 @@ public final class WebContext implements Serializable {
 		return false;
 	}
 
-	public static boolean checkReCaptcha(final String secretKey) {
+	public static boolean checkReCaptcha(String secretKey) {
 		String responseField = (String) getMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME);
 		if (responseField != null) {
 			return ReCaptchaHandler.checkReCaptchaV1(secretKey, responseField);
@@ -476,7 +491,7 @@ public final class WebContext implements Serializable {
         }
         if (context.bodyContent == null) {
             String line = null;
-            final StringBuffer buffer = new StringBuffer();
+            StringBuffer buffer = new StringBuffer();
 
             BufferedReader reader = context.request.getReader();
             while ((line = reader.readLine()) != null) {
@@ -492,8 +507,8 @@ public final class WebContext implements Serializable {
     }
 
     public static <T> T getContentFromXml(Class<T> clazz) throws IOException, JAXBException {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-        final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         StringReader reader = new StringReader(getContentAsString());
         return (T) unmarshaller.unmarshal(reader);
     }
@@ -531,20 +546,20 @@ public final class WebContext implements Serializable {
             context.response.setContentType("application/xml");
             PrintWriter writer = context.response.getWriter();
 
-            final JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
-            final Marshaller marshaller = jaxbContext.createMarshaller();
+            JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+            Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.marshal(object, writer);
             writer.flush();
         }
     }
 
-    public static void writeResponseAsEventStream(final AsyncContext asyncContext, final String event,
-            final Object data) throws IOException {
+    public static void writeResponseAsEventStream(AsyncContext asyncContext, String event,
+            Object data) throws IOException {
         writeResponseAsEventStream(asyncContext, event, data, null);
     }
 
-    public static void writeResponseAsEventStream(final AsyncContext asyncContext, final String event, final Object data,
-            final Long retry) throws IOException {
+    public static void writeResponseAsEventStream(AsyncContext asyncContext, String event, Object data,
+            Long retry) throws IOException {
         if (asyncContext != null && event != null && data != null) {
 
             HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
@@ -560,7 +575,7 @@ public final class WebContext implements Serializable {
         }
     }
 
-    public static void writeResponseAsFileStream(final File file, final int bufferSize) throws IOException {
+    public static void writeResponseAsFileStream(File file, int bufferSize) throws IOException {
         WebContext context = getCurrentInstance();
         if (context != null && file != null && bufferSize > 0) {
 

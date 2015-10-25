@@ -1549,6 +1549,11 @@ var JSmart = (function() {
                         if (redirect && redirect.length > 0) {
                             $(location).attr('href', redirect);
                         }
+
+                        var newWindow = xhr.getResponseHeader("New-Window-Ajax");
+                        if (newWindow && newWindow.length > 0) {
+                            window.open(newWindow, '_blank');
+                        }
                     }
                 }
             },
