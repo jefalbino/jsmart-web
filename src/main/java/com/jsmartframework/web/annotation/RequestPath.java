@@ -24,6 +24,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestPath {
 
-    String path();
+    String value();
 
 }

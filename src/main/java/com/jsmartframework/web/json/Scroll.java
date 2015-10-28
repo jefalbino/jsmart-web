@@ -18,6 +18,7 @@
 
 package com.jsmartframework.web.json;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class Scroll {
@@ -75,7 +76,7 @@ public class Scroll {
     }
 
     public Map<String, String> getFilters() {
-		return filters;
+		return filters != null ? filters : Collections.<String, String>emptyMap();
 	}
 
 	public void setFilters(Map<String, String> filters) {

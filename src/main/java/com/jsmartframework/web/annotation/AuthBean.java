@@ -23,10 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * The {@link AuthBean} annotation is used on a class that contain a mechanism to
- * authenticate the user and hold their values.
- * <br>
- * The instance of class annotated with {@link AuthBean} is kept on session as
- * long as session is valid.
+ * authenticate the user and hold their access values.
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AuthBean {
@@ -37,6 +34,11 @@ public @interface AuthBean {
 	 * Default value is the name of the class in camel case.
 	 */
 	String name() default "";
+
+    /**
+     *
+     */
+    AuthType type() default AuthType.REQUEST;
 
 	/**
 	 * The mapped path on configuration file to specify the login

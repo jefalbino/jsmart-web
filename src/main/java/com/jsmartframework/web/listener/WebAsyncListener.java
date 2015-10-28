@@ -26,8 +26,8 @@ public interface WebAsyncListener {
         COMPLETE, TIMEOUT, ERROR
     }
 
-    public void asyncContextCreated(final AsyncContext asyncContext);
+    public void asyncContextCreated(AsyncContext asyncContext);
 
-    public void asyncContextDestroyed(final AsyncContext asyncContext, final Reason reason);
+    public void asyncContextDestroyed(AsyncContext asyncContext, Reason reason);
 
 }

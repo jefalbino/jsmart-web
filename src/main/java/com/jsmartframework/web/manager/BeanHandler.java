@@ -24,6 +24,7 @@ import com.jsmartframework.web.annotation.AsyncBean;
 import com.jsmartframework.web.annotation.AuthAccess;
 import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
+import com.jsmartframework.web.annotation.AuthType;
 import com.jsmartframework.web.annotation.ExecuteAccess;
 import com.jsmartframework.web.annotation.PostPreset;
 import com.jsmartframework.web.annotation.PostSubmit;
@@ -170,11 +171,13 @@ public enum BeanHandler {
     @SuppressWarnings("all")
     boolean executePreSubmit(Object bean, String action) {
         for (Method method : getBeanMethods(bean.getClass())) {
-            if (method.isAnnotationPresent(PreSubmit.class)) {
-                try {
-                    String forAction = method.getAnnotation(PreSubmit.class).forAction();
+            if (!method.isAnnotationPresent(PreSubmit.class) || method.getAnnotation(PreSubmit.class).onActions() == null) {
+                return true;
+            }
 
-                    if (action.equalsIgnoreCase(forAction)) {
+            for (String onAction : method.getAnnotation(PreSubmit.class).onActions()) {
+                try {
+                    if (action.equalsIgnoreCase(onAction)) {
                         Boolean result = (Boolean) method.invoke(bean, null);
                         return result != null && result;
                     }
@@ -189,19 +192,21 @@ public enum BeanHandler {
     @SuppressWarnings("all")
     void executePostSubmit(Object bean, String action) {
         for (Method method : getBeanMethods(bean.getClass())) {
-            if (method.isAnnotationPresent(PostSubmit.class)) {
-                try {
-                    String forAction = method.getAnnotation(PostSubmit.class).forAction();
+            if (!method.isAnnotationPresent(PostSubmit.class) || method.getAnnotation(PostSubmit.class).onActions() == null) {
+                return;
+            }
 
-                    if (action.equalsIgnoreCase(forAction)) {
+            for (String onAction : method.getAnnotation(PostSubmit.class).onActions()) {
+                try {
+                    if (action.equalsIgnoreCase(onAction)) {
                         method.invoke(bean, null);
                         return;
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                return;
             }
+            return;
         }
     }
 
@@ -313,24 +318,13 @@ public enum BeanHandler {
     void instantiateBeans(String path, Map<String, String> expressions) throws Exception {
         JspPageBean jspPageBean = jspPageBeans.get(path);
         if (jspPageBean != null) {
-
-            PageScope pageScope = new PageScope(path);
-
             for (String name : jspPageBean.getBeanNames()) {
-                instantiateBean(name, expressions, pageScope);
-            }
-
-            // Include into session the path with respective page scoped bean names
-            if (!pageScope.getNames().isEmpty()) {
-                HttpSession session = WebContext.getSession();
-                synchronized (session) {
-                    session.setAttribute(path, pageScope);
-                }
+                instantiateBean(name, expressions);
             }
         }
     }
 
-    private Object instantiateBean(String name, Map<String, String> expressions, PageScope pageScope) throws Exception {
+    private Object instantiateBean(String name, Map<String, String> expressions) throws Exception {
         Object bean = null;
         ServletContext context = WebContext.getApplication();
         HttpSession session = WebContext.getSession();
@@ -338,21 +332,21 @@ public enum BeanHandler {
 
         if (request.getAttribute(name) != null) {
             bean = request.getAttribute(name);
-            executeInjection(bean, pageScope);
+            executeInjection(bean);
             return bean;
         }
 
         synchronized (session) {
             if (session.getAttribute(name) != null) {
                 bean = session.getAttribute(name);
-                executeInjection(bean, pageScope);
+                executeInjection(bean);
                 return bean;
             }
         }
 
         if (context.getAttribute(name) != null) {
             bean = context.getAttribute(name);
-            executeInjection(bean, pageScope);
+            executeInjection(bean);
             return bean;
         }
 
@@ -361,28 +355,22 @@ public enum BeanHandler {
             bean = clazz.newInstance();
 
             WebBean webBean = clazz.getAnnotation(WebBean.class);
-            if (webBean.scope().equals(ScopeType.REQUEST_SCOPE)) {
+            if (webBean.scope().equals(ScopeType.REQUEST)) {
                 request.setAttribute(name, bean);
 
-            } else if (webBean.scope().equals(ScopeType.PAGE_SCOPE)) {
-                synchronized (session) {
-                    pageScope.addName(name);
-                    session.setAttribute(name, bean);
-                }
-
-            } else if (webBean.scope().equals(ScopeType.SESSION_SCOPE)) {
+            } else if (webBean.scope().equals(ScopeType.SESSION)) {
                 synchronized (session) {
                     session.setAttribute(name, bean);
                 }
 
-            } else if (webBean.scope().equals(ScopeType.APPLICATION_SCOPE)) {
+            } else if (webBean.scope().equals(ScopeType.APPLICATION)) {
                 context.setAttribute(name, bean);
 
             } else {
                 return null;
             }
 
-            executeInjection(bean, pageScope);
+            executeInjection(bean);
             executePostPreset(name, bean, expressions);
             executePostConstruct(bean);
         }
@@ -397,10 +385,6 @@ public enum BeanHandler {
             return bean;
         }
         return null;
-    }
-
-    void executeInjection(Object bean) {
-        executeInjection(bean, null);
     }
 
     private String getClassName(String name) {
@@ -439,7 +423,7 @@ public enum BeanHandler {
         return filter.name();
     }
 
-    private void executeInjection(Object bean, PageScope pageScope) {
+    void executeInjection(Object bean) {
         try {
             HttpSession session = WebContext.getSession();
             HttpServletRequest request = WebContext.getRequest();
@@ -450,7 +434,7 @@ public enum BeanHandler {
                     WebBean sb = field.getType().getAnnotation(WebBean.class);
                     if (sb != null) {
                         field.setAccessible(true);
-                        field.set(bean, instantiateBean(getClassName(sb, field.getType()), null, pageScope));
+                        field.set(bean, instantiateBean(getClassName(sb, field.getType()), null));
                         continue;
                     }
 
@@ -465,7 +449,7 @@ public enum BeanHandler {
                 // Inject URL Parameters
                 if (field.isAnnotationPresent(QueryParam.class)) {
                     QueryParam queryParam = field.getAnnotation(QueryParam.class);
-                    String paramValue = request.getParameter(queryParam.name());
+                    String paramValue = request.getParameter(queryParam.value());
 
                     if (paramValue != null) {
                         field.setAccessible(true);
@@ -552,43 +536,8 @@ public enum BeanHandler {
         }
     }
 
-    void finalizeBeans(Object bean) {
-
-    }
-
-    void finalizeBeans(String path, HttpSession session) {
-        // Do not finalize beans case path was meant to be processed by AsyncBean,
-        // otherwise (WebBean) clear the page scope beans
-        if (asyncBeans.containsKey(path)) {
-            return;
-        }
-
-        synchronized (session) {
-            List<String> names = Collections.list(session.getAttributeNames());
-
-            for (String attrname : names) {
-                Object object = session.getAttribute(attrname);
-
-                if (!attrname.equals(path) && object instanceof PageScope) {
-
-                    for (String name : ((PageScope) object).getNames()) {
-                        finalizeWebBean(session.getAttribute(name), session);
-                    }
-                    session.removeAttribute(attrname);
-                }
-            }
-        }
-    }
-
     void finalizeWebBean(String path, HttpSession session) {
         synchronized (session) {
-            Object pageScope = session.getAttribute(path);
-            if (pageScope instanceof PageScope) {
-
-                for (String name : ((PageScope) pageScope).getNames()) {
-                    finalizeWebBean(session.getAttribute(name), session);
-                }
-            }
             session.removeAttribute(path);
         }
     }
@@ -924,8 +873,7 @@ public enum BeanHandler {
             WebBean bean = clazz.getAnnotation(WebBean.class);
             LOGGER.log(Level.INFO, "Mapping WebBean class: " + clazz);
 
-            if ((bean.scope() == ScopeType.PAGE_SCOPE || bean.scope() == ScopeType.SESSION_SCOPE)
-                    && !Serializable.class.isAssignableFrom(clazz)) {
+            if (bean.scope() == ScopeType.SESSION && !Serializable.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("Mapped WebBean class [" + clazz + "] with scope [" + bean.scope() + "] " +
                         "must implement java.io.Serializable interface");
             }
@@ -943,9 +891,9 @@ public enum BeanHandler {
             if (authBeans.isEmpty()) {
                 LOGGER.log(Level.INFO, "Mapping AuthBean class: " + clazz);
 
-                if (!Serializable.class.isAssignableFrom(clazz)) {
+                if (authBean.type() == AuthType.SESSION && !Serializable.class.isAssignableFrom(clazz)) {
                     throw new RuntimeException("Mapped AuthBean class [" + clazz + "] must implement " +
-                            "java.io.Serializable interface");
+                            "java.io.Serializable interface case its type is AuthType.SESSION");
                 }
 
                 setBeanFields(clazz);
@@ -954,7 +902,7 @@ public enum BeanHandler {
                 authBeans.put(className, clazz);
                 continue;
             } else {
-                LOGGER.log(Level.SEVERE, "Only one AuthBean must be declared! Skipping remained ones.");
+                LOGGER.log(Level.SEVERE, "Only one AuthBean can be declared! Skipping the remaining ones.");
             }
         }
 
@@ -967,14 +915,14 @@ public enum BeanHandler {
                 throw new RuntimeException("Mapped RequestPath class [" + clazz + "] must be annotated with " +
                         "org.springframework.stereotype.Controller from Spring");
             }
-            if (!requestPath.path().endsWith("*")) {
+            if (!requestPath.value().endsWith("*")) {
                 throw new RuntimeException("Mapped class [" + clazz + "] annotated with RequestPath must have its " +
                         "path annotation attribute ending with * character");
             }
 
             setBeanFields(clazz);
             setBeanMethods(clazz);
-            requestPaths.put(requestPath.path(), clazz);
+            requestPaths.put(requestPath.value(), clazz);
         }
 
         annotations = reflections.getTypesAnnotatedWith(AsyncBean.class);
@@ -990,7 +938,7 @@ public enum BeanHandler {
             setBeanFields(clazz);
             setBeanMethods(clazz);
 
-            String path = getCleanPath(asyncBean.asyncPath());
+            String path = getCleanPath(asyncBean.value());
 
             path = matchUrlPattern(path);
             asyncBeans.put(path, clazz);

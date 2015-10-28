@@ -227,9 +227,9 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     // Only applied for List and Table
     protected boolean shallExecuteTag() {
-        final HttpServletRequest request = getRequest();
+        HttpServletRequest request = getRequest();
 		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-			final String update = request.getHeader("Update-Ajax");
+			String update = request.getHeader("Update-Ajax");
 			return update != null && update.contains(id);
 		}
         return true;
@@ -475,15 +475,15 @@ public abstract class TagHandler extends SimpleTagSupport {
         return WebContext.getResponse();
     }
 
-    protected Object getMappedValue(final String name) {
+    protected Object getMappedValue(String name) {
         return WebContext.getMappedValue(name);
     }
 
-    protected Object removeMappedValue(final String name) {
+    protected Object removeMappedValue(String name) {
         return WebContext.removeMappedValue(name);
     }
 
-    protected void addMappedValue(final String name, final Object value) {
+    protected void addMappedValue(String name, Object value) {
         WebContext.addMappedValue(name, value);
     }
 

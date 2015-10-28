@@ -28,24 +28,18 @@ public enum ScopeType {
 	 * Indicates that the bean is on request scope, i.e., the bean instance is
 	 * kept only during the request processing.
 	 */
-	REQUEST_SCOPE, 
+	REQUEST,
 	
 	/**
 	 * Indicates that the bean is on session scope, i.e., the bean instance is kept 
 	 * as long as the session is alive.
 	 */
-	SESSION_SCOPE, 
-	
-	/**
-	 * Indicates that the bean is on page scope, i.e., the bean instance is kept as
-	 * long as the mapped URL keep being accessed.
-	 */
-	PAGE_SCOPE, 
+	SESSION,
 	
 	/**
 	 * Indicated that the bean is on application scope, i.e., the bean instance is kept
 	 * as long as the application is alive.
 	 */
-	APPLICATION_SCOPE;
+	APPLICATION;
 
 }

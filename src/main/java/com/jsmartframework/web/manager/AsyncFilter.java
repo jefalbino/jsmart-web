@@ -45,8 +45,8 @@ public class AsyncFilter implements Filter {
     // Filter used case AsyncContext is dispatched internally by AsyncBean implementation
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        final HttpServletRequest httpRequest = (HttpServletRequest) request;
-        final HttpServletResponse httpResponse = (HttpServletResponse) response;
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         httpRequest.setCharacterEncoding(ENCODING);
         httpResponse.setCharacterEncoding(ENCODING);

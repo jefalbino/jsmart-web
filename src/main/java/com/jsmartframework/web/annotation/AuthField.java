@@ -27,10 +27,12 @@ import java.lang.annotation.Target;
  * The {@link AuthField} annotation is used on a field attributes to indicate that
  * those fields are used to check if the user is authenticated. 
  * <br>
- * The field must be a object.
+ * The field must be an object and in case AuthBean if of type of Request the field
+ * will be set as Cookies.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface AuthField {
 
+    String value();
 }

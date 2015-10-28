@@ -24,6 +24,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AsyncBean {
 
-    String asyncPath();
+    String value();
 
 }

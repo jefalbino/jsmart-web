@@ -40,8 +40,8 @@ public @interface WebBean {
 	/**
 	 * The scope of the bean.
 	 * <br>
-	 * Default value is ScopeType.REQUEST_SCOPE
+	 * Default value is ScopeType.REQUEST
 	 */
-	ScopeType scope() default ScopeType.REQUEST_SCOPE;
+	ScopeType scope() default ScopeType.REQUEST;
 
 }

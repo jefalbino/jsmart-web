@@ -231,11 +231,11 @@ public final class EncodeFilter implements Filter {
 	    
 	    private WriteListener writeListener;
 
-	    public SmartEncodingServletOutputStream(final OutputStream outputStream) {
+	    public SmartEncodingServletOutputStream(OutputStream outputStream) {
 	        this.outputStream = outputStream;
 	    }
 
-	    public void write(final int b) throws IOException {
+	    public void write(int b) throws IOException {
 	    	try {
 		    	outputStream.write(b);
 		    	if (writeListener != null) {
@@ -249,7 +249,7 @@ public final class EncodeFilter implements Filter {
 	    	}
 	    }
 
-	    public void write(final byte[] b) throws IOException {
+	    public void write(byte[] b) throws IOException {
 	    	try {
 		    	outputStream.write(b);
 		    	if (writeListener != null) {
@@ -263,7 +263,7 @@ public final class EncodeFilter implements Filter {
 	    	}
 	    }
 
-	    public void write(final byte[] b, final int off, final int len) throws IOException {
+	    public void write(byte[] b, int off, int len) throws IOException {
 	    	try {
 	    		outputStream.write(b, off, len);
 	    		if (writeListener != null) {

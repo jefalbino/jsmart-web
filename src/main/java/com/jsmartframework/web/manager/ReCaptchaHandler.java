@@ -49,18 +49,18 @@ public final class ReCaptchaHandler {
 	static final String RECAPTCHA_V2_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
 	
-	static boolean checkReCaptchaV1(final String secretKey, final String responseField) {
+	static boolean checkReCaptchaV1(String secretKey, String responseField) {
 		return checkReCaptcha(secretKey, responseField, RECAPTCHA_V1);
 	}
 	
-	static boolean checkReCaptchaV2(final String secretKey, final String responseField) {
+	static boolean checkReCaptchaV2(String secretKey, String responseField) {
 		return checkReCaptcha(secretKey, responseField, RECAPTCHA_V2);
 	}
 	
-	private static boolean checkReCaptcha(final String secretKey, final String responseField, final Integer version) {
+	private static boolean checkReCaptcha(String secretKey, String responseField, Integer version) {
 
 		HttpsURLConnection conn = null;
-		final HttpServletRequest request = WebContext.getRequest();
+		HttpServletRequest request = WebContext.getRequest();
 
 		try {
 			if (version.equals(RECAPTCHA_V1)) {

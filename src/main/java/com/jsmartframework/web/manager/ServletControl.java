@@ -72,9 +72,6 @@ public final class ServletControl extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getServletPath();
 
-        // Clear related PageScope beans case needed
-        HANDLER.finalizeBeans(path, request.getSession());
-
         // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
         if (checkAuthentication(path, request, response)) {
             return;
@@ -268,7 +265,7 @@ public final class ServletControl extends HttpServlet {
 
         private WebAsyncListener bean;
 
-        public WebServletAsyncListener(final String path, final WebAsyncListener bean) {
+        public WebServletAsyncListener(String path, WebAsyncListener bean) {
             this.path = path;
             this.bean = bean;
         }

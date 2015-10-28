@@ -16,34 +16,10 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmartframework.web.manager;
+package com.jsmartframework.web.annotation;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+public enum AuthType {
 
-final class PageScope implements Serializable {
-
-	private static final long serialVersionUID = 4464006622540986000L;
-
-	private String path;
-
-	private Set<String> names = new HashSet<String>();
-
-	public PageScope(String path) {
-		this.path = path;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public Set<String> getNames() {
-		return names;
-	}
-
-	public void addName(String name) {
-		this.names.add(name);
-	}
+	REQUEST, SESSION
 
 }
