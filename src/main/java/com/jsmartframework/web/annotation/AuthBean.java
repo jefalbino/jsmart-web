@@ -38,7 +38,7 @@ public @interface AuthBean {
     /**
      *
      */
-    AuthType type() default AuthType.REQUEST;
+    AuthType type() default AuthType.SESSION;
 
 	/**
 	 * The mapped path on configuration file to specify the login

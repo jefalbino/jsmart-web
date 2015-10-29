@@ -120,6 +120,9 @@ public final class FilterControl implements Filter {
 		// Initiate bean context based on current thread instance
 		WebContext.initCurrentInstance(httpRequest, httpResponse);
 
+        // Instantiate request scoped auth bean
+        HANDLER.instantiateAuthBean(httpRequest);
+
 		// Anonymous subclass to wrap HTTP response to print output
 		WebFilterResponseWrapper responseWrapper = new WebFilterResponseWrapper(httpResponse);
 
@@ -131,8 +134,8 @@ public final class FilterControl implements Filter {
         	thrown.printStackTrace();
         }
 
-        // Finalize request scoped web beans
-        HANDLER.finalizeWebBeans(httpRequest);
+        // Finalize request scoped web and auth beans
+        HANDLER.finalizeBeans(httpRequest);
 
         // Check if response was written before closing the WebContext
         boolean responseWritten = WebContext.isResponseWritten();

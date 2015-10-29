@@ -20,6 +20,8 @@ package com.jsmartframework.web.util;
 
 import org.apache.commons.codec.binary.Base32;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
@@ -55,4 +57,19 @@ public final class WebUtils {
 		return base32String.toLowerCase().replace("=", "");
 	}
 
+    public static String getCookie(HttpServletRequest request, String name) {
+        if (name == null) {
+            return null;
+        }
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length == 0) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (name.equalsIgnoreCase(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
 }

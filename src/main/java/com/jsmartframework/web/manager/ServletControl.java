@@ -72,7 +72,7 @@ public final class ServletControl extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getServletPath();
 
-        // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
+        // If path is secure, check if user was logged case @AuthBean annotation was provided
         if (checkAuthentication(path, request, response)) {
             return;
         }
@@ -89,7 +89,7 @@ public final class ServletControl extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getServletPath();
 
-        // If path is secure, check if user was logged case @AuthenticationBean annotation was provided
+        // If path is secure, check if user was logged case @AuthBean annotation was provided
         if (checkAuthentication(path, request, response)) {
             return;
         }
@@ -116,7 +116,6 @@ public final class ServletControl extends HttpServlet {
         // Case user had ordered redirect to specific path in postConstruct method
         String redirectPath = WebContext.getRedirectTo();
         if (redirectPath != null && !redirectPath.equals(path)) {
-            HANDLER.finalizeWebBean(path, request.getSession());
             sendRedirect(redirectPath, request, response);
             return;
         }
@@ -137,7 +136,6 @@ public final class ServletControl extends HttpServlet {
         // Case user had ordered redirect to specific path in submitted method
         redirectPath = WebContext.getRedirectTo();
         if (redirectPath != null && !redirectPath.equals(path)) {
-            HANDLER.finalizeWebBean(path, request.getSession());
             responsePath = redirectPath;
         }
 
@@ -214,7 +212,6 @@ public final class ServletControl extends HttpServlet {
         // Case user had ordered redirect to specific path in postConstruct method
         String redirectPath = WebContext.getRedirectTo();
         if (redirectPath != null && !redirectPath.equals(path)) {
-            HANDLER.finalizeWebBean(path, request.getSession());
             sendRedirect(redirectPath, request, response);
             return;
         }

@@ -32,7 +32,6 @@ public final class SessionControl implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-
 		synchronized (session) {
 			session.setAttribute(Constants.SESSION_RESET_ATTR, "#");
 			HANDLER.instantiateAuthBean(session);
@@ -51,10 +50,9 @@ public final class SessionControl implements HttpSessionListener {
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-
 		synchronized (session) {
 			for (HttpSessionListener sessionListener : HANDLER.sessionListeners) {
-				sessionListener.sessionDestroyed(event);
+                sessionListener.sessionDestroyed(event);
 			}
 			HANDLER.finalizeBeans(session);
 		}
