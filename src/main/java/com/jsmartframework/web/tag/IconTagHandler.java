@@ -27,10 +27,11 @@ import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Align;
 import com.jsmartframework.web.tag.type.Look;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
-import java.io.IOException;
 
 public final class IconTagHandler extends TagHandler {
 

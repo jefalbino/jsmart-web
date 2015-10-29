@@ -22,22 +22,22 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public final class AttributeAdapter extends XmlAdapter<String, String[]> {
 
-	@Override
-	public String marshal(String[] values) throws Exception {
-		String string = "";
-		for (String value : values) {
-			string += value + ",";
-		}
-		return string;
-	}
+    @Override
+    public String marshal(String[] values) throws Exception {
+        String string = "";
+        for (String value : values) {
+            string += value + ",";
+        }
+        return string;
+    }
 
-	@Override
-	public String[] unmarshal(String value) throws Exception {
-		String[] values = value.split(",");
-		for (int i = 0; i < values.length; i++) {
-			values[i] = values[i].trim();
-		}
-		return values;
-	}
+    @Override
+    public String[] unmarshal(String value) throws Exception {
+        String[] values = value.split(",");
+        for (int i = 0; i < values.length; i++) {
+            values[i] = values[i].trim();
+        }
+        return values;
+    }
 
 }

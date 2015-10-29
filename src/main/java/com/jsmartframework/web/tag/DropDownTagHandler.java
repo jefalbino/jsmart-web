@@ -27,9 +27,10 @@ import com.jsmartframework.web.tag.html.Span;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Align;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import java.io.IOException;
 
 public final class DropDownTagHandler extends TagHandler {
 

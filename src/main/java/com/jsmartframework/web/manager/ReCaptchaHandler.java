@@ -18,103 +18,104 @@
 
 package com.jsmartframework.web.manager;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.servlet.http.HttpServletRequest;
+
 public final class ReCaptchaHandler {
-	
-	public static final Integer RECAPTCHA_V1 = 1;
-	
-	public static final Integer RECAPTCHA_V2 = 2;
+
+    public static final Integer RECAPTCHA_V1 = 1;
+
+    public static final Integer RECAPTCHA_V2 = 2;
 
 
-	public static final String RESPONSE_V1_FIELD_NAME = "recaptcha_response_field";
+    public static final String RESPONSE_V1_FIELD_NAME = "recaptcha_response_field";
 
-	public static final String RECAPTCHA_V1_CHALLENGE_URL = "https://www.google.com/recaptcha/api/challenge?k=%s";
+    public static final String RECAPTCHA_V1_CHALLENGE_URL = "https://www.google.com/recaptcha/api/challenge?k=%s";
 
-	static final String CHALLENGE_V1_FIELD_NAME = "recaptcha_challenge_field";
+    static final String CHALLENGE_V1_FIELD_NAME = "recaptcha_challenge_field";
 
-	static final String RECAPTCHA_V1_VERIFY_URL = "https://www.google.com/recaptcha/api/verify";
+    static final String RECAPTCHA_V1_VERIFY_URL = "https://www.google.com/recaptcha/api/verify";
 
 
-	public static final String RESPONSE_V2_FIELD_NAME = "g-recaptcha-response";
+    public static final String RESPONSE_V2_FIELD_NAME = "g-recaptcha-response";
 
-	public static final String RECAPTCHA_CHALLENGE_V2_URL = "https://www.google.com/recaptcha/api.js?onload=%s&render=explicit&hl=%s";
-	
-	static final String RECAPTCHA_V2_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
+    public static final String RECAPTCHA_CHALLENGE_V2_URL = "https://www.google.com/recaptcha/api.js?onload=%s&render=explicit&hl=%s";
 
-	
-	static boolean checkReCaptchaV1(String secretKey, String responseField) {
-		return checkReCaptcha(secretKey, responseField, RECAPTCHA_V1);
-	}
-	
-	static boolean checkReCaptchaV2(String secretKey, String responseField) {
-		return checkReCaptcha(secretKey, responseField, RECAPTCHA_V2);
-	}
-	
-	private static boolean checkReCaptcha(String secretKey, String responseField, Integer version) {
+    static final String RECAPTCHA_V2_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
-		HttpsURLConnection conn = null;
-		HttpServletRequest request = WebContext.getRequest();
 
-		try {
-			if (version.equals(RECAPTCHA_V1)) {
-				conn = (HttpsURLConnection) new URL(RECAPTCHA_V1_VERIFY_URL).openConnection();
-			} else {
-				conn = (HttpsURLConnection) new URL(RECAPTCHA_V2_VERIFY_URL).openConnection();
-			}
+    static boolean checkReCaptchaV1(String secretKey, String responseField) {
+        return checkReCaptcha(secretKey, responseField, RECAPTCHA_V1);
+    }
 
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
+    static boolean checkReCaptchaV2(String secretKey, String responseField) {
+        return checkReCaptcha(secretKey, responseField, RECAPTCHA_V2);
+    }
 
-			StringBuilder params = new StringBuilder();
-			params.append("response=").append(URLEncoder.encode(responseField, "UTF-8"))
-				.append("&remoteip=").append(request.getRemoteAddr()); 
+    private static boolean checkReCaptcha(String secretKey, String responseField, Integer version) {
 
-			if (version.equals(RECAPTCHA_V1)) {
-				String challengeField = request.getParameter(CHALLENGE_V1_FIELD_NAME);
+        HttpsURLConnection conn = null;
+        HttpServletRequest request = WebContext.getRequest();
 
-				params.append("&privatekey=").append(URLEncoder.encode(secretKey, "UTF-8"))
-					.append("&challenge=").append(URLEncoder.encode(challengeField, "UTF-8"));
-			} else {
-				params.append("&secret=").append(URLEncoder.encode(secretKey, "UTF-8"));
-			}
+        try {
+            if (version.equals(RECAPTCHA_V1)) {
+                conn = (HttpsURLConnection) new URL(RECAPTCHA_V1_VERIFY_URL).openConnection();
+            } else {
+                conn = (HttpsURLConnection) new URL(RECAPTCHA_V2_VERIFY_URL).openConnection();
+            }
 
-			DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-			wr.writeBytes(params.toString());
-			wr.close();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
 
-			if (conn.getResponseCode() != 200) {
-				return false;
-			}
+            StringBuilder params = new StringBuilder();
+            params.append("response=").append(URLEncoder.encode(responseField, "UTF-8"))
+                .append("&remoteip=").append(request.getRemoteAddr());
 
-			String line;
-			StringBuilder builder = new StringBuilder();
-			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            if (version.equals(RECAPTCHA_V1)) {
+                String challengeField = request.getParameter(CHALLENGE_V1_FIELD_NAME);
 
-			while ((line = in.readLine()) != null) {
-				builder.append(line);
-			}
-			in.close();
+                params.append("&privatekey=").append(URLEncoder.encode(secretKey, "UTF-8"))
+                    .append("&challenge=").append(URLEncoder.encode(challengeField, "UTF-8"));
+            } else {
+                params.append("&secret=").append(URLEncoder.encode(secretKey, "UTF-8"));
+            }
 
-			return builder.toString().contains("true");
-			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+            wr.writeBytes(params.toString());
+            wr.close();
 
-		} finally {
-			if (conn != null) {
-				conn.disconnect();
-			}
-		}
-	}
+            if (conn.getResponseCode() != 200) {
+                return false;
+            }
 
-	private ReCaptchaHandler() {
-		// DO NOTHING
-	}
+            String line;
+            StringBuilder builder = new StringBuilder();
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            while ((line = in.readLine()) != null) {
+                builder.append(line);
+            }
+            in.close();
+
+            return builder.toString().contains("true");
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
+
+    private ReCaptchaHandler() {
+        // DO NOTHING
+    }
 }

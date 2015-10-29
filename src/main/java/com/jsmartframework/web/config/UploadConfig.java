@@ -23,48 +23,48 @@ import javax.xml.bind.annotation.XmlValue;
 
 public final class UploadConfig {
 
-	private String location;
+    private String location;
 
-	private long maxFileSize;
+    private long maxFileSize;
 
-	private long maxRequestSize;
+    private long maxRequestSize;
 
-	private int fileSizeThreshold;
+    private int fileSizeThreshold;
 
-	@XmlValue
-	public String getLocation() {
-		return location;
-	}
+    @XmlValue
+    public String getLocation() {
+        return location;
+    }
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-	@XmlAttribute
-	public long getMaxFileSize() {
-		return maxFileSize;
-	}
+    @XmlAttribute
+    public long getMaxFileSize() {
+        return maxFileSize;
+    }
 
-	public void setMaxFileSize(long maxFileSize) {
-		this.maxFileSize = maxFileSize;
-	}
+    public void setMaxFileSize(long maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
 
-	@XmlAttribute
-	public long getMaxRequestSize() {
-		return maxRequestSize;
-	}
+    @XmlAttribute
+    public long getMaxRequestSize() {
+        return maxRequestSize;
+    }
 
-	public void setMaxRequestSize(long maxRequestSize) {
-		this.maxRequestSize = maxRequestSize;
-	}
+    public void setMaxRequestSize(long maxRequestSize) {
+        this.maxRequestSize = maxRequestSize;
+    }
 
-	@XmlAttribute
-	public int getFileSizeThreshold() {
-		return fileSizeThreshold;
-	}
+    @XmlAttribute
+    public int getFileSizeThreshold() {
+        return fileSizeThreshold;
+    }
 
-	public void setFileSizeThreshold(int fileSizeThreshold) {
-		this.fileSizeThreshold = fileSizeThreshold;
-	}
+    public void setFileSizeThreshold(int fileSizeThreshold) {
+        this.fileSizeThreshold = fileSizeThreshold;
+    }
 
 }

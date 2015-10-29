@@ -20,68 +20,68 @@ package com.jsmartframework.web.adapter;
 
 public final class ImageAdapter {
 
-	private String lib;
-	
-	private String name;
-	
-	private String alt;
+    private String lib;
 
-	private String width;
+    private String name;
 
-	private String height;
-	
-	public ImageAdapter(String name) {
-		this(name, null);
-	}
-	
-	public ImageAdapter(String name, String lib) {
-		this.name = name;
-		this.lib = lib;
-	}
+    private String alt;
 
-	public String getLib() {
-		return lib;
-	}
+    private String width;
 
-	public ImageAdapter setLib(String lib) {
-		this.lib = lib;
+    private String height;
+
+    public ImageAdapter(String name) {
+        this(name, null);
+    }
+
+    public ImageAdapter(String name, String lib) {
+        this.name = name;
+        this.lib = lib;
+    }
+
+    public String getLib() {
+        return lib;
+    }
+
+    public ImageAdapter setLib(String lib) {
+        this.lib = lib;
         return this;
-	}
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public ImageAdapter setName(String name) {
-		this.name = name;
+    public ImageAdapter setName(String name) {
+        this.name = name;
         return this;
-	}
+    }
 
-	public String getAlt() {
-		return alt;
-	}
+    public String getAlt() {
+        return alt;
+    }
 
-	public ImageAdapter setAlt(String alt) {
-		this.alt = alt;
+    public ImageAdapter setAlt(String alt) {
+        this.alt = alt;
         return this;
-	}
+    }
 
-	public String getWidth() {
-		return width;
-	}
+    public String getWidth() {
+        return width;
+    }
 
-	public ImageAdapter setWidth(String width) {
-		this.width = width;
+    public ImageAdapter setWidth(String width) {
+        this.width = width;
         return this;
-	}
+    }
 
-	public String getHeight() {
-		return height;
-	}
+    public String getHeight() {
+        return height;
+    }
 
-	public ImageAdapter setHeight(String height) {
-		this.height = height;
+    public ImageAdapter setHeight(String height) {
+        this.height = height;
         return this;
-	}
+    }
 
 }

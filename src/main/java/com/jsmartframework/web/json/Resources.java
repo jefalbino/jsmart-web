@@ -22,14 +22,14 @@ import java.util.List;
 
 public class Resources {
 
-	private List<String> resources;
+    private List<String> resources;
 
-	public List<String> getResources() {
-		return resources;
-	}
+    public List<String> getResources() {
+        return resources;
+    }
 
-	public void setResources(List<String> resources) {
-		this.resources = resources;
-	}
+    public void setResources(List<String> resources) {
+        this.resources = resources;
+    }
 
 }

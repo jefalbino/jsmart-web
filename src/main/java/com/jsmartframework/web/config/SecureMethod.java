@@ -24,49 +24,49 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public final class SecureMethod {
 
-	private String transport; // none, confidential (ssl)
+    private String transport; // none, confidential (ssl)
 
-	private String[] roles; // TODO: Change to access and may remove emptyRole
+    private String[] roles; // TODO: Change to access and may remove emptyRole
 
-	private String emptyRole; // deny, permit
+    private String emptyRole; // deny, permit
 
-	private String method; // *, delete, get, head, options, post, put, trace
+    private String method; // *, delete, get, head, options, post, put, trace
 
-	@XmlAttribute
-	public String getTransport() {
-		return transport;
-	}
+    @XmlAttribute
+    public String getTransport() {
+        return transport;
+    }
 
-	public void setTransport(String transport) {
-		this.transport = transport;
-	}
+    public void setTransport(String transport) {
+        this.transport = transport;
+    }
 
-	@XmlAttribute
-	@XmlJavaTypeAdapter(value = AttributeAdapter.class)
-	public String[] getRoles() {
-		return roles;
-	}
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = AttributeAdapter.class)
+    public String[] getRoles() {
+        return roles;
+    }
 
-	public void setRoles(String[] roles) {
-		this.roles = roles;
-	}
+    public void setRoles(String[] roles) {
+        this.roles = roles;
+    }
 
-	@XmlAttribute(name = "emptyRole")
-	public String getEmptyRole() {
-		return emptyRole;
-	}
+    @XmlAttribute(name = "emptyRole")
+    public String getEmptyRole() {
+        return emptyRole;
+    }
 
-	public void setEmptyRole(String emptyRole) {
-		this.emptyRole = emptyRole;
-	}
+    public void setEmptyRole(String emptyRole) {
+        this.emptyRole = emptyRole;
+    }
 
-	@XmlValue
-	public String getMethod() {
-		return method;
-	}
+    @XmlValue
+    public String getMethod() {
+        return method;
+    }
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
 }

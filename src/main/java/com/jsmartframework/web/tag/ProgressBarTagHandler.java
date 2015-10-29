@@ -18,6 +18,8 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_PROGRESSBAR;
+
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Progress;
 import com.jsmartframework.web.manager.TagHandler;
@@ -28,12 +30,11 @@ import com.jsmartframework.web.tag.html.Set;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Look;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
-import java.io.IOException;
-
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_PROGRESSBAR;
 
 public final class ProgressBarTagHandler extends TagHandler {
 

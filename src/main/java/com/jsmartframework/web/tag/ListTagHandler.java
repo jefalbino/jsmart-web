@@ -18,6 +18,9 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_LIST;
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_LISTSCROLL;
+
 import com.jsmartframework.web.adapter.ListAdapter;
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Ajax;
@@ -30,17 +33,15 @@ import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.html.Ul;
 import com.jsmartframework.web.tag.type.Event;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_LIST;
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_LISTSCROLL;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public final class ListTagHandler extends TagHandler {
 

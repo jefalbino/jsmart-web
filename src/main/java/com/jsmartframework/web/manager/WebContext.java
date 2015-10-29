@@ -22,7 +22,22 @@ import com.google.gson.Gson;
 import com.jsmartframework.web.annotation.WebBean;
 import com.jsmartframework.web.util.WebAlert;
 import com.jsmartframework.web.util.WebUtils;
+
 import org.apache.commons.lang.StringEscapeUtils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 import javax.el.ExpressionFactory;
@@ -40,19 +55,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class represents the context of the request being currently processed and it allows {@link WebBean}
@@ -64,127 +66,127 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class WebContext implements Serializable {
 
-	private static final long serialVersionUID = -3910553204750683737L;
+    private static final long serialVersionUID = -3910553204750683737L;
 
-	private static final JspFactory JSP_FACTORY = JspFactory.getDefaultFactory();
+    private static final JspFactory JSP_FACTORY = JspFactory.getDefaultFactory();
 
-	private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<>();
+    private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<>();
 
     private static final Gson gson = new Gson();
 
-	private static Servlet smartServlet;
+    private static Servlet smartServlet;
 
-	private static JspApplicationContext jspContext;
+    private static JspApplicationContext jspContext;
 
-	private HttpServletRequest request;
+    private HttpServletRequest request;
 
     private String bodyContent;
 
-	private HttpServletResponse response;
+    private HttpServletResponse response;
 
     private boolean responseWritten;
 
-	private String redirectTo;
+    private String redirectTo;
 
     private boolean redirectToWindow;
 
-	private boolean invalidate;
+    private boolean invalidate;
 
-	private PageContext pageContext;
+    private PageContext pageContext;
 
-	private Map<String, List<WebAlert>> alerts = new LinkedHashMap<>();
+    private Map<String, List<WebAlert>> alerts = new LinkedHashMap<>();
 
-	private Map<String, Object> mappedValues = new ConcurrentHashMap<>();
+    private Map<String, Object> mappedValues = new ConcurrentHashMap<>();
 
     private Map<String, String> queryParams;
 
-	private WebContext(HttpServletRequest request, HttpServletResponse response) {
-		this.request = request;
-		this.response = response;
-	}
+    private WebContext(HttpServletRequest request, HttpServletResponse response) {
+        this.request = request;
+        this.response = response;
+    }
 
-	static final void setServlet(Servlet servlet) {
-		smartServlet = servlet;
-		jspContext = JSP_FACTORY.getJspApplicationContext(servlet.getServletConfig().getServletContext());
-	}
+    static final void setServlet(Servlet servlet) {
+        smartServlet = servlet;
+        jspContext = JSP_FACTORY.getJspApplicationContext(servlet.getServletConfig().getServletContext());
+    }
 
-	private static final WebContext getCurrentInstance() {
-		return THREADS.get(Thread.currentThread());
-	}
+    private static final WebContext getCurrentInstance() {
+        return THREADS.get(Thread.currentThread());
+    }
 
-	static final void initCurrentInstance(HttpServletRequest request, HttpServletResponse response) {
-		THREADS.put(Thread.currentThread(), new WebContext(request, response));
-	}
+    static final void initCurrentInstance(HttpServletRequest request, HttpServletResponse response) {
+        THREADS.put(Thread.currentThread(), new WebContext(request, response));
+    }
 
-	static final void closeCurrentInstance() {
-		THREADS.remove(Thread.currentThread()).close();
-	}
+    static final void closeCurrentInstance() {
+        THREADS.remove(Thread.currentThread()).close();
+    }
 
-	private void close() {
-		if (invalidate) {
-			request.getSession().invalidate();
-		}
-		invalidate = false;
-		request = null;
+    private void close() {
+        if (invalidate) {
+            request.getSession().invalidate();
+        }
+        invalidate = false;
+        request = null;
         bodyContent = null;
-		response = null;
+        response = null;
         responseWritten = false;
-		redirectTo = null;
-		alerts.clear();
-		alerts = null;
-		mappedValues.clear();
-		mappedValues = null;
-		JSP_FACTORY.releasePageContext(pageContext);
-		pageContext = null;
-	}
+        redirectTo = null;
+        alerts.clear();
+        alerts = null;
+        mappedValues.clear();
+        mappedValues = null;
+        JSP_FACTORY.releasePageContext(pageContext);
+        pageContext = null;
+    }
 
-	static PageContext getPageContext() {
-		WebContext context = getCurrentInstance();
-		return context != null ? context.getPage() : null;
-	}
+    static PageContext getPageContext() {
+        WebContext context = getCurrentInstance();
+        return context != null ? context.getPage() : null;
+    }
 
-	private PageContext getPage() {
-		if (pageContext == null) {
-			pageContext = JSP_FACTORY.getPageContext(smartServlet, request, response, null, true, 8192, true);
-		}
-		return pageContext;
-	}
+    private PageContext getPage() {
+        if (pageContext == null) {
+            pageContext = JSP_FACTORY.getPageContext(smartServlet, request, response, null, true, 8192, true);
+        }
+        return pageContext;
+    }
 
-	static ExpressionFactory getExpressionFactory() {
-		return jspContext.getExpressionFactory();
-	}
+    static ExpressionFactory getExpressionFactory() {
+        return jspContext.getExpressionFactory();
+    }
 
-	/**
-	 * Returns the current {@link ServletContext} instance associated to the request
-	 * being processed.
-	 *  
-	 * @return a instance of {@link ServletContext}.
-	 */
-	public static ServletContext getApplication() {
-		return smartServlet.getServletConfig().getServletContext();
-	}
+    /**
+     * Returns the current {@link ServletContext} instance associated to the request
+     * being processed.
+     *
+     * @return a instance of {@link ServletContext}.
+     */
+    public static ServletContext getApplication() {
+        return smartServlet.getServletConfig().getServletContext();
+    }
 
-	/**
-	 * Returns the current {@link HttpSession} instance associated to the request being
-	 * processed.
-	 * 
-	 * @return a instance of {@link HttpSession}.
-	 */
-	public static HttpSession getSession() {
-		WebContext context = getCurrentInstance();
-		return context != null ? context.request.getSession() : null;
-	}
+    /**
+     * Returns the current {@link HttpSession} instance associated to the request being
+     * processed.
+     *
+     * @return a instance of {@link HttpSession}.
+     */
+    public static HttpSession getSession() {
+        WebContext context = getCurrentInstance();
+        return context != null ? context.request.getSession() : null;
+    }
 
-	/**
-	 * Returns the current {@link HttpServletRequest} instance associated to the request being
-	 * processed.
-	 * 
-	 * @return a instance of {@link HttpServletRequest}.
-	 */
-	public static HttpServletRequest getRequest() {
-		WebContext context = getCurrentInstance();
-		return context != null ? context.request : null;
-	}
+    /**
+     * Returns the current {@link HttpServletRequest} instance associated to the request being
+     * processed.
+     *
+     * @return a instance of {@link HttpServletRequest}.
+     */
+    public static HttpServletRequest getRequest() {
+        WebContext context = getCurrentInstance();
+        return context != null ? context.request : null;
+    }
 
     public static Map<String, String> getQueryParams() {
         WebContext context = getCurrentInstance();
@@ -208,41 +210,41 @@ public final class WebContext implements Serializable {
         return context.queryParams;
     }
 
-	/**
-	 * Returns the current {@link HttpServletResponse} instance associated to the request 
-	 * being processed.
-	 * 
-	 * @return a instance of {@link HttpServletResponse}
-	 */
-	public static HttpServletResponse getResponse() {
-		WebContext context = getCurrentInstance();
-		return context != null ? context.response : null;
-	}
+    /**
+     * Returns the current {@link HttpServletResponse} instance associated to the request
+     * being processed.
+     *
+     * @return a instance of {@link HttpServletResponse}
+     */
+    public static HttpServletResponse getResponse() {
+        WebContext context = getCurrentInstance();
+        return context != null ? context.response : null;
+    }
 
-	static String getRedirectTo() {
-		WebContext context = getCurrentInstance();
-		return context != null ? context.redirectTo : null;
-	}
+    static String getRedirectTo() {
+        WebContext context = getCurrentInstance();
+        return context != null ? context.redirectTo : null;
+    }
 
     static boolean isRedirectToWindow() {
         WebContext context = getCurrentInstance();
         return context != null ? context.redirectToWindow : false;
     }
 
-	/**
-	 * Redirect the request to the specified link path after the current request is processed.
-	 * <br>
-	 * Case this method is called on {@link PostConstruct} annotated method, the redirect is done after the
-	 * {@link PostConstruct} annotated method execution.
-	 * 
-	 * @param path path mapped on configuration file or general valid URL link.
-	 */
-	public static void redirectTo(String path) {
-		WebContext context = getCurrentInstance();
-		if (context != null) {
-			context.redirectTo = WebUtils.decodePath(path);
-		}
-	}
+    /**
+     * Redirect the request to the specified link path after the current request is processed.
+     * <br>
+     * Case this method is called on {@link PostConstruct} annotated method, the redirect is done after the
+     * {@link PostConstruct} annotated method execution.
+     *
+     * @param path path mapped on configuration file or general valid URL link.
+     */
+    public static void redirectTo(String path) {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.redirectTo = WebUtils.decodePath(path);
+        }
+    }
 
     public static void redirectToWindow(String path) {
         WebContext context = getCurrentInstance();
@@ -252,221 +254,221 @@ public final class WebContext implements Serializable {
         }
     }
 
-	/**
-	 * Calling this method will cause the current {@link HttpSession} to be invalidated after the request
-	 * processing is done. It means that the session will be invalidated after {@link WebBean} life cycle
-	 * is completed.
-	 * <br>
-	 * Case there is a need to invalidate the session at the moment of the execution, use {@link HttpSession}
-	 * invalidate method instead.  
-	 */
-	public static void invalidate() {
-		WebContext context = getCurrentInstance();
-		if (context != null) {
-			context.invalidate = true;
-		}
-	}
+    /**
+     * Calling this method will cause the current {@link HttpSession} to be invalidated after the request
+     * processing is done. It means that the session will be invalidated after {@link WebBean} life cycle
+     * is completed.
+     * <br>
+     * Case there is a need to invalidate the session at the moment of the execution, use {@link HttpSession}
+     * invalidate method instead.
+     */
+    public static void invalidate() {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.invalidate = true;
+        }
+    }
 
-	/**
-	 * Returns the {@link Locale} of the client associated to the request being processed.
-	 * 
-	 * @return {@link Locale} instance.
-	 */
-	public static Locale getLocale() {
-		HttpServletRequest request = getRequest();
-		return request != null ? request.getLocale() : null;
-	}
+    /**
+     * Returns the {@link Locale} of the client associated to the request being processed.
+     *
+     * @return {@link Locale} instance.
+     */
+    public static Locale getLocale() {
+        HttpServletRequest request = getRequest();
+        return request != null ? request.getLocale() : null;
+    }
 
-	/**
-	 * Returns <code>true</code> if the request being process was triggered by Ajax on client side,
-	 * <code>false</code> otherwise.
-	 * 
-	 * @return boolean value indicating if request was done using Ajax.
-	 */
-	public static boolean isAjaxRequest() {
-		HttpServletRequest request = getRequest();
-		return request != null ? "XMLHttpRequest".equals(request.getHeader("X-Requested-With")) : false;
-	}
+    /**
+     * Returns <code>true</code> if the request being process was triggered by Ajax on client side,
+     * <code>false</code> otherwise.
+     *
+     * @return boolean value indicating if request was done using Ajax.
+     */
+    public static boolean isAjaxRequest() {
+        HttpServletRequest request = getRequest();
+        return request != null ? "XMLHttpRequest".equals(request.getHeader("X-Requested-With")) : false;
+    }
 
-	static List<WebAlert> getAlerts(String id) {
-		WebContext context = getCurrentInstance();
-		return context != null ? context.alerts.get(id) : null;
-	}
+    static List<WebAlert> getAlerts(String id) {
+        WebContext context = getCurrentInstance();
+        return context != null ? context.alerts.get(id) : null;
+    }
 
-	public static void addAlert(String id, WebAlert alert) {
-		WebContext context = getCurrentInstance();
-		if (context != null && id != null && alert != null) {
-			List<WebAlert> alerts = context.alerts.get(id);
-			if (alerts == null) {
-				context.alerts.put(id, alerts = new ArrayList<WebAlert>());
-			}
-			alerts.add(alert);
-		}
-	}
+    public static void addAlert(String id, WebAlert alert) {
+        WebContext context = getCurrentInstance();
+        if (context != null && id != null && alert != null) {
+            List<WebAlert> alerts = context.alerts.get(id);
+            if (alerts == null) {
+                context.alerts.put(id, alerts = new ArrayList<WebAlert>());
+            }
+            alerts.add(alert);
+        }
+    }
 
-	/**
-	 * Add info alert to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the alert tag is mapped with specified id and with position fixed
-	 * on the page returned to the client.
-	 * <br>
-	 * The message is placed on the same position where the the message tag is mapped.
-	 * 
-	 * @param id of the tag to receive the message.
-	 * @param message to be presented on the client side.
-	 */
-	public static void addInfo(String id, String message) {
-		WebAlert alert = new WebAlert(WebAlert.AlertType.INFO);
-		alert.setMessage(message);
-		addAlert(id, alert);
-	}
+    /**
+     * Add info alert to be presented on client side after the response is returned.
+     * <br>
+     * This method only take effect if the alert tag is mapped with specified id and with position fixed
+     * on the page returned to the client.
+     * <br>
+     * The message is placed on the same position where the the message tag is mapped.
+     *
+     * @param id of the tag to receive the message.
+     * @param message to be presented on the client side.
+     */
+    public static void addInfo(String id, String message) {
+        WebAlert alert = new WebAlert(WebAlert.AlertType.INFO);
+        alert.setMessage(message);
+        addAlert(id, alert);
+    }
 
-	/**
-	 * Add warning alert to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the alert tag is mapped with specified id and with position fixed
-	 * on the page returned to the client.
-	 * <br>
-	 * The message is placed on the same position where the the message tag is mapped.
-	 * 
-	 * @param id of the tag to receive the message.
-	 * @param message to be presented on the client side.
-	 */
-	public static void addWarning(String id, String message) {
-		WebAlert alert = new WebAlert(WebAlert.AlertType.WARNING);
-		alert.setMessage(message);
-		addAlert(id, alert);
-	}
-	
-	/**
-	 * Add success alert to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the alert tag is mapped with specified id and with position fixed
-	 * on the page returned to the client.
-	 * <br>
-	 * The message is placed on the same position where the the message tag is mapped.
-	 * 
-	 * @param id of the tag to receive the message.
-	 * @param message to be presented on the client side.
-	 */
-	public static void addSuccess(String id, String message) {
-		WebAlert alert = new WebAlert(WebAlert.AlertType.SUCCESS);
-		alert.setMessage(message);
-		addAlert(id, alert);
-	}
-	
-	/**
-	 * Add error alert to be presented on client side after the response is returned. 
-	 * <br>
-	 * This method only take effect if the alert tag is mapped with specified id and with position fixed
-	 * on the page returned to the client.
-	 * <br>
-	 * The message is placed on the same position where the the message tag is mapped.
-	 * 
-	 * @param id of the tag to receive the message.
-	 * @param message to be presented on the client side.
-	 */
-	public static void addError(String id, String message) {
-		WebAlert alert = new WebAlert(WebAlert.AlertType.DANGER);
-		alert.setMessage(message);
-		addAlert(id, alert);
-	}
+    /**
+     * Add warning alert to be presented on client side after the response is returned.
+     * <br>
+     * This method only take effect if the alert tag is mapped with specified id and with position fixed
+     * on the page returned to the client.
+     * <br>
+     * The message is placed on the same position where the the message tag is mapped.
+     *
+     * @param id of the tag to receive the message.
+     * @param message to be presented on the client side.
+     */
+    public static void addWarning(String id, String message) {
+        WebAlert alert = new WebAlert(WebAlert.AlertType.WARNING);
+        alert.setMessage(message);
+        addAlert(id, alert);
+    }
 
-	static Object getMappedValue(String name) {
-		WebContext context = getCurrentInstance();
-		if (context != null) {
-			return context.mappedValues.get(name);
-		}
-		return null;
-	}
-	
-	static Object removeMappedValue(String name) {
-		WebContext context = getCurrentInstance();
-		if (context != null) {
-			return context.mappedValues.remove(name);
-		}
-		return null;
-	}
+    /**
+     * Add success alert to be presented on client side after the response is returned.
+     * <br>
+     * This method only take effect if the alert tag is mapped with specified id and with position fixed
+     * on the page returned to the client.
+     * <br>
+     * The message is placed on the same position where the the message tag is mapped.
+     *
+     * @param id of the tag to receive the message.
+     * @param message to be presented on the client side.
+     */
+    public static void addSuccess(String id, String message) {
+        WebAlert alert = new WebAlert(WebAlert.AlertType.SUCCESS);
+        alert.setMessage(message);
+        addAlert(id, alert);
+    }
 
-	static void addMappedValue(String name, Object value) {
-		WebContext context = getCurrentInstance();
-		if (context != null) {
-			context.mappedValues.put(name, value);
-		}
-	}
+    /**
+     * Add error alert to be presented on client side after the response is returned.
+     * <br>
+     * This method only take effect if the alert tag is mapped with specified id and with position fixed
+     * on the page returned to the client.
+     * <br>
+     * The message is placed on the same position where the the message tag is mapped.
+     *
+     * @param id of the tag to receive the message.
+     * @param message to be presented on the client side.
+     */
+    public static void addError(String id, String message) {
+        WebAlert alert = new WebAlert(WebAlert.AlertType.DANGER);
+        alert.setMessage(message);
+        addAlert(id, alert);
+    }
 
-	/**
-	 * Returns the attribute carried on {@link HttpServletRequest}, {@link HttpSession} or {@link ServletContext}
-	 * instances associated with current request being processed.
-	 * 
-	 * @param name name of the attribute.
-	 * @return the {@link Object} mapped by attribute name on the current request.
-	 */
-	public static Object getAttribute(String name) {
-		if (name != null) {
-			HttpServletRequest request = getRequest();
-			if (request != null && request.getAttribute(name) != null) {
-				return request.getAttribute(name);
-			}
-			
-			HttpSession session = getSession();
-			if (session != null) {
-				synchronized (session) {
-					if (session.getAttribute(name) != null) {
-						return session.getAttribute(name);
-					}
-				}
-			}
+    static Object getMappedValue(String name) {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            return context.mappedValues.get(name);
+        }
+        return null;
+    }
 
-			ServletContext application = getApplication();
-			if (application.getAttribute(name) != null) {
-				return application.getAttribute(name); 
-			}
-		}
-		return null;
-	}
+    static Object removeMappedValue(String name) {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            return context.mappedValues.remove(name);
+        }
+        return null;
+    }
 
-	/**
-	 * Check if attribute is carried on {@link HttpServletRequest}, {@link HttpSession} or {@link ServletContext}
-	 * instances associated with current request being processed.
-	 * 
-	 * @param name name of the attribute.
-	 * @return <code>true</code> if the attribute is contained in one of the instances {@link HttpServletRequest}, 
-	 * {@link HttpSession} or {@link ServletContext}, <code>false</code> otherwise.
-	 */
-	public static boolean containsAttribute(String name) {
-		if (name != null) {
-			HttpServletRequest request = getRequest();
-			if (request != null && request.getAttribute(name) != null) {
-				return true;
-			}
+    static void addMappedValue(String name, Object value) {
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.mappedValues.put(name, value);
+        }
+    }
 
-			HttpSession session = getSession();
-			if (session != null) {
-				synchronized (session) {
-					if (session.getAttribute(name) != null) {
-						return true;
-					}
-				}
-			}
+    /**
+     * Returns the attribute carried on {@link HttpServletRequest}, {@link HttpSession} or {@link ServletContext}
+     * instances associated with current request being processed.
+     *
+     * @param name name of the attribute.
+     * @return the {@link Object} mapped by attribute name on the current request.
+     */
+    public static Object getAttribute(String name) {
+        if (name != null) {
+            HttpServletRequest request = getRequest();
+            if (request != null && request.getAttribute(name) != null) {
+                return request.getAttribute(name);
+            }
 
-			return getApplication().getAttribute(name) != null;
-		}
-		return false;
-	}
+            HttpSession session = getSession();
+            if (session != null) {
+                synchronized (session) {
+                    if (session.getAttribute(name) != null) {
+                        return session.getAttribute(name);
+                    }
+                }
+            }
 
-	public static boolean checkReCaptcha(String secretKey) {
-		String responseField = (String) getMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME);
-		if (responseField != null) {
-			return ReCaptchaHandler.checkReCaptchaV1(secretKey, responseField);
-		}
+            ServletContext application = getApplication();
+            if (application.getAttribute(name) != null) {
+                return application.getAttribute(name);
+            }
+        }
+        return null;
+    }
 
-		responseField = (String) getMappedValue(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME);
-		if (responseField != null) {
-			return ReCaptchaHandler.checkReCaptchaV2(secretKey, responseField);
-		}
-		throw new RuntimeException("ReCaptcha not found on this submit. Plase make sure the recaptcha tag is included on submitted form");
-	}
+    /**
+     * Check if attribute is carried on {@link HttpServletRequest}, {@link HttpSession} or {@link ServletContext}
+     * instances associated with current request being processed.
+     *
+     * @param name name of the attribute.
+     * @return <code>true</code> if the attribute is contained in one of the instances {@link HttpServletRequest},
+     * {@link HttpSession} or {@link ServletContext}, <code>false</code> otherwise.
+     */
+    public static boolean containsAttribute(String name) {
+        if (name != null) {
+            HttpServletRequest request = getRequest();
+            if (request != null && request.getAttribute(name) != null) {
+                return true;
+            }
+
+            HttpSession session = getSession();
+            if (session != null) {
+                synchronized (session) {
+                    if (session.getAttribute(name) != null) {
+                        return true;
+                    }
+                }
+            }
+
+            return getApplication().getAttribute(name) != null;
+        }
+        return false;
+    }
+
+    public static boolean checkReCaptcha(String secretKey) {
+        String responseField = (String) getMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME);
+        if (responseField != null) {
+            return ReCaptchaHandler.checkReCaptchaV1(secretKey, responseField);
+        }
+
+        responseField = (String) getMappedValue(ReCaptchaHandler.RESPONSE_V2_FIELD_NAME);
+        if (responseField != null) {
+            return ReCaptchaHandler.checkReCaptchaV2(secretKey, responseField);
+        }
+        throw new RuntimeException("ReCaptcha not found on this submit. Plase make sure the recaptcha tag is included on submitted form");
+    }
 
     public static String escapeString(String value) {
         if (value != null) {

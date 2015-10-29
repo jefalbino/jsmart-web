@@ -18,19 +18,20 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_ASYNCEVENT;
+
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Async;
 import com.jsmartframework.web.json.AsyncEvent;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.html.Tag;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_ASYNCEVENT;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public final class AsyncTagHandler extends TagHandler {
 

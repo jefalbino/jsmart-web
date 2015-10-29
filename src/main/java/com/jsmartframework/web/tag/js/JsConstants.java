@@ -20,43 +20,43 @@ package com.jsmartframework.web.tag.js;
 
 public enum JsConstants {
 
-	JSMART_VALIDATE("JSmart.validate", "('%s');"),
-	JSMART_AJAX("JSmart.ajax", "(%s,$(this));"),
+    JSMART_VALIDATE("JSmart.validate", "('%s');"),
+    JSMART_AJAX("JSmart.ajax", "(%s,$(this));"),
     JSMART_AJAX_ATTACH("JSmart.ajaxattach", "('%s');"),
-	JSMART_BIND("JSmart.bind", "(%s);"),
-	JSMART_MODAL("JSmart.modal", "('%s');"),
-	JSMART_LIST("JSmart.list", "($(this),%s);"),
-	JSMART_LISTSCROLL("JSmart.listscroll", "(%s);"),
-	JSMART_TAB("JSmart.tab", "(%s);"),
-	JSMART_TABPANE("JSmart.tabpane", "($(this),%s);"),
-	JSMART_CAROUSEL("JSmart.carousel", "('%s');"),
-	JSMART_DATE("JSmart.date", "(%s);"),
-	JSMART_PROGRESSBAR("JSmart.progressbar", "(%s);"),
-	JSMART_PROGRESSGROUP("JSmart.progressgroup", "(%s);"),
-	JSMART_TABLE("JSmart.table", "($(this),%s);"),
-	JSMART_TABLESCROLL("JSmart.tablescroll", "(%s);"),
-	JSMART_TABLEHEADER("JSmart.tableheader", "(%s);"),
-	JSMART_AUTOCOMPLETE("JSmart.autocplt", "(%s,e);"),
-	JSMART_AUTOCPLTSCROLL("JSmart.autocpltscroll", "(%s);"),
+    JSMART_BIND("JSmart.bind", "(%s);"),
+    JSMART_MODAL("JSmart.modal", "('%s');"),
+    JSMART_LIST("JSmart.list", "($(this),%s);"),
+    JSMART_LISTSCROLL("JSmart.listscroll", "(%s);"),
+    JSMART_TAB("JSmart.tab", "(%s);"),
+    JSMART_TABPANE("JSmart.tabpane", "($(this),%s);"),
+    JSMART_CAROUSEL("JSmart.carousel", "('%s');"),
+    JSMART_DATE("JSmart.date", "(%s);"),
+    JSMART_PROGRESSBAR("JSmart.progressbar", "(%s);"),
+    JSMART_PROGRESSGROUP("JSmart.progressgroup", "(%s);"),
+    JSMART_TABLE("JSmart.table", "($(this),%s);"),
+    JSMART_TABLESCROLL("JSmart.tablescroll", "(%s);"),
+    JSMART_TABLEHEADER("JSmart.tableheader", "(%s);"),
+    JSMART_AUTOCOMPLETE("JSmart.autocplt", "(%s,e);"),
+    JSMART_AUTOCPLTSCROLL("JSmart.autocpltscroll", "(%s);"),
     JSMART_ASYNCEVENT("JSmart.asyncevent", "(%s);"),
     JSMART_FUNCTION_VAR("JSmart.fnvar", "('%s',%s);");
 
-	private String name;
+    private String name;
 
-	private String parameters;
+    private String parameters;
 
-	private JsConstants(String name, String parameters) {
-		this.name = name;
-		this.parameters = parameters;
-	}
+    private JsConstants(String name, String parameters) {
+        this.name = name;
+        this.parameters = parameters;
+    }
 
-	public String format(Object ... values) {
-		return String.format(name + parameters, values);
-	}
+    public String format(Object ... values) {
+        return String.format(name + parameters, values);
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

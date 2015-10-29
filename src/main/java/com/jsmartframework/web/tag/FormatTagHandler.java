@@ -22,15 +22,17 @@ import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Type;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspTag;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
 
 public final class FormatTagHandler extends TagHandler {
 	

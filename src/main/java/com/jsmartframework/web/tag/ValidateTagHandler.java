@@ -23,9 +23,10 @@ import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Look;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
-import java.io.IOException;
 
 public final class ValidateTagHandler extends TagHandler {
 

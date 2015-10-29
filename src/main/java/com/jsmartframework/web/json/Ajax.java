@@ -23,41 +23,41 @@ import java.util.List;
 
 public final class Ajax {
 
-	private String id;
+    private String id;
 
     private String form;
-	
-	private String tag;
 
-	private Integer timeout;
+    private String tag;
 
-	private String method;
+    private Integer timeout;
 
-	private String action;
-	
-	private String url;
+    private String method;
 
-	private List<Param> params = new ArrayList<Param>(2);
-	
-	private List<Param> args = new ArrayList<Param>(2);
+    private String action;
 
-	private String update;
+    private String url;
 
-	private String before;
+    private List<Param> params = new ArrayList<Param>(2);
 
-	private String success;
-	
-	private String error;
-	
-	private String complete;
+    private List<Param> args = new ArrayList<Param>(2);
 
-	public String getId() {
-		return id;
-	}
+    private String update;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    private String before;
+
+    private String success;
+
+    private String error;
+
+    private String complete;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getForm() {
         return form;
@@ -68,153 +68,153 @@ public final class Ajax {
     }
 
     public String getTag() {
-		return tag;
-	}
+        return tag;
+    }
 
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
-	public Integer getTimeout() {
-		return timeout;
-	}
+    public Integer getTimeout() {
+        return timeout;
+    }
 
-	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
-	}
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
 
-	public String getMethod() {
-		return method;
-	}
+    public String getMethod() {
+        return method;
+    }
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public List<Param> getParams() {
-		return params;
-	}
-	
-	public void addParam(Param param) {
-		this.params.add(param);
-	}
+    public List<Param> getParams() {
+        return params;
+    }
 
-	public void setParams(List<Param> params) {
-		this.params = params;
-	}
+    public void addParam(Param param) {
+        this.params.add(param);
+    }
 
-	public List<Param> getArgs() {
-		return args;
-	}
+    public void setParams(List<Param> params) {
+        this.params = params;
+    }
 
-	public void addArg(Param arg) {
-		this.args.add(arg);
-	}
+    public List<Param> getArgs() {
+        return args;
+    }
 
-	public void setArgs(List<Param> args) {
-		this.args = args;
-	}
+    public void addArg(Param arg) {
+        this.args.add(arg);
+    }
 
-	public String getUpdate() {
-		return update;
-	}
+    public void setArgs(List<Param> args) {
+        this.args = args;
+    }
 
-	public void setUpdate(String update) {
-		this.update = update;
-	}
+    public String getUpdate() {
+        return update;
+    }
 
-	public String getBefore() {
-		return before;
-	}
+    public void setUpdate(String update) {
+        this.update = update;
+    }
 
-	public void setBefore(String before) {
-		this.before = before;
-	}
+    public String getBefore() {
+        return before;
+    }
 
-	public String getSuccess() {
-		return success;
-	}
+    public void setBefore(String before) {
+        this.before = before;
+    }
 
-	public void setSuccess(String success) {
-		this.success = success;
-	}
+    public String getSuccess() {
+        return success;
+    }
 
-	public String getError() {
-		return error;
-	}
+    public void setSuccess(String success) {
+        this.success = success;
+    }
 
-	public void setError(String error) {
-		this.error = error;
-	}
+    public String getError() {
+        return error;
+    }
 
-	public String getComplete() {
-		return complete;
-	}
+    public void setError(String error) {
+        this.error = error;
+    }
 
-	public void setComplete(String complete) {
-		this.complete = complete;
-	}
+    public String getComplete() {
+        return complete;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((action == null) ? 0 : action.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((url == null) ? 0 : url.hashCode());
-		return result;
-	}
+    public void setComplete(String complete) {
+        this.complete = complete;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Ajax other = (Ajax) obj;
-		if (action == null) {
-			if (other.action != null) {
-				return false;
-			}
-		} else if (!action.equals(other.action)) {
-			return false;
-		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		if (url == null) {
-			if (other.url != null) {
-				return false;
-			}
-		} else if (!url.equals(other.url)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((action == null) ? 0 : action.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Ajax other = (Ajax) obj;
+        if (action == null) {
+            if (other.action != null) {
+                return false;
+            }
+        } else if (!action.equals(other.action)) {
+            return false;
+        }
+        if (id == null) {
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!id.equals(other.id)) {
+            return false;
+        }
+        if (url == null) {
+            if (other.url != null) {
+                return false;
+            }
+        } else if (!url.equals(other.url)) {
+            return false;
+        }
+        return true;
+    }
 
 }

@@ -24,40 +24,40 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public final class CachePattern {
 
-	private String cacheControl;
+    private String cacheControl;
 
-	private String[] files;
+    private String[] files;
 
-	@XmlAttribute
-	public String getCacheControl() {
-		return cacheControl;
-	}
+    @XmlAttribute
+    public String getCacheControl() {
+        return cacheControl;
+    }
 
-	public void setCacheControl(String cacheControl) {
-		if (cacheControl != null && !cacheControl.trim().isEmpty()) {
-			this.cacheControl = cacheControl;
-		}
-	}
+    public void setCacheControl(String cacheControl) {
+        if (cacheControl != null && !cacheControl.trim().isEmpty()) {
+            this.cacheControl = cacheControl;
+        }
+    }
 
-	@XmlAttribute
-	@XmlJavaTypeAdapter(value = AttributeAdapter.class)
-	public String[] getFiles() {
-		return files;
-	}
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = AttributeAdapter.class)
+    public String[] getFiles() {
+        return files;
+    }
 
-	public boolean isEndedIn(String file) {
-		if (files != null && file != null) {
-			for (String fl : files) {
-				if (file.endsWith("." + fl)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    public boolean isEndedIn(String file) {
+        if (files != null && file != null) {
+            for (String fl : files) {
+                if (file.endsWith("." + fl)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	public void setFiles(String[] files) {
-		this.files = files;
-	}
-	
+    public void setFiles(String[] files) {
+        this.files = files;
+    }
+
 }

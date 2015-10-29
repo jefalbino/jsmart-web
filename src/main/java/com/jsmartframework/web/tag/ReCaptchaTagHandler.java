@@ -34,10 +34,11 @@ import com.jsmartframework.web.tag.type.Align;
 import com.jsmartframework.web.tag.type.Size;
 import com.jsmartframework.web.tag.type.Type;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
-import java.io.IOException;
 
 public final class ReCaptchaTagHandler extends TagHandler {
 

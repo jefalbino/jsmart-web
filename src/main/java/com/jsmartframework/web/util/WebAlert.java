@@ -20,19 +20,19 @@ package com.jsmartframework.web.util;
 
 public final class WebAlert {
 
-	private AlertType type;
-	
-	private String title;
-	
-	private String titleIcon;
+    private AlertType type;
 
-	private String message;
-	
-	private String messageUrl;
-	
-	public WebAlert(AlertType type) {
-		this.type = type;
-	}
+    private String title;
+
+    private String titleIcon;
+
+    private String message;
+
+    private String messageUrl;
+
+    public WebAlert(AlertType type) {
+        this.type = type;
+    }
 
     public WebAlert(AlertType type, String title, String message) {
         this.type = type;
@@ -47,44 +47,44 @@ public final class WebAlert {
         this.titleIcon = titleIcon;
     }
 
-	public AlertType getType() {
-		return type;
-	}
+    public AlertType getType() {
+        return type;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getTitleIcon() {
-		return titleIcon;
-	}
+    public String getTitleIcon() {
+        return titleIcon;
+    }
 
-	public void setTitleIcon(String titleIcon) {
-		this.titleIcon = titleIcon;
-	}
+    public void setTitleIcon(String titleIcon) {
+        this.titleIcon = titleIcon;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public String getMessageUrl() {
-		return messageUrl;
-	}
+    public String getMessageUrl() {
+        return messageUrl;
+    }
 
-	public void setMessageUrl(String messageUrl) {
-		this.messageUrl = messageUrl;
-	}
+    public void setMessageUrl(String messageUrl) {
+        this.messageUrl = messageUrl;
+    }
 
-	public static enum AlertType {
-		INFO, WARNING, DANGER, SUCCESS;
-	}
+    public static enum AlertType {
+        INFO, WARNING, DANGER, SUCCESS;
+    }
 
 }

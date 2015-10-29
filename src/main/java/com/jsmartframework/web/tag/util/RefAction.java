@@ -26,40 +26,40 @@ import java.util.Map;
 
 public class RefAction {
 
-	private Map<String, EventAction> refs;
-	
-	public Map<String, EventAction> getRefs() {
-		return refs;
-	}
-	
-	public void setRefs(Map<String, EventAction> refs) {
-		this.refs = refs;
-	}
+    private Map<String, EventAction> refs;
 
-	public void addRef(String refId, String event, Ajax ajax) {
-		if (refs == null) {
-			refs = new HashMap<String, EventAction>();
-		}
-		
-		EventAction eventAction = refs.get(refId);
-		if (eventAction == null) {
-			eventAction = new EventAction();
-			refs.put(refId, eventAction);
-		}
-		eventAction.addAjax(event, ajax);
-	}
-	
-	public void addRef(String refId, String event, Bind bind) {
-		if (refs == null) {
-			refs = new HashMap<String, EventAction>();
-		}
-		
-		EventAction eventAction = refs.get(refId);
-		if (eventAction == null) {
-			eventAction = new EventAction();
-			refs.put(refId, eventAction);
-		}
-		eventAction.addBind(event, bind);
-	}
+    public Map<String, EventAction> getRefs() {
+        return refs;
+    }
+
+    public void setRefs(Map<String, EventAction> refs) {
+        this.refs = refs;
+    }
+
+    public void addRef(String refId, String event, Ajax ajax) {
+        if (refs == null) {
+            refs = new HashMap<String, EventAction>();
+        }
+
+        EventAction eventAction = refs.get(refId);
+        if (eventAction == null) {
+            eventAction = new EventAction();
+            refs.put(refId, eventAction);
+        }
+        eventAction.addAjax(event, ajax);
+    }
+
+    public void addRef(String refId, String event, Bind bind) {
+        if (refs == null) {
+            refs = new HashMap<String, EventAction>();
+        }
+
+        EventAction eventAction = refs.get(refId);
+        if (eventAction == null) {
+            eventAction = new EventAction();
+            refs.put(refId, eventAction);
+        }
+        eventAction.addBind(event, bind);
+    }
 
 }

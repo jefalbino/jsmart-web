@@ -18,12 +18,12 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+
 import org.springframework.web.context.request.RequestContextListener;
 
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
-
-import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
 
 public class RequestControl implements ServletRequestListener {
 

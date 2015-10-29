@@ -18,19 +18,20 @@
 
 package com.jsmartframework.web.exception;
 
-import javax.servlet.jsp.JspException;
 import java.text.MessageFormat;
+
+import javax.servlet.jsp.JspException;
 
 public class ConstraintTagException extends JspException {
 
-	private static final long serialVersionUID = -7139156469829986156L;
+    private static final long serialVersionUID = -7139156469829986156L;
 
-	public ConstraintTagException(String message) {
-		super(message);
-	}
+    public ConstraintTagException(String message) {
+        super(message);
+    }
 
-	public static ConstraintTagException fromConstraint(String tag, String constraint) {
-		return new ConstraintTagException(MessageFormat.format("Invalid [{0}] constraint. {1}", tag, constraint));
-	}
+    public static ConstraintTagException fromConstraint(String tag, String constraint) {
+        return new ConstraintTagException(MessageFormat.format("Invalid [{0}] constraint. {1}", tag, constraint));
+    }
 
 }

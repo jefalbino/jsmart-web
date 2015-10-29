@@ -20,64 +20,64 @@ package com.jsmartframework.web.json;
 
 public final class Progress {
 
-	private String id;
-	
-	private String method;
+    private String id;
 
-	private boolean request;
+    private String method;
 
-	private Integer interval;
+    private boolean request;
 
-	private String onInterval;
+    private Integer interval;
 
-	private int[] relation;
+    private String onInterval;
 
-	public String getId() {
-		return id;
-	}
+    private int[] relation;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getMethod() {
-		return method;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+    public String getMethod() {
+        return method;
+    }
 
-	public boolean isRequest() {
-		return request;
-	}
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-	public void setRequest(boolean request) {
-		this.request = request;
-	}
+    public boolean isRequest() {
+        return request;
+    }
 
-	public Integer getInterval() {
-		return interval;
-	}
+    public void setRequest(boolean request) {
+        this.request = request;
+    }
 
-	public void setInterval(Integer interval) {
-		this.interval = interval;
-	}
+    public Integer getInterval() {
+        return interval;
+    }
 
-	public String getOnInterval() {
-		return onInterval;
-	}
+    public void setInterval(Integer interval) {
+        this.interval = interval;
+    }
 
-	public void setOnInterval(String onInterval) {
-		this.onInterval = onInterval;
-	}
+    public String getOnInterval() {
+        return onInterval;
+    }
 
-	public int[] getRelation() {
-		return relation;
-	}
+    public void setOnInterval(String onInterval) {
+        this.onInterval = onInterval;
+    }
 
-	public void setRelation(int[] relation) {
-		this.relation = relation;
-	}
+    public int[] getRelation() {
+        return relation;
+    }
+
+    public void setRelation(int[] relation) {
+        this.relation = relation;
+    }
 
 }

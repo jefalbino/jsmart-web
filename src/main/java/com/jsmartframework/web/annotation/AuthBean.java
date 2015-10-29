@@ -28,28 +28,28 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AuthBean {
 
-	/**
-	 * The name of the bean that can be mapped on JSP files.
-	 * <br>
-	 * Default value is the name of the class in camel case.
-	 */
-	String name() default "";
+    /**
+     * The name of the bean that can be mapped on JSP files.
+     * <br>
+     * Default value is the name of the class in camel case.
+     */
+    String name() default "";
 
     /**
      *
      */
-    AuthType type() default AuthType.SESSION;
+    AuthType type() default AuthType.REQUEST;
 
-	/**
-	 * The mapped path on configuration file to specify the login
-	 * path of the application case user is not authenticated.
-	 */
-	String loginPath();
+    /**
+     * The mapped path on configuration file to specify the login
+     * path of the application case user is not authenticated.
+     */
+    String loginPath();
 
-	/**
-	 * The mapped path on configuration file to specify the hone
-	 * path of the application case user is authenticated.
-	 */
-	String homePath();
+    /**
+     * The mapped path on configuration file to specify the hone
+     * path of the application case user is authenticated.
+     */
+    String homePath();
 
 }

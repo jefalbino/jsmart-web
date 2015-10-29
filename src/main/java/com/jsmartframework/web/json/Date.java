@@ -19,64 +19,64 @@
 package com.jsmartframework.web.json;
 
 public final class Date {
-	
-	private String id;
 
-	private String locale;
-	
-	private String format;
-	
-	private String viewMode;
-	
-	private boolean showWeeks;
-	
-	private String linkDate;
+    private String id;
 
-	public String getId() {
-		return id;
-	}
+    private String locale;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    private String format;
 
-	public String getLocale() {
-		return locale;
-	}
+    private String viewMode;
 
-	public void setLocale(String locale) {
-		this.locale = locale;
-	}
+    private boolean showWeeks;
 
-	public String getFormat() {
-		return format;
-	}
+    private String linkDate;
 
-	public void setFormat(String format) {
-		this.format = format;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getViewMode() {
-		return viewMode;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setViewMode(String viewMode) {
-		this.viewMode = viewMode;
-	}
+    public String getLocale() {
+        return locale;
+    }
 
-	public boolean getShowWeeks() {
-		return showWeeks;
-	}
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
 
-	public void setShowWeeks(boolean showWeeks) {
-		this.showWeeks = showWeeks;
-	}
+    public String getFormat() {
+        return format;
+    }
 
-	public String getLinkDate() {
-		return linkDate;
-	}
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
-	public void setLinkDate(String linkDate) {
-		this.linkDate = linkDate;
-	}
+    public String getViewMode() {
+        return viewMode;
+    }
+
+    public void setViewMode(String viewMode) {
+        this.viewMode = viewMode;
+    }
+
+    public boolean getShowWeeks() {
+        return showWeeks;
+    }
+
+    public void setShowWeeks(boolean showWeeks) {
+        this.showWeeks = showWeeks;
+    }
+
+    public String getLinkDate() {
+        return linkDate;
+    }
+
+    public void setLinkDate(String linkDate) {
+        this.linkDate = linkDate;
+    }
 }

@@ -23,29 +23,29 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public final class ContentEncode {
 
-	private String encode;
+    private String encode;
 
-	private String[] mimeTypes;
+    private String[] mimeTypes;
 
-	@XmlAttribute
-	public String getEncode() {
-		return encode;
-	}
+    @XmlAttribute
+    public String getEncode() {
+        return encode;
+    }
 
-	public void setEncode(String encode) {
-		if (encode != null) {
-			this.encode = encode.toLowerCase();
-		}
-	}
+    public void setEncode(String encode) {
+        if (encode != null) {
+            this.encode = encode.toLowerCase();
+        }
+    }
 
-	@XmlAttribute
-	@XmlJavaTypeAdapter(value = AttributeAdapter.class)
-	public String[] getMimeTypes() {
-		return mimeTypes;
-	}
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = AttributeAdapter.class)
+    public String[] getMimeTypes() {
+        return mimeTypes;
+    }
 
-	public void setMimeTypes(String[] mimeTypes) {
-		this.mimeTypes = mimeTypes;
-	}
+    public void setMimeTypes(String[] mimeTypes) {
+        this.mimeTypes = mimeTypes;
+    }
 
 }

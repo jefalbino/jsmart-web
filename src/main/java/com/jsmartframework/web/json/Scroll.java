@@ -23,49 +23,49 @@ import java.util.Map;
 
 public class Scroll {
 
-	private Integer index;
-	
-	private Integer size;
+    private Integer index;
 
-	private String sort;
+    private Integer size;
 
-	private Integer order;
+    private String sort;
+
+    private Integer order;
 
     private Object offset;
 
-	private Map<String, String> filters;
+    private Map<String, String> filters;
 
-	public Integer getIndex() {
-		return index;
-	}
+    public Integer getIndex() {
+        return index;
+    }
 
-	public void setIndex(Integer index) {
-		this.index = index;
-	}
+    public void setIndex(Integer index) {
+        this.index = index;
+    }
 
-	public Integer getSize() {
-		return size;
-	}
+    public Integer getSize() {
+        return size;
+    }
 
-	public void setSize(Integer size) {
-		this.size = size;
-	}
+    public void setSize(Integer size) {
+        this.size = size;
+    }
 
-	public String getSort() {
-		return sort;
-	}
+    public String getSort() {
+        return sort;
+    }
 
-	public void setSort(String sort) {
-		this.sort = sort;
-	}
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
 
-	public Integer getOrder() {
-		return order == null ? 0 : order;
-	}
+    public Integer getOrder() {
+        return order == null ? 0 : order;
+    }
 
-	public void setOrder(Integer order) {
-		this.order = order;
-	}
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
 
     public Object getOffset() {
         return offset;
@@ -76,11 +76,11 @@ public class Scroll {
     }
 
     public Map<String, String> getFilters() {
-		return filters != null ? filters : Collections.<String, String>emptyMap();
-	}
+        return filters != null ? filters : Collections.<String, String>emptyMap();
+    }
 
-	public void setFilters(Map<String, String> filters) {
-		this.filters = filters;
-	}
+    public void setFilters(Map<String, String> filters) {
+        this.filters = filters;
+    }
 
 }

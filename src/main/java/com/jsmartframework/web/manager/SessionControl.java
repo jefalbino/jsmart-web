@@ -18,44 +18,44 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.config.Config.CONFIG;
+import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+
 import com.jsmartframework.web.config.Constants;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import static com.jsmartframework.web.config.Config.CONFIG;
-import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
-
 public final class SessionControl implements HttpSessionListener {
 
-	@Override
-	public void sessionCreated(HttpSessionEvent event) {
-		HttpSession session = event.getSession();
-		synchronized (session) {
-			session.setAttribute(Constants.SESSION_RESET_ATTR, "#");
-			HANDLER.instantiateAuthBean(session);
+    @Override
+    public void sessionCreated(HttpSessionEvent event) {
+        HttpSession session = event.getSession();
+        synchronized (session) {
+            session.setAttribute(Constants.SESSION_RESET_ATTR, "#");
+            HANDLER.instantiateAuthBean(session);
 
-			if (CONFIG.getContent().getSessionTimeout() > 0) {
-				session.setMaxInactiveInterval(CONFIG.getContent().getSessionTimeout() * 60);
-			}
+            if (CONFIG.getContent().getSessionTimeout() > 0) {
+                session.setMaxInactiveInterval(CONFIG.getContent().getSessionTimeout() * 60);
+            }
 
-			for (HttpSessionListener sessionListener : HANDLER.sessionListeners) {
-				HANDLER.executeInjection(sessionListener);
-				sessionListener.sessionCreated(event);
-			}
-		}
-	}
+            for (HttpSessionListener sessionListener : HANDLER.sessionListeners) {
+                HANDLER.executeInjection(sessionListener);
+                sessionListener.sessionCreated(event);
+            }
+        }
+    }
 
-	@Override
-	public void sessionDestroyed(HttpSessionEvent event) {
-		HttpSession session = event.getSession();
-		synchronized (session) {
-			for (HttpSessionListener sessionListener : HANDLER.sessionListeners) {
+    @Override
+    public void sessionDestroyed(HttpSessionEvent event) {
+        HttpSession session = event.getSession();
+        synchronized (session) {
+            for (HttpSessionListener sessionListener : HANDLER.sessionListeners) {
                 sessionListener.sessionDestroyed(event);
-			}
-			HANDLER.finalizeBeans(session);
-		}
-	}
+            }
+            HANDLER.finalizeBeans(session);
+        }
+    }
 
 }

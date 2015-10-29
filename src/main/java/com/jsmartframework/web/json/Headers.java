@@ -22,24 +22,24 @@ import java.util.List;
 
 public class Headers {
 
-	private List<String> styles;
-	
-	private List<String> scripts;
+    private List<String> styles;
 
-	public List<String> getStyles() {
-		return styles;
-	}
+    private List<String> scripts;
 
-	public void setStyles(List<String> styles) {
-		this.styles = styles;
-	}
+    public List<String> getStyles() {
+        return styles;
+    }
 
-	public List<String> getScripts() {
-		return scripts;
-	}
+    public void setStyles(List<String> styles) {
+        this.styles = styles;
+    }
 
-	public void setScripts(List<String> scripts) {
-		this.scripts = scripts;
-	}
+    public List<String> getScripts() {
+        return scripts;
+    }
+
+    public void setScripts(List<String> scripts) {
+        this.scripts = scripts;
+    }
 
 }

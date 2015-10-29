@@ -28,48 +28,48 @@ import java.util.Set;
 
 public class EventAction {
 
-	private Map<String, Set<Ajax>> ajaxs;
+    private Map<String, Set<Ajax>> ajaxs;
 
-	private Map<String, Set<Bind>> binds;
+    private Map<String, Set<Bind>> binds;
 
-	public Map<String, Set<Ajax>> getAjaxs() {
-		return ajaxs;
-	}
+    public Map<String, Set<Ajax>> getAjaxs() {
+        return ajaxs;
+    }
 
-	public Set<Ajax> getAjax(String event) {
-		return ajaxs.get(event);
-	}
+    public Set<Ajax> getAjax(String event) {
+        return ajaxs.get(event);
+    }
 
-	public void addAjax(String event, Ajax ajax) {
-		if (ajaxs == null) {
-			ajaxs = new HashMap<String, Set<Ajax>>();
-		}
-		Set<Ajax> set = ajaxs.get(event);
-		if (set == null) {
-			set = new LinkedHashSet<Ajax>(2);
-			ajaxs.put(event, set);
-		}
-		set.add(ajax);
-	}
-	
-	public Map<String, Set<Bind>> getBinds() {
-		return binds;
-	}
+    public void addAjax(String event, Ajax ajax) {
+        if (ajaxs == null) {
+            ajaxs = new HashMap<String, Set<Ajax>>();
+        }
+        Set<Ajax> set = ajaxs.get(event);
+        if (set == null) {
+            set = new LinkedHashSet<Ajax>(2);
+            ajaxs.put(event, set);
+        }
+        set.add(ajax);
+    }
 
-	public Set<Bind> getBind(String event) {
-		return binds.get(event);
-	}
+    public Map<String, Set<Bind>> getBinds() {
+        return binds;
+    }
 
-	public void addBind(String event, Bind bind) {
-		if (binds == null) {
-			binds = new HashMap<String, Set<Bind>>();
-		}
-		Set<Bind> set = binds.get(event);
-		if (set == null) {
-			set = new LinkedHashSet<Bind>(2);
-			binds.put(event, set);
-		}
-		set.add(bind);
-	}
+    public Set<Bind> getBind(String event) {
+        return binds.get(event);
+    }
+
+    public void addBind(String event, Bind bind) {
+        if (binds == null) {
+            binds = new HashMap<String, Set<Bind>>();
+        }
+        Set<Bind> set = binds.get(event);
+        if (set == null) {
+            set = new LinkedHashSet<Bind>(2);
+            binds.put(event, set);
+        }
+        set.add(bind);
+    }
 
 }

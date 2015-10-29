@@ -30,18 +30,18 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebBean {
 
-	/**
-	 * The name of the bean that can be mapped on JSP files.
-	 * <br>
-	 * Default value is the name of the class in camel case.
-	 */
-	String name() default "";
+    /**
+     * The name of the bean that can be mapped on JSP files.
+     * <br>
+     * Default value is the name of the class in camel case.
+     */
+    String name() default "";
 
-	/**
-	 * The scope of the bean.
-	 * <br>
-	 * Default value is ScopeType.REQUEST
-	 */
-	ScopeType scope() default ScopeType.REQUEST;
+    /**
+     * The scope of the bean.
+     * <br>
+     * Default value is ScopeType.REQUEST
+     */
+    ScopeType scope() default ScopeType.REQUEST;
 
 }

@@ -20,11 +20,11 @@ package com.jsmartframework.web.json;
 
 public final class AsyncEvent {
 
-	private String event;
+    private String event;
 
-	private String execute;
+    private String execute;
 
-	private Boolean capture;
+    private Boolean capture;
 
     public String getEvent() {
         return event;

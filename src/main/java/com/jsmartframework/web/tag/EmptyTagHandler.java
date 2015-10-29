@@ -21,11 +21,12 @@ package com.jsmartframework.web.tag;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.html.Tag;
 
+import java.io.IOException;
+import java.io.StringWriter;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
-import java.io.IOException;
-import java.io.StringWriter;
 
 public final class EmptyTagHandler extends TagHandler {
 

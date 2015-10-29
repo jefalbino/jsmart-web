@@ -26,62 +26,62 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 public final class UrlPattern {
 
-	private String url;
+    private String url;
 
-	private String jsp;
+    private String jsp;
 
-	private String[] access; // *, roles allowed with comma separated
+    private String[] access; // *, roles allowed with comma separated
 
-	private boolean loggedAccess = true;
+    private boolean loggedAccess = true;
 
-	@XmlValue
-	public String getUrl() {
-		return url;
-	}
+    @XmlValue
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = WebUtils.decodePath(url);
-	}
+    public void setUrl(String url) {
+        this.url = WebUtils.decodePath(url);
+    }
 
-	@XmlAttribute
-	public String getJsp() {
-		return jsp;
-	}
+    @XmlAttribute
+    public String getJsp() {
+        return jsp;
+    }
 
-	public void setJsp(String jsp) {
-		this.jsp = jsp;
-	}
+    public void setJsp(String jsp) {
+        this.jsp = jsp;
+    }
 
-	@XmlAttribute
-	@XmlJavaTypeAdapter(value = AttributeAdapter.class)
-	public String[] getAccess() {
-		return access;
-	}
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = AttributeAdapter.class)
+    public String[] getAccess() {
+        return access;
+    }
 
-	public boolean containsAccess(String value) {
-		if (access != null) {
-			for (String acs : access) {
-				if (acs.equals(value)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    public boolean containsAccess(String value) {
+        if (access != null) {
+            for (String acs : access) {
+                if (acs.equals(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	public void setAccess(String[] access) {
-		if (access != null && access.length > 0) {
-			this.access = access;
-		}
-	}
+    public void setAccess(String[] access) {
+        if (access != null && access.length > 0) {
+            this.access = access;
+        }
+    }
 
-	@XmlAttribute
-	public boolean isLoggedAccess() {
-		return loggedAccess;
-	}
+    @XmlAttribute
+    public boolean isLoggedAccess() {
+        return loggedAccess;
+    }
 
-	public void setLoggedAccess(boolean loggedAccess) {
-		this.loggedAccess = loggedAccess;
-	}
+    public void setLoggedAccess(boolean loggedAccess) {
+        this.loggedAccess = loggedAccess;
+    }
 
 }

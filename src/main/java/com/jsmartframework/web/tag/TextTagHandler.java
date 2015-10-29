@@ -21,12 +21,13 @@ package com.jsmartframework.web.tag;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.html.Tag;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public final class TextTagHandler extends TagHandler {
 	

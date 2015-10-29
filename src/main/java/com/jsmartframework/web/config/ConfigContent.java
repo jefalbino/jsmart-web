@@ -18,64 +18,65 @@
 
 package com.jsmartframework.web.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @XmlRootElement(name = "web-config")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public final class ConfigContent {
 
-	private UrlPattern[] urlPatterns;
+    private UrlPattern[] urlPatterns;
 
     private String welcomeUrl;
 
     private String assetsUrl;
 
-	private SecureMethod[] secureMethods;
+    private SecureMethod[] secureMethods;
 
-	private int sessionTimeout;
+    private int sessionTimeout;
 
-	private String[] messageFiles;
+    private String[] messageFiles;
 
-	private String defaultLocale;
+    private String defaultLocale;
 
-	private UploadConfig uploadConfig;
+    private UploadConfig uploadConfig;
 
-	private ErrorPage[] errorPages;
+    private ErrorPage[] errorPages;
 
-	private InitParam[] initParams;
+    private InitParam[] initParams;
 
-	private CachePattern[] cachePatterns;
+    private CachePattern[] cachePatterns;
 
-	private ContentEncode contentEncode;
+    private ContentEncode contentEncode;
 
-	private boolean escapeRequest = true;
+    private boolean escapeRequest = true;
 
-	private boolean printHtml = false;
+    private boolean printHtml = false;
 
-	private HtmlCompress compressHtml;
+    private HtmlCompress compressHtml;
 
-	private String packageScan;
+    private String packageScan;
 
-	private String ejbLookup = "global";
+    private String ejbLookup = "global";
 
-	private List<String> secureUrls;
+    private List<String> secureUrls;
 
-	private List<String> nonSecureUrls;
+    private List<String> nonSecureUrls;
 
-	private List<String> nonSecureUrlsOnly;
+    private List<String> nonSecureUrlsOnly;
 
-	ConfigContent() {
-		secureUrls = new ArrayList<String>();
-		nonSecureUrls = new ArrayList<String>();
-		nonSecureUrlsOnly = new ArrayList<String>();
-	}
+    ConfigContent() {
+        secureUrls = new ArrayList<String>();
+        nonSecureUrls = new ArrayList<String>();
+        nonSecureUrlsOnly = new ArrayList<String>();
+    }
 
     @XmlElement(name = "welcome-url")
     public String getWelcomeUrl() {
@@ -103,238 +104,238 @@ public final class ConfigContent {
     }
 
     @XmlElement(name = "url-pattern")
-	@XmlElementWrapper(name = "url-patterns")
-	public UrlPattern[] getUrlPatterns() {
-		return urlPatterns;
-	}
+    @XmlElementWrapper(name = "url-patterns")
+    public UrlPattern[] getUrlPatterns() {
+        return urlPatterns;
+    }
 
-	public UrlPattern getUrlPattern(String url) {
-		if (url != null && !url.trim().isEmpty() && urlPatterns != null) {
-			for (UrlPattern urlPattern : urlPatterns) {
-				if (urlPattern.getUrl().equals(url.trim())) {
-					return urlPattern;
-				}
-			}
-		}
-		return null;
-	}
+    public UrlPattern getUrlPattern(String url) {
+        if (url != null && !url.trim().isEmpty() && urlPatterns != null) {
+            for (UrlPattern urlPattern : urlPatterns) {
+                if (urlPattern.getUrl().equals(url.trim())) {
+                    return urlPattern;
+                }
+            }
+        }
+        return null;
+    }
 
-	public void setUrlPatterns(UrlPattern[] urlPatterns) {
-		if (urlPatterns != null && urlPatterns.length > 0) {
-			this.urlPatterns = urlPatterns;
+    public void setUrlPatterns(UrlPattern[] urlPatterns) {
+        if (urlPatterns != null && urlPatterns.length > 0) {
+            this.urlPatterns = urlPatterns;
 
-			for (UrlPattern urlPattern : urlPatterns) {
+            for (UrlPattern urlPattern : urlPatterns) {
 
-				if (!urlPattern.isLoggedAccess()) {
-					nonSecureUrlsOnly.add(urlPattern.getUrl().replace("/*", ""));
-				} else {
-					if (urlPattern.getAccess() == null) {
-						nonSecureUrls.add(urlPattern.getUrl().replace("/*", ""));
-					} else {
-						secureUrls.add(urlPattern.getUrl().replace("/*", ""));
-					}
-				}
-			}
-		}
-	}
+                if (!urlPattern.isLoggedAccess()) {
+                    nonSecureUrlsOnly.add(urlPattern.getUrl().replace("/*", ""));
+                } else {
+                    if (urlPattern.getAccess() == null) {
+                        nonSecureUrls.add(urlPattern.getUrl().replace("/*", ""));
+                    } else {
+                        secureUrls.add(urlPattern.getUrl().replace("/*", ""));
+                    }
+                }
+            }
+        }
+    }
 
-	public List<String> getSecureUrls() {
-		return secureUrls;
-	}
+    public List<String> getSecureUrls() {
+        return secureUrls;
+    }
 
-	public boolean containsSecureUrl(String url) {
-		if (url != null && !url.trim().isEmpty() && secureUrls != null) {
-			return secureUrls.contains(url);
-		}
-		return false;
-	}
+    public boolean containsSecureUrl(String url) {
+        if (url != null && !url.trim().isEmpty() && secureUrls != null) {
+            return secureUrls.contains(url);
+        }
+        return false;
+    }
 
-	public boolean containsNonSecureUrlOnly(String url) {
-		if (url != null && !url.trim().isEmpty() && nonSecureUrlsOnly != null) {
-			return nonSecureUrlsOnly.contains(url);
-		}
-		return false;
-	}
+    public boolean containsNonSecureUrlOnly(String url) {
+        if (url != null && !url.trim().isEmpty() && nonSecureUrlsOnly != null) {
+            return nonSecureUrlsOnly.contains(url);
+        }
+        return false;
+    }
 
-	@XmlElement(name = "secure-method")
-	@XmlElementWrapper(name = "secure-methods")
-	public SecureMethod[] getSecureMethods() {
-		return secureMethods;
-	}
+    @XmlElement(name = "secure-method")
+    @XmlElementWrapper(name = "secure-methods")
+    public SecureMethod[] getSecureMethods() {
+        return secureMethods;
+    }
 
-	public SecureMethod getSecureMethod(String method) {
-		if (secureMethods != null) {
-			for (SecureMethod secMethod : secureMethods) {
-				if (secMethod.getMethod().equals(method)) {
-					return secMethod;
-				}
-			}
-		}
-		return null;
-	}
+    public SecureMethod getSecureMethod(String method) {
+        if (secureMethods != null) {
+            for (SecureMethod secMethod : secureMethods) {
+                if (secMethod.getMethod().equals(method)) {
+                    return secMethod;
+                }
+            }
+        }
+        return null;
+    }
 
-	public void setSecureMethods(SecureMethod[] secureMethods) {
-		this.secureMethods = secureMethods;
-	}
+    public void setSecureMethods(SecureMethod[] secureMethods) {
+        this.secureMethods = secureMethods;
+    }
 
-	@XmlElement(name = "session-timeout")
-	public int getSessionTimeout() {
-		return sessionTimeout;
-	}
+    @XmlElement(name = "session-timeout")
+    public int getSessionTimeout() {
+        return sessionTimeout;
+    }
 
-	public void setSessionTimeout(int sessionTimeout) {
-		if (sessionTimeout >= 0) {
-			this.sessionTimeout = sessionTimeout;
-		}
-	}
+    public void setSessionTimeout(int sessionTimeout) {
+        if (sessionTimeout >= 0) {
+            this.sessionTimeout = sessionTimeout;
+        }
+    }
 
-	@XmlElement(name = "message-file")
-	@XmlElementWrapper(name = "message-files")
-	public String[] getMessageFiles() {
-		return messageFiles;
-	}
+    @XmlElement(name = "message-file")
+    @XmlElementWrapper(name = "message-files")
+    public String[] getMessageFiles() {
+        return messageFiles;
+    }
 
-	public void setMessageFiles(String[] messageFiles) {
-		this.messageFiles = messageFiles;
-	}
+    public void setMessageFiles(String[] messageFiles) {
+        this.messageFiles = messageFiles;
+    }
 
-	@XmlElement(name = "default-locale")
-	public String getDefaultLocale() {
-		return defaultLocale;
-	}
+    @XmlElement(name = "default-locale")
+    public String getDefaultLocale() {
+        return defaultLocale;
+    }
 
-	public void setDefaultLocale(String defaultLocale) {
-		if (defaultLocale != null && !defaultLocale.trim().isEmpty()) {
-			this.defaultLocale = defaultLocale.trim();
-		}
-	}
+    public void setDefaultLocale(String defaultLocale) {
+        if (defaultLocale != null && !defaultLocale.trim().isEmpty()) {
+            this.defaultLocale = defaultLocale.trim();
+        }
+    }
 
-	@XmlElement(name = "upload-config")
-	public UploadConfig getUploadConfig() {
-		return uploadConfig;
-	}
+    @XmlElement(name = "upload-config")
+    public UploadConfig getUploadConfig() {
+        return uploadConfig;
+    }
 
-	public void setUploadConfig(UploadConfig uploadConfig) {
-		this.uploadConfig = uploadConfig;
-	}
+    public void setUploadConfig(UploadConfig uploadConfig) {
+        this.uploadConfig = uploadConfig;
+    }
 
-	@XmlElement(name = "error-page")
-	@XmlElementWrapper(name = "error-pages")
-	public ErrorPage[] getErrorPages() {
-		return errorPages;
-	}
+    @XmlElement(name = "error-page")
+    @XmlElementWrapper(name = "error-pages")
+    public ErrorPage[] getErrorPages() {
+        return errorPages;
+    }
 
-	public ErrorPage getErrorPage(Integer code) {
-		if (errorPages != null) {
-			for (ErrorPage errorPage : errorPages) {
-				if (errorPage.getCode().equals(code)) {
-					return errorPage;
-				}
-			}
-		}
-		return null;
-	}
+    public ErrorPage getErrorPage(Integer code) {
+        if (errorPages != null) {
+            for (ErrorPage errorPage : errorPages) {
+                if (errorPage.getCode().equals(code)) {
+                    return errorPage;
+                }
+            }
+        }
+        return null;
+    }
 
-	public void setErrorPages(ErrorPage[] errorPages) {
-		if (errorPages != null && errorPages.length > 0) {
-			this.errorPages = errorPages;
-		}
-	}
+    public void setErrorPages(ErrorPage[] errorPages) {
+        if (errorPages != null && errorPages.length > 0) {
+            this.errorPages = errorPages;
+        }
+    }
 
-	@XmlElement(name = "init-param")
-	@XmlElementWrapper(name = "init-params")
-	public InitParam[] getInitParams() {
-		return initParams;
-	}
+    @XmlElement(name = "init-param")
+    @XmlElementWrapper(name = "init-params")
+    public InitParam[] getInitParams() {
+        return initParams;
+    }
 
-	public void setInitParams(InitParam[] initParams) {
-		if (initParams != null && initParams.length > 0) {
-			this.initParams = initParams;
-		}
-	}
+    public void setInitParams(InitParam[] initParams) {
+        if (initParams != null && initParams.length > 0) {
+            this.initParams = initParams;
+        }
+    }
 
-	@XmlElement(name = "escape-request")
-	public boolean isEscapeRequest() {
-		return escapeRequest;
-	}
+    @XmlElement(name = "escape-request")
+    public boolean isEscapeRequest() {
+        return escapeRequest;
+    }
 
-	public void setEscapeRequest(boolean escapeRequest) {
-		this.escapeRequest = escapeRequest;
-	}
+    public void setEscapeRequest(boolean escapeRequest) {
+        this.escapeRequest = escapeRequest;
+    }
 
-	@XmlElement(name = "print-html")
-	public boolean isPrintHtml() {
-		return printHtml;
-	}
+    @XmlElement(name = "print-html")
+    public boolean isPrintHtml() {
+        return printHtml;
+    }
 
-	public void setPrintHtml(boolean printHtml) {
-		this.printHtml = printHtml;
-	}
+    public void setPrintHtml(boolean printHtml) {
+        this.printHtml = printHtml;
+    }
 
-	@XmlElement(name = "compress-html")
-	public HtmlCompress getCompressHtml() {
-		if (compressHtml == null) {
-			compressHtml = new HtmlCompress();
-		}
-		return compressHtml;
-	}
+    @XmlElement(name = "compress-html")
+    public HtmlCompress getCompressHtml() {
+        if (compressHtml == null) {
+            compressHtml = new HtmlCompress();
+        }
+        return compressHtml;
+    }
 
-	public void setCompressHtml(HtmlCompress compressHtml) {
-		this.compressHtml = compressHtml;
-	}
+    public void setCompressHtml(HtmlCompress compressHtml) {
+        this.compressHtml = compressHtml;
+    }
 
-	@XmlElement(name = "package-scan")
-	public String getPackageScan() {
-		return packageScan;
-	}
+    @XmlElement(name = "package-scan")
+    public String getPackageScan() {
+        return packageScan;
+    }
 
-	public void setPackageScan(String packageScan) {
-		if (packageScan != null && !packageScan.trim().isEmpty()) {
-			this.packageScan = packageScan;
-		}
-	}
+    public void setPackageScan(String packageScan) {
+        if (packageScan != null && !packageScan.trim().isEmpty()) {
+            this.packageScan = packageScan;
+        }
+    }
 
-	@XmlElement(name = "ejb-lookup")
-	public String getEjbLookup() {
-		return ejbLookup;
-	}
+    @XmlElement(name = "ejb-lookup")
+    public String getEjbLookup() {
+        return ejbLookup;
+    }
 
-	public void setEjbLookup(String ejbLookup) {
-		if (ejbLookup != null && !ejbLookup.trim().isEmpty()) {
-			this.ejbLookup = ejbLookup;
-		}
-	}
+    public void setEjbLookup(String ejbLookup) {
+        if (ejbLookup != null && !ejbLookup.trim().isEmpty()) {
+            this.ejbLookup = ejbLookup;
+        }
+    }
 
-	@XmlElement(name = "cache-pattern")
-	@XmlElementWrapper(name = "cache-patterns")
-	public CachePattern[] getCachePatterns() {
-		return cachePatterns;
-	}
+    @XmlElement(name = "cache-pattern")
+    @XmlElementWrapper(name = "cache-patterns")
+    public CachePattern[] getCachePatterns() {
+        return cachePatterns;
+    }
 
-	public CachePattern getCachePattern(String file) {
-		if (file != null && !file.trim().isEmpty() && cachePatterns != null) {
-			for (CachePattern cachePattern : cachePatterns) {
-				if (cachePattern.isEndedIn(file)) {
-					return cachePattern;
-				}
-			}
-		}
-		return null;
-	}
+    public CachePattern getCachePattern(String file) {
+        if (file != null && !file.trim().isEmpty() && cachePatterns != null) {
+            for (CachePattern cachePattern : cachePatterns) {
+                if (cachePattern.isEndedIn(file)) {
+                    return cachePattern;
+                }
+            }
+        }
+        return null;
+    }
 
-	public void setCachePatterns(CachePattern[] cachePatterns) {
-		if (cachePatterns != null && cachePatterns.length > 0) {
-			this.cachePatterns = cachePatterns;
-		}
-	}
+    public void setCachePatterns(CachePattern[] cachePatterns) {
+        if (cachePatterns != null && cachePatterns.length > 0) {
+            this.cachePatterns = cachePatterns;
+        }
+    }
 
-	@XmlElement(name = "content-encode")
-	public ContentEncode getContentEncode() {
-		return contentEncode;
-	}
+    @XmlElement(name = "content-encode")
+    public ContentEncode getContentEncode() {
+        return contentEncode;
+    }
 
-	public void setContentEncode(ContentEncode contentEncode) {
-		this.contentEncode = contentEncode;
-	}
+    public void setContentEncode(ContentEncode contentEncode) {
+        this.contentEncode = contentEncode;
+    }
 
 }

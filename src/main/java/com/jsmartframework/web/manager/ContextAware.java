@@ -18,19 +18,19 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
-import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
-
 @Service
 final class ContextAware implements ApplicationContextAware {
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		HANDLER.setSpringContext(applicationContext);
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        HANDLER.setSpringContext(applicationContext);
+    }
 
 }

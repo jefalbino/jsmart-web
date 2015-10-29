@@ -18,11 +18,12 @@
 
 package com.jsmartframework.web.annotation;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.annotation.WebInitParam;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * The {@link WebFilter} annotation is used on classes to declare {@link Filter}
@@ -33,34 +34,34 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebFilter {
 
-	/**
-	 * The name of the filter.
-	 */
-	String name() default "";
+    /**
+     * The name of the filter.
+     */
+    String name() default "";
 
-	/**
-	 * The order in which this filter will be called before Servlet execution.
-	 */
-	int order();
+    /**
+     * The order in which this filter will be called before Servlet execution.
+     */
+    int order();
 
-	/**
-	 * The URL patterns to which the filter applies.
-	 */
-	String[] urlPatterns() default {"/*"};
+    /**
+     * The URL patterns to which the filter applies.
+     */
+    String[] urlPatterns() default {"/*"};
 
-	/**
-	 * The dispatcher types to which the filter applies
-	 */
-	DispatcherType[] dispatcherTypes() default {DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.INCLUDE, DispatcherType.ASYNC};
+    /**
+     * The dispatcher types to which the filter applies
+     */
+    DispatcherType[] dispatcherTypes() default {DispatcherType.REQUEST, DispatcherType.ERROR, DispatcherType.INCLUDE, DispatcherType.ASYNC};
 
-	/**
-	 * The init parameters of the filter.
-	 */
-	WebInitParam[] initParams() default {};
+    /**
+     * The init parameters of the filter.
+     */
+    WebInitParam[] initParams() default {};
 
-	/**
-	 * Declares whether the filter supports asynchronous operation mode.
-	 */
-	boolean asyncSupported() default true;
+    /**
+     * Declares whether the filter supports asynchronous operation mode.
+     */
+    boolean asyncSupported() default true;
 
 }

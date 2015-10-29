@@ -18,6 +18,9 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_FUNCTION_VAR;
+
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Ajax;
 import com.jsmartframework.web.json.Param;
@@ -26,12 +29,10 @@ import com.jsmartframework.web.tag.html.Input;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Type;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_FUNCTION_VAR;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public final class FunctionTagHandler extends TagHandler {
 

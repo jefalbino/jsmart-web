@@ -18,6 +18,11 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_BIND;
+
 import com.google.gson.Gson;
 import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.exception.InvalidAttributeException;
@@ -40,10 +45,6 @@ import com.jsmartframework.web.util.WebAlert;
 import com.jsmartframework.web.util.WebText;
 import com.jsmartframework.web.util.WebUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -59,10 +60,10 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
-import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_BIND;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public abstract class TagHandler extends SimpleTagSupport {
 
@@ -228,10 +229,10 @@ public abstract class TagHandler extends SimpleTagSupport {
     // Only applied for List and Table
     protected boolean shallExecuteTag() {
         HttpServletRequest request = getRequest();
-		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-			String update = request.getHeader("Update-Ajax");
-			return update != null && update.contains(id);
-		}
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            String update = request.getHeader("Update-Ajax");
+            return update != null && update.contains(id);
+        }
         return true;
     }
 

@@ -26,9 +26,10 @@ import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.html.Ul;
 import com.jsmartframework.web.tag.type.Look;
 
-import javax.servlet.jsp.JspException;
 import java.io.IOException;
 import java.util.Collection;
+
+import javax.servlet.jsp.JspException;
 
 public final class OutputListTagHandler extends TagHandler {
 

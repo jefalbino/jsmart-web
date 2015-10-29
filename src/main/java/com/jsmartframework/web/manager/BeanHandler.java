@@ -41,10 +41,33 @@ import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.config.UrlPattern;
 import com.jsmartframework.web.listener.WebAsyncListener;
 import com.jsmartframework.web.util.WebUtils;
+
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -64,29 +87,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public enum BeanHandler {
 
@@ -162,7 +162,7 @@ public enum BeanHandler {
             initialContext = null;
             springContext = null;
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Failure to destroy BeanHandler: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Failed to destroy BeanHandler: " + ex.getMessage());
         }
     }
 
@@ -256,7 +256,6 @@ public enum BeanHandler {
 
                         Matcher tagMatcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
                         if (tagMatcher.find()) {
-
                             String jTag = tagMatcher.group(1);
                             String jParam = tagMatcher.group(2);
 
@@ -268,7 +267,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Execute PostPreset on WebBean " + bean + " failure: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Execution of PostPreset on WebBean " + bean + " failed: " + ex.getMessage());
         }
     }
 
@@ -489,7 +488,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Injection on WebBean " + bean + " failure: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Injection on WebBean " + bean + " failed: " + ex.getMessage());
         }
     }
 
@@ -608,7 +607,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Finalize injection on WebBean " + bean + " failure: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Finalize injection on WebBean " + bean + " failed: " + ex.getMessage());
         }
     }
 
@@ -697,7 +696,7 @@ public enum BeanHandler {
             executePostConstruct(bean);
 
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Injection on AuthBean " + bean + " failure: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Injection on AuthBean " + bean + " failed: " + ex.getMessage());
         }
         return bean;
     }
@@ -712,7 +711,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failure: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failed: " + ex.getMessage());
         }
         AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
         session.removeAttribute(getClassName(authBean, bean.getClass()));
@@ -735,9 +734,8 @@ public enum BeanHandler {
                         if (value != null) {
                             Cookie cookie = new Cookie(authField.value(), value.toString());
                             cookie.setHttpOnly(true);
+                            cookie.setPath("/");
                             cookie.setMaxAge(CONFIG.getContent().getSessionTimeout() * 60);
-//                            cookie.setDomain(request.getServerName());
-//                            cookie.setPath(request.getServletPath());
                             response.addCookie(cookie);
                         }
                     }
@@ -745,7 +743,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failure: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failed: " + ex.getMessage());
         }
         AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
         request.removeAttribute(getClassName(authBean, bean.getClass()));

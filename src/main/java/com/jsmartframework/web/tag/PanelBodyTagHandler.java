@@ -28,10 +28,11 @@ import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Align;
 import com.jsmartframework.web.tag.type.Type;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.io.StringWriter;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public final class PanelBodyTagHandler extends TagHandler {
 

@@ -28,11 +28,12 @@ import com.jsmartframework.web.tag.type.Case;
 import com.jsmartframework.web.tag.type.Look;
 import com.jsmartframework.web.tag.type.Output;
 
+import java.io.IOException;
+import java.io.StringWriter;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
-import java.io.IOException;
-import java.io.StringWriter;
 
 public final class OutputTagHandler extends TagHandler {
 

@@ -18,6 +18,9 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_TAB;
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_TABPANE;
+
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Ajax;
 import com.jsmartframework.web.json.Param;
@@ -34,15 +37,13 @@ import com.jsmartframework.web.tag.type.Align;
 import com.jsmartframework.web.tag.type.Event;
 import com.jsmartframework.web.tag.type.Type;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_TAB;
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_TABPANE;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public final class TabTagHandler extends TagHandler {
 	

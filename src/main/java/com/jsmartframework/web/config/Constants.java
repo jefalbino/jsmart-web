@@ -19,52 +19,52 @@
 package com.jsmartframework.web.config;
 
 public final class Constants {
-	
-	public static final String REQUEST_USER_ACCESS = "jsmart_request_user_access";
 
-	public static final String REQUEST_PAGE_DOC_SCRIPT_ATTR = "jsmart_page_doc_script_attr";
+    public static final String REQUEST_USER_ACCESS = "jsmart_request_user_access";
 
-	public static final String REQUEST_PAGE_SCRIPT_ATTR = "jsmart_page_script_attr";
+    public static final String REQUEST_PAGE_DOC_SCRIPT_ATTR = "jsmart_page_doc_script_attr";
 
-	public static final String REQUEST_REDIRECT_PATH_AJAX_ATTR = "jsmart_request_redirect_path_ajax_attr";
+    public static final String REQUEST_PAGE_SCRIPT_ATTR = "jsmart_page_script_attr";
+
+    public static final String REQUEST_REDIRECT_PATH_AJAX_ATTR = "jsmart_request_redirect_path_ajax_attr";
 
     public static final String REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR = "jsmart_request_redirect_window_path_ajax_attr";
 
-	public static final String SESSION_RESET_ATTR = "jsmart_session_reset_attr";
+    public static final String SESSION_RESET_ATTR = "jsmart_session_reset_attr";
 
 
-	public static final String JSP_EL = "${%s}";
-	
-	public static final String TAG_EL = "@{%s}";
+    public static final String JSP_EL = "${%s}";
 
-	public static final String POINT = ".";
+    public static final String TAG_EL = "@{%s}";
 
-	public static final String EL_SEPARATOR = "\\.";
+    public static final String POINT = ".";
 
-	public static final String EL_PARAM_READ_ONLY = "#";
+    public static final String EL_SEPARATOR = "\\.";
+
+    public static final String EL_PARAM_READ_ONLY = "#";
 
 
-	public static final String WEB_INF = "/WEB-INF";
+    public static final String WEB_INF = "/WEB-INF";
 
     public static final String INDEX_JSP = "index.jsp";
 
-	public static final String PATH_SEPARATOR = "/";
-	
-	public static final String LIB_FILE_PATH = WEB_INF + PATH_SEPARATOR + "lib";
+    public static final String PATH_SEPARATOR = "/";
 
-	public static final String LIB_JAR_FILE_PATTERN = ".*jsmart.*\\.jar";
+    public static final String LIB_FILE_PATH = WEB_INF + PATH_SEPARATOR + "lib";
+
+    public static final String LIB_JAR_FILE_PATTERN = ".*jsmart.*\\.jar";
 
     public static final String WEB_CONFIG_XML = "webConfig.xml";
 
-	public static final String WEB_CONFIG_XML_PATH = WEB_INF + PATH_SEPARATOR + WEB_CONFIG_XML;
+    public static final String WEB_CONFIG_XML_PATH = WEB_INF + PATH_SEPARATOR + WEB_CONFIG_XML;
 
-	public static final String FILTER_RESOURCES = "jsmart_resources.json";
+    public static final String FILTER_RESOURCES = "jsmart_resources.json";
 
-	public static final String FILTER_HEADERS = "jsmart_headers.json";
+    public static final String FILTER_HEADERS = "jsmart_headers.json";
 
 
-	private Constants() {
-		// DO NOTHING
-	}
+    private Constants() {
+        // DO NOTHING
+    }
 
 }

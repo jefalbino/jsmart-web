@@ -18,6 +18,11 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -26,27 +31,23 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
-import java.util.regex.Matcher;
-
-import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
 
 public final class OutputFilter implements Filter {
 
-	@Override
-	public void init(FilterConfig config) throws ServletException {
-		// DO NOTHING
-	}
+    @Override
+    public void init(FilterConfig config) throws ServletException {
+        // DO NOTHING
+    }
 
-	@Override
-	public void destroy() {
-		// DO NOTHING
-	}
+    @Override
+    public void destroy() {
+        // DO NOTHING
+    }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
-		final HttpServletResponseWrapper responseWrapper = (HttpServletResponseWrapper) response;
+        final HttpServletResponseWrapper responseWrapper = (HttpServletResponseWrapper) response;
 
         filterChain.doFilter(request, responseWrapper);
 
@@ -60,19 +61,19 @@ public final class OutputFilter implements Filter {
         String html = responseWrapper.toString();
 
         Matcher outputMatcher = ExpressionHandler.EL_PATTERN.matcher(html);
-	    while (outputMatcher.find()) {
-	    	foundRegex = true;
-	    	String expression = outputMatcher.group();
-	    	Object value = EXPRESSIONS.getExpressionValue(expression);
-	    	html = html.replace(expression, value != null ? value.toString() : "");
-	    }
+        while (outputMatcher.find()) {
+            foundRegex = true;
+            String expression = outputMatcher.group();
+            Object value = EXPRESSIONS.getExpressionValue(expression);
+            html = html.replace(expression, value != null ? value.toString() : "");
+        }
 
         // Write our modified text to the real response
-	    if (foundRegex) {
-		    responseWrapper.reset();
-		    responseWrapper.setContentLength(html.getBytes().length);
-	        responseWrapper.getWriter().write(html);
-	    }
-	}
+        if (foundRegex) {
+            responseWrapper.reset();
+            responseWrapper.setContentLength(html.getBytes().length);
+            responseWrapper.getWriter().write(html);
+        }
+    }
 
 }

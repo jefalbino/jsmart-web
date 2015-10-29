@@ -28,9 +28,10 @@ import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Type;
 import com.jsmartframework.web.util.WebImage;
 
+import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
-import java.io.IOException;
 
 public final class ImageTagHandler extends TagHandler {
 

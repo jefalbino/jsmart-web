@@ -20,6 +20,6 @@ package com.jsmartframework.web.annotation;
 
 public enum AuthType {
 
-	REQUEST, SESSION
+    REQUEST, SESSION
 
 }

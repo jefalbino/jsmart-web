@@ -23,26 +23,26 @@ import javax.xml.bind.annotation.XmlValue;
 
 public final class HtmlCompress {
 
-	private boolean compressHtml = true;
+    private boolean compressHtml = true;
 
-	private boolean skipComments = false;
+    private boolean skipComments = false;
 
-	@XmlValue
-	public boolean isCompressHtml() {
-		return compressHtml;
-	}
+    @XmlValue
+    public boolean isCompressHtml() {
+        return compressHtml;
+    }
 
-	public void setCompressHtml(boolean compressHtml) {
-		this.compressHtml = compressHtml;
-	}
+    public void setCompressHtml(boolean compressHtml) {
+        this.compressHtml = compressHtml;
+    }
 
-	@XmlAttribute
-	public boolean isSkipComments() {
-		return skipComments;
-	}
+    @XmlAttribute
+    public boolean isSkipComments() {
+        return skipComments;
+    }
 
-	public void setSkipComments(boolean skipComments) {
-		this.skipComments = skipComments;
-	}
+    public void setSkipComments(boolean skipComments) {
+        this.skipComments = skipComments;
+    }
 
 }

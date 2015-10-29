@@ -18,9 +18,18 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
+import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
+import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+
 import com.jsmartframework.web.listener.WebAsyncListener;
 import com.jsmartframework.web.listener.WebAsyncListener.Reason;
 import com.jsmartframework.web.util.WebUtils;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
@@ -32,14 +41,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
-import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
-import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
 
 public final class ServletControl extends HttpServlet {
 

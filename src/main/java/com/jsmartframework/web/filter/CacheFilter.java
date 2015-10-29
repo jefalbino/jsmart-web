@@ -18,7 +18,11 @@
 
 package com.jsmartframework.web.filter;
 
+import static com.jsmartframework.web.config.Config.CONFIG;
+
 import com.jsmartframework.web.config.CachePattern;
+
+import java.io.IOException;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -29,42 +33,39 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-import static com.jsmartframework.web.config.Config.CONFIG;
 
 public final class CacheFilter implements Filter {
 
-	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
+    private static final String HEADER_CACHE_CONTROL = "Cache-Control";
 
-	@Override
-	public void init(FilterConfig config) throws ServletException {
-		// DO NOTHING
-	}
+    @Override
+    public void init(FilterConfig config) throws ServletException {
+        // DO NOTHING
+    }
 
-	@Override
-	public void destroy() {
-		// DO NOTHING
-	}
+    @Override
+    public void destroy() {
+        // DO NOTHING
+    }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		// Dispatcher Forward not supposed to get in this Filter
-		if (httpRequest.getDispatcherType() == DispatcherType.FORWARD) {
-			filterChain.doFilter(httpRequest, httpResponse);
-        	return;
-		}
+        // Dispatcher Forward not supposed to get in this Filter
+        if (httpRequest.getDispatcherType() == DispatcherType.FORWARD) {
+            filterChain.doFilter(httpRequest, httpResponse);
+            return;
+        }
 
-		CachePattern cachePattern = CONFIG.getContent().getCachePattern(httpRequest.getRequestURI());
+        CachePattern cachePattern = CONFIG.getContent().getCachePattern(httpRequest.getRequestURI());
 
-		if (cachePattern != null && cachePattern.getCacheControl() != null) {
-			httpResponse.setHeader(HEADER_CACHE_CONTROL, cachePattern.getCacheControl());
-		}
+        if (cachePattern != null && cachePattern.getCacheControl() != null) {
+            httpResponse.setHeader(HEADER_CACHE_CONTROL, cachePattern.getCacheControl());
+        }
 
-		filterChain.doFilter(httpRequest, httpResponse);
-	}
+        filterChain.doFilter(httpRequest, httpResponse);
+    }
 
 }

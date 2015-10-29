@@ -18,6 +18,8 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
+
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Ajax;
 import com.jsmartframework.web.manager.TagHandler;
@@ -29,14 +31,13 @@ import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Event;
 import com.jsmartframework.web.tag.type.Size;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
-import javax.servlet.jsp.tagext.JspTag;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 public final class SelectTagHandler extends TagHandler {
 

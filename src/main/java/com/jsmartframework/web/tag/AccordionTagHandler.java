@@ -23,10 +23,11 @@ import com.jsmartframework.web.tag.css.Bootstrap;
 import com.jsmartframework.web.tag.html.Div;
 import com.jsmartframework.web.tag.html.Tag;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.io.StringWriter;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public final class AccordionTagHandler extends TagHandler {
 

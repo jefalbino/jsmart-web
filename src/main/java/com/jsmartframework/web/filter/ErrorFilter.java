@@ -18,7 +18,13 @@
 
 package com.jsmartframework.web.filter;
 
+import static com.jsmartframework.web.config.Config.CONFIG;
+
 import com.jsmartframework.web.config.ErrorPage;
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,85 +35,80 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.jsmartframework.web.config.Config.CONFIG;
 
 public final class ErrorFilter implements Filter {
 
-	private static final Logger LOGGER = Logger.getLogger(ErrorFilter.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(ErrorFilter.class.getPackage().getName());
 
-	private static final String HEADER_E_TAG = "ETag";
+    private static final String HEADER_E_TAG = "ETag";
 
-	@Override
-	public void init(FilterConfig config) throws ServletException {
-		// DO NOTHING
-	}
+    @Override
+    public void init(FilterConfig config) throws ServletException {
+        // DO NOTHING
+    }
 
-	@Override
-	public void destroy() {
-		// DO NOTHING
-	}
+    @Override
+    public void destroy() {
+        // DO NOTHING
+    }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-		final HttpServletRequest httpRequest = (HttpServletRequest) request;
-		final HttpServletResponse httpResponse = (HttpServletResponse) response;
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        final HttpServletRequest httpRequest = (HttpServletRequest) request;
+        final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		final String requestPath = httpRequest.getServletPath();
+        final String requestPath = httpRequest.getServletPath();
 
-		// Wrapper to change the default ETag-based validated caching to faster max-age-caching,
-		// we need to prevent the ETag-header from being added to the response object.
-		// Also it is necessary to avoid error 404 (not found) to be set by container, 
-		// in order to allow 404 page customization by framework settings
-		HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(httpResponse) {
+        // Wrapper to change the default ETag-based validated caching to faster max-age-caching,
+        // we need to prevent the ETag-header from being added to the response object.
+        // Also it is necessary to avoid error 404 (not found) to be set by container,
+        // in order to allow 404 page customization by framework settings
+        HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(httpResponse) {
 
-			@Override 
-			public void setHeader(String name, String value) {
-				if (!HEADER_E_TAG.equals(name)) {
-					httpResponse.setHeader(name, value);
-				}
-			}
+            @Override
+            public void setHeader(String name, String value) {
+                if (!HEADER_E_TAG.equals(name)) {
+                    httpResponse.setHeader(name, value);
+                }
+            }
 
-			@Override
-			public void sendError(int error) throws IOException {
-				LOGGER.log(Level.INFO, "Request error [" + error + "] on path [" + requestPath + "]");
+            @Override
+            public void sendError(int error) throws IOException {
+                LOGGER.log(Level.INFO, "Request error [" + error + "] on path [" + requestPath + "]");
 
-				if (CONFIG.getContent().getErrorPage(error) != null) {
-					httpResponse.setStatus(error);
-				} else {
-					httpResponse.sendError(error);
-				}
-			}
+                if (CONFIG.getContent().getErrorPage(error) != null) {
+                    httpResponse.setStatus(error);
+                } else {
+                    httpResponse.sendError(error);
+                }
+            }
 
-			@Override
-			public void sendError(int error, String message) throws IOException {
-				LOGGER.log(Level.INFO, "Request error [" + error + "] on path [" + requestPath + "] caused by: [" + message + "]");
+            @Override
+            public void sendError(int error, String message) throws IOException {
+                LOGGER.log(Level.INFO, "Request error [" + error + "] on path [" + requestPath + "] caused by: [" + message + "]");
 
-				if (CONFIG.getContent().getErrorPage(error) != null) {
-					httpResponse.setStatus(error);
-				} else {
-					httpResponse.sendError(error, message);
-				}
-			}
-		};
+                if (CONFIG.getContent().getErrorPage(error) != null) {
+                    httpResponse.setStatus(error);
+                } else {
+                    httpResponse.sendError(error, message);
+                }
+            }
+        };
 
-		try {
-			filterChain.doFilter(httpRequest, responseWrapper);
-		} catch (Exception ex) {
-			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-		}
+        try {
+            filterChain.doFilter(httpRequest, responseWrapper);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
 
-		ErrorPage errorPage = CONFIG.getContent().getErrorPage(responseWrapper.getStatus());
+        ErrorPage errorPage = CONFIG.getContent().getErrorPage(responseWrapper.getStatus());
 
-		if (errorPage != null) {
-			String path = errorPage.getPage();
+        if (errorPage != null) {
+            String path = errorPage.getPage();
 
-			// Use Redirect response internally to change to error page
-			responseWrapper.sendRedirect((path.startsWith("/") ? httpRequest.getContextPath() : "") + path);
-		}
-	}
+            // Use Redirect response internally to change to error page
+            responseWrapper.sendRedirect((path.startsWith("/") ? httpRequest.getContextPath() : "") + path);
+        }
+    }
 
 }

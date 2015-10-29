@@ -18,16 +18,17 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX_ATTACH;
+
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.html.Div;
 import com.jsmartframework.web.tag.html.Tag;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX_ATTACH;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public class AjaxAttachTagHandler extends TagHandler {
 

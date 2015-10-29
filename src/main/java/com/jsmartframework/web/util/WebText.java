@@ -40,96 +40,96 @@ import java.util.regex.Pattern;
  */
 public enum WebText {
 
-	TEXTS();
+    TEXTS();
 
-	private static final Logger LOGGER = Logger.getLogger(WebText.class.getPackage().getName());
-	
-	private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
+    private static final Logger LOGGER = Logger.getLogger(WebText.class.getPackage().getName());
 
-	private final SmartTextControl control = new SmartTextControl();
+    private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
+
+    private final SmartTextControl control = new SmartTextControl();
 
     private static Locale defaultLocale;
 
-	private Set<String> resources = new HashSet<String>();
+    private Set<String> resources = new HashSet<String>();
 
-	public void init(String[] messageFiles, String defaultLocale) {
-		if (messageFiles != null) {
-			for (String msg : messageFiles) {
-				this.resources.add(msg);
-			}
-		}
-		if (defaultLocale != null) {
-			this.defaultLocale = new Locale(defaultLocale);
-		}
-	}
+    public void init(String[] messageFiles, String defaultLocale) {
+        if (messageFiles != null) {
+            for (String msg : messageFiles) {
+                this.resources.add(msg);
+            }
+        }
+        if (defaultLocale != null) {
+            this.defaultLocale = new Locale(defaultLocale);
+        }
+    }
 
-	/**
-	 * Return <code>true</code> if some resource mapped on configuration file is
-	 * presented on this container, <code>false</code> otherwise.
-	 * 
-	 * @param res resource name mapped on configuration file.
-	 * @return boolean indicating the presence of specified resource.
-	 */
-	public static boolean containsResource(final String res) {
-		return TEXTS.resources.contains(res);
-	}
+    /**
+     * Return <code>true</code> if some resource mapped on configuration file is
+     * presented on this container, <code>false</code> otherwise.
+     *
+     * @param res resource name mapped on configuration file.
+     * @return boolean indicating the presence of specified resource.
+     */
+    public static boolean containsResource(final String res) {
+        return TEXTS.resources.contains(res);
+    }
 
-	/**
-	 * Returns the string mapped by specified resource and key inside the file according
-	 * to the standard of properties file. 
-	 * <br>
-	 * The string returned considers the {@link Locale} of the current request being processed.
-	 * 
-	 * @param res resource name mapped on configuration file.
-	 * @param key key of the string inside the properties file
-	 * @return the string on resource file according to the {@link Locale} of the request.
-	 */
-	public static String getString(final String res, final String key) {
-		try {
-			if (containsResource(res)) {
+    /**
+     * Returns the string mapped by specified resource and key inside the file according
+     * to the standard of properties file.
+     * <br>
+     * The string returned considers the {@link Locale} of the current request being processed.
+     *
+     * @param res resource name mapped on configuration file.
+     * @param key key of the string inside the properties file
+     * @return the string on resource file according to the {@link Locale} of the request.
+     */
+    public static String getString(final String res, final String key) {
+        try {
+            if (containsResource(res)) {
                 Locale locale = WebContext.getLocale();
                 if (locale == null && defaultLocale != null) {
                     locale = defaultLocale;
                 }
-				return ResourceBundle.getBundle(res, (locale != null ? locale : Locale.getDefault()), TEXTS.control).getString(key);
-			} else {
-				LOGGER.log(Level.INFO, "Resource " + res + " not found!");
-			}
-		} catch (MissingResourceException ex) {
-			LOGGER.log(Level.INFO, "Message for " + key + " not found: " + ex.getMessage());
-		}
-		return "???";
-	}
-	
-	public static String getString(final String res, final String key, final Object ... params) {
-		String string = getString(res, key);
-		string = formatString(string, params);
-		return string;
-	}
+                return ResourceBundle.getBundle(res, (locale != null ? locale : Locale.getDefault()), TEXTS.control).getString(key);
+            } else {
+                LOGGER.log(Level.INFO, "Resource " + res + " not found!");
+            }
+        } catch (MissingResourceException ex) {
+            LOGGER.log(Level.INFO, "Message for " + key + " not found: " + ex.getMessage());
+        }
+        return "???";
+    }
 
-	public static String formatString(String string, final Object ... params) {
-		if (string != null && params != null && params.length > 0) {
+    public static String getString(final String res, final String key, final Object ... params) {
+        String string = getString(res, key);
+        string = formatString(string, params);
+        return string;
+    }
 
-			if (BRACKETS.matcher(string).find()) {
-				string = MessageFormat.format(string, params);
+    public static String formatString(String string, final Object ... params) {
+        if (string != null && params != null && params.length > 0) {
 
-			} else if (string.contains("%s")) {
-				string = String.format(string, params);
-			}
-		}
-		return string;
-	}
+            if (BRACKETS.matcher(string).find()) {
+                string = MessageFormat.format(string, params);
 
-	private class SmartTextControl extends ResourceBundle.Control {
+            } else if (string.contains("%s")) {
+                string = String.format(string, params);
+            }
+        }
+        return string;
+    }
 
-		@Override
-		public List<Locale> getCandidateLocales(String baseName, Locale locale) {
-			List<Locale> locales = super.getCandidateLocales(baseName, locale);
-			if (defaultLocale != null) {
-				locales.add(locales.indexOf(Locale.ROOT), defaultLocale);
-			}
-			return locales;
-		}
-	}
+    private class SmartTextControl extends ResourceBundle.Control {
+
+        @Override
+        public List<Locale> getCandidateLocales(String baseName, Locale locale) {
+            List<Locale> locales = super.getCandidateLocales(baseName, locale);
+            if (defaultLocale != null) {
+                locales.add(locales.indexOf(Locale.ROOT), defaultLocale);
+            }
+            return locales;
+        }
+    }
 
 }

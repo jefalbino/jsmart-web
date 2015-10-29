@@ -18,6 +18,20 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.config.Config.CONFIG;
+import static com.jsmartframework.web.config.Constants.FILTER_HEADERS;
+import static com.jsmartframework.web.config.Constants.FILTER_RESOURCES;
+import static com.jsmartframework.web.config.Constants.INDEX_JSP;
+import static com.jsmartframework.web.config.Constants.LIB_FILE_PATH;
+import static com.jsmartframework.web.config.Constants.LIB_JAR_FILE_PATTERN;
+import static com.jsmartframework.web.config.Constants.PATH_SEPARATOR;
+import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_DOC_SCRIPT_ATTR;
+import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_SCRIPT_ATTR;
+import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
+import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
+import static com.jsmartframework.web.config.Constants.SESSION_RESET_ATTR;
+import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+
 import com.google.gson.Gson;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import com.jsmartframework.web.config.HtmlCompress;
@@ -26,23 +40,11 @@ import com.jsmartframework.web.json.Resources;
 import com.jsmartframework.web.tag.html.DocScript;
 import com.jsmartframework.web.tag.html.Head;
 import com.jsmartframework.web.tag.html.Script;
+
 import org.apache.commons.io.IOUtils;
 import org.reflections.vfs.Vfs;
 import org.reflections.vfs.Vfs.Dir;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.WriteListener;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.http.HttpSession;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -60,78 +62,78 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jsmartframework.web.config.Config.CONFIG;
-import static com.jsmartframework.web.config.Constants.FILTER_HEADERS;
-import static com.jsmartframework.web.config.Constants.FILTER_RESOURCES;
-import static com.jsmartframework.web.config.Constants.INDEX_JSP;
-import static com.jsmartframework.web.config.Constants.LIB_FILE_PATH;
-import static com.jsmartframework.web.config.Constants.LIB_JAR_FILE_PATTERN;
-import static com.jsmartframework.web.config.Constants.PATH_SEPARATOR;
-import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_DOC_SCRIPT_ATTR;
-import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_SCRIPT_ATTR;
-import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
-import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
-import static com.jsmartframework.web.config.Constants.SESSION_RESET_ATTR;
-import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import javax.servlet.http.HttpSession;
 
 public final class FilterControl implements Filter {
 
-	public static final String ENCODING = "UTF-8";
+    public static final String ENCODING = "UTF-8";
 
-	private static final int STREAM_BUFFER = 2048;
+    private static final int STREAM_BUFFER = 2048;
 
-	private static final Gson GSON = new Gson();
+    private static final Gson GSON = new Gson();
 
-	private static final Logger LOGGER = Logger.getLogger(FilterControl.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(FilterControl.class.getPackage().getName());
 
-	private static final Pattern HTML_PATTERN = Pattern.compile("(<html.*?>)");
+    private static final Pattern HTML_PATTERN = Pattern.compile("(<html.*?>)");
 
-	private static final Pattern START_HEAD_PATTERN = Pattern.compile("(<head.*?>)");
+    private static final Pattern START_HEAD_PATTERN = Pattern.compile("(<head.*?>)");
 
-	private static final Pattern CLOSE_BODY_PATTERN = Pattern.compile("(</body.*?>)");
+    private static final Pattern CLOSE_BODY_PATTERN = Pattern.compile("(</body.*?>)");
 
-	private static final Pattern SCRIPT_BODY_PATTERN = Pattern.compile("(<body.*?>\\s*)(<script.*?>)", Pattern.DOTALL);
+    private static final Pattern SCRIPT_BODY_PATTERN = Pattern.compile("(<body.*?>\\s*)(<script.*?>)", Pattern.DOTALL);
 
-	private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
+    private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
 
-	private static final StringBuilder headerScripts = new StringBuilder();;
+    private static final StringBuilder headerScripts = new StringBuilder();;
 
-	private static final StringBuilder headerStyles = new StringBuilder();
+    private static final StringBuilder headerStyles = new StringBuilder();
 
-	@Override
-	public void init(FilterConfig config) throws ServletException {
-		initHeaders();
-		initResources(config);
-	}
+    @Override
+    public void init(FilterConfig config) throws ServletException {
+        initHeaders();
+        initResources(config);
+    }
 
-	@Override
-	public void destroy() {
-		// DO NOTHING
-	}
+    @Override
+    public void destroy() {
+        // DO NOTHING
+    }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		httpRequest.setCharacterEncoding(ENCODING);
-		httpResponse.setCharacterEncoding(ENCODING);
+        httpRequest.setCharacterEncoding(ENCODING);
+        httpResponse.setCharacterEncoding(ENCODING);
 
-		// Initiate bean context based on current thread instance
-		WebContext.initCurrentInstance(httpRequest, httpResponse);
+        // Initiate bean context based on current thread instance
+        WebContext.initCurrentInstance(httpRequest, httpResponse);
 
         // Instantiate request scoped auth bean
         HANDLER.instantiateAuthBean(httpRequest);
 
-		// Anonymous subclass to wrap HTTP response to print output
-		WebFilterResponseWrapper responseWrapper = new WebFilterResponseWrapper(httpResponse);
+        // Anonymous subclass to wrap HTTP response to print output
+        WebFilterResponseWrapper responseWrapper = new WebFilterResponseWrapper(httpResponse);
 
         Throwable throwable = null;
         try {
-        	filterChain.doFilter(request, responseWrapper);
+            filterChain.doFilter(request, responseWrapper);
         } catch (Throwable thrown) {
-        	throwable = thrown;
-        	thrown.printStackTrace();
+            throwable = thrown;
+            thrown.printStackTrace();
         }
 
         // Finalize request scoped web and auth beans
@@ -179,43 +181,43 @@ public final class FilterControl implements Filter {
         responseWrapper.close();
 
         // Case internal server error
-		if (throwable != null) {
-			responseWrapper.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        if (throwable != null) {
+            responseWrapper.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
-			if (throwable instanceof IOException) {
-				throw new IOException(throwable);
-			}
-			throw new ServletException(throwable);
-		}
+            if (throwable instanceof IOException) {
+                throw new IOException(throwable);
+            }
+            throw new ServletException(throwable);
+        }
 
-		if (html == null || html.trim().isEmpty()) {
-			return;
-		}
+        if (html == null || html.trim().isEmpty()) {
+            return;
+        }
 
-		if (CONFIG.getContent().isPrintHtml()) {
-        	LOGGER.log(Level.INFO, html);
+        if (CONFIG.getContent().isPrintHtml()) {
+            LOGGER.log(Level.INFO, html);
         }
 
         // Compress html to better load performance
-		HtmlCompress compressHtml = CONFIG.getContent().getCompressHtml();
-		if (compressHtml.isCompressHtml()) {
-			HtmlCompressor compressor = new HtmlCompressor();
-	    	compressor.setRemoveComments(!compressHtml.isSkipComments());
-	    	html = compressor.compress(html);
-		}
+        HtmlCompress compressHtml = CONFIG.getContent().getCompressHtml();
+        if (compressHtml.isCompressHtml()) {
+            HtmlCompressor compressor = new HtmlCompressor();
+            compressor.setRemoveComments(!compressHtml.isSkipComments());
+            html = compressor.compress(html);
+        }
 
-		// Write our modified text to the real response
-		if (!httpResponse.isCommitted()) {
-			httpResponse.setContentLength(html.getBytes().length);
-			httpResponse.getWriter().write(html);
-		}
-	}
+        // Write our modified text to the real response
+        if (!httpResponse.isCommitted()) {
+            httpResponse.setContentLength(html.getBytes().length);
+            httpResponse.getWriter().write(html);
+        }
+    }
 
-	private void addAjaxHeaders(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
+    private void addAjaxHeaders(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
 
-		// Case redirect via ajax, place tag with path to be handled by java script
-    	String ajaxPath = (String) httpRequest.getAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR);
-		if (ajaxPath != null) {
+        // Case redirect via ajax, place tag with path to be handled by java script
+        String ajaxPath = (String) httpRequest.getAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR);
+        if (ajaxPath != null) {
             Boolean newWindow = (Boolean) httpRequest.getAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR);
 
             if (Boolean.TRUE.equals(newWindow)) {
@@ -223,79 +225,79 @@ public final class FilterControl implements Filter {
             } else {
                 response.addHeader("Redirect-Ajax", ajaxPath);
             }
-		}
+        }
 
-		// Case session reset, place tag to force java script reset the page
-	    HttpSession session = httpRequest.getSession();
-	    synchronized (session) {
+        // Case session reset, place tag to force java script reset the page
+        HttpSession session = httpRequest.getSession();
+        synchronized (session) {
 
-			if (session.getAttribute(SESSION_RESET_ATTR) != null) {
-				if (ajaxPath == null && WebContext.isAjaxRequest()) {
-					response.addHeader("Reset-Ajax", "Session");
-				}
+            if (session.getAttribute(SESSION_RESET_ATTR) != null) {
+                if (ajaxPath == null && WebContext.isAjaxRequest()) {
+                    response.addHeader("Reset-Ajax", "Session");
+                }
                 session.removeAttribute(SESSION_RESET_ATTR);
-	        }
-	    }
-	}
+            }
+        }
+    }
 
-	private String getCompleteHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
-		String html = response.toString();
+    private String getCompleteHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
+        String html = response.toString();
 
-		// Ajax request do not use scripts returned on html body 
-		if ("XMLHttpRequest".equals(httpRequest.getHeader("X-Requested-With"))) {
-			return html;
-		}
+        // Ajax request do not use scripts returned on html body
+        if ("XMLHttpRequest".equals(httpRequest.getHeader("X-Requested-With"))) {
+            return html;
+        }
 
         Matcher htmlMatcher = HTML_PATTERN.matcher(html);
 
-		// Check if it is a valid html, if not just return the html
+        // Check if it is a valid html, if not just return the html
         if (!htmlMatcher.find()) {
-        	return html;
+            return html;
         }
 
-		// Try to place the css as the first link in the head tag
-    	Matcher startHeadMatcher = START_HEAD_PATTERN.matcher(html);
-	    if (startHeadMatcher.find()) {
-	    	html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(headerStyles.toString()));
+        // Try to place the css as the first link in the head tag
+        Matcher startHeadMatcher = START_HEAD_PATTERN.matcher(html);
+        if (startHeadMatcher.find()) {
+            html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(headerStyles.toString()));
 
-	    } else {
-	    	Head head = new Head();
-	    	head.addText(headerStyles);
-	    	html = htmlMatcher.replaceFirst("$1" + Matcher.quoteReplacement(head.getHtml().toString()));
-	    }
+        } else {
+            Head head = new Head();
+            head.addText(headerStyles);
+            html = htmlMatcher.replaceFirst("$1" + Matcher.quoteReplacement(head.getHtml().toString()));
+        }
 
-	    // Stand alone functions mapped via function tag
-	    Script funcScript = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
-	    
-	    // General document scripts executed on page ready
-	    DocScript docScript = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_DOC_SCRIPT_ATTR);
+        // Stand alone functions mapped via function tag
+        Script funcScript = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
 
-	    StringBuilder scriptBuilder = new StringBuilder(headerScripts);
-	    if (funcScript != null) {
-	    	scriptBuilder.append(funcScript.getHtml());
-	    }
-	    if (docScript != null) {
-	    	scriptBuilder.append(docScript.getHtml());
-	    }
+        // General document scripts executed on page ready
+        DocScript docScript = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_DOC_SCRIPT_ATTR);
 
-	    // Place the scripts before the last script tag inside body
-	    Matcher scriptMatcher = SCRIPT_BODY_PATTERN.matcher(html);
-	    if (scriptMatcher.find()) {
-	    	return scriptMatcher.replaceFirst("$1" + Matcher.quoteReplacement(scriptBuilder.toString()) + "$2");
-	    }
+        StringBuilder scriptBuilder = new StringBuilder(headerScripts);
+        if (funcScript != null) {
+            scriptBuilder.append(funcScript.getHtml());
+        }
+        if (docScript != null) {
+            scriptBuilder.append(docScript.getHtml());
+        }
 
-	    // Place the scripts before the end body tag
-	    Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
-	    if (!bodyMatcher.find()) {
-	    	throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
-	    }
+        // Place the scripts before the last script tag inside body
+        Matcher scriptMatcher = SCRIPT_BODY_PATTERN.matcher(html);
+        if (scriptMatcher.find()) {
+            return scriptMatcher.replaceFirst("$1" + Matcher.quoteReplacement(scriptBuilder.toString()) + "$2");
+        }
 
-		return bodyMatcher.replaceFirst(Matcher.quoteReplacement(scriptBuilder.toString()) + "$1");
-	}
+        // Place the scripts before the end body tag
+        Matcher bodyMatcher = CLOSE_BODY_PATTERN.matcher(html);
+        if (!bodyMatcher.find()) {
+            throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
+        }
 
-	private void initHeaders() {
+        return bodyMatcher.replaceFirst(Matcher.quoteReplacement(scriptBuilder.toString()) + "$1");
+    }
+
+    private void initHeaders() {
         String assetsUrl = CONFIG.getContent().getAssetsUrl();
-		Headers jsonHeaders = GSON.fromJson(convertResourceToString(FILTER_HEADERS), Headers.class);
+        Headers jsonHeaders = GSON.fromJson(convertResourceToString(FILTER_HEADERS), Headers.class);
 
         for (String style : jsonHeaders.getStyles()) {
             headerStyles.append(String.format(style, assetsUrl != null ? assetsUrl : "/"));
@@ -303,52 +305,52 @@ public final class FilterControl implements Filter {
         for (String script : jsonHeaders.getScripts()) {
             headerScripts.append(String.format(script, assetsUrl != null ? assetsUrl : "/"));
         }
-	}
+    }
 
-	@SuppressWarnings("resource")
-	private String convertResourceToString(String resource) {
-		InputStream is = FilterControl.class.getClassLoader().getResourceAsStream(resource);
-		Scanner scanner = new Scanner(is).useDelimiter("\\A");
-		return scanner.hasNext() ? scanner.next() : "";
-	}
+    @SuppressWarnings("resource")
+    private String convertResourceToString(String resource) {
+        InputStream is = FilterControl.class.getClassLoader().getResourceAsStream(resource);
+        Scanner scanner = new Scanner(is).useDelimiter("\\A");
+        return scanner.hasNext() ? scanner.next() : "";
+    }
 
-	private void initResources(FilterConfig config) {
-		try {
+    private void initResources(FilterConfig config) {
+        try {
             if (CONFIG.getContent().getAssetsUrl() != null) {
                 LOGGER.log(Level.INFO, "Using external assets, please provide the jsmart assets content at "
                         + CONFIG.getContent().getAssetsUrl());
             }
 
-			ServletContext context = config.getServletContext();
-			Set<String> libs = context.getResourcePaths(LIB_FILE_PATH);
+            ServletContext context = config.getServletContext();
+            Set<String> libs = context.getResourcePaths(LIB_FILE_PATH);
 
-			if (libs == null || libs.isEmpty()) {
-				LOGGER.log(Level.SEVERE, "Could not find the JSmart library JAR file. Empty " + LIB_FILE_PATH + " resource folder.");
-				return;
-			}
+            if (libs == null || libs.isEmpty()) {
+                LOGGER.log(Level.SEVERE, "Could not find the JSmart library JAR file. Empty " + LIB_FILE_PATH + " resource folder.");
+                return;
+            }
 
-			String libFilePath = null;
-			for (String lib : libs) {
-				Matcher matcher = JAR_FILE_PATTERN.matcher(lib);
-				if (matcher.find()) {
-					libFilePath = matcher.group();
-					break;
-				}
-			}
+            String libFilePath = null;
+            for (String lib : libs) {
+                Matcher matcher = JAR_FILE_PATTERN.matcher(lib);
+                if (matcher.find()) {
+                    libFilePath = matcher.group();
+                    break;
+                }
+            }
 
-			if (libFilePath == null) {
-				LOGGER.log(Level.SEVERE, "Could not find the JSmart library JAR file inside " + LIB_FILE_PATH);
-				return;
-			}
+            if (libFilePath == null) {
+                LOGGER.log(Level.SEVERE, "Could not find the JSmart library JAR file inside " + LIB_FILE_PATH);
+                return;
+            }
 
-			Resources jsonResources = GSON.fromJson(convertResourceToString(FILTER_RESOURCES), Resources.class);
+            Resources jsonResources = GSON.fromJson(convertResourceToString(FILTER_RESOURCES), Resources.class);
 
-			File libFile = new File(context.getRealPath(libFilePath));
-			Dir content = Vfs.fromURL(libFile.toURI().toURL());
+            File libFile = new File(context.getRealPath(libFilePath));
+            Dir content = Vfs.fromURL(libFile.toURI().toURL());
 
-			Iterator<Vfs.File> files = content.getFiles().iterator();
-			while (files.hasNext()) {
-				Vfs.File file = files.next();
+            Iterator<Vfs.File> files = content.getFiles().iterator();
+            while (files.hasNext()) {
+                Vfs.File file = files.next();
 
                 // Copy index.jsp and replace content to redirect to welcome-url case configured
                 if (file.getRelativePath().startsWith(INDEX_JSP)) {
@@ -366,36 +368,36 @@ public final class FilterControl implements Filter {
                 }
 
                 // Copy js, css and font resources to specific location
-				for (String resource : jsonResources.getResources()) {
+                for (String resource : jsonResources.getResources()) {
 
-					String resourcePath = resource.replace("*", "");
+                    String resourcePath = resource.replace("*", "");
 
-					if (file.getRelativePath().startsWith(resourcePath)) {
-						initDirResources(context.getRealPath(PATH_SEPARATOR), file.getRelativePath());
+                    if (file.getRelativePath().startsWith(resourcePath)) {
+                        initDirResources(context.getRealPath(PATH_SEPARATOR), file.getRelativePath());
                         copyFileResource(file.openInputStream(), file.getRelativePath(), context);
-	                    break;
-					}
-				}
-			}
+                        break;
+                    }
+                }
+            }
         } catch (Exception ex) {
-        	LOGGER.log(Level.SEVERE, ex.getMessage());
+            LOGGER.log(Level.SEVERE, ex.getMessage());
         }
     }
 
-	private void initDirResources(String currentPath, String relativePath) {
-		if (relativePath.contains(PATH_SEPARATOR)) {
-			String[] paths = relativePath.split(PATH_SEPARATOR);
+    private void initDirResources(String currentPath, String relativePath) {
+        if (relativePath.contains(PATH_SEPARATOR)) {
+            String[] paths = relativePath.split(PATH_SEPARATOR);
 
-			for (int i = 0; i < paths.length - 1; i++) {
-				currentPath += PATH_SEPARATOR + paths[i];
+            for (int i = 0; i < paths.length - 1; i++) {
+                currentPath += PATH_SEPARATOR + paths[i];
 
-				File dir = new File(currentPath);
-				if (!dir.exists()) {
-					dir.mkdir();
-				}
-			}
-		}
-	}
+                File dir = new File(currentPath);
+                if (!dir.exists()) {
+                    dir.mkdir();
+                }
+            }
+        }
+    }
 
     private void copyFileResource(InputStream is, String relativePath, ServletContext context) throws Exception {
         int count = 0;
@@ -413,127 +415,127 @@ public final class FilterControl implements Filter {
         bis.close();
     }
 
-	private class WebFilterResponseWrapper extends HttpServletResponseWrapper {
+    private class WebFilterResponseWrapper extends HttpServletResponseWrapper {
 
-		private WebFilterOutputStream outputStream = new WebFilterOutputStream();
+        private WebFilterOutputStream outputStream = new WebFilterOutputStream();
 
-		public WebFilterResponseWrapper(HttpServletResponse servletResponse) {
-			super(servletResponse);
-		}
+        public WebFilterResponseWrapper(HttpServletResponse servletResponse) {
+            super(servletResponse);
+        }
 
-		@Override
-		public ServletOutputStream getOutputStream() throws IOException {
-			return outputStream;
-		}
+        @Override
+        public ServletOutputStream getOutputStream() throws IOException {
+            return outputStream;
+        }
 
-		@Override
-		public PrintWriter getWriter() throws IOException {
-			return new PrintWriter(outputStream.getWriter(), true);
-		}
+        @Override
+        public PrintWriter getWriter() throws IOException {
+            return new PrintWriter(outputStream.getWriter(), true);
+        }
 
-		@Override
-		public void reset() {
-			outputStream.reset();
-		}
+        @Override
+        public void reset() {
+            outputStream.reset();
+        }
 
-		@Override
-		public void flushBuffer() throws IOException {
-			outputStream.flush();
-		}
+        @Override
+        public void flushBuffer() throws IOException {
+            outputStream.flush();
+        }
 
-		public void close() throws IOException {
-			outputStream.close();
-		}
+        public void close() throws IOException {
+            outputStream.close();
+        }
 
-		@Override
-		public String toString() {
-			return outputStream.toString();
-		}
-	}
+        @Override
+        public String toString() {
+            return outputStream.toString();
+        }
+    }
 
-	private class WebFilterOutputStream extends ServletOutputStream {
+    private class WebFilterOutputStream extends ServletOutputStream {
 
-		private StringWriter writer = new StringWriter();
-		
-		private WriteListener writeListener;
+        private StringWriter writer = new StringWriter();
 
-		public StringWriter getWriter() {
-			return writer;
-		}
+        private WriteListener writeListener;
 
-		public void reset() {
-			writer = new StringWriter();
-		}
+        public StringWriter getWriter() {
+            return writer;
+        }
 
-		@Override
-		public void write(int b) throws IOException {
-			try {
-				writer.write(b);
-				if (writeListener != null) {
-		    		writeListener.onWritePossible();
-		    	}
-	    	} catch (IOException ex) {
-	    		if (writeListener != null) {
-		    		writeListener.onError(ex);
-		    	}
-	    		throw ex;
-	    	}
-		}
+        public void reset() {
+            writer = new StringWriter();
+        }
 
-		@Override
-		public void write(byte[] b) throws IOException {
-			try {
-				writer.write(new String(b));
-				if (writeListener != null) {
-		    		writeListener.onWritePossible();
-		    	}
-	    	} catch (IOException ex) {
-	    		if (writeListener != null) {
-		    		writeListener.onError(ex);
-		    	}
-	    		throw ex;
-	    	}
-		}
+        @Override
+        public void write(int b) throws IOException {
+            try {
+                writer.write(b);
+                if (writeListener != null) {
+                    writeListener.onWritePossible();
+                }
+            } catch (IOException ex) {
+                if (writeListener != null) {
+                    writeListener.onError(ex);
+                }
+                throw ex;
+            }
+        }
 
-		@Override
-		public void write(byte[] b, int off, int len) throws IOException {
-			try {
-				writer.write(new String(b), off, len);
-				if (writeListener != null) {
-		    		writeListener.onWritePossible();
-		    	}
-	    	} catch (IOException ex) {
-	    		if (writeListener != null) {
-		    		writeListener.onError(ex);
-		    	}
-	    		throw ex;
-	    	}
-		}
+        @Override
+        public void write(byte[] b) throws IOException {
+            try {
+                writer.write(new String(b));
+                if (writeListener != null) {
+                    writeListener.onWritePossible();
+                }
+            } catch (IOException ex) {
+                if (writeListener != null) {
+                    writeListener.onError(ex);
+                }
+                throw ex;
+            }
+        }
 
-		@Override
-		public void flush() throws IOException {
-			writer.flush();
-		}
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            try {
+                writer.write(new String(b), off, len);
+                if (writeListener != null) {
+                    writeListener.onWritePossible();
+                }
+            } catch (IOException ex) {
+                if (writeListener != null) {
+                    writeListener.onError(ex);
+                }
+                throw ex;
+            }
+        }
 
-		@Override
-		public void close() throws IOException {
-			writer.close();
-		}
+        @Override
+        public void flush() throws IOException {
+            writer.flush();
+        }
 
-		@Override
-		public String toString() {
-			return writer.toString();
-		}
+        @Override
+        public void close() throws IOException {
+            writer.close();
+        }
 
-		@Override
-		public boolean isReady() {
-			return false;
-		}
+        @Override
+        public String toString() {
+            return writer.toString();
+        }
 
-		@Override
-		public void setWriteListener(WriteListener writeListener) {
-			this.writeListener = writeListener;
-		}
-	}
+        @Override
+        public boolean isReady() {
+            return false;
+        }
+
+        @Override
+        public void setWriteListener(WriteListener writeListener) {
+            this.writeListener = writeListener;
+        }
+    }
 
 }

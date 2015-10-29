@@ -20,48 +20,48 @@ package com.jsmartframework.web.adapter;
 
 public final class SlideAdapter {
 
-	private ImageAdapter image;
+    private ImageAdapter image;
 
-	private HeaderAdapter header;
+    private HeaderAdapter header;
 
-	private boolean active;
-	
-	private String label;
+    private boolean active;
 
-	public ImageAdapter getImage() {
-		return image;
-	}
+    private String label;
 
-	public SlideAdapter setImage(ImageAdapter image) {
-		this.image = image;
+    public ImageAdapter getImage() {
+        return image;
+    }
+
+    public SlideAdapter setImage(ImageAdapter image) {
+        this.image = image;
         return this;
-	}
+    }
 
-	public HeaderAdapter getHeader() {
-		return header;
-	}
+    public HeaderAdapter getHeader() {
+        return header;
+    }
 
-	public SlideAdapter setHeader(HeaderAdapter header) {
-		this.header = header;
+    public SlideAdapter setHeader(HeaderAdapter header) {
+        this.header = header;
         return this;
-	}
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	public SlideAdapter setActive(boolean active) {
-		this.active = active;
+    public SlideAdapter setActive(boolean active) {
+        this.active = active;
         return this;
-	}
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public SlideAdapter setLabel(String label) {
-		this.label = label;
+    public SlideAdapter setLabel(String label) {
+        this.label = label;
         return this;
-	}
+    }
 
 }

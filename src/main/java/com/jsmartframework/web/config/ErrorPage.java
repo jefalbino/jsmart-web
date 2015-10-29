@@ -22,27 +22,27 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
 public final class ErrorPage {
-	
-	private Integer code;
 
-	private String page;
+    private Integer code;
 
-	@XmlAttribute
-	public Integer getCode() {
-		return code;
-	}
+    private String page;
 
-	public void setCode(Integer code) {
-		this.code = code;
-	}
+    @XmlAttribute
+    public Integer getCode() {
+        return code;
+    }
 
-	@XmlValue
-	public String getPage() {
-		return page;
-	}
+    public void setCode(Integer code) {
+        this.code = code;
+    }
 
-	public void setPage(String page) {
-		this.page = page;
-	}
+    @XmlValue
+    public String getPage() {
+        return page;
+    }
+
+    public void setPage(String page) {
+        this.page = page;
+    }
 
 }

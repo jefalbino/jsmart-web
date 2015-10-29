@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface QueryParam {
 
-	String value();
+    String value();
 }

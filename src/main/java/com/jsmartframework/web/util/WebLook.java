@@ -20,11 +20,11 @@ package com.jsmartframework.web.util;
 
 public enum WebLook {
 
-	DEFAULT, PRIMARY, SUCCESS, INFO, WARNING, DANGER, MUTED, LINK, ERROR;
+    DEFAULT, PRIMARY, SUCCESS, INFO, WARNING, DANGER, MUTED, LINK, ERROR;
 
-	@Override
-	public String toString() {
-		return super.toString().toLowerCase();
-	}
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase();
+    }
 
 }

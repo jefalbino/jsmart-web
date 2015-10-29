@@ -18,14 +18,15 @@
 
 package com.jsmartframework.web.util;
 
-import javax.servlet.ServletContext;
+import static com.jsmartframework.web.config.Config.CONFIG;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import static com.jsmartframework.web.config.Config.CONFIG;
+import javax.servlet.ServletContext;
 
 /**
  * This class represents the container of image paths packed inside the project.
@@ -36,7 +37,7 @@ import static com.jsmartframework.web.config.Config.CONFIG;
  */
 public enum WebImage {
 
-	IMAGES();
+    IMAGES();
 
     private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
 
@@ -44,53 +45,53 @@ public enum WebImage {
 
     private Map<String, Map<String, String>> libraries =  new ConcurrentHashMap<>();
 
-	public void init(ServletContext servletContext) {
+    public void init(ServletContext servletContext) {
         if (assetsUrl != null && assetsUrl.endsWith("/")) {
             assetsUrl = assetsUrl.substring(0, assetsUrl.length() - 1);
         }
-		lookupInResourcePath(servletContext, "/");
-	}
+        lookupInResourcePath(servletContext, "/");
+    }
 
-	/**
-	 * Returns the image path according to its library and image name.
+    /**
+     * Returns the image path according to its library and image name.
      * Case not found internally, this image is maybe stored on assetsUrl link,
      * so point to there.
-	 * 
-	 * @param lib folder path name containing the desired image.
-	 * @param name name of the image including its extension.
-	 * @return the path to get the image resource.
-	 */
-	public static String getImage(String lib, String name) {
-		if (lib != null) {
+     *
+     * @param lib folder path name containing the desired image.
+     * @param name name of the image including its extension.
+     * @return the path to get the image resource.
+     */
+    public static String getImage(String lib, String name) {
+        if (lib != null) {
             // This is for image url pointing to assetsUrl case
             // image is not found internally
             String externalImg = assetsUrl != null ? assetsUrl : "";
 
             // Library used to create url for internal and external images
-			String library = DOT_PATTERN.matcher(lib).replaceAll("/");
+            String library = DOT_PATTERN.matcher(lib).replaceAll("/");
 
-			if (!library.startsWith("/")) {
-				library = "/" + library;
-			}
+            if (!library.startsWith("/")) {
+                library = "/" + library;
+            }
             externalImg += library;
 
-			if (library.endsWith("/")) {
-				library = library.substring(0, library.length() - 1);
+            if (library.endsWith("/")) {
+                library = library.substring(0, library.length() - 1);
 
-			} else if (!name.startsWith("/")) {
+            } else if (!name.startsWith("/")) {
                 externalImg += "/";
             }
             externalImg += name;
 
             String internalImg = null;
-			Map<String, String> internalImgs = IMAGES.libraries.get(library);
+            Map<String, String> internalImgs = IMAGES.libraries.get(library);
 
-			if (internalImgs != null) {
+            if (internalImgs != null) {
                 if (name.startsWith("/")) {
                     name = name.substring(1);
                 }
                 internalImg = internalImgs.get(name);
-			}
+            }
 
             if (assetsUrl != null) {
                 return externalImg;
@@ -98,32 +99,32 @@ public enum WebImage {
             } else if (internalImg != null) {
                 return internalImg;
             }
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
-	private void lookupInResourcePath(ServletContext servletContext, String path) {
-		Set<String> resources = servletContext.getResourcePaths(path);
-		if (resources != null) {
-			Map<String, String> library = null;
+    private void lookupInResourcePath(ServletContext servletContext, String path) {
+        Set<String> resources = servletContext.getResourcePaths(path);
+        if (resources != null) {
+            Map<String, String> library = null;
 
-			for (String res : resources) {
-				if (res.endsWith(".png") || res.endsWith(".jpg") || res.endsWith(".jpeg") || res.endsWith(".gif") || res.endsWith(".bmp") || res.endsWith(".ico")) {
-					if (library == null) {
-						library = new HashMap<String, String>();
-					}
-					String[] bars = res.split("/");
-					library.put(bars[bars.length -1], res.replace("WEB-INF/classes/", "/"));
-				} else {
-					lookupInResourcePath(servletContext, res);
-				}
-			}
+            for (String res : resources) {
+                if (res.endsWith(".png") || res.endsWith(".jpg") || res.endsWith(".jpeg") || res.endsWith(".gif") || res.endsWith(".bmp") || res.endsWith(".ico")) {
+                    if (library == null) {
+                        library = new HashMap<String, String>();
+                    }
+                    String[] bars = res.split("/");
+                    library.put(bars[bars.length -1], res.replace("WEB-INF/classes/", "/"));
+                } else {
+                    lookupInResourcePath(servletContext, res);
+                }
+            }
 
-			// Add library to libraries
-			if (library != null) {
-				IMAGES.libraries.put(path.substring(0, path.length() -1), library);
-			}
-		}
-	}
+            // Add library to libraries
+            if (library != null) {
+                IMAGES.libraries.put(path.substring(0, path.length() -1), library);
+            }
+        }
+    }
 
 }

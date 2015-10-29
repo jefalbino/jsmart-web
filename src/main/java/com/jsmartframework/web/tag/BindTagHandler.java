@@ -18,6 +18,8 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_BIND;
+
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Bind;
 import com.jsmartframework.web.manager.TagHandler;
@@ -25,12 +27,11 @@ import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Event;
 import com.jsmartframework.web.tag.util.RefAction;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspTag;
 import java.io.IOException;
 import java.util.Stack;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_BIND;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspTag;
 
 public final class BindTagHandler extends TagHandler {
 

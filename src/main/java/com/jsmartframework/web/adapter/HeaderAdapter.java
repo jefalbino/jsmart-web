@@ -20,41 +20,41 @@ package com.jsmartframework.web.adapter;
 
 public final class HeaderAdapter {
 
-	private String title;
-	
-	private String icon;
-	
-	private String type;
-	
-	public HeaderAdapter(String title) {
-		this.title = title;
-	}
+    private String title;
 
-	public String getTitle() {
-		return title;
-	}
+    private String icon;
 
-	public HeaderAdapter setTitle(String title) {
-		this.title = title;
+    private String type;
+
+    public HeaderAdapter(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public HeaderAdapter setTitle(String title) {
+        this.title = title;
         return this;
-	}
+    }
 
-	public String getIcon() {
-		return icon;
-	}
+    public String getIcon() {
+        return icon;
+    }
 
-	public HeaderAdapter setIcon(String icon) {
-		this.icon = icon;
+    public HeaderAdapter setIcon(String icon) {
+        this.icon = icon;
         return this;
-	}
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public HeaderAdapter setType(String type) {
-		this.type = type;
+    public HeaderAdapter setType(String type) {
+        this.type = type;
         return this;
-	}
+    }
 
 }

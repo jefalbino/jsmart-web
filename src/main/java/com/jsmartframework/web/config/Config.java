@@ -18,46 +18,47 @@
 
 package com.jsmartframework.web.config;
 
-import javax.servlet.ServletContext;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+
 
 public enum Config {
 
-	CONFIG();
+    CONFIG();
 
-	private static final Logger LOGGER = Logger.getLogger(Config.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(Config.class.getPackage().getName());
 
-	private ConfigContent content;
+    private ConfigContent content;
 
-	private List<String> mappedUrls = new ArrayList<String>();
+    private List<String> mappedUrls = new ArrayList<String>();
 
-	public void init(ServletContext context) {
-		try (InputStream is = context.getResourceAsStream(Constants.WEB_CONFIG_XML_PATH)) {
-			JAXBContext jaxbContext = JAXBContext.newInstance(ConfigContent.class);
-			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-			content = (ConfigContent) unmarshaller.unmarshal(is);
-		} catch (Exception ex) {
-			LOGGER.log(Level.INFO, "Failure to parse " + Constants.WEB_CONFIG_XML + ": " + ex.getMessage());
-		}
-	}
+    public void init(ServletContext context) {
+        try (InputStream is = context.getResourceAsStream(Constants.WEB_CONFIG_XML_PATH)) {
+            JAXBContext jaxbContext = JAXBContext.newInstance(ConfigContent.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            content = (ConfigContent) unmarshaller.unmarshal(is);
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, "Failed to parse " + Constants.WEB_CONFIG_XML + ": " + ex.getMessage());
+        }
+    }
 
-	public ConfigContent getContent() {
-		return content;
-	}
+    public ConfigContent getContent() {
+        return content;
+    }
 
-	public void addMappedUrls(List<String> urls) {
-		mappedUrls.addAll(urls);
-	}
+    public void addMappedUrls(List<String> urls) {
+        mappedUrls.addAll(urls);
+    }
 
-	public boolean containsMappedUrl(String url) {
-		return mappedUrls.contains(url);
-	}
+    public boolean containsMappedUrl(String url) {
+        return mappedUrls.contains(url);
+    }
 
 }

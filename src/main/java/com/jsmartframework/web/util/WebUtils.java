@@ -20,42 +20,43 @@ package com.jsmartframework.web.util;
 
 import org.apache.commons.codec.binary.Base32;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Random;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 public final class WebUtils {
 
-	private static final int DEFAULT_RANDOM_BYTES = 8;
+    private static final int DEFAULT_RANDOM_BYTES = 8;
 
-	private static final Random random = new SecureRandom();
+    private static final Random random = new SecureRandom();
 
-	private static final Base32 base32 = new Base32();
-	
-	private WebUtils() {
-		// DO NOTHING
-	}
+    private static final Base32 base32 = new Base32();
 
-	public static String decodePath(String path) {
-		if (path != null && !path.startsWith("/")) {
-			try {
-				new URL(path);
-			} catch (MalformedURLException ex) {
-				path = "/" + path;
-			}
-		}
-		return path;
-	}
+    private WebUtils() {
+        // DO NOTHING
+    }
 
-	public static String randomId() {
-		final byte[] bytes = new byte[DEFAULT_RANDOM_BYTES];
-		random.nextBytes(bytes);
-		String base32String = base32.encodeAsString(bytes);
-		return base32String.toLowerCase().replace("=", "");
-	}
+    public static String decodePath(String path) {
+        if (path != null && !path.startsWith("/")) {
+            try {
+                new URL(path);
+            } catch (MalformedURLException ex) {
+                path = "/" + path;
+            }
+        }
+        return path;
+    }
+
+    public static String randomId() {
+        final byte[] bytes = new byte[DEFAULT_RANDOM_BYTES];
+        random.nextBytes(bytes);
+        String base32String = base32.encodeAsString(bytes);
+        return base32String.toLowerCase().replace("=", "");
+    }
 
     public static String getCookie(HttpServletRequest request, String name) {
         if (name == null) {

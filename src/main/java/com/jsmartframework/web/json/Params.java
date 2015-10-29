@@ -23,18 +23,18 @@ import java.util.List;
 
 public final class Params {
 
-	private List<Param> params = new ArrayList<Param>();
+    private List<Param> params = new ArrayList<Param>();
 
-	public List<Param> getParams() {
-		return params;
-	}
+    public List<Param> getParams() {
+        return params;
+    }
 
-	public void setParams(List<Param> params) {
-		this.params = params;
-	}
+    public void setParams(List<Param> params) {
+        this.params = params;
+    }
 
-	public void addParam(Param param) {
-		params.add(param);
-	}
+    public void addParam(Param param) {
+        params.add(param);
+    }
 
 }

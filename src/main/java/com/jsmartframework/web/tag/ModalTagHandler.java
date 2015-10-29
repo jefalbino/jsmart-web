@@ -18,6 +18,8 @@
 
 package com.jsmartframework.web.tag;
 
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_MODAL;
+
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.css.Bootstrap;
@@ -27,12 +29,11 @@ import com.jsmartframework.web.tag.html.Span;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Size;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_MODAL;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
 
 public final class ModalTagHandler extends TagHandler {
 

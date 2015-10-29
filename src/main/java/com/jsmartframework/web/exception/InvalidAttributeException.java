@@ -20,31 +20,32 @@ package com.jsmartframework.web.exception;
 
 import com.google.common.collect.Lists;
 
-import javax.servlet.jsp.JspException;
 import java.text.MessageFormat;
+
+import javax.servlet.jsp.JspException;
 
 public class InvalidAttributeException extends JspException {
 
-	private static final long serialVersionUID = -4064886707211938557L;
-	
-	public InvalidAttributeException(String message) {
-		super(message);
-	}
-	
-	public static InvalidAttributeException fromPossibleValues(String tag, String attr, String ... values) {
-		int index = 0;
-		Object[] args = new Object[3];
-		args[index++] = attr;
-		args[index++] = tag;
-		args[index++] = Lists.newArrayList(values);
-		return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. Possible values are {2}", args));
-	}
-	
-	public static InvalidAttributeException fromConstraint(String tag, String attr, String constraint) {
-		return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. Value must be {2}", attr, tag, constraint));
-	}
+    private static final long serialVersionUID = -4064886707211938557L;
 
-	public static InvalidAttributeException fromConflict(String tag, String attr, String conflict) {
-		return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. {2}", attr, tag, conflict));
-	}
+    public InvalidAttributeException(String message) {
+        super(message);
+    }
+
+    public static InvalidAttributeException fromPossibleValues(String tag, String attr, String ... values) {
+        int index = 0;
+        Object[] args = new Object[3];
+        args[index++] = attr;
+        args[index++] = tag;
+        args[index++] = Lists.newArrayList(values);
+        return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. Possible values are {2}", args));
+    }
+
+    public static InvalidAttributeException fromConstraint(String tag, String attr, String constraint) {
+        return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. Value must be {2}", attr, tag, constraint));
+    }
+
+    public static InvalidAttributeException fromConflict(String tag, String attr, String conflict) {
+        return new InvalidAttributeException(MessageFormat.format("Invalid [{0}] value for [{1}] tag. {2}", attr, tag, conflict));
+    }
 }
