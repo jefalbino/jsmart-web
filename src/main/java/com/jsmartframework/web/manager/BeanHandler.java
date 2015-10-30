@@ -1,17 +1,17 @@
 /*
  * JSmart Framework - Java Web Development Framework
  * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3.0 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -19,14 +19,19 @@
 package com.jsmartframework.web.manager;
 
 import static com.jsmartframework.web.config.Config.CONFIG;
+import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
+import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN;
+import static com.jsmartframework.web.manager.TagHandler.J_TAG_PATTERN;
+import static com.jsmartframework.web.manager.BeanHelper.HELPER;
 
 import com.jsmartframework.web.annotation.AsyncBean;
 import com.jsmartframework.web.annotation.AuthAccess;
 import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
+import com.jsmartframework.web.annotation.AuthMethod;
 import com.jsmartframework.web.annotation.AuthType;
 import com.jsmartframework.web.annotation.ExecuteAccess;
-import com.jsmartframework.web.annotation.PostPreset;
+import com.jsmartframework.web.annotation.PreSet;
 import com.jsmartframework.web.annotation.PostSubmit;
 import com.jsmartframework.web.annotation.PreSubmit;
 import com.jsmartframework.web.annotation.QueryParam;
@@ -54,6 +59,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -96,11 +102,9 @@ public enum BeanHandler {
 
     private static final Pattern INCLUDE_PATTERN = Pattern.compile("<%@*.include.*file=\"(.*)\".*%>");
 
-    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(ExpressionHandler.EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern());
+    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern());
 
     private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
-
-    private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
 
     private static final Pattern PATH_BEAN_ALL_PATTERN = Pattern.compile("(.*)/\\*");
 
@@ -125,10 +129,6 @@ public enum BeanHandler {
     private Map<String, String> forwardPaths = new ConcurrentHashMap<>();
 
     private Map<Class<?>, String> jndiMapping = new ConcurrentHashMap<>();
-
-    private Map<Class<?>, Field[]> mappedBeanFields = new ConcurrentHashMap<>();
-
-    private Map<Class<?>, Method[]> mappedBeanMethods = new ConcurrentHashMap<>();
 
     private Map<String, JspPageBean> jspPageBeans = new ConcurrentHashMap<>();
 
@@ -172,11 +172,7 @@ public enum BeanHandler {
 
     @SuppressWarnings("all")
     boolean executePreSubmit(Object bean, String action) {
-        for (Method method : getBeanMethods(bean.getClass())) {
-            if (!method.isAnnotationPresent(PreSubmit.class) || method.getAnnotation(PreSubmit.class).onActions() == null) {
-                return true;
-            }
-
+        for (Method method : HELPER.getPreSubmitMethods(bean.getClass())) {
             for (String onAction : method.getAnnotation(PreSubmit.class).onActions()) {
                 try {
                     if (action.equalsIgnoreCase(onAction)) {
@@ -193,11 +189,7 @@ public enum BeanHandler {
 
     @SuppressWarnings("all")
     void executePostSubmit(Object bean, String action) {
-        for (Method method : getBeanMethods(bean.getClass())) {
-            if (!method.isAnnotationPresent(PostSubmit.class) || method.getAnnotation(PostSubmit.class).onActions() == null) {
-                return;
-            }
-
+        for (Method method : HELPER.getPostSubmitMethods(bean.getClass())) {
             for (String onAction : method.getAnnotation(PostSubmit.class).onActions()) {
                 try {
                     if (action.equalsIgnoreCase(onAction)) {
@@ -214,7 +206,7 @@ public enum BeanHandler {
 
     @SuppressWarnings("all")
     void executePreDestroy(Object bean) {
-        for (Method method : getBeanMethods(bean.getClass())) {
+        for (Method method : HELPER.getPreDestroyMethods(bean.getClass())) {
             if (method.isAnnotationPresent(PreDestroy.class)) {
                 try {
                     method.invoke(bean, null);
@@ -228,7 +220,7 @@ public enum BeanHandler {
 
     @SuppressWarnings("all")
     void executePostConstruct(Object bean) {
-        for (Method method : getBeanMethods(bean.getClass())) {
+        for (Method method : HELPER.getPostConstructMethods(bean.getClass())) {
             if (method.isAnnotationPresent(PostConstruct.class)) {
                 try {
                     method.invoke(bean, null);
@@ -240,26 +232,22 @@ public enum BeanHandler {
         }
     }
 
-    void executePostPreset(String name, Object bean, Map<String, String> expressions) {
+    void executePreSet(String name, Object bean, Map<String, String> expressions) {
+        if (expressions == null || expressions.isEmpty()) {
+            return;
+        }
         try {
-            if (expressions == null || expressions.isEmpty()) {
-                return;
-            }
-            for (Field field : getBeanFields(bean.getClass())) {
-                if (!field.isAnnotationPresent(PostPreset.class)) {
-                    continue;
-                }
-
+            for (Field field : HELPER.getPreSetFields(bean.getClass())) {
                 for (Entry<String, String> expr : expressions.entrySet()) {
-                    Matcher elMatcher = ExpressionHandler.EL_PATTERN.matcher(expr.getValue());
+                    Matcher elMatcher = EL_PATTERN.matcher(expr.getValue());
                     if (elMatcher.find() && elMatcher.group(1).contains(name + "." + field.getName())) {
 
-                        Matcher tagMatcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
+                        Matcher tagMatcher = J_TAG_PATTERN.matcher(expr.getKey());
                         if (tagMatcher.find()) {
                             String jTag = tagMatcher.group(1);
                             String jParam = tagMatcher.group(2);
 
-                            ExpressionHandler.EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
+                            EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
                             expressions.remove(expr.getKey());
                             break;
                         }
@@ -267,20 +255,19 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Execution of PostPreset on WebBean " + bean + " failed: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Execution of PreSet on WebBean " + bean + " failed: " + ex.getMessage());
         }
     }
 
     boolean containsUnescapeMethod(String[] names) {
         if (names != null && names.length > 1) {
             Class<?> clazz = webBeans.get(names[0]);
-            if (clazz != null) {
-                for (Method method : getBeanMethods(clazz)) {
-                    Matcher matcher = SET_METHOD_PATTERN.matcher(method.getName());
-
-                    if (matcher.find() && names[1].equalsIgnoreCase(matcher.group(1))) {
-                        return method.isAnnotationPresent(Unescape.class);
-                    }
+            if (clazz == null) {
+                return false;
+            }
+            for (String methodName : HELPER.getUnescapeMethods(clazz)) {
+                if (names[1].equalsIgnoreCase(methodName)) {
+                    return true;
                 }
             }
         }
@@ -288,7 +275,7 @@ public enum BeanHandler {
     }
 
     Map<String, String> getRequestExpressions() {
-        return ExpressionHandler.EXPRESSIONS.getRequestExpressions();
+        return EXPRESSIONS.getRequestExpressions();
     }
 
     String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
@@ -296,12 +283,12 @@ public enum BeanHandler {
         String submitExpr = null;
 
         for (Entry<String, String> expr : expressions.entrySet()) {
-            Matcher matcher = TagHandler.J_TAG_PATTERN.matcher(expr.getKey());
+            Matcher matcher = J_TAG_PATTERN.matcher(expr.getKey());
             if (matcher.find()) {
 
                 String jTag = matcher.group(1);
                 String jParam = matcher.group(2);
-                ExpressionHandler.EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
+                EXPRESSIONS.handleRequestExpression(jTag, expr.getValue(), jParam);
 
                 if (jTag.equals(TagHandler.J_SBMT)) {
                     submitExpr = expr.getValue();
@@ -312,7 +299,7 @@ public enum BeanHandler {
 
         String responsePath = null;
         if (submitExpr != null) {
-            responsePath = ExpressionHandler.EXPRESSIONS.handleSubmitExpression(submitExpr, submitParam);
+            responsePath = EXPRESSIONS.handleSubmitExpression(submitExpr, submitParam);
         }
         return responsePath;
     }
@@ -372,7 +359,7 @@ public enum BeanHandler {
             }
 
             executeInjection(bean);
-            executePostPreset(name, bean, expressions);
+            executePreSet(name, bean, expressions);
             executePostConstruct(bean);
         }
         return bean;
@@ -429,7 +416,7 @@ public enum BeanHandler {
             HttpSession session = WebContext.getSession();
             HttpServletRequest request = WebContext.getRequest();
 
-            for (Field field : getBeanFields(bean.getClass())) {
+            for (Field field : HELPER.getBeanFields(bean.getClass())) {
                 if (field.getAnnotations().length == 0) {
                     continue;
                 }
@@ -575,7 +562,7 @@ public enum BeanHandler {
 
     private void finalizeInjection(Object bean, Object servletObject) {
         try {
-            for (Field field : getBeanFields(bean.getClass())) {
+            for (Field field : HELPER.getBeanFields(bean.getClass())) {
                 if (field.isAnnotationPresent(Inject.class)) {
 
                     if (field.getType().isAnnotationPresent(WebBean.class)) {
@@ -661,7 +648,9 @@ public enum BeanHandler {
         Object bean = null;
         try {
             bean = authBeans.get(name).newInstance();
-            for (Field field : getBeanFields(bean.getClass())) {
+            AuthBean authBean = authBeans.get(name).getAnnotation(AuthBean.class);
+
+            for (Field field : HELPER.getBeanFields(bean.getClass())) {
                 if (field.getAnnotations().length == 0) {
                     continue;
                 }
@@ -670,7 +659,10 @@ public enum BeanHandler {
                 if (request != null && field.isAnnotationPresent(AuthField.class)) {
                     AuthField authField = field.getAnnotation(AuthField.class);
                     field.setAccessible(true);
-                    field.set(bean, WebUtils.getCookie(request, authField.value()));
+                    String cookieValue = WebUtils.getCookie(request, authField.value());
+                    if (cookieValue != null) {
+                        field.set(bean, AuthEncrypter.decrypt(authBean.secretKey(), cookieValue));
+                    }
                     continue;
                 }
 
@@ -703,8 +695,9 @@ public enum BeanHandler {
 
     private void finalizeAuthBean(Object bean, HttpSession session) {
         executePreDestroy(bean);
+
         try {
-            for (Field field : getBeanFields(bean.getClass())) {
+            for (Field field : HELPER.getBeanFields(bean.getClass())) {
                 if (field.getAnnotations().length > 0) {
                     field.setAccessible(true);
                     field.set(bean, null);
@@ -713,29 +706,35 @@ public enum BeanHandler {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failed: " + ex.getMessage());
         }
+
         AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
         session.removeAttribute(getClassName(authBean, bean.getClass()));
     }
 
     private void finalizeAuthBean(Object bean, HttpServletRequest request) {
         executePreDestroy(bean);
+        AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
         HttpServletResponse response = WebContext.getResponse();
 
         try {
-            for (Field field : getBeanFields(bean.getClass())) {
+            for (Field field : HELPER.getBeanFields(bean.getClass())) {
                 if (field.getAnnotations().length > 0) {
                     field.setAccessible(true);
 
                     if (field.isAnnotationPresent(AuthField.class)) {
                         AuthField authField = field.getAnnotation(AuthField.class);
 
-                        // Return auth fields as cookies to check if customer is still logged on next request
                         Object value = field.get(bean);
                         if (value != null) {
-                            Cookie cookie = new Cookie(authField.value(), value.toString());
-                            cookie.setHttpOnly(true);
-                            cookie.setPath("/");
-                            cookie.setMaxAge(CONFIG.getContent().getSessionTimeout() * 60);
+                            // Return encrypted auth fields as cookies to check if customer is still
+                            // logged on next request
+                            String cookieValue = AuthEncrypter.encrypt(authBean.secretKey(), value);
+                            Cookie cookie = getAuthenticationCookie(authField.value(), cookieValue,
+                                                                    -1);
+                            response.addCookie(cookie);
+                        } else {
+                            // Case value is null we force Cookie deletion on client side
+                            Cookie cookie = getAuthenticationCookie(authField.value(), null, 0);
                             response.addCookie(cookie);
                         }
                     }
@@ -745,8 +744,15 @@ public enum BeanHandler {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failed: " + ex.getMessage());
         }
-        AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
         request.removeAttribute(getClassName(authBean, bean.getClass()));
+    }
+
+    private Cookie getAuthenticationCookie(String name, String value, int age) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(age);
+        return cookie;
     }
 
     String checkAuthentication(String path) throws ServletException {
@@ -805,28 +811,32 @@ public enum BeanHandler {
 
     private boolean checkAuthentication(Object bean) throws ServletException {
         boolean authenticated = true;
-        if (bean != null) {
-            boolean foundField = false;
+        if (bean == null) {
+            return authenticated;
+        }
 
-            for (Field field : getBeanFields(bean.getClass())) {
-                if (!field.isAnnotationPresent(AuthField.class)) {
-                    continue;
-                }
-                try {
-                    foundField = true;
-                    field.setAccessible(true);
+        for (Field field : HELPER.getAuthFields(bean.getClass())) {
+            try {
+                field.setAccessible(true);
 
-                    // If field is not set it means that user is not authenticated
-                    if (field.get(bean) == null) {
-                        authenticated = false;
-                        break;
-                    }
-                } catch (Exception ex) {
-                    throw new ServletException("AuthField not accessible: " + ex.getMessage(), ex);
+                // If field is not set it means that user is not authenticated
+                if (field.get(bean) == null) {
+                    authenticated = false;
+                    break;
                 }
+            } catch (Exception ex) {
+                throw new ServletException("AuthField not accessible: " + ex.getMessage(), ex);
             }
-            if (!foundField) {
-                throw new ServletException("None AuthField found in AuthBean!");
+        }
+
+        if (authenticated) {
+            for (Method method : HELPER.getAuthMethods(bean.getClass())) {
+                try {
+                    Boolean auth = (Boolean) method.invoke(bean);
+                    authenticated &= auth != null ? auth : false;
+                } catch (Exception ex) {
+                    throw new ServletException("AuthMethod not accessible: " + ex.getMessage(), ex);
+                }
             }
         }
         return authenticated;
@@ -834,12 +844,22 @@ public enum BeanHandler {
 
     @SuppressWarnings("all")
     Integer checkAuthorization(String path) {
-        if (CONFIG.getContent().containsSecureUrl(path)) {
-            Collection<String> userAccess = getUserAuthorizationAccess();
+        if (CONFIG.getContent().containsSecureUrl(path) && !authBeans.isEmpty()) {
 
             AuthBean authBean = null;
+            Collection<String> userAccess = null;
             for (String name : authBeans.keySet()) {
                 authBean = authBeans.get(name).getAnnotation(AuthBean.class);
+
+                if (authBean.type() == AuthType.SESSION) {
+                    HttpSession session = WebContext.getSession();
+                    synchronized (session) {
+                        userAccess = getUserAuthorizationAccess(session.getAttribute(name));
+                    }
+                } else if (authBean.type() == AuthType.REQUEST) {
+                    HttpServletRequest request = WebContext.getRequest();
+                    userAccess = getUserAuthorizationAccess(request.getAttribute(name));
+                }
                 // We must have only one @AuthBean mapped
                 break;
             }
@@ -859,38 +879,29 @@ public enum BeanHandler {
         return null; // It means, authorized user
     }
 
-    @SuppressWarnings("unchecked")
     Collection<String> getUserAuthorizationAccess() {
+
+    }
+
+    @SuppressWarnings("unchecked")
+    Collection<String> getUserAuthorizationAccess(Object bean) {
         HttpServletRequest request = WebContext.getRequest();
+
         if (request.getAttribute(Constants.REQUEST_USER_ACCESS) == null) {
-
             Collection<String> userAccess = new HashSet<>();
-            HttpSession session = WebContext.getSession();
-            synchronized (session) {
-                for (String name : authBeans.keySet()) {
 
-                    Object bean = session.getAttribute(name);
-                    if (bean != null) {
-                        for (Field field : getBeanFields(bean.getClass())) {
-
-                            if (field.isAnnotationPresent(AuthAccess.class)) {
-                                try {
-                                    field.setAccessible(true);
-                                    Object object = field.get(bean);
-                                    if (object != null) {
-                                        userAccess.addAll((Collection<String>) object);
-                                    }
-                                } catch (Exception ex) {
-                                    LOGGER.log(Level.SEVERE, "AuthAccess mapped on WebBean [" + bean + "] could " +
-                                            "not be cast to Collection<String>: " + ex.getMessage());
-                                }
-                                break;
-                            }
-                        }
+            for (Field field : HELPER.getAuthAccess(bean.getClass())) {
+                try {
+                    field.setAccessible(true);
+                    Object object = field.get(bean);
+                    if (object != null) {
+                        userAccess.addAll((Collection<String>) object);
                     }
-                    // We must have only one @AuthBean mapped
-                    break;
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, "AuthAccess mapped on WebBean [" + bean + "] could " +
+                                             "not be cast to Collection<String>: " + ex.getMessage());
                 }
+                break;
             }
             request.setAttribute(Constants.REQUEST_USER_ACCESS, userAccess);
         }
@@ -898,13 +909,13 @@ public enum BeanHandler {
     }
 
     boolean checkExecuteAuthorization(Object bean, String expression) {
-        for (Method method : getBeanMethods(bean.getClass())) {
+        for (Method method : HELPER.getExecuteAccessMethods(bean.getClass())) {
             ExecuteAccess execAccess = method.getAnnotation(ExecuteAccess.class);
 
-            if (execAccess != null && execAccess.access().length > 0 && expression.contains(method.getName())) {
-                Collection<String> userAccess = getUserAuthorizationAccess();
-                if (!userAccess.isEmpty()) {
+            if (execAccess.access().length > 0 && expression.contains(method.getName())) {
+                Collection<String> userAccess = getUserAuthorizationAccess(bean);
 
+                if (!userAccess.isEmpty()) {
                     for (String access : execAccess.access()) {
                         if (userAccess.contains(access)) {
                             return true;
@@ -920,168 +931,217 @@ public enum BeanHandler {
 
     private void initAnnotatedBeans(ServletContext context) {
         if (CONFIG.getContent().getPackageScan() == null) {
-            LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML
-                    + " file! Skipping package scanning.");
+            LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML +
+                                     " file! Skipping package scanning.");
             return;
         }
 
         Object[] packages = CONFIG.getContent().getPackageScan().split(",");
         Reflections reflections = new Reflections(packages);
 
+        initAnnotatedWebBeans(reflections);
+        initAnnotatedAuthBeans(reflections);
+        initAnnotatedRequestPaths(reflections);
+        initAnnotatedAsyncBeans(reflections);
+        initAnnotatedWebServlets(reflections);
+        initAnnotatedWebFilters(reflections);
+        initAnnotatedWebListeners(reflections);
+    }
+
+    private void initAnnotatedWebBeans(Reflections reflections) {
         Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebBean.class);
+
         for (Class<?> clazz : annotations) {
             WebBean bean = clazz.getAnnotation(WebBean.class);
             LOGGER.log(Level.INFO, "Mapping WebBean class: " + clazz);
 
             if (bean.scope() == ScopeType.SESSION && !Serializable.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("Mapped WebBean class [" + clazz + "] with scope [" + bean.scope() + "] " +
-                        "must implement java.io.Serializable interface");
+                                           "must implement java.io.Serializable interface");
             }
 
-            setBeanFields(clazz);
-            setBeanMethods(clazz);
+            HELPER.setBeanFields(clazz);
+            HELPER.setBeanMethods(clazz);
             String className = getClassName(bean, clazz);
             webBeans.put(className, clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(AuthBean.class);
+        if (webBeans.isEmpty()) {
+            LOGGER.log(Level.INFO, "WebBeans were not mapped!");
+        }
+    }
+
+    private void initAnnotatedAuthBeans(Reflections reflections) {
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(AuthBean.class);
+
         for (Class<?> clazz : annotations) {
             AuthBean authBean = clazz.getAnnotation(AuthBean.class);
             if (authBeans.isEmpty()) {
                 LOGGER.log(Level.INFO, "Mapping AuthBean class: " + clazz);
 
                 if (authBean.type() == AuthType.SESSION && !Serializable.class.isAssignableFrom(clazz)) {
-                    throw new RuntimeException("Mapped AuthBean class [" + clazz + "] must implement " +
-                            "java.io.Serializable interface case its type is AuthType.SESSION");
+                    throw new RuntimeException("Mapped AuthBean class [" + clazz + "] of type AuthType.SESSION " +
+                                               "must implement java.io.Serializable interface");
                 }
 
-                setBeanFields(clazz);
-                setBeanMethods(clazz);
+                HELPER.setBeanFields(clazz);
+                HELPER.setBeanMethods(clazz);
+                HELPER.setAuthFields(clazz);
+                HELPER.setAuthAccess(clazz);
+                HELPER.setAuthMethods(clazz);
+
+                if (HELPER.getAuthFields(clazz).length == 0) {
+                    throw new RuntimeException("Mapped AuthBean class [" + clazz + "] must contain at " +
+                                               "least one field annotated with @AuthField");
+                }
+                if (HELPER.getAuthMethods(clazz).length == 0) {
+                    throw new RuntimeException("Mapped AuthBean class [" + clazz + "] must contain at " +
+                                               "least one method that is annotated with @AuthMethod " +
+                                               "and returns boolean value to return authentication status");
+                }
+
                 String className = getClassName(authBean, clazz);
                 authBeans.put(className, clazz);
                 continue;
             } else {
-                LOGGER.log(Level.SEVERE, "Only one AuthBean can be declared! Skipping the remaining ones.");
+                LOGGER.log(Level.SEVERE, "Only one AuthBean can be declared! Skipping class " + clazz);
             }
         }
 
-        annotations = reflections.getTypesAnnotatedWith(RequestPath.class);
+        if (authBeans.isEmpty()) {
+            LOGGER.log(Level.INFO, "AuthBean was not mapped!");
+        }
+    }
+
+    private void initAnnotatedRequestPaths(Reflections reflections) {
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(RequestPath.class);
+
         for (Class<?> clazz : annotations) {
             RequestPath requestPath = clazz.getAnnotation(RequestPath.class);
             LOGGER.log(Level.INFO, "Mapping RequestPath class: " + clazz);
 
             if (!clazz.isAnnotationPresent(Controller.class)) {
                 throw new RuntimeException("Mapped RequestPath class [" + clazz + "] must be annotated with " +
-                        "org.springframework.stereotype.Controller from Spring");
+                                           "org.springframework.stereotype.Controller from Spring");
             }
             if (!requestPath.value().endsWith("*")) {
-                throw new RuntimeException("Mapped class [" + clazz + "] annotated with RequestPath must have its " +
-                        "path annotation attribute ending with * character");
+                throw new RuntimeException("Mapped class [" + clazz + "] annotated with @RequestPath must have its " +
+                                           "path annotation attribute ending with * character");
             }
 
-            setBeanFields(clazz);
-            setBeanMethods(clazz);
+            HELPER.setBeanFields(clazz);
+            HELPER.setBeanMethods(clazz);
             requestPaths.put(requestPath.value(), clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(AsyncBean.class);
+        if (requestPaths.isEmpty()) {
+            LOGGER.log(Level.INFO, "RequestPaths were not mapped!");
+        }
+    }
+
+    private void initAnnotatedAsyncBeans(Reflections reflections) {
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(AsyncBean.class);
+
         for (Class<?> clazz : annotations) {
             AsyncBean asyncBean = clazz.getAnnotation(AsyncBean.class);
             LOGGER.log(Level.INFO, "Mapping AsyncBean class: " + clazz);
 
             if (!WebAsyncListener.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("Mapped AsyncBean class [" + clazz + "] must implement " +
-                        "WebAsyncListener interface");
+                                           "WebAsyncListener interface");
             }
 
-            setBeanFields(clazz);
-            setBeanMethods(clazz);
+            HELPER.setBeanFields(clazz);
+            HELPER.setBeanMethods(clazz);
             String path = getCleanPath(asyncBean.value());
             path = matchUrlPattern(path);
             asyncBeans.put(path, clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(WebServlet.class);
+        if (asyncBeans.isEmpty()) {
+            LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");
+        }
+    }
+
+    private void initAnnotatedWebServlets(Reflections reflections) {
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebServlet.class);
+
         for (Class<?> clazz : annotations) {
             WebServlet servlet = clazz.getAnnotation(WebServlet.class);
             LOGGER.log(Level.INFO, "Mapping WebServlet class: " + clazz);
 
             if (!HttpServlet.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("Mapped WebServlet class " +
-                        "[" + clazz + "] must extends javax.servlet.http.HttpServlet class");
+                                           "[" + clazz + "] must extends javax.servlet.http.HttpServlet class");
             }
 
-            setBeanFields(clazz);
-            setBeanMethods(clazz);
+            HELPER.setBeanFields(clazz);
+            HELPER.setBeanMethods(clazz);
             webServlets.put(getClassName(servlet, clazz), clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(WebFilter.class);
+        if (webServlets.isEmpty()) {
+            LOGGER.log(Level.INFO, "WebServlets were not mapped!");
+        }
+    }
+
+    private void initAnnotatedWebFilters(Reflections reflections) {
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebFilter.class);
+
         for (Class<?> clazz : annotations) {
             WebFilter filter = clazz.getAnnotation(WebFilter.class);
             LOGGER.log(Level.INFO, "Mapping WebFilter class: " + clazz);
 
             if (!Filter.class.isAssignableFrom(clazz)) {
                 throw new RuntimeException("Mapped WebFilter class [" + clazz + "] " +
-                        "must implement javax.servlet.Filter interface");
+                                           "must implement javax.servlet.Filter interface");
             }
 
-            setBeanFields(clazz);
-            setBeanMethods(clazz);
+            HELPER.setBeanFields(clazz);
+            HELPER.setBeanMethods(clazz);
             webFilters.put(getClassName(filter, clazz), clazz);
         }
 
-        annotations = reflections.getTypesAnnotatedWith(WebListener.class);
+        if (webFilters.isEmpty()) {
+            LOGGER.log(Level.INFO, "WebFilters were not mapped!");
+        }
+    }
+
+    private void initAnnotatedWebListeners(Reflections reflections) {
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebListener.class);
+
         for (Class<?> clazz : annotations) {
             try {
                 Object listenerObj = clazz.newInstance();
                 if (ServletContextListener.class.isInstance(listenerObj)) {
                     LOGGER.log(Level.INFO, "Mapping ServletContextListener class [" + clazz + "]");
-                    setBeanFields(clazz);
-                    setBeanMethods(clazz);
+                    HELPER.setBeanFields(clazz);
+                    HELPER.setBeanMethods(clazz);
                     contextListeners.add((ServletContextListener) listenerObj);
 
                 } else if (HttpSessionListener.class.isInstance(listenerObj)) {
                     LOGGER.log(Level.INFO, "Mapping HttpSessionListener class [" + clazz + "]");
-                    setBeanFields(clazz);
-                    setBeanMethods(clazz);
+                    HELPER.setBeanFields(clazz);
+                    HELPER.setBeanMethods(clazz);
                     sessionListeners.add((HttpSessionListener) listenerObj);
 
                 } else if (ServletRequestListener.class.isInstance(listenerObj)) {
                     LOGGER.log(Level.INFO, "Mapping ServletRequestListener class [" + clazz + "]");
-                    setBeanFields(clazz);
-                    setBeanMethods(clazz);
+                    HELPER.setBeanFields(clazz);
+                    HELPER.setBeanMethods(clazz);
                     requestListeners.add((ServletRequestListener) listenerObj);
 
                 } else {
                     throw new RuntimeException("Mapped WebListener class [" + clazz + "] " +
-                            "must implement javax.servlet.ServletContextListener, " +
-                            "javax.servlet.http.HttpSessionListener or javax.servlet.ServletRequestListener interface");
+                                               "must implement javax.servlet.ServletContextListener, " +
+                                               "javax.servlet.http.HttpSessionListener or javax.servlet.ServletRequestListener interface");
                 }
             } catch (Exception ex) {
                 LOGGER.log(Level.SEVERE, "WebListener class [" + clazz.getName() + "] " +
-                        "could not be instantiated!");
+                                         "could not be instantiated!");
             }
         }
 
-        if (webBeans.isEmpty()) {
-            LOGGER.log(Level.INFO, "WebBeans were not mapped!");
-        }
-        if (authBeans.isEmpty()) {
-            LOGGER.log(Level.INFO, "AuthBean was not mapped!");
-        }
-        if (asyncBeans.isEmpty()) {
-            LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");
-        }
-        if (webServlets.isEmpty()) {
-            LOGGER.log(Level.INFO, "WebServlets were not mapped!");
-        }
-        if (webFilters.isEmpty()) {
-            LOGGER.log(Level.INFO, "WebFilters were not mapped!");
-        }
-        if (requestPaths.isEmpty()) {
-            LOGGER.log(Level.INFO, "RequestPaths were not mapped!");
-        }
         if (contextListeners.isEmpty() && sessionListeners.isEmpty() && requestListeners.isEmpty()) {
             LOGGER.log(Level.INFO, "WebListeners were not mapped!");
         }
@@ -1218,32 +1278,6 @@ public enum BeanHandler {
             }
         } catch (Throwable ex) {
             LOGGER.log(Level.WARNING, "Bindings could not be found for EJB context: " + ex.getMessage());
-        }
-    }
-
-    private Field[] getBeanFields(Class<?> clazz) {
-        if (!mappedBeanFields.containsKey(clazz)) {
-            mappedBeanFields.put(clazz, clazz.getDeclaredFields());
-        }
-        return mappedBeanFields.get(clazz);
-    }
-   
-    private void setBeanFields(Class<?> clazz) {
-        if (!mappedBeanFields.containsKey(clazz)) {
-            mappedBeanFields.put(clazz, clazz.getDeclaredFields());
-        }
-    }
-
-    private Method[] getBeanMethods(Class<?> clazz) {
-        if (!mappedBeanMethods.containsKey(clazz)) {
-            mappedBeanMethods.put(clazz, clazz.getMethods());
-        }
-        return mappedBeanMethods.get(clazz);
-    }
-
-    private void setBeanMethods(Class<?> clazz) {
-        if (!mappedBeanMethods.containsKey(clazz)) {
-            mappedBeanMethods.put(clazz, clazz.getMethods());
         }
     }
 

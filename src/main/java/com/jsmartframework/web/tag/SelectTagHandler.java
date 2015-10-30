@@ -41,64 +41,64 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class SelectTagHandler extends TagHandler {
 
-	private String selectValues;
+    private String selectValues;
 
-	private boolean multiple;
+    private boolean multiple;
 
-	private Integer tabIndex;
-	
-	private String label;
-	
-	private String leftAddOn;
-	
-	private String rightAddOn;
-	
-	private String size;
-	
-	private String update;
-	
-	private String beforeSend;
-	
-	private String onError;
-	
-	private String onSuccess;
+    private Integer tabIndex;
 
-	private String onComplete;
+    private String label;
 
-	private List<OptionTagHandler> options;
+    private String leftAddOn;
 
-	private List<TagHandler> childAddOns;
+    private String rightAddOn;
 
-	public SelectTagHandler() {
-		options = new ArrayList<OptionTagHandler>();
+    private String size;
+
+    private String update;
+
+    private String beforeSend;
+
+    private String onError;
+
+    private String onSuccess;
+
+    private String onComplete;
+
+    private List<OptionTagHandler> options;
+
+    private List<TagHandler> childAddOns;
+
+    public SelectTagHandler() {
+        options = new ArrayList<OptionTagHandler>();
         childAddOns = new ArrayList<TagHandler>(2);
-	}
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (size != null && !Size.validateSmallLarge(size)) {
-			throw InvalidAttributeException.fromPossibleValues("select", "size", Size.getSmallLargeValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (size != null && !Size.validateSmallLarge(size)) {
+            throw InvalidAttributeException.fromPossibleValues("select", "size", Size.getSmallLargeValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		
-		setRandomId("select");
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		Div formGroup = null;
-		Div inputGroup = null;
-		
-		JspTag parent = getParent();
-		if (label != null || parent instanceof FormTagHandler || parent instanceof RestTagHandler) {
-			formGroup = new Div();
-			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
+        setRandomId("select");
+
+        Div formGroup = null;
+        Div inputGroup = null;
+
+        JspTag parent = getParent();
+        if (label != null || parent instanceof FormTagHandler || parent instanceof RestTagHandler) {
+            formGroup = new Div();
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 
             String size = null;
             if (parent instanceof FormTagHandler) {
@@ -111,32 +111,32 @@ public final class SelectTagHandler extends TagHandler {
             } else if (Size.SMALL.equalsIgnoreCase(size)) {
                 formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
             }
-		}
+        }
 
-		if (label != null) {
-			Label labelTag = new Label();
-			labelTag.addAttribute("for", id)
-					.addAttribute("class", Bootstrap.LABEL_CONTROL)
-					.addText(getTagValue(label));
-			formGroup.addTag(labelTag);
-		}
+        if (label != null) {
+            Label labelTag = new Label();
+            labelTag.addAttribute("for", id)
+                    .addAttribute("class", Bootstrap.LABEL_CONTROL)
+                    .addText(getTagValue(label));
+            formGroup.addTag(labelTag);
+        }
 
-		if (leftAddOn != null || rightAddOn != null) {
-			inputGroup = new Div();
-			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
+        if (leftAddOn != null || rightAddOn != null) {
+            inputGroup = new Div();
+            inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			if (Size.SMALL.equalsIgnoreCase(size)) {
-				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
-			} else if (Size.LARGE.equalsIgnoreCase(size)) {
-				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
-			}
+            if (Size.SMALL.equalsIgnoreCase(size)) {
+                inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
+            } else if (Size.LARGE.equalsIgnoreCase(size)) {
+                inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
+            }
 
-			if (formGroup != null) {
-				formGroup.addTag(inputGroup);
-			}
-		}
-		
-		if (leftAddOn != null) {
+            if (formGroup != null) {
+                formGroup.addTag(inputGroup);
+            }
+        }
+
+        if (leftAddOn != null) {
             boolean foundAddOn = false;
 
             for (int i = 0; i < childAddOns.size(); i++) {
@@ -146,50 +146,50 @@ public final class SelectTagHandler extends TagHandler {
                     break;
                 }
             }
-			if (!foundAddOn) {
-				Div div = new Div();
-				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText(getTagValue(leftAddOn));
-				inputGroup.addTag(div);
-			}
-		}
+            if (!foundAddOn) {
+                Div div = new Div();
+                div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+                    .addText(getTagValue(leftAddOn));
+                inputGroup.addTag(div);
+            }
+        }
 
         String name = getTagName((multiple ? J_ARRAY : J_TAG), selectValues);
 
-		Select select = new Select();
-		select.addAttribute("id", id)
-			 .addAttribute("class", Bootstrap.FORM_CONTROL)
-			 .addAttribute("name", name)
-			 .addAttribute("tabindex", tabIndex)
-			 .addAttribute("disabled", isDisabled() ? "disabled" : null)
-			 .addAttribute("multiple", multiple ? "multiple" : null);
-		
-		if (Size.SMALL.equalsIgnoreCase(size)) {
-			select.addAttribute("class", Bootstrap.INPUT_SMALL);
-		} else if (Size.LARGE.equalsIgnoreCase(size)) {
-			select.addAttribute("class", Bootstrap.INPUT_LARGE);
-		}
+        Select select = new Select();
+        select.addAttribute("id", id)
+             .addAttribute("class", Bootstrap.FORM_CONTROL)
+             .addAttribute("name", name)
+             .addAttribute("tabindex", tabIndex)
+             .addAttribute("disabled", isDisabled() ? "disabled" : null)
+             .addAttribute("multiple", multiple ? "multiple" : null);
 
-		// Add the style class at last
-		if (inputGroup != null) {
-			inputGroup.addAttribute("style", getTagValue(style))
-				.addAttribute("class", getTagValue(styleClass));
-		} else {
-			select.addAttribute("style", getTagValue(style))
-				.addAttribute("class", getTagValue(styleClass));
-		}
+        if (Size.SMALL.equalsIgnoreCase(size)) {
+            select.addAttribute("class", Bootstrap.INPUT_SMALL);
+        } else if (Size.LARGE.equalsIgnoreCase(size)) {
+            select.addAttribute("class", Bootstrap.INPUT_LARGE);
+        }
 
-		appendValidator(select);
-		appendRest(select, name);
-		appendEvent(select);
+        // Add the style class at last
+        if (inputGroup != null) {
+            inputGroup.addAttribute("style", getTagValue(style))
+                .addAttribute("class", getTagValue(styleClass));
+        } else {
+            select.addAttribute("style", getTagValue(style))
+                .addAttribute("class", getTagValue(styleClass));
+        }
 
-		if (inputGroup != null) {
-			inputGroup.addTag(select);
-		} else if (formGroup != null) {
-			formGroup.addTag(select);
-		}
+        appendValidator(select);
+        appendRest(select, name);
+        appendEvent(select);
 
-		if (rightAddOn != null) {
+        if (inputGroup != null) {
+            inputGroup.addTag(select);
+        } else if (formGroup != null) {
+            formGroup.addTag(select);
+        }
+
+        if (rightAddOn != null) {
             boolean foundAddOn = false;
 
             for (int i = 0; i < childAddOns.size(); i++) {
@@ -199,122 +199,122 @@ public final class SelectTagHandler extends TagHandler {
                     break;
                 }
             }
-			if (!foundAddOn) {
-				Div div = new Div();
-				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText(getTagValue(rightAddOn));
-				inputGroup.addTag(div);
-			}
-		}
+            if (!foundAddOn) {
+                Div div = new Div();
+                div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+                    .addText(getTagValue(rightAddOn));
+                inputGroup.addTag(div);
+            }
+        }
 
-		if (ajax) {
-			appendDocScript(getFunction());
-		}
+        if (ajax) {
+            appendDocScript(getFunction());
+        }
 
-		for (OptionTagHandler option : options) {
-			option.setName(selectValues);
-			select.addTag(option.executeTag());
-		}
+        for (OptionTagHandler option : options) {
+            option.setName(selectValues);
+            select.addTag(option.executeTag());
+        }
 
-		appendAjax(id);
-		appendBind(id);
-		
-		if (formGroup != null) {
-			appendTooltip(formGroup);
-			appendPopOver(formGroup);
+        appendAjax(id);
+        appendBind(id);
 
-		} else if (inputGroup != null) {
-			appendTooltip(inputGroup);
-			appendPopOver(inputGroup);
-		} else {
-			appendTooltip(select);
-			appendPopOver(select);
-		}
+        if (formGroup != null) {
+            appendTooltip(formGroup);
+            appendPopOver(formGroup);
 
-		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : select;
-	}
+        } else if (inputGroup != null) {
+            appendTooltip(inputGroup);
+            appendPopOver(inputGroup);
+        } else {
+            appendTooltip(select);
+            appendPopOver(select);
+        }
 
-	private StringBuilder getFunction() {
-		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
-		jsonAjax.setTag("select");
+        return formGroup != null ? formGroup : inputGroup != null ? inputGroup : select;
+    }
 
-		if (update != null) {
-			jsonAjax.setUpdate(update.trim());
-		}
-		if (beforeSend != null) {
-			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
-		}
-		if (onError != null) {
-			jsonAjax.setError((String) getTagValue(onError.trim()));
-		}
-		if (onSuccess != null) {
-			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
-		}
-		if (onComplete != null) {
-			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
-		}
+    private StringBuilder getFunction() {
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
+        jsonAjax.setMethod("post");
+        jsonAjax.setTag("select");
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-		return getBindFunction(id, Event.CHANGE.name(), builder);
-	}
-	
-	void addChildAddOn(TagHandler childAddOn) {
-		this.childAddOns.add(childAddOn);
-	}
+        if (update != null) {
+            jsonAjax.setUpdate(update.trim());
+        }
+        if (beforeSend != null) {
+            jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+        }
+        if (onError != null) {
+            jsonAjax.setError((String) getTagValue(onError.trim()));
+        }
+        if (onSuccess != null) {
+            jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+        }
+        if (onComplete != null) {
+            jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+        }
 
-	void addOption(OptionTagHandler option) {
-		this.options.add(option);
-	}
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+        return getBindFunction(id, Event.CHANGE.name(), builder);
+    }
 
-	public void setSelectValues(String selectValues) {
-		this.selectValues = selectValues;
-	}
+    void addChildAddOn(TagHandler childAddOn) {
+        this.childAddOns.add(childAddOn);
+    }
 
-	public void setMultiple(boolean multiple) {
-		this.multiple = multiple;
-	}
+    void addOption(OptionTagHandler option) {
+        this.options.add(option);
+    }
 
-	public void setTabIndex(Integer tabIndex) {
-		this.tabIndex = tabIndex;
-	}
+    public void setSelectValues(String selectValues) {
+        this.selectValues = selectValues;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setMultiple(boolean multiple) {
+        this.multiple = multiple;
+    }
 
-	public void setLeftAddOn(String leftAddOn) {
-		this.leftAddOn = leftAddOn;
-	}
+    public void setTabIndex(Integer tabIndex) {
+        this.tabIndex = tabIndex;
+    }
 
-	public void setRightAddOn(String rightAddOn) {
-		this.rightAddOn = rightAddOn;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setLeftAddOn(String leftAddOn) {
+        this.leftAddOn = leftAddOn;
+    }
 
-	public void setUpdate(String update) {
-		this.update = update;
-	}
+    public void setRightAddOn(String rightAddOn) {
+        this.rightAddOn = rightAddOn;
+    }
 
-	public void setBeforeSend(String beforeSend) {
-		this.beforeSend = beforeSend;
-	}
+    public void setSize(String size) {
+        this.size = size;
+    }
 
-	public void setOnError(String onError) {
-		this.onError = onError;
-	}
+    public void setUpdate(String update) {
+        this.update = update;
+    }
 
-	public void setOnSuccess(String onSuccess) {
-		this.onSuccess = onSuccess;
-	}
+    public void setBeforeSend(String beforeSend) {
+        this.beforeSend = beforeSend;
+    }
 
-	public void setOnComplete(String onComplete) {
-		this.onComplete = onComplete;
-	}
+    public void setOnError(String onError) {
+        this.onError = onError;
+    }
+
+    public void setOnSuccess(String onSuccess) {
+        this.onSuccess = onSuccess;
+    }
+
+    public void setOnComplete(String onComplete) {
+        this.onComplete = onComplete;
+    }
 
 }

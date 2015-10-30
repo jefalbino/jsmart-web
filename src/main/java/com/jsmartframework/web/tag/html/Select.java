@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Select extends Tag {
 
-	public Select() {
-		super("select");
-	}
+    public Select() {
+        super("select");
+    }
 }

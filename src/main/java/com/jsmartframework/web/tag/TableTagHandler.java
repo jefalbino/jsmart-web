@@ -57,114 +57,114 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class TableTagHandler extends TagHandler {
 
-	private String var;
+    private String var;
 
-	private String values;
+    private String values;
 
-	private String selectValue;
+    private String selectValue;
 
-	private String caption;
+    private String caption;
 
-	private Integer scrollSize;
+    private Integer scrollSize;
 
     private String scrollOffset;
 
-	private String maxHeight;
-	
-	private String size;
+    private String maxHeight;
 
-	private boolean bordered;
+    private String size;
 
-	private boolean striped;
-	
-	private String update;
-	
-	private String beforeSend;
-	
-	private String onError;
-	
-	private String onSuccess;
+    private boolean bordered;
 
-	private String onComplete;
+    private boolean striped;
 
-	private final List<ColumnTagHandler> columns;
+    private String update;
 
-	public TableTagHandler() {
-		columns = new ArrayList<ColumnTagHandler>();
-	}
+    private String beforeSend;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (scrollSize != null && scrollSize <= 0) {
-			throw InvalidAttributeException.fromConstraint("table", "scrollSize", "greater than zero");
-		}
-		if (scrollSize != null && maxHeight == null) {
-			throw InvalidAttributeException.fromConflict("table", "maxHeight", "Attribute [maxHeight] must be specified");
-		}
-		if (size != null && !Size.validateSmallLarge(size)) {
-			throw InvalidAttributeException.fromPossibleValues("table", "size", Size.getSmallLargeValues());
-		}
-		if (values != null && var == null) {
-			throw InvalidAttributeException.fromConflict("table", "var", "Attribute [var] must be specified case [values] is specified");
-		}
-	}
+    private String onError;
+
+    private String onSuccess;
+
+    private String onComplete;
+
+    private final List<ColumnTagHandler> columns;
+
+    public TableTagHandler() {
+        columns = new ArrayList<ColumnTagHandler>();
+    }
+
+    @Override
+    public void validateTag() throws JspException {
+        if (scrollSize != null && scrollSize <= 0) {
+            throw InvalidAttributeException.fromConstraint("table", "scrollSize", "greater than zero");
+        }
+        if (scrollSize != null && maxHeight == null) {
+            throw InvalidAttributeException.fromConflict("table", "maxHeight", "Attribute [maxHeight] must be specified");
+        }
+        if (size != null && !Size.validateSmallLarge(size)) {
+            throw InvalidAttributeException.fromPossibleValues("table", "size", Size.getSmallLargeValues());
+        }
+        if (values != null && var == null) {
+            throw InvalidAttributeException.fromConflict("table", "var", "Attribute [var] must be specified case [values] is specified");
+        }
+    }
 
     @Override
     protected boolean checkTagExecution() {
         return shallExecuteTag();
     }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		
-		// Need to indicate that it is a table parent tag for deep inner tags
-		// so the ajax and bind actions can be set by this class
-		pushDelegateTagParent();
+    @SuppressWarnings("unchecked")
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+        // Need to indicate that it is a table parent tag for deep inner tags
+        // so the ajax and bind actions can be set by this class
+        pushDelegateTagParent();
 
-		HttpServletRequest request = getRequest();		
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		Div div = new Div();
-		div.addAttribute("class", Bootstrap.TABLE_RESPONSIVE)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass));
+        HttpServletRequest request = getRequest();
 
-		Table table = new Table();
-		table.addAttribute("id", id)
+        Div div = new Div();
+        div.addAttribute("class", Bootstrap.TABLE_RESPONSIVE)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass));
+
+        Table table = new Table();
+        table.addAttribute("id", id)
             .addAttribute("class", Bootstrap.TABLE)
-			.addAttribute("class", bordered ? Bootstrap.TABLE_BORDERED : null)
-			.addAttribute("class", striped ? Bootstrap.TABLE_STRIPED : null)
-			.addAttribute("class", selectValue != null ? Bootstrap.TABLE_HOVER : null)
-			.addAttribute("class", scrollSize != null ? JSmart.TABLE_SCROLL : null);
+            .addAttribute("class", bordered ? Bootstrap.TABLE_BORDERED : null)
+            .addAttribute("class", striped ? Bootstrap.TABLE_STRIPED : null)
+            .addAttribute("class", selectValue != null ? Bootstrap.TABLE_HOVER : null)
+            .addAttribute("class", scrollSize != null ? JSmart.TABLE_SCROLL : null);
 
-		if (Size.SMALL.equalsIgnoreCase(size)) {
-			table.addAttribute("class", Bootstrap.TABLE_CONDENSED);
-		}
+        if (Size.SMALL.equalsIgnoreCase(size)) {
+            table.addAttribute("class", Bootstrap.TABLE_CONDENSED);
+        }
 
-		if (caption != null) {
-			Caption captionTag = new Caption();
-			captionTag.addText(getTagValue(caption));
-			table.addTag(captionTag);
-		}
+        if (caption != null) {
+            Caption captionTag = new Caption();
+            captionTag.addText(getTagValue(caption));
+            table.addTag(captionTag);
+        }
 
-		THead thead = new THead();
-		TBody tbody = new TBody();
-		tbody.addAttribute("scroll-size", scrollSize);
+        THead thead = new THead();
+        TBody tbody = new TBody();
+        tbody.addAttribute("scroll-size", scrollSize);
 
-		if (maxHeight != null) {
-			tbody.addAttribute("style", "height: " + maxHeight + ";")
-				.addAttribute("style", "max-height: " + maxHeight + ";");
-			table.addAttribute("style", "margin-bottom: " + maxHeight + ";");
-		}
+        if (maxHeight != null) {
+            tbody.addAttribute("style", "height: " + maxHeight + ";")
+                .addAttribute("style", "max-height: " + maxHeight + ";");
+            table.addAttribute("style", "margin-bottom: " + maxHeight + ";");
+        }
 
-		if (loadTag != null) {
-			Tr tr = new Tr();
+        if (loadTag != null) {
+            Tr tr = new Tr();
             tr.addAttribute("style", "border: 1px solid transparent;")
                 .addAttribute("role-load", "true");
 
@@ -172,11 +172,11 @@ public final class TableTagHandler extends TagHandler {
             td.addAttribute("style", "display: none;")
                 .addAttribute("style", "text-align: center;")
                 .addAttribute("colspan", columns.size())
-				.addTag(loadTag.executeTag());
+                .addTag(loadTag.executeTag());
 
-			tr.addTag(td);
-			tbody.addTag(tr);
-		}
+            tr.addTag(td);
+            tbody.addTag(tr);
+        }
 
         if (emptyTag != null) {
             Tr tr = new Tr();
@@ -197,46 +197,46 @@ public final class TableTagHandler extends TagHandler {
 
         appendColumnTemplate(tbody);
 
-		// Get the scroll parameters case requested by scroll table
-		Scroll scroll = null;
-		boolean hasFilterOrSort = hasFilterOrSort();
+        // Get the scroll parameters case requested by scroll table
+        Scroll scroll = null;
+        boolean hasFilterOrSort = hasFilterOrSort();
 
         // It means that a scroll maybe happened
         String scrollParam = request.getParameter(getTagName(J_SCROLL, fakeTagName(id)));
         if (scrollParam != null) {
             scroll = GSON.fromJson(scrollParam, Scroll.class);
 
-		} else {
-			// It means that the select on table was performed
-			scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
+        } else {
+            // It means that the select on table was performed
+            scrollParam = request.getParameter(getTagName(J_SCROLL, selectValue));
 
-			if (scrollParam != null) {
-				scroll = GSON.fromJson(scrollParam, Scroll.class);
-			}
-		}
+            if (scrollParam != null) {
+                scroll = GSON.fromJson(scrollParam, Scroll.class);
+            }
+        }
 
         Object object = getTableContent(getTagValue(values), scroll, hasFilterOrSort);
 
-		if (object instanceof List<?>) {
-			Iterator<Object> iterator = ((List<Object>) object).iterator();
+        if (object instanceof List<?>) {
+            Iterator<Object> iterator = ((List<Object>) object).iterator();
 
-			int scrollIndex = scroll != null && scroll.getIndex() != null ? scroll.getIndex() : 0;
-			int selectIndex = scrollIndex;
+            int scrollIndex = scroll != null && scroll.getIndex() != null ? scroll.getIndex() : 0;
+            int selectIndex = scrollIndex;
 
-			while (iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 Object obj = iterator.next();
                 if (obj == null) {
                     continue;
                 }
-				request.setAttribute(var, obj);
+                request.setAttribute(var, obj);
 
-				Tr tr = new Tr();
-				tr.addAttribute("scroll-index", scrollIndex)
+                Tr tr = new Tr();
+                tr.addAttribute("scroll-index", scrollIndex)
                     .addAttribute("table-index", selectIndex);
 
-				if (selectValue != null) {
+                if (selectValue != null) {
                     tr.addAttribute("style", "cursor: pointer;");
-				}
+                }
 
                 // Only needs to set the role-delegate case bind or ajax is included inside table,
                 // otherwise the table row does not need an id
@@ -247,45 +247,45 @@ public final class TableTagHandler extends TagHandler {
                     tr.addAttribute("scroll-offset", scrollOffsetVal);
                 }
 
-				appendEvent(tr);
+                appendEvent(tr);
 
-				for (ColumnTagHandler column : columns) {
-					tr.addTag(column.executeTag());
-				}
+                for (ColumnTagHandler column : columns) {
+                    tr.addTag(column.executeTag());
+                }
 
-				tbody.addTag(tr);
-				selectIndex++;
-				request.removeAttribute(var);
-			}
-		}
+                tbody.addTag(tr);
+                selectIndex++;
+                request.removeAttribute(var);
+            }
+        }
 
         // Must be outside the looping case the initial table has no items
         appendAjax(id);
         appendBind(id);
 
-		// Call after reading the column inner tag headers
-		thead.addTag(addHeaderColumns());
+        // Call after reading the column inner tag headers
+        thead.addTag(addHeaderColumns());
 
-		// Needs to pop the iterator action so this class set the 
-		// ajax and bind actions carried via RefAction
-		popDelegateTagParent();
+        // Needs to pop the iterator action so this class set the
+        // ajax and bind actions carried via RefAction
+        popDelegateTagParent();
 
-		if (selectValue != null) {
-			appendDocScript(getAjaxFunction());
-		}
-		if (scrollSize != null) {
-			appendDocScript(getScrollFunction());
-		}
-		if (hasFilterOrSort) {
-			appendDocScript(getHeaderFunction());
-		}
+        if (selectValue != null) {
+            appendDocScript(getAjaxFunction());
+        }
+        if (scrollSize != null) {
+            appendDocScript(getScrollFunction());
+        }
+        if (hasFilterOrSort) {
+            appendDocScript(getHeaderFunction());
+        }
 
-		div.addTag(table);
-		table.addTag(thead)
-			.addTag(tbody);
+        div.addTag(table);
+        table.addTag(thead)
+            .addTag(tbody);
 
-		return div;
-	}
+        return div;
+    }
 
     private void appendColumnTemplate(Tag tbody) throws JspException, IOException {
         Tr tr = new Tr();
@@ -300,231 +300,231 @@ public final class TableTagHandler extends TagHandler {
         tbody.addTag(tr);
     }
 
-	private Tag addHeaderColumns() throws JspException, IOException {
-		Tr tr = new Tr();
+    private Tag addHeaderColumns() throws JspException, IOException {
+        Tr tr = new Tr();
 
-		for (ColumnTagHandler column : columns) {
-			Th th = new Th();
+        for (ColumnTagHandler column : columns) {
+            Th th = new Th();
             th.addAttribute("style", getTagValue(column.style))
                 .addAttribute("class", getTagValue(column.styleClass));
 
-			if (column.getFilterBy() != null) {
-				Div div = new Div();
-				div.addAttribute("class", JSmart.TABLE_HEADER_FILTER_BY);
+            if (column.getFilterBy() != null) {
+                Div div = new Div();
+                div.addAttribute("class", JSmart.TABLE_HEADER_FILTER_BY);
 
-				Input input = new Input();
-				input.addAttribute("class", Bootstrap.FORM_CONTROL)
-					.addAttribute("class", Bootstrap.INPUT_SMALL)
-					.addAttribute("placeholder", getTagValue(column.getLabel()))
-					.addAttribute("type", Type.TEXT.name().toLowerCase())
-					.addAttribute("datatype", Type.TEXT.name().toLowerCase())
-					.addAttribute("filter-by", column.getFilterBy());
+                Input input = new Input();
+                input.addAttribute("class", Bootstrap.FORM_CONTROL)
+                    .addAttribute("class", Bootstrap.INPUT_SMALL)
+                    .addAttribute("placeholder", getTagValue(column.getLabel()))
+                    .addAttribute("type", Type.TEXT.name().toLowerCase())
+                    .addAttribute("datatype", Type.TEXT.name().toLowerCase())
+                    .addAttribute("filter-by", column.getFilterBy());
 
-				div.addTag(input);
-				th.addTag(div);
+                div.addTag(input);
+                th.addTag(div);
 
-			} else {
-				if (column.getSortBy() != null) {
-					Div div = new Div();
-					div.addAttribute("class", JSmart.TABLE_HEADER_SORT_BY)
-						.addText(getTagValue(column.getLabel()));
-					th.addTag(div);
+            } else {
+                if (column.getSortBy() != null) {
+                    Div div = new Div();
+                    div.addAttribute("class", JSmart.TABLE_HEADER_SORT_BY)
+                        .addText(getTagValue(column.getLabel()));
+                    th.addTag(div);
 
-				} else {
-					th.addText(getTagValue(column.getLabel()));
-				}
-			}
+                } else {
+                    th.addText(getTagValue(column.getLabel()));
+                }
+            }
 
-			if (column.getSortBy() != null) {
-				Div div = new Div();
-				div.addAttribute("class", column.getFilterBy() != null ? 
-						JSmart.TABLE_FILTER_SORT_BY : JSmart.TABLE_SORT_BY);
+            if (column.getSortBy() != null) {
+                Div div = new Div();
+                div.addAttribute("class", column.getFilterBy() != null ?
+                        JSmart.TABLE_FILTER_SORT_BY : JSmart.TABLE_SORT_BY);
 
-				IconTagHandler topIcon = new IconTagHandler();
-				topIcon.setName("glyphicon-triangle-top");
-				Tag topTag = topIcon.executeTag();
-				topTag.addAttribute("sort-by", column.getSortBy())
-					.addAttribute("sort-order", "1");
+                IconTagHandler topIcon = new IconTagHandler();
+                topIcon.setName("glyphicon-triangle-top");
+                Tag topTag = topIcon.executeTag();
+                topTag.addAttribute("sort-by", column.getSortBy())
+                    .addAttribute("sort-order", "1");
 
-				IconTagHandler bottomIcon = new IconTagHandler();
-				bottomIcon.setName("glyphicon-triangle-bottom");
-				Tag bottomTag = bottomIcon.executeTag();
-				bottomTag.addAttribute("sort-by", column.getSortBy())
-					.addAttribute("sort-order", "-1");
+                IconTagHandler bottomIcon = new IconTagHandler();
+                bottomIcon.setName("glyphicon-triangle-bottom");
+                Tag bottomTag = bottomIcon.executeTag();
+                bottomTag.addAttribute("sort-by", column.getSortBy())
+                    .addAttribute("sort-order", "-1");
 
-				div.addTag(topTag);
-				div.addTag(bottomTag);
+                div.addTag(topTag);
+                div.addTag(bottomTag);
 
-				th.addTag(div);
-			}
-			tr.addTag(th);
-		}
-		return tr;
-	}
+                th.addTag(div);
+            }
+            tr.addTag(th);
+        }
+        return tr;
+    }
 
-	@SuppressWarnings("unchecked")
-	private List<?> getTableContent(Object object, Scroll scroll, Boolean hasFilterOrSort) throws JspException {
-		int index = scroll != null  && scroll.getIndex() != null ? scroll.getIndex() : 0;
+    @SuppressWarnings("unchecked")
+    private List<?> getTableContent(Object object, Scroll scroll, Boolean hasFilterOrSort) throws JspException {
+        int index = scroll != null  && scroll.getIndex() != null ? scroll.getIndex() : 0;
         Object offset = scroll != null ? scroll.getOffset() : null;
 
-		if (object instanceof TableAdapter) {
-			if (scrollSize == null) {
-				throw InvalidAttributeException.fromConflict("table", "scrollSize",
-						"Attribute [scrollSize] must be specified to use TableAdapter");
-			}
-			
-			String sort = null;
-			Integer order = 0;
-			Map<String, String> filters = null;
+        if (object instanceof TableAdapter) {
+            if (scrollSize == null) {
+                throw InvalidAttributeException.fromConflict("table", "scrollSize",
+                        "Attribute [scrollSize] must be specified to use TableAdapter");
+            }
 
-			if (scroll != null) {
-				sort = scroll.getSort();
-				order = scroll.getOrder();
-				filters = scroll.getFilters();
-			}
+            String sort = null;
+            Integer order = 0;
+            Map<String, String> filters = null;
 
-			TableAdapter<Object> tableAdapter = (TableAdapter<Object>) object;
-			return tableAdapter.load(index, offset, scrollSize, sort, order, filters);
+            if (scroll != null) {
+                sort = scroll.getSort();
+                order = scroll.getOrder();
+                filters = scroll.getFilters();
+            }
 
-		} else if (object instanceof List) {
-			if (hasFilterOrSort) {
-				throw InvalidAttributeException.fromConflict("table", "values",
-						"Attribute [values] with static List cannot be used along with columns " +
-						"using [filterBy] or [sortBy] attributes. Please use TableAdapter instead.");
-			}
+            TableAdapter<Object> tableAdapter = (TableAdapter<Object>) object;
+            return tableAdapter.load(index, offset, scrollSize, sort, order, filters);
 
-			List<Object> list = (List<Object>) object;
-			Object[] array = list.toArray();
+        } else if (object instanceof List) {
+            if (hasFilterOrSort) {
+                throw InvalidAttributeException.fromConflict("table", "values",
+                        "Attribute [values] with static List cannot be used along with columns " +
+                        "using [filterBy] or [sortBy] attributes. Please use TableAdapter instead.");
+            }
 
-			List<Object> retList = new ArrayList<Object>();
+            List<Object> list = (List<Object>) object;
+            Object[] array = list.toArray();
 
-			int size = list.size();
-			if (scrollSize != null) {
-				size = index + scrollSize >= list.size() ? list.size() : (int) (index + scrollSize);
-			}
+            List<Object> retList = new ArrayList<Object>();
 
-			for (int i = index; i < size; i++) {
- 	 			retList.add(array[i]);
- 	 		}
- 	 		return retList;
-		}
-		return Collections.EMPTY_LIST;
-	}
+            int size = list.size();
+            if (scrollSize != null) {
+                size = index + scrollSize >= list.size() ? list.size() : (int) (index + scrollSize);
+            }
 
-	private StringBuilder getAjaxFunction() {
-		Ajax jsonAjax = new Ajax();
+            for (int i = index; i < size; i++) {
+                  retList.add(array[i]);
+              }
+              return retList;
+        }
+        return Collections.EMPTY_LIST;
+    }
 
-		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
-		jsonAjax.setTag("table");
+    private StringBuilder getAjaxFunction() {
+        Ajax jsonAjax = new Ajax();
 
-		jsonAjax.addParam(new Param(getTagName(J_SEL, selectValue), getTagName(J_VALUES, values)));
-		jsonAjax.addParam(new Param(getTagName(J_SEL_VAL, selectValue), ""));
+        jsonAjax.setId(id);
+        jsonAjax.setMethod("post");
+        jsonAjax.setTag("table");
 
-		if (scrollSize != null) {
-			jsonAjax.addParam(new Param(getTagName(J_SCROLL, selectValue), ""));
-		}
-		if (update != null) {
-			jsonAjax.setUpdate(update.trim());
-		}
-		if (beforeSend != null) {
-			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
-		}
-		if (onError != null) {
-			jsonAjax.setError((String) getTagValue(onError.trim()));
-		}
-		if (onSuccess != null) {
-			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
-		}
-		if (onComplete != null) {
-			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
-		}
+        jsonAjax.addParam(new Param(getTagName(J_SEL, selectValue), getTagName(J_VALUES, values)));
+        jsonAjax.addParam(new Param(getTagName(J_SEL_VAL, selectValue), ""));
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_TABLE.format(getJsonValue(jsonAjax)));
-		return getDelegateFunction(id, "tr", Event.CLICK.name(), builder);
-	}
+        if (scrollSize != null) {
+            jsonAjax.addParam(new Param(getTagName(J_SCROLL, selectValue), ""));
+        }
+        if (update != null) {
+            jsonAjax.setUpdate(update.trim());
+        }
+        if (beforeSend != null) {
+            jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+        }
+        if (onError != null) {
+            jsonAjax.setError((String) getTagValue(onError.trim()));
+        }
+        if (onSuccess != null) {
+            jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+        }
+        if (onComplete != null) {
+            jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+        }
 
-	private StringBuilder getScrollFunction() {
-		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
-		jsonAjax.setTag("tablescroll");
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_TABLE.format(getJsonValue(jsonAjax)));
+        return getDelegateFunction(id, "tr", Event.CLICK.name(), builder);
+    }
 
-		jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
+    private StringBuilder getScrollFunction() {
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
+        jsonAjax.setMethod("post");
+        jsonAjax.setTag("tablescroll");
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_TABLESCROLL.format(getJsonValue(jsonAjax)));
-		return builder;
-	}
+        jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
 
-	private StringBuilder getHeaderFunction() {
-		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
-		jsonAjax.setTag("tableheader");
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_TABLESCROLL.format(getJsonValue(jsonAjax)));
+        return builder;
+    }
 
-		jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
+    private StringBuilder getHeaderFunction() {
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
+        jsonAjax.setMethod("post");
+        jsonAjax.setTag("tableheader");
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_TABLEHEADER.format(getJsonValue(jsonAjax)));
-		return builder;
-	}
+        jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
 
-	private boolean hasFilterOrSort() {
-		boolean headerScript = false;
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_TABLEHEADER.format(getJsonValue(jsonAjax)));
+        return builder;
+    }
 
-		for (ColumnTagHandler column : columns) {
-			if (column.getFilterBy() != null || column.getSortBy() != null) {
-				headerScript = true;
-				break;
-			}
-		}
-		return headerScript;
-	}
+    private boolean hasFilterOrSort() {
+        boolean headerScript = false;
 
-	void addColumn(ColumnTagHandler column) {
-		this.columns.add(column);
-	}
+        for (ColumnTagHandler column : columns) {
+            if (column.getFilterBy() != null || column.getSortBy() != null) {
+                headerScript = true;
+                break;
+            }
+        }
+        return headerScript;
+    }
 
-	public void setVar(String var) {
-		this.var = var;
-	}
+    void addColumn(ColumnTagHandler column) {
+        this.columns.add(column);
+    }
 
-	public void setValues(String values) {
-		this.values = values;
-	}
+    public void setVar(String var) {
+        this.var = var;
+    }
 
-	public void setSelectValue(String selectValue) {
-		this.selectValue = selectValue;
-	}
+    public void setValues(String values) {
+        this.values = values;
+    }
 
-	public void setCaption(String caption) {
-		this.caption = caption;
-	}
+    public void setSelectValue(String selectValue) {
+        this.selectValue = selectValue;
+    }
 
-	public void setScrollSize(Integer scrollSize) {
-		this.scrollSize = scrollSize;
-	}
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public void setScrollSize(Integer scrollSize) {
+        this.scrollSize = scrollSize;
+    }
 
     public void setScrollOffset(String scrollOffset) {
         this.scrollOffset = scrollOffset;
     }
 
     public void setMaxHeight(String maxHeight) {
-		this.maxHeight = maxHeight;
-	}
+        this.maxHeight = maxHeight;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setSize(String size) {
+        this.size = size;
+    }
 
-	public void setBordered(boolean bordered) {
-		this.bordered = bordered;
-	}
+    public void setBordered(boolean bordered) {
+        this.bordered = bordered;
+    }
 
-	public void setStriped(boolean striped) {
-		this.striped = striped;
-	}
+    public void setStriped(boolean striped) {
+        this.striped = striped;
+    }
 
 }

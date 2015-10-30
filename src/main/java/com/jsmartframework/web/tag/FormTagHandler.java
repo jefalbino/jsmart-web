@@ -42,111 +42,111 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class FormTagHandler extends TagHandler {
 
-	private String method;
-	
-	private String enctype;
-	
-	private String position;
-	
-	private String size;
-	
-	private List<Tag> beforeForm;
+    private String method;
 
-	public FormTagHandler() {
-		beforeForm = new ArrayList<Tag>();
-	}
+    private String enctype;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (method != null && !Method.validatePostGet(method)) {
+    private String position;
+
+    private String size;
+
+    private List<Tag> beforeForm;
+
+    public FormTagHandler() {
+        beforeForm = new ArrayList<Tag>();
+    }
+
+    @Override
+    public void validateTag() throws JspException {
+        if (method != null && !Method.validatePostGet(method)) {
             throw InvalidAttributeException.fromPossibleValues("form", "method", Method.getPostGetValues());
         }
-		if (position != null && !Position.validate(position)) {
-			throw InvalidAttributeException.fromPossibleValues("form", "position", Position.getValues());
-		}
-		if (size != null && !Size.validateSmallLarge(size)) {
-			throw InvalidAttributeException.fromPossibleValues("form", "size", Size.getSmallLargeValues());
-		}
-	}
+        if (position != null && !Position.validate(position)) {
+            throw InvalidAttributeException.fromPossibleValues("form", "position", Position.getValues());
+        }
+        if (size != null && !Size.validateSmallLarge(size)) {
+            throw InvalidAttributeException.fromPossibleValues("form", "size", Size.getSmallLargeValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
-		
-		setRandomId("form");
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		Form form = new Form();
-		form.addAttribute("id", id)
-			.addAttribute("method", method != null ? method : Method.POST.name().toLowerCase())
-			.addAttribute("enctype", enctype)
-			.addAttribute("style", getTagValue(style));
+        setRandomId("form");
 
-		if (Position.HORIZONTAL.equalsIgnoreCase(position)) {
-			form.addAttribute("class", Bootstrap.FORM_HORIZONTAL);
-		} else if (Position.INLINE.equalsIgnoreCase(position)) {
-			form.addAttribute("class", Bootstrap.FORM_INLINE);
-		}
-		
-		// Add the style class at last
-		form.addAttribute("class", getTagValue(styleClass));
+        Form form = new Form();
+        form.addAttribute("id", id)
+            .addAttribute("method", method != null ? method : Method.POST.name().toLowerCase())
+            .addAttribute("enctype", enctype)
+            .addAttribute("style", getTagValue(style));
 
-		FieldSet fieldSet = null;
-		if (isDisabled()) {
-			fieldSet = new FieldSet();
-			fieldSet.addAttribute("disabled", "disabled");
-			form.addTag(fieldSet);
-		}
+        if (Position.HORIZONTAL.equalsIgnoreCase(position)) {
+            form.addAttribute("class", Bootstrap.FORM_HORIZONTAL);
+        } else if (Position.INLINE.equalsIgnoreCase(position)) {
+            form.addAttribute("class", Bootstrap.FORM_INLINE);
+        }
 
-		if (fieldSet != null) {
-			fieldSet.addText(sw.toString());
-		} else {
-			form.addText(sw.toString());
-		}
+        // Add the style class at last
+        form.addAttribute("class", getTagValue(styleClass));
 
-		appendBind(id);
-		appendDocScript(getFunction());
-		
-		Set set = new Set();
-		for (Tag tag : beforeForm) {
-			set.addTag(tag);
-		}
-		set.addTag(form);
-		return set;
-	}
+        FieldSet fieldSet = null;
+        if (isDisabled()) {
+            fieldSet = new FieldSet();
+            fieldSet.addAttribute("disabled", "disabled");
+            form.addTag(fieldSet);
+        }
 
-	private StringBuilder getFunction() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("return " + JSMART_VALIDATE.format(id));
-		return getBindFunction(id, Event.SUBMIT.name(), builder);
-	}
+        if (fieldSet != null) {
+            fieldSet.addText(sw.toString());
+        } else {
+            form.addText(sw.toString());
+        }
 
-	void addBeforeFormTag(Tag tag) {
-		this.beforeForm.add(tag);
-	}
+        appendBind(id);
+        appendDocScript(getFunction());
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+        Set set = new Set();
+        for (Tag tag : beforeForm) {
+            set.addTag(tag);
+        }
+        set.addTag(form);
+        return set;
+    }
 
-	public void setEnctype(String enctype) {
-		this.enctype = enctype;
-	}
+    private StringBuilder getFunction() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("return " + JSMART_VALIDATE.format(id));
+        return getBindFunction(id, Event.SUBMIT.name(), builder);
+    }
 
-	public void setPosition(String position) {
-		this.position = position;
-	}
+    void addBeforeFormTag(Tag tag) {
+        this.beforeForm.add(tag);
+    }
 
-	String getSize() {
-		return size;
-	}
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setEnctype(String enctype) {
+        this.enctype = enctype;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 
 }

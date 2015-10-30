@@ -20,32 +20,32 @@ package com.jsmartframework.web.tag.type;
 
 public enum TipEvent {
 
-	FOCUS,
-	HOVER,
-	CLICK,
-	MANUAL;
+    FOCUS,
+    HOVER,
+    CLICK,
+    MANUAL;
 
-	public static boolean validate(String tipEvent) {
-		try {
-			TipEvent.valueOf(tipEvent.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	public static String[] getValues() {
-		int index = 0;
-		TipEvent[] tipEvents = values();
-		String[] values = new String[tipEvents.length];
+    public static boolean validate(String tipEvent) {
+        try {
+            TipEvent.valueOf(tipEvent.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-		for (TipEvent tipEvent : tipEvents) {
-			values[index++] = tipEvent.name().toLowerCase();
-		}
-		return values;
-	}
+    public static String[] getValues() {
+        int index = 0;
+        TipEvent[] tipEvents = values();
+        String[] values = new String[tipEvents.length];
 
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+        for (TipEvent tipEvent : tipEvents) {
+            values[index++] = tipEvent.name().toLowerCase();
+        }
+        return values;
+    }
+
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 }

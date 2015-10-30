@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class FigCaption extends Tag {
 
-	public FigCaption() {
-		super("figcaption");
-	}
+    public FigCaption() {
+        super("figcaption");
+    }
 }

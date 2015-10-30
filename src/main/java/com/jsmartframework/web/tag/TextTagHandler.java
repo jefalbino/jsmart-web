@@ -30,34 +30,34 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 public final class TextTagHandler extends TagHandler {
-	
-	private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
 
-	private String res;
+    private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
 
-	private String key;
+    private String res;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
-	
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		// Look for parameters
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+    private String key;
 
-		String message = getResourceString(res, key);
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-		if (!params.isEmpty()) {
-			message = formatText(message, params);
-		}
-		printOutput(message);
-		return true;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        // Look for parameters
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
+
+        String message = getResourceString(res, key);
+
+        if (!params.isEmpty()) {
+            message = formatText(message, params);
+        }
+        printOutput(message);
+        return true;
+    }
 
     static String formatText(final String message, final Map<String, Object> params) {
         if (BRACKETS.matcher(message).find()) {
@@ -69,18 +69,18 @@ public final class TextTagHandler extends TagHandler {
         return message;
     }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
-	public void setRes(String res) {
-		this.res = res;
-	}
+    public void setRes(String res) {
+        this.res = res;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
 }

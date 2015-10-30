@@ -29,41 +29,41 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class ParamTagHandler extends TagHandler {
 
-	private String name;
+    private String name;
 
-	private Object value;
+    private Object value;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (name != null && name.trim().contains(" ")) {
-			throw InvalidAttributeException.fromConflict("param", "name", "Value cannot contains space characters");
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (name != null && name.trim().contains(" ")) {
+            throw InvalidAttributeException.fromConflict("param", "name", "Value cannot contains space characters");
+        }
+    }
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof TagHandler) {
 
-			String key = getTagName(J_TAG, name);
-			Object obj = getTagValue(value);
-			((TagHandler) parent).addParam(key, obj);
-		}
-		return false;
-	}
+            String key = getTagName(J_TAG, name);
+            Object obj = getTagValue(value);
+            ((TagHandler) parent).addParam(key, obj);
+        }
+        return false;
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
 }

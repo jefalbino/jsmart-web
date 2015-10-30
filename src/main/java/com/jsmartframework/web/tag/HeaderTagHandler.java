@@ -32,127 +32,127 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 public final class HeaderTagHandler extends TagHandler {
-	
-	private String title;
-	
-	private String type;
-	
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
 
-		if (parent instanceof ModalTagHandler) {
-			((ModalTagHandler) parent).setHeader(this);
-			return false;
+    private String title;
 
-		} else if (parent instanceof RowTagHandler) {
-			((RowTagHandler) parent).setHeader(this);
-			return false;
+    private String type;
 
-		} else if (parent instanceof PanelTagHandler) {
-			((PanelTagHandler) parent).setHeader(this);
-			return false;
-		
-		} else if (parent instanceof AlertTagHandler) {
-			((AlertTagHandler) parent).setHeader(this);
-			return false;
-			
-		} else if (parent instanceof SlideTagHandler) {
-			((SlideTagHandler) parent).setHeader(this);
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
 
-	@Override
-	public void validateTag() throws JspException {
-		if (type != null && !Output.validateHeader(type)) {
-			throw InvalidAttributeException.fromPossibleValues("header", "type", Output.getHeaderValues());
-		}
-	}
+        if (parent instanceof ModalTagHandler) {
+            ((ModalTagHandler) parent).setHeader(this);
+            return false;
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+        } else if (parent instanceof RowTagHandler) {
+            ((RowTagHandler) parent).setHeader(this);
+            return false;
 
-		JspTag parent = getParent();
+        } else if (parent instanceof PanelTagHandler) {
+            ((PanelTagHandler) parent).setHeader(this);
+            return false;
 
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		
-		setRandomId("header");
+        } else if (parent instanceof AlertTagHandler) {
+            ((AlertTagHandler) parent).setHeader(this);
+            return false;
 
-		Tag header = null;
-		if (type != null) {
-			header = new Tag(type);
-		}
+        } else if (parent instanceof SlideTagHandler) {
+            ((SlideTagHandler) parent).setHeader(this);
+            return false;
+        }
+        return true;
+    }
 
-		if (parent instanceof RowTagHandler) {
-			if (header == null) {
-				header = new Tag(Output.H4.name().toLowerCase());
-			}
-			header.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_HEADING);
+    @Override
+    public void validateTag() throws JspException {
+        if (type != null && !Output.validateHeader(type)) {
+            throw InvalidAttributeException.fromPossibleValues("header", "type", Output.getHeaderValues());
+        }
+    }
 
-		} else if (parent instanceof PanelTagHandler) {
-			if (header == null) {
-				header = new Tag(Output.H3.name().toLowerCase());
-			}
-			header.addAttribute("class", Bootstrap.PANEL_TITLE);
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		} else if (parent instanceof ModalTagHandler) {
-			if (header == null) {
-				header = new Tag(Output.H4.name().toLowerCase());
-			}
-			header.addAttribute("class", Bootstrap.MODAL_TITLE);
-			
-		} else if (parent instanceof AlertTagHandler) {
-			if (header == null) {
-				header = new Tag(Output.H4.name().toLowerCase());
-			}
-		} else if (header == null) {
-			header = new Tag(Output.H3.name().toLowerCase());
-		}
-		
-		header.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass));
-		
-		appendRefId(header, id);
+        JspTag parent = getParent();
 
-		for (IconTagHandler iconTag : iconTags) {
-			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-				header.addTag(iconTag.executeTag());
-				header.addText(" ");
-			}
-		}
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		header.addText(getTagValue(title));
+        setRandomId("header");
 
-		for (IconTagHandler iconTag : iconTags) {
-			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-				header.addText(" ");
-				header.addTag(iconTag.executeTag());
-			}
-		}
-		
-		if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
+        Tag header = null;
+        if (type != null) {
+            header = new Tag(type);
+        }
+
+        if (parent instanceof RowTagHandler) {
+            if (header == null) {
+                header = new Tag(Output.H4.name().toLowerCase());
+            }
+            header.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_HEADING);
+
+        } else if (parent instanceof PanelTagHandler) {
+            if (header == null) {
+                header = new Tag(Output.H3.name().toLowerCase());
+            }
+            header.addAttribute("class", Bootstrap.PANEL_TITLE);
+
+        } else if (parent instanceof ModalTagHandler) {
+            if (header == null) {
+                header = new Tag(Output.H4.name().toLowerCase());
+            }
+            header.addAttribute("class", Bootstrap.MODAL_TITLE);
+
+        } else if (parent instanceof AlertTagHandler) {
+            if (header == null) {
+                header = new Tag(Output.H4.name().toLowerCase());
+            }
+        } else if (header == null) {
+            header = new Tag(Output.H3.name().toLowerCase());
+        }
+
+        header.addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass));
+
+        appendRefId(header, id);
+
+        for (IconTagHandler iconTag : iconTags) {
+            if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+                header.addTag(iconTag.executeTag());
+                header.addText(" ");
+            }
+        }
+
+        header.addText(getTagValue(title));
+
+        for (IconTagHandler iconTag : iconTags) {
+            if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+                header.addText(" ");
+                header.addTag(iconTag.executeTag());
+            }
+        }
+
+        if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
             String tagId = ((TagHandler) parent).getId();
-			appendAjax(tagId);
-			appendBind(tagId);
-		} else {
-			appendAjax(id);
-			appendBind(id);
-		}
+            appendAjax(tagId);
+            appendBind(tagId);
+        } else {
+            appendAjax(id);
+            appendBind(id);
+        }
 
-		return header;
-	}
+        return header;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

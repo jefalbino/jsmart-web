@@ -16,11 +16,21 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmartframework.web.tag.html;
+package com.jsmartframework.web.annotation;
 
-public class Ul extends Tag {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public Ul() {
-        super("ul");
-    }
+/**
+ * The {@link PreSet} annotation is used on a field attribute that needs to be
+ * set before the method annotated with {@link javax.annotation.PostConstruct} is invoked.
+ * <br>
+ * In order to be set the field attribute must be mapped on JSP file currently being submitted.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface PreSet {
+
 }

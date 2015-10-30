@@ -35,99 +35,99 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class BindTagHandler extends TagHandler {
 
-	private String event;
+    private String event;
 
-	private String execute;
+    private String execute;
 
-	private Integer timeout;
+    private Integer timeout;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (event != null && !Event.validate(event)) {
-			throw InvalidAttributeException.fromPossibleValues("ajax", "event", Event.getValues());
-		}
-		if (timeout != null && timeout < 0) {
-			throw InvalidAttributeException.fromConstraint("ajax", "timeout", "greater or equal to 0"); 
-		}
-	}
-	
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
+    @Override
+    public void validateTag() throws JspException {
+        if (event != null && !Event.validate(event)) {
+            throw InvalidAttributeException.fromPossibleValues("ajax", "event", Event.getValues());
+        }
+        if (timeout != null && timeout < 0) {
+            throw InvalidAttributeException.fromConstraint("ajax", "timeout", "greater or equal to 0");
+        }
+    }
 
-			((TagHandler) parent).addBindTag(this);
-		}
-		return false;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof TagHandler) {
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
-	
-	private Bind getJsonBind(String id) {
-		Bind jsonBind = new Bind();
-		jsonBind.setId(id);
-		jsonBind.setTimeout((Integer) getTagValue(timeout));
-		
-		String exec = (String) getTagValue(execute);
-		if (exec != null && !exec.trim().endsWith(";")) {
-			exec += ";";
-		}
-		jsonBind.setExecute(exec);
-		return jsonBind;
-	}
+            ((TagHandler) parent).addBindTag(this);
+        }
+        return false;
+    }
 
-	@SuppressWarnings("unchecked")
-	public StringBuilder getBindFunction(String id) {
-		Bind jsonBind = getJsonBind(id);
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
-		// It means that the ajax is inside some iterator tag, so the
-		// bind actions will be set by iterator tag and the event bind
-		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
-		if (actionStack != null) {
-			actionStack.peek().addRef(id, event, jsonBind);
-		
-		} else {
-			StringBuilder builder = new StringBuilder();
-			builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
-			return getBindFunction(id, event, builder);
-		}
-		return null;
-	}
+    private Bind getJsonBind(String id) {
+        Bind jsonBind = new Bind();
+        jsonBind.setId(id);
+        jsonBind.setTimeout((Integer) getTagValue(timeout));
 
-	@SuppressWarnings("unchecked")
-	public StringBuilder getDelegateFunction(String id, String child) {
-		Bind jsonBind = getJsonBind(id);
+        String exec = (String) getTagValue(execute);
+        if (exec != null && !exec.trim().endsWith(";")) {
+            exec += ";";
+        }
+        jsonBind.setExecute(exec);
+        return jsonBind;
+    }
 
-		// It means that the ajax is inside some iterator tag, so the
-		// bind actions will be set by iterator tag and the event bind
-		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
-		if (actionStack != null) {
-			actionStack.peek().addRef(id, event, jsonBind);
+    @SuppressWarnings("unchecked")
+    public StringBuilder getBindFunction(String id) {
+        Bind jsonBind = getJsonBind(id);
 
-		} else {
-			StringBuilder builder = new StringBuilder();
-			builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
-			return getDelegateFunction(id, child, event, builder);
-		}
-		return null;
-	}
+        // It means that the ajax is inside some iterator tag, so the
+        // bind actions will be set by iterator tag and the event bind
+        // will use the id as tag attribute
+        Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
+        if (actionStack != null) {
+            actionStack.peek().addRef(id, event, jsonBind);
 
-	public void setEvent(String event) {
-		this.event = event;
-	}
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
+            return getBindFunction(id, event, builder);
+        }
+        return null;
+    }
 
-	public void setExecute(String execute) {
-		this.execute = execute;
-	}
+    @SuppressWarnings("unchecked")
+    public StringBuilder getDelegateFunction(String id, String child) {
+        Bind jsonBind = getJsonBind(id);
 
-	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
-	}
+        // It means that the ajax is inside some iterator tag, so the
+        // bind actions will be set by iterator tag and the event bind
+        // will use the id as tag attribute
+        Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
+        if (actionStack != null) {
+            actionStack.peek().addRef(id, event, jsonBind);
+
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append(JSMART_BIND.format(getJsonValue(jsonBind)));
+            return getDelegateFunction(id, child, event, builder);
+        }
+        return null;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public void setExecute(String execute) {
+        this.execute = execute;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
 
 }

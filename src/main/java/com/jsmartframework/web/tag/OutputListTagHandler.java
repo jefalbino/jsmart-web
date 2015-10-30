@@ -33,81 +33,81 @@ import javax.servlet.jsp.JspException;
 
 public final class OutputListTagHandler extends TagHandler {
 
-	private Object values;
-	
-	private String look;
+    private Object values;
 
-	private boolean inline;
+    private String look;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (look != null && !Look.validateText(look) && !isEL(look)) {
-			throw InvalidAttributeException.fromPossibleValues("outputlist", "look", Look.getTextValues());
-		}
-	}
+    private boolean inline;
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public void validateTag() throws JspException {
+        if (look != null && !Look.validateText(look) && !isEL(look)) {
+            throw InvalidAttributeException.fromPossibleValues("outputlist", "look", Look.getTextValues());
+        }
+    }
 
-		Ul ul = new Ul();
-		ul.addAttribute("id", id)
-			.addAttribute("style", getTagValue(style));
-		
-		String lookVal = (String) getTagValue(look);
+    @SuppressWarnings("unchecked")
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
-			ul.addAttribute("class", Bootstrap.TEXT_PRIMARY);
-		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
-			ul.addAttribute("class", Bootstrap.TEXT_SUCCESS);
-		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
-			ul.addAttribute("class", Bootstrap.TEXT_INFO);
-		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
-			ul.addAttribute("class", Bootstrap.TEXT_WARNING);
-		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
-			ul.addAttribute("class", Bootstrap.TEXT_DANGER);
-		} else if (Look.MUTED.equalsIgnoreCase(lookVal)) {
-			ul.addAttribute("class", Bootstrap.TEXT_MUTED);
-		}
+        Ul ul = new Ul();
+        ul.addAttribute("id", id)
+            .addAttribute("style", getTagValue(style));
 
-		ul.addAttribute("class", inline ? Bootstrap.LIST_INLINE : null);
+        String lookVal = (String) getTagValue(look);
 
-		// Add the style class at last
-		ul.addAttribute("class", getTagValue(styleClass));
+        if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+            ul.addAttribute("class", Bootstrap.TEXT_PRIMARY);
+        } else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+            ul.addAttribute("class", Bootstrap.TEXT_SUCCESS);
+        } else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+            ul.addAttribute("class", Bootstrap.TEXT_INFO);
+        } else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+            ul.addAttribute("class", Bootstrap.TEXT_WARNING);
+        } else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+            ul.addAttribute("class", Bootstrap.TEXT_DANGER);
+        } else if (Look.MUTED.equalsIgnoreCase(lookVal)) {
+            ul.addAttribute("class", Bootstrap.TEXT_MUTED);
+        }
 
-		Object obj = getTagValue(values);
-		if (obj != null) {
-			if (obj instanceof Collection) {
-				for (Object o : (Collection<Object>) obj) {
-					if (o != null) {
-						Li li = new Li();
-						li.addText(o.toString());
-						ul.addTag(li);
-					}
-				}
-			} else if (obj.getClass().isArray()) {
-				for (Object o : (Object[]) obj) {
-					if (o != null) {
-						Li li = new Li();
-						li.addText(o.toString());
-						ul.addTag(li);
-					}
-				}
-			}
-		}
+        ul.addAttribute("class", inline ? Bootstrap.LIST_INLINE : null);
 
-		return ul;
-	}
+        // Add the style class at last
+        ul.addAttribute("class", getTagValue(styleClass));
 
-	public void setValues(Object values) {
-		this.values = values;
-	}
+        Object obj = getTagValue(values);
+        if (obj != null) {
+            if (obj instanceof Collection) {
+                for (Object o : (Collection<Object>) obj) {
+                    if (o != null) {
+                        Li li = new Li();
+                        li.addText(o.toString());
+                        ul.addTag(li);
+                    }
+                }
+            } else if (obj.getClass().isArray()) {
+                for (Object o : (Object[]) obj) {
+                    if (o != null) {
+                        Li li = new Li();
+                        li.addText(o.toString());
+                        ul.addTag(li);
+                    }
+                }
+            }
+        }
 
-	public void setInline(boolean inline) {
-		this.inline = inline;
-	}
+        return ul;
+    }
 
-	public void setLook(String look) {
-		this.look = look;
-	}
+    public void setValues(Object values) {
+        this.values = values;
+    }
+
+    public void setInline(boolean inline) {
+        this.inline = inline;
+    }
+
+    public void setLook(String look) {
+        this.look = look;
+    }
 }

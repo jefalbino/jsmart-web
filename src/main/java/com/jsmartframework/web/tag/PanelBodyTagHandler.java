@@ -36,58 +36,58 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class PanelBodyTagHandler extends TagHandler {
 
-	private String align;
+    private String align;
 
-	private String type;
+    private String type;
 
-	public void validateTag() throws JspException {
-		if (type != null && !Type.validatePanel(type)) {
-			throw InvalidAttributeException.fromPossibleValues("panelbody", "type", Type.getPanelValues());
-		}
-		if (align != null && !Align.validateLeftRightCenter(align)) {
-			throw InvalidAttributeException.fromPossibleValues("panelbody", "align", Align.getLeftRightCenterValues());
-		}
-	}
+    public void validateTag() throws JspException {
+        if (type != null && !Type.validatePanel(type)) {
+            throw InvalidAttributeException.fromPossibleValues("panelbody", "type", Type.getPanelValues());
+        }
+        if (align != null && !Align.validateLeftRightCenter(align)) {
+            throw InvalidAttributeException.fromPossibleValues("panelbody", "align", Align.getLeftRightCenterValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
-		
-		setRandomId("panelbody");
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		Tag content = null;
+        setRandomId("panelbody");
 
-		if (Type.FIELDSET.equalsIgnoreCase(type)) {
-			content = new FieldSet();
-		} else if (Type.SECTION.equalsIgnoreCase(type)) {
-			content = new Section();
-		} else {
-			content = new Div();
-		}
+        Tag content = null;
 
-		content.addAttribute("id", id)
-			.addAttribute("align", align)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.PANEL_BODY)
-			.addAttribute("class", getTagValue(styleClass))
+        if (Type.FIELDSET.equalsIgnoreCase(type)) {
+            content = new FieldSet();
+        } else if (Type.SECTION.equalsIgnoreCase(type)) {
+            content = new Section();
+        } else {
+            content = new Div();
+        }
+
+        content.addAttribute("id", id)
+            .addAttribute("align", align)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", Bootstrap.PANEL_BODY)
+            .addAttribute("class", getTagValue(styleClass))
                 .addText(sw.toString());
 
-		appendEvent(content);
+        appendEvent(content);
 
-		return content;
-	}
+        return content;
+    }
 
-	public void setAlign(String align) {
-		this.align = align;
-	}
+    public void setAlign(String align) {
+        this.align = align;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

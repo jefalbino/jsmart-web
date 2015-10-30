@@ -506,7 +506,7 @@ public abstract class TagHandler extends SimpleTagSupport {
         if (name != null) {
             Matcher matcher = ExpressionHandler.EL_PATTERN.matcher(name);
             if (matcher.find()) {
-                return prefix + TagEncrypter.complexEncrypt(name);
+                return prefix + TagEncrypter.encrypt(name);
             }
         }
         return name;

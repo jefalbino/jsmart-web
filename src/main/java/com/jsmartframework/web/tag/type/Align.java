@@ -20,56 +20,56 @@ package com.jsmartframework.web.tag.type;
 
 public enum Align {
 
-	LEFT,
-	RIGHT,
-	CENTER,
-	JUSTIFY;
+    LEFT,
+    RIGHT,
+    CENTER,
+    JUSTIFY;
 
-	public static boolean validate(String align) {
-		try {
-			Align.valueOf(align.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    public static boolean validate(String align) {
+        try {
+            Align.valueOf(align.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	public static boolean validateLeftRight(String align) {
-		return LEFT.equalsIgnoreCase(align) || RIGHT.equalsIgnoreCase(align);
-	}
-	
-	public static boolean validateLeftRightCenter(String align) {
-		return validateLeftRight(align) || CENTER.equalsIgnoreCase(align);
-	}
+    public static boolean validateLeftRight(String align) {
+        return LEFT.equalsIgnoreCase(align) || RIGHT.equalsIgnoreCase(align);
+    }
 
-	public static String[] getValues() {
-		int index = 0;
-		Align[] aligns = values();
-		String[] values = new String[aligns.length];
+    public static boolean validateLeftRightCenter(String align) {
+        return validateLeftRight(align) || CENTER.equalsIgnoreCase(align);
+    }
 
-		for (Align align : aligns) {
-			values[index++] = align.name().toLowerCase();
-		}
-		return values;
-	}
-	
-	public static String[] getLeftRightValues() {
-		String[] values = new String[2];
-		values[0] = LEFT.name().toLowerCase();
-		values[1] = RIGHT.name().toLowerCase();
-		return values;
-	}
-	
-	public static String[] getLeftRightCenterValues() {
-		String[] values = new String[3];
-		values[0] = LEFT.name().toLowerCase();
-		values[1] = RIGHT.name().toLowerCase();
-		values[2] = CENTER.name().toLowerCase();
-		return values;
-	}
+    public static String[] getValues() {
+        int index = 0;
+        Align[] aligns = values();
+        String[] values = new String[aligns.length];
 
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+        for (Align align : aligns) {
+            values[index++] = align.name().toLowerCase();
+        }
+        return values;
+    }
+
+    public static String[] getLeftRightValues() {
+        String[] values = new String[2];
+        values[0] = LEFT.name().toLowerCase();
+        values[1] = RIGHT.name().toLowerCase();
+        return values;
+    }
+
+    public static String[] getLeftRightCenterValues() {
+        String[] values = new String[3];
+        values[0] = LEFT.name().toLowerCase();
+        values[1] = RIGHT.name().toLowerCase();
+        values[2] = CENTER.name().toLowerCase();
+        return values;
+    }
+
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 
 }

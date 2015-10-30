@@ -38,21 +38,21 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class ProgressBarTagHandler extends TagHandler {
 
-	private static final Integer DEFAULT_MAX = 100;
+    private static final Integer DEFAULT_MAX = 100;
 
-	private static final Integer DEFAULT_MIN = 0;
+    private static final Integer DEFAULT_MIN = 0;
 
-	private String value;
+    private String value;
 
-	private Integer intValue;
+    private Integer intValue;
 
-	private String maxValue;
+    private String maxValue;
 
-	private Integer intMaxValue;
+    private Integer intMaxValue;
 
-	private String minValue;
+    private String minValue;
 
-	private Integer intMinValue;
+    private Integer intMinValue;
 
     private Integer interval;
 
@@ -70,235 +70,235 @@ public final class ProgressBarTagHandler extends TagHandler {
 
     private Integer relation;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (interval != null && interval < 0) {
-			throw InvalidAttributeException.fromConstraint("progressbar", "interval", "greater than 0");
-		}
-		if (onInterval != null && interval == null) {
-			throw InvalidAttributeException.fromConflict("progressbar", "interval", "Attribute must be specified case [onInterval] attribute is used");
-		}
-		if (look != null && !Look.validateButton(look) && !isEL(look)) {
-			throw InvalidAttributeException.fromPossibleValues("progressbar", "look", Look.getBasicValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (interval != null && interval < 0) {
+            throw InvalidAttributeException.fromConstraint("progressbar", "interval", "greater than 0");
+        }
+        if (onInterval != null && interval == null) {
+            throw InvalidAttributeException.fromConflict("progressbar", "interval", "Attribute must be specified case [onInterval] attribute is used");
+        }
+        if (look != null && !Look.validateButton(look) && !isEL(look)) {
+            throw InvalidAttributeException.fromPossibleValues("progressbar", "look", Look.getBasicValues());
+        }
+    }
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
 
-		if (parent instanceof ProgressGroupTagHandler) {
-			((ProgressGroupTagHandler) parent).addBar(this);
-			return false;
-		}
-		return true;
-	}
+        if (parent instanceof ProgressGroupTagHandler) {
+            ((ProgressGroupTagHandler) parent).addBar(this);
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		JspTag parent = getParent();
-		ProgressGroupTagHandler group = null; 
+        JspTag parent = getParent();
+        ProgressGroupTagHandler group = null;
 
-		// Just call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+        // Just call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		setRandomId("progressbar");
+        setRandomId("progressbar");
 
-		Div progress = null;
+        Div progress = null;
 
-		if (!(parent instanceof ProgressGroupTagHandler)) {
-			progress = new Div();
-			progress.addAttribute("class", Bootstrap.PROGRESS);
-			
-			// Initiate integer values because parent will not call it
-			initIntValues(false);
-		} else {
-			// In this case the group parent will call initIntValues before calling executeTag
-			group = (ProgressGroupTagHandler) parent;
-		}
+        if (!(parent instanceof ProgressGroupTagHandler)) {
+            progress = new Div();
+            progress.addAttribute("class", Bootstrap.PROGRESS);
 
-		int percent = ((100 * (intValue - intMinValue) / (intMaxValue - intMinValue)) | 0);
-		
-		if (relation != null) {
-			percent = ((percent * relation / 100) | 0);
-		}
+            // Initiate integer values because parent will not call it
+            initIntValues(false);
+        } else {
+            // In this case the group parent will call initIntValues before calling executeTag
+            group = (ProgressGroupTagHandler) parent;
+        }
 
-		String name = getTagName(J_TAG, value);
+        int percent = ((100 * (intValue - intMinValue) / (intMaxValue - intMinValue)) | 0);
 
-		Div bar = new Div();
-		bar.addAttribute("id", id)
-			.addAttribute("name", name)
-			.addAttribute("class", Bootstrap.PROGRESS_BAR)
-			.addAttribute("role", "progressbar")
-			.addAttribute("aria-valuenow", intValue)
-			.addAttribute("aria-valuemin", intMinValue)
-			.addAttribute("aria-valuemax", intMaxValue)
+        if (relation != null) {
+            percent = ((percent * relation / 100) | 0);
+        }
+
+        String name = getTagName(J_TAG, value);
+
+        Div bar = new Div();
+        bar.addAttribute("id", id)
+            .addAttribute("name", name)
+            .addAttribute("class", Bootstrap.PROGRESS_BAR)
+            .addAttribute("role", "progressbar")
+            .addAttribute("aria-valuenow", intValue)
+            .addAttribute("aria-valuemin", intMinValue)
+            .addAttribute("aria-valuemax", intMaxValue)
             .addAttribute("role-relation", relation)
-			.addAttribute("style", "width:" + percent + "%;");
+            .addAttribute("style", "width:" + percent + "%;");
 
-		if (minWidth != null) {
-			bar.addAttribute("style", "min-width:" + minWidth + ";");
-		}
+        if (minWidth != null) {
+            bar.addAttribute("style", "min-width:" + minWidth + ";");
+        }
 
-		String lookVal = (String) getTagValue(look);
-		bar.addAttribute("class", getProgressBarLook(lookVal));
+        String lookVal = (String) getTagValue(look);
+        bar.addAttribute("class", getProgressBarLook(lookVal));
 
-		if (striped || animated) {
-			bar.addAttribute("class", Bootstrap.PROGRESS_BAR_STRIPED);
-		}
-		if (animated) {
-			bar.addAttribute("class", Bootstrap.ACTIVE);
-		}
-		if (withLabel) {
-			bar.addText(percent + "%");
-		}
+        if (striped || animated) {
+            bar.addAttribute("class", Bootstrap.PROGRESS_BAR_STRIPED);
+        }
+        if (animated) {
+            bar.addAttribute("class", Bootstrap.ACTIVE);
+        }
+        if (withLabel) {
+            bar.addText(percent + "%");
+        }
 
-		if (progress != null) {
-			progress.addAttribute("class", getTagValue(styleClass))
-				.addAttribute("style", getTagValue(style));
-		} else {
-			bar.addAttribute("class", getTagValue(styleClass))
-				.addAttribute("style", getTagValue(style));
-		}
+        if (progress != null) {
+            progress.addAttribute("class", getTagValue(styleClass))
+                .addAttribute("style", getTagValue(style));
+        } else {
+            bar.addAttribute("class", getTagValue(styleClass))
+                .addAttribute("style", getTagValue(style));
+        }
 
-		appendEvent(bar);
+        appendEvent(bar);
 
-		// Hidden input must be included to be captured on request parameters
-		Input hidden = null;
+        // Hidden input must be included to be captured on request parameters
+        Input hidden = null;
 
-		if ((isEL(value) || rest != null) && (group == null || !group.containsBarValue(value))) {
+        if ((isEL(value) || rest != null) && (group == null || !group.containsBarValue(value))) {
 
-			// Control to avoid duplicated hidden input tags per value on group
-			if (group != null) {
-				group.addBarValue(value);
-			}
+            // Control to avoid duplicated hidden input tags per value on group
+            if (group != null) {
+                group.addBarValue(value);
+            }
 
-			hidden = new Input();
-			hidden.addAttribute("type", "hidden")
-				.addAttribute("name", name)
-				.addAttribute("value", intValue);
-			
-			appendRest(hidden, name);
-		}
+            hidden = new Input();
+            hidden.addAttribute("type", "hidden")
+                .addAttribute("name", name)
+                .addAttribute("value", intValue);
 
-		appendAjax(id);
-		appendBind(id);
+            appendRest(hidden, name);
+        }
 
-		appendTooltip(bar);
-		appendPopOver(bar);
-		
-		if (onInterval != null) {
-			appendDocScript(getIntervalScript());
-		}
+        appendAjax(id);
+        appendBind(id);
 
-		if (progress != null) {
-			return progress.addTag(bar).addTag(hidden); 
-		} else {
-			Set set = new Set();
-			return set.addTag(bar).addTag(hidden);
-		}
-	}
+        appendTooltip(bar);
+        appendPopOver(bar);
 
-	Integer initIntValues(boolean onGroup) throws JspException {
-		intMinValue = getValue(minValue, DEFAULT_MIN);
-		intValue = getValue(value, intMinValue);
-		intMaxValue = getValue(maxValue, DEFAULT_MAX);
-		
-		if (!onGroup && intMinValue >= intMaxValue) {
-			throw InvalidAttributeException.fromConstraint("progressbar", "minValue", "less than [maxValue] attribute value");
-		}
-		if (!onGroup && intValue < intMinValue) {
-			throw InvalidAttributeException.fromConstraint("progressbar", "value", "greater or equal to [minValue] attribute value");
-		}
-		if (!onGroup && intValue > intMaxValue) {
-			throw InvalidAttributeException.fromConstraint("progressbar", "value", "less or equal to [maxValue] attribute value");
-		}
-		return Math.abs(intMaxValue - intMinValue);
-	}
+        if (onInterval != null) {
+            appendDocScript(getIntervalScript());
+        }
 
-	private StringBuilder getIntervalScript() {
-		Progress jsonProgress = new Progress();
-		jsonProgress.setId(id);
-		jsonProgress.setMethod("get");
-		jsonProgress.setRequest(ajax);
-		jsonProgress.setInterval(interval);
-		jsonProgress.setOnInterval(onInterval);
-		return new StringBuilder(JSMART_PROGRESSBAR.format(getJsonValue(jsonProgress)));
-	}
+        if (progress != null) {
+            return progress.addTag(bar).addTag(hidden);
+        } else {
+            Set set = new Set();
+            return set.addTag(bar).addTag(hidden);
+        }
+    }
 
-	private Integer getValue(String value, Integer defaultValue) {
-		Object obj = getTagValue(value);
+    Integer initIntValues(boolean onGroup) throws JspException {
+        intMinValue = getValue(minValue, DEFAULT_MIN);
+        intValue = getValue(value, intMinValue);
+        intMaxValue = getValue(maxValue, DEFAULT_MAX);
 
-		if (obj instanceof Number) {
-			return ((Number) obj).intValue();
-		} else if (obj instanceof String) {
-			return Integer.parseInt((String) obj);
-		} else {
-			return defaultValue;
-		}
-	}
+        if (!onGroup && intMinValue >= intMaxValue) {
+            throw InvalidAttributeException.fromConstraint("progressbar", "minValue", "less than [maxValue] attribute value");
+        }
+        if (!onGroup && intValue < intMinValue) {
+            throw InvalidAttributeException.fromConstraint("progressbar", "value", "greater or equal to [minValue] attribute value");
+        }
+        if (!onGroup && intValue > intMaxValue) {
+            throw InvalidAttributeException.fromConstraint("progressbar", "value", "less or equal to [maxValue] attribute value");
+        }
+        return Math.abs(intMaxValue - intMinValue);
+    }
 
-	private String getProgressBarLook(String lookVal) {
-		String progressBarLook = null;
+    private StringBuilder getIntervalScript() {
+        Progress jsonProgress = new Progress();
+        jsonProgress.setId(id);
+        jsonProgress.setMethod("get");
+        jsonProgress.setRequest(ajax);
+        jsonProgress.setInterval(interval);
+        jsonProgress.setOnInterval(onInterval);
+        return new StringBuilder(JSMART_PROGRESSBAR.format(getJsonValue(jsonProgress)));
+    }
 
-		if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
-			progressBarLook = Bootstrap.PROGRESS_BAR_SUCCESS;
-		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
-			progressBarLook = Bootstrap.PROGRESS_BAR_INFO;
-		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
-			progressBarLook = Bootstrap.PROGRESS_BAR_WARNING;
-		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
-			progressBarLook = Bootstrap.PROGRESS_BAR_DANGER;
-		}
-		return progressBarLook;
-	}
+    private Integer getValue(String value, Integer defaultValue) {
+        Object obj = getTagValue(value);
 
-	void setRelation(Integer relation) {
-		this.relation = relation;
-	}
+        if (obj instanceof Number) {
+            return ((Number) obj).intValue();
+        } else if (obj instanceof String) {
+            return Integer.parseInt((String) obj);
+        } else {
+            return defaultValue;
+        }
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    private String getProgressBarLook(String lookVal) {
+        String progressBarLook = null;
 
-	public void setMaxValue(String maxValue) {
-		this.maxValue = maxValue;
-	}
+        if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+            progressBarLook = Bootstrap.PROGRESS_BAR_SUCCESS;
+        } else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+            progressBarLook = Bootstrap.PROGRESS_BAR_INFO;
+        } else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+            progressBarLook = Bootstrap.PROGRESS_BAR_WARNING;
+        } else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+            progressBarLook = Bootstrap.PROGRESS_BAR_DANGER;
+        }
+        return progressBarLook;
+    }
 
-	public void setMinValue(String minValue) {
-		this.minValue = minValue;
-	}
+    void setRelation(Integer relation) {
+        this.relation = relation;
+    }
 
-	public void setInterval(Integer interval) {
-		this.interval = interval;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setOnInterval(String onInterval) {
-		this.onInterval = onInterval;
-	}
+    public void setMaxValue(String maxValue) {
+        this.maxValue = maxValue;
+    }
 
-	public void setWithLabel(boolean withLabel) {
-		this.withLabel = withLabel;
-	}
+    public void setMinValue(String minValue) {
+        this.minValue = minValue;
+    }
 
-	public void setStriped(boolean striped) {
-		this.striped = striped;
-	}
+    public void setInterval(Integer interval) {
+        this.interval = interval;
+    }
 
-	public void setAnimated(boolean animated) {
-		this.animated = animated;
-	}
+    public void setOnInterval(String onInterval) {
+        this.onInterval = onInterval;
+    }
 
-	public void setLook(String look) {
-		this.look = look;
-	}
+    public void setWithLabel(boolean withLabel) {
+        this.withLabel = withLabel;
+    }
 
-	public void setMinWidth(String minWidth) {
-		this.minWidth = minWidth;
-	}
+    public void setStriped(boolean striped) {
+        this.striped = striped;
+    }
+
+    public void setAnimated(boolean animated) {
+        this.animated = animated;
+    }
+
+    public void setLook(String look) {
+        this.look = look;
+    }
+
+    public void setMinWidth(String minWidth) {
+        this.minWidth = minWidth;
+    }
 
 }

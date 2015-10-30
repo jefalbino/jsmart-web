@@ -38,144 +38,144 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class AlertTagHandler extends TagHandler {
 
-	private boolean dismissible = true;
+    private boolean dismissible = true;
 
-	private String onHide;
-	
-	private HeaderTagHandler header;
+    private String onHide;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    private HeaderTagHandler header;
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		Div wrap = new Div();
-		wrap.addAttribute("id", id + "-wrap")
-			.addAttribute("role", "alert-wrap");
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		if (onHide != null) {
-			appendDocScript(getBindFunction(id, "close.bs.alert", new StringBuilder(onHide)));
-		}
+        Div wrap = new Div();
+        wrap.addAttribute("id", id + "-wrap")
+            .addAttribute("role", "alert-wrap");
 
-		List<WebAlert> alerts = getAlerts(id);
-		if (alerts == null || alerts.isEmpty()) {
-			wrap.addAttribute("style", "display: none;");
-			return wrap;
-		}
+        if (onHide != null) {
+            appendDocScript(getBindFunction(id, "close.bs.alert", new StringBuilder(onHide)));
+        }
 
-		Div div = new Div();
-		div.addAttribute("id", id)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.ALERT)
-			.addAttribute("class", Bootstrap.FADE)
-			.addAttribute("class", Bootstrap.IN)
-			.addAttribute("role", "alert");
+        List<WebAlert> alerts = getAlerts(id);
+        if (alerts == null || alerts.isEmpty()) {
+            wrap.addAttribute("style", "display: none;");
+            return wrap;
+        }
 
-		if (dismissible) {
-			div.addAttribute("class", Bootstrap.ALERT_DISMISSIBLE);
-			
-			Button button = new Button();
-			button.addAttribute("type", "button")
-				.addAttribute("class", Bootstrap.CLOSE)
-				.addAttribute("data-dismiss", "alert")
-				.addAttribute("aria-label", "close");
-			
-			Span span = new Span();
-			span.addAttribute("aria-hidden", "true").addText("x");
-			
-			button.addTag(span);
-			div.addTag(button);
-		}
+        Div div = new Div();
+        div.addAttribute("id", id)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", Bootstrap.ALERT)
+            .addAttribute("class", Bootstrap.FADE)
+            .addAttribute("class", Bootstrap.IN)
+            .addAttribute("role", "alert");
 
-		// Add type, title and icon for the first fixed alert
-		WebAlert firstAlert = alerts.get(0);
-		
-		if (WebAlert.AlertType.INFO.equals(firstAlert.getType())) {
-			div.addAttribute("class", Bootstrap.ALERT_INFO);
+        if (dismissible) {
+            div.addAttribute("class", Bootstrap.ALERT_DISMISSIBLE);
 
-		} else if (WebAlert.AlertType.SUCCESS.equals(firstAlert.getType())) {
-			div.addAttribute("class", Bootstrap.ALERT_SUCCESS);
-			
-		} else if (WebAlert.AlertType.WARNING.equals(firstAlert.getType())) {
-			div.addAttribute("class", Bootstrap.ALERT_WARNING);
+            Button button = new Button();
+            button.addAttribute("type", "button")
+                .addAttribute("class", Bootstrap.CLOSE)
+                .addAttribute("data-dismiss", "alert")
+                .addAttribute("aria-label", "close");
 
-		} else if (WebAlert.AlertType.DANGER.equals(firstAlert.getType())) {
-			div.addAttribute("class", Bootstrap.ALERT_DANGER);
-		}
+            Span span = new Span();
+            span.addAttribute("aria-hidden", "true").addText("x");
 
-		// At last add the custom style
-		div.addAttribute("class", getTagValue(styleClass));
+            button.addTag(span);
+            div.addTag(button);
+        }
 
-		if (firstAlert.getTitleIcon() != null) {
-			header = new HeaderTagHandler();
-			header.setParent(this);
+        // Add type, title and icon for the first fixed alert
+        WebAlert firstAlert = alerts.get(0);
 
-			IconTagHandler iconTag = new IconTagHandler();
-			iconTag.setName(firstAlert.getTitleIcon());
-			header.addIconTag(iconTag);
-		}
+        if (WebAlert.AlertType.INFO.equals(firstAlert.getType())) {
+            div.addAttribute("class", Bootstrap.ALERT_INFO);
 
-		if (firstAlert.getTitle() != null) {
-			if (header == null) {
-				header = new HeaderTagHandler();
-				header.setParent(this);
-			}
-			header.setTitle(firstAlert.getTitle()); 
-		}
+        } else if (WebAlert.AlertType.SUCCESS.equals(firstAlert.getType())) {
+            div.addAttribute("class", Bootstrap.ALERT_SUCCESS);
 
-		if (header != null) {
-			div.addTag(header.executeTag());
-		}
+        } else if (WebAlert.AlertType.WARNING.equals(firstAlert.getType())) {
+            div.addAttribute("class", Bootstrap.ALERT_WARNING);
 
-		// Add messages to the alert
-		for (WebAlert alert : alerts) {
-			P p = new P();
+        } else if (WebAlert.AlertType.DANGER.equals(firstAlert.getType())) {
+            div.addAttribute("class", Bootstrap.ALERT_DANGER);
+        }
 
-			if (alert.getMessageUrl() != null) {
-				A a = new A();
-				a.addAttribute("href", alert.getMessageUrl())
-					.addAttribute("class", Bootstrap.ALERT_LINK)
-					.addText(alert.getMessage());
-				p.addTag(a);
-			} else {
-				p.addText(alert.getMessage());
-			}
-			div.addTag(p);
-		}
+        // At last add the custom style
+        div.addAttribute("class", getTagValue(styleClass));
 
-		if (!sw.toString().isEmpty()) {
-			P p = new P();
-			p.addText(sw);
-			div.addTag(p);
-		}
+        if (firstAlert.getTitleIcon() != null) {
+            header = new HeaderTagHandler();
+            header.setParent(this);
 
-		if (WebContext.isAjaxRequest()) {
-			wrap.addAttribute("alert-show", "true");
-		}
+            IconTagHandler iconTag = new IconTagHandler();
+            iconTag.setName(firstAlert.getTitleIcon());
+            header.addIconTag(iconTag);
+        }
 
-		wrap.addTag(div);
-		return wrap;
-	}
+        if (firstAlert.getTitle() != null) {
+            if (header == null) {
+                header = new HeaderTagHandler();
+                header.setParent(this);
+            }
+            header.setTitle(firstAlert.getTitle());
+        }
 
-	void setHeader(HeaderTagHandler header) {
-		this.header = header;
-	}
+        if (header != null) {
+            div.addTag(header.executeTag());
+        }
 
-	public void setDismissible(boolean dismissible) {
-		this.dismissible = dismissible;
-	}
+        // Add messages to the alert
+        for (WebAlert alert : alerts) {
+            P p = new P();
 
-	public void setOnHide(String onHide) {
-		this.onHide = onHide;
-	}
+            if (alert.getMessageUrl() != null) {
+                A a = new A();
+                a.addAttribute("href", alert.getMessageUrl())
+                    .addAttribute("class", Bootstrap.ALERT_LINK)
+                    .addText(alert.getMessage());
+                p.addTag(a);
+            } else {
+                p.addText(alert.getMessage());
+            }
+            div.addTag(p);
+        }
+
+        if (!sw.toString().isEmpty()) {
+            P p = new P();
+            p.addText(sw);
+            div.addTag(p);
+        }
+
+        if (WebContext.isAjaxRequest()) {
+            wrap.addAttribute("alert-show", "true");
+        }
+
+        wrap.addTag(div);
+        return wrap;
+    }
+
+    void setHeader(HeaderTagHandler header) {
+        this.header = header;
+    }
+
+    public void setDismissible(boolean dismissible) {
+        this.dismissible = dismissible;
+    }
+
+    public void setOnHide(String onHide) {
+        this.onHide = onHide;
+    }
 
 }

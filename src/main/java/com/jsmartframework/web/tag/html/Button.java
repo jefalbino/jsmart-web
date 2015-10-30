@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Button extends Tag {
 
-	public Button() {
-		super("button");
-	}
+    public Button() {
+        super("button");
+    }
 }

@@ -20,43 +20,43 @@ package com.jsmartframework.web.tag.type;
 
 public enum Size {
 
-	JUSTIFIED,
-	LARGE,
-	SMALL,
-	XSMALL;
-	
-	public static boolean validate(String size) {
-		try {
-			Size.valueOf(size.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	public static boolean validateSmallLarge(String size) {
-		return LARGE.equalsIgnoreCase(size) || SMALL.equalsIgnoreCase(size);
-	}
+    JUSTIFIED,
+    LARGE,
+    SMALL,
+    XSMALL;
 
-	public static String[] getValues() {
-		int index = 0;
-		Size[] sizes = values();
-		String[] values = new String[sizes.length];
+    public static boolean validate(String size) {
+        try {
+            Size.valueOf(size.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-		for (Size size : sizes) {
-			values[index++] = size.name().toLowerCase();
-		}
-		return values;
-	}
-	
-	public static String[] getSmallLargeValues() {
-		String[] values = new String[2];
-		values[0] = SMALL.name().toLowerCase();
-		values[1] = LARGE.name().toLowerCase();
-		return values;
-	}
-	
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+    public static boolean validateSmallLarge(String size) {
+        return LARGE.equalsIgnoreCase(size) || SMALL.equalsIgnoreCase(size);
+    }
+
+    public static String[] getValues() {
+        int index = 0;
+        Size[] sizes = values();
+        String[] values = new String[sizes.length];
+
+        for (Size size : sizes) {
+            values[index++] = size.name().toLowerCase();
+        }
+        return values;
+    }
+
+    public static String[] getSmallLargeValues() {
+        String[] values = new String[2];
+        values[0] = SMALL.name().toLowerCase();
+        values[1] = LARGE.name().toLowerCase();
+        return values;
+    }
+
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 }

@@ -35,67 +35,67 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspTag;
 
 public final class FormatTagHandler extends TagHandler {
-	
-	private String type;
 
-	private String regex;
+    private String type;
 
-	@Override
-	public void validateTag() throws JspException {
-		JspTag parent = getParent();
+    private String regex;
 
-		if (!(parent instanceof DateTagHandler) && !Type.validateFormat(type)) {
-			throw InvalidAttributeException.fromPossibleValues("format", "type", Type.getFormatValues());
-		}
-	}
-	
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
+    @Override
+    public void validateTag() throws JspException {
+        JspTag parent = getParent();
 
-		if (parent instanceof OutputTagHandler) {
-			((OutputTagHandler) parent).setFormat(this);
+        if (!(parent instanceof DateTagHandler) && !Type.validateFormat(type)) {
+            throw InvalidAttributeException.fromPossibleValues("format", "type", Type.getFormatValues());
+        }
+    }
 
-		} else if (parent instanceof DateTagHandler) {
-			((DateTagHandler) parent).setFormat(this);
-		}
-		return false;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
+        if (parent instanceof OutputTagHandler) {
+            ((OutputTagHandler) parent).setFormat(this);
 
-	String formatValue(final Object value) {
-		if (value != null) {
-			if (Type.NUMBER.equalsIgnoreCase(type)) {
-				return new DecimalFormat(regex).format(value);
-						
-			} else if (Type.DATE.equalsIgnoreCase(type)) {
-				if (value instanceof Date) {
-					return new SimpleDateFormat(regex, getRequest().getLocale()).format(value);
-	
-				} else if (value instanceof DateTime) {
-					return ((DateTime) value).toString(DateTimeFormat.forPattern(regex).withLocale(getRequest().getLocale()));
-				}
-			}
-			return value.toString();
-		}
-		return null;
-	}
+        } else if (parent instanceof DateTagHandler) {
+            ((DateTagHandler) parent).setFormat(this);
+        }
+        return false;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
-	
-	String getRegex() {
-		return regex;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
-	public void setRegex(String regex) {
-		this.regex = regex;
-	}
+    String formatValue(final Object value) {
+        if (value != null) {
+            if (Type.NUMBER.equalsIgnoreCase(type)) {
+                return new DecimalFormat(regex).format(value);
+
+            } else if (Type.DATE.equalsIgnoreCase(type)) {
+                if (value instanceof Date) {
+                    return new SimpleDateFormat(regex, getRequest().getLocale()).format(value);
+
+                } else if (value instanceof DateTime) {
+                    return ((DateTime) value).toString(DateTimeFormat.forPattern(regex).withLocale(getRequest().getLocale()));
+                }
+            }
+            return value.toString();
+        }
+        return null;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    String getRegex() {
+        return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
+    }
 
 }

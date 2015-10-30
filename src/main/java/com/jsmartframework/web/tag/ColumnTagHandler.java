@@ -31,65 +31,65 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class ColumnTagHandler extends TagHandler {
 
-	private String label;
+    private String label;
 
-	private String sortBy;
+    private String sortBy;
 
-	private String filterBy;
+    private String filterBy;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TableTagHandler) {
-			((TableTagHandler) parent).addColumn(this);
-		}
-		return false;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof TableTagHandler) {
+            ((TableTagHandler) parent).addColumn(this);
+        }
+        return false;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		Td td = new Td();
-		td.addAttribute("id", id)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass))
+        Td td = new Td();
+        td.addAttribute("id", id)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass))
                 .addText(sw.toString());
-		return td;
-	}
+        return td;
+    }
 
-	String getLabel() {
-		return label;
-	}
+    String getLabel() {
+        return label;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	String getSortBy() {
-		return sortBy;
-	}
+    String getSortBy() {
+        return sortBy;
+    }
 
-	public void setSortBy(String sortBy) {
-		this.sortBy = sortBy;
-	}
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
+    }
 
-	String getFilterBy() {
-		return filterBy;
-	}
+    String getFilterBy() {
+        return filterBy;
+    }
 
-	public void setFilterBy(String filterBy) {
-		this.filterBy = filterBy;
-	}
+    public void setFilterBy(String filterBy) {
+        this.filterBy = filterBy;
+    }
 
 }

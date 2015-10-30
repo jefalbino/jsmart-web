@@ -39,15 +39,15 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class RestTagHandler extends TagHandler {
 
-	private String endpoint;
+    private String endpoint;
 
     private String method;
 
-	private String contentType;
+    private String contentType;
 
-	private Boolean cors;
+    private Boolean cors;
 
-	private String jsonpCallback;
+    private String jsonpCallback;
 
     private String bodyRoot;
 
@@ -61,24 +61,24 @@ public final class RestTagHandler extends TagHandler {
         beforeRest = new ArrayList<Tag>();
     }
 
-	@Override
-	public void validateTag() throws JspException {
+    @Override
+    public void validateTag() throws JspException {
         if (method != null && !Method.validate(method)) {
             throw InvalidAttributeException.fromPossibleValues("rest", "method", Method.getValues());
         }
-		if (contentType != null && !ContentType.validate(contentType)) {
+        if (contentType != null && !ContentType.validate(contentType)) {
             throw InvalidAttributeException.fromPossibleValues("rest", "contentType", ContentType.getValues());
-		}
+        }
         if (position != null && !Position.validate(position)) {
             throw InvalidAttributeException.fromPossibleValues("rest", "position", Position.getValues());
         }
         if (size != null && !Size.validateSmallLarge(size)) {
             throw InvalidAttributeException.fromPossibleValues("rest", "size", Size.getSmallLargeValues());
         }
-	}
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
         StringWriter sw = new StringWriter();
         JspFragment body = getJspBody();
@@ -116,8 +116,8 @@ public final class RestTagHandler extends TagHandler {
             set.addTag(rest);
             return set;
         }
-		return rest;
-	}
+        return rest;
+    }
 
     void addBeforeRestTag(Tag tag) {
         this.beforeRest.add(tag);

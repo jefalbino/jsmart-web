@@ -41,6 +41,11 @@ public @interface AuthBean {
     AuthType type() default AuthType.REQUEST;
 
     /**
+     *
+     */
+    String secretKey() default "gtDw9AVj3jla8hIT";
+
+    /**
      * The mapped path on configuration file to specify the login
      * path of the application case user is not authenticated.
      */

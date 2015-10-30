@@ -20,27 +20,27 @@ package com.jsmartframework.web.tag.html;
 
 public class DocScript extends Tag {
 
-	public DocScript() {
-		super("script");
-	}
+    public DocScript() {
+        super("script");
+    }
 
-	public StringBuilder getHtml() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<").append(name);
+    public StringBuilder getHtml() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<").append(name);
 
-		for (String attr : attributes.keySet()) {
-			builder.append(" ").append(attr).append("=\"").append(attributes.get(attr)).append("\"");
-		}
-		builder.append(">");
+        for (String attr : attributes.keySet()) {
+            builder.append(" ").append(attr).append("=\"").append(attributes.get(attr)).append("\"");
+        }
+        builder.append(">");
 
-		builder.append("$(document).ready(function() {");
+        builder.append("$(document).ready(function() {");
 
-		for (Object obj : objects) {
-			builder.append(obj);
-		}
+        for (Object obj : objects) {
+            builder.append(obj);
+        }
 
-		builder.append("});");
-		builder.append("</").append(name).append(">");
-		return builder;
-	}
+        builder.append("});");
+        builder.append("</").append(name).append(">");
+        return builder;
+    }
 }

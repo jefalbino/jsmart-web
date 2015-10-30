@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class TextArea extends Tag {
 
-	public TextArea() {
-		super("textarea");
-	}
+    public TextArea() {
+        super("textarea");
+    }
 }

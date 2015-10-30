@@ -37,89 +37,89 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 public final class InputTagHandler extends TagHandler {
-	
-	private String type;
 
-	private Integer length;
+    private String type;
 
-	private String size;
+    private Integer length;
 
-	private String value;
+    private String size;
 
-	private boolean readOnly;
+    private String value;
 
-	private boolean autoFocus;
+    private boolean readOnly;
 
-	private Integer tabIndex;
+    private boolean autoFocus;
 
-	private String mask;
+    private Integer tabIndex;
 
-	private String placeholder;
+    private String mask;
 
-	private String label;
-	
-	private String leftAddOn;
-	
-	private String rightAddOn;
+    private String placeholder;
 
-	private String pattern;
+    private String label;
 
-	private Integer minValue;
+    private String leftAddOn;
 
-	private Integer maxValue;
+    private String rightAddOn;
 
-	private Integer stepValue;
+    private String pattern;
 
-	private List<TagHandler> childAddOns;
+    private Integer minValue;
+
+    private Integer maxValue;
+
+    private Integer stepValue;
+
+    private List<TagHandler> childAddOns;
 
     public InputTagHandler() {
         childAddOns = new ArrayList<TagHandler>(2);
     }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (type != null && !Type.validateInput(type)) {
-			throw InvalidAttributeException.fromPossibleValues("input", "type", Type.getInputValues());
-		}
-		if (maxValue != null && minValue == null) {
-			throw InvalidAttributeException.fromConstraint("input", "minValue", "must be specified case maxValue is specified");
-		}
-		if (minValue != null && maxValue == null) {
-			throw InvalidAttributeException.fromConstraint("input", "maxValue", "specified case minValue is specified");
-		}
-		if (stepValue != null && stepValue <= 0) {
-			throw InvalidAttributeException.fromConstraint("input", "stepValue", "greater than 0");
-		}
-		if (maxValue != null && minValue != null && minValue >= maxValue) {
-			throw InvalidAttributeException.fromConstraint("input", "minValue", "less than maxValue");
-		}
-		if (maxValue != null && minValue != null && stepValue != null && stepValue > (maxValue - minValue)) {
-			throw InvalidAttributeException.fromConstraint("input", "stepValue", "less than the difference of maxValue and minValue");
-		}
-		if (size != null && !Size.validateSmallLarge(size)) {
-			throw InvalidAttributeException.fromPossibleValues("input", "size", Size.getSmallLargeValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (type != null && !Type.validateInput(type)) {
+            throw InvalidAttributeException.fromPossibleValues("input", "type", Type.getInputValues());
+        }
+        if (maxValue != null && minValue == null) {
+            throw InvalidAttributeException.fromConstraint("input", "minValue", "must be specified case maxValue is specified");
+        }
+        if (minValue != null && maxValue == null) {
+            throw InvalidAttributeException.fromConstraint("input", "maxValue", "specified case minValue is specified");
+        }
+        if (stepValue != null && stepValue <= 0) {
+            throw InvalidAttributeException.fromConstraint("input", "stepValue", "greater than 0");
+        }
+        if (maxValue != null && minValue != null && minValue >= maxValue) {
+            throw InvalidAttributeException.fromConstraint("input", "minValue", "less than maxValue");
+        }
+        if (maxValue != null && minValue != null && stepValue != null && stepValue > (maxValue - minValue)) {
+            throw InvalidAttributeException.fromConstraint("input", "stepValue", "less than the difference of maxValue and minValue");
+        }
+        if (size != null && !Size.validateSmallLarge(size)) {
+            throw InvalidAttributeException.fromPossibleValues("input", "size", Size.getSmallLargeValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		
-		setRandomId("input");
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		Div formGroup = null;
-		Div inputGroup = null;
-		
-		JspTag parent = getParent();
-		if (!Type.HIDDEN.equalsIgnoreCase(type) && (label != null || parent instanceof FormTagHandler
+        setRandomId("input");
+
+        Div formGroup = null;
+        Div inputGroup = null;
+
+        JspTag parent = getParent();
+        if (!Type.HIDDEN.equalsIgnoreCase(type) && (label != null || parent instanceof FormTagHandler
                 || parent instanceof RestTagHandler)) {
-			formGroup = new Div();
-			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
+            formGroup = new Div();
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
 
             String size = null;
             if (parent instanceof FormTagHandler) {
@@ -132,32 +132,32 @@ public final class InputTagHandler extends TagHandler {
             } else if (Size.SMALL.equalsIgnoreCase(size)) {
                 formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
             }
-		}
+        }
 
-		if (!Type.HIDDEN.equalsIgnoreCase(type) && label != null) {
-			Label labelTag = new Label();
-			labelTag.addAttribute("for", id)
-					.addAttribute("class", Bootstrap.LABEL_CONTROL)
-					.addText(getTagValue(label));
-			formGroup.addTag(labelTag);
-		}
+        if (!Type.HIDDEN.equalsIgnoreCase(type) && label != null) {
+            Label labelTag = new Label();
+            labelTag.addAttribute("for", id)
+                    .addAttribute("class", Bootstrap.LABEL_CONTROL)
+                    .addText(getTagValue(label));
+            formGroup.addTag(labelTag);
+        }
 
-		if (!Type.HIDDEN.equalsIgnoreCase(type) && (leftAddOn != null || rightAddOn != null)) {
-			inputGroup = new Div();
-			inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
+        if (!Type.HIDDEN.equalsIgnoreCase(type) && (leftAddOn != null || rightAddOn != null)) {
+            inputGroup = new Div();
+            inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP);
 
-			if (Size.SMALL.equalsIgnoreCase(size)) {
-				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
-			} else if (Size.LARGE.equalsIgnoreCase(size)) {
-				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
-			}
+            if (Size.SMALL.equalsIgnoreCase(size)) {
+                inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
+            } else if (Size.LARGE.equalsIgnoreCase(size)) {
+                inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
+            }
 
-			if (formGroup != null) {
-				formGroup.addTag(inputGroup);
-			}
-		}
-		
-		if (!Type.HIDDEN.equalsIgnoreCase(type) && leftAddOn != null) {
+            if (formGroup != null) {
+                formGroup.addTag(inputGroup);
+            }
+        }
+
+        if (!Type.HIDDEN.equalsIgnoreCase(type) && leftAddOn != null) {
             boolean foundAddOn = false;
 
             for (int i = 0; i < childAddOns.size(); i++) {
@@ -167,70 +167,70 @@ public final class InputTagHandler extends TagHandler {
                     break;
                 }
             }
-			if (!foundAddOn) {
-				Div div = new Div();
-				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText(getTagValue(leftAddOn));
-				inputGroup.addTag(div);
-			}
-		}
+            if (!foundAddOn) {
+                Div div = new Div();
+                div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+                    .addText(getTagValue(leftAddOn));
+                inputGroup.addTag(div);
+            }
+        }
 
         String name = getTagName(J_TAG, value);
 
-		Input input = new Input();
-		input.addAttribute("name", name + (readOnly ? EL_PARAM_READ_ONLY : ""))
-			 .addAttribute("type", type != null ? type : Type.TEXT.name().toLowerCase())
-			 .addAttribute("class", Bootstrap.FORM_CONTROL)
-			 .addAttribute("tabindex", tabIndex)
-			 .addAttribute("maxlength", length)
-			 .addAttribute("readonly", readOnly ? readOnly : null)
-			 .addAttribute("disabled", isDisabled() ? "disabled" : null)
-			 .addAttribute("placeholder", getTagValue(placeholder))
-			 .addAttribute("datatype", type != null ? type : Type.TEXT.name().toLowerCase())
-			 .addAttribute("pattern", pattern)
-			 .addAttribute("autofocus", autoFocus ? autoFocus : null)
-			 .addAttribute("data-mask", mask);
-		
-		appendRefId(input, id);
-		
-		if (Size.SMALL.equalsIgnoreCase(size)) {
-			input.addAttribute("class", Bootstrap.INPUT_SMALL);
-		} else if (Size.LARGE.equalsIgnoreCase(size)) {
-			input.addAttribute("class", Bootstrap.INPUT_LARGE);
-		}
-		
-		if (Type.NUMBER.equalsIgnoreCase(type) || Type.RANGE.equalsIgnoreCase(type)) {
-			input.addAttribute("min", minValue)
-				 .addAttribute("max", maxValue)
-				 .addAttribute("step", stepValue);
-		}
-		
-		// Add the style class at last
-		if (inputGroup != null) {
-			inputGroup.addAttribute("style", getTagValue(style))
-				.addAttribute("class", getTagValue(styleClass));
-		} else {
-			input.addAttribute("style", getTagValue(style))
-				.addAttribute("class", getTagValue(styleClass));
-		}
+        Input input = new Input();
+        input.addAttribute("name", name + (readOnly ? EL_PARAM_READ_ONLY : ""))
+             .addAttribute("type", type != null ? type : Type.TEXT.name().toLowerCase())
+             .addAttribute("class", Bootstrap.FORM_CONTROL)
+             .addAttribute("tabindex", tabIndex)
+             .addAttribute("maxlength", length)
+             .addAttribute("readonly", readOnly ? readOnly : null)
+             .addAttribute("disabled", isDisabled() ? "disabled" : null)
+             .addAttribute("placeholder", getTagValue(placeholder))
+             .addAttribute("datatype", type != null ? type : Type.TEXT.name().toLowerCase())
+             .addAttribute("pattern", pattern)
+             .addAttribute("autofocus", autoFocus ? autoFocus : null)
+             .addAttribute("data-mask", mask);
 
-		if (!Type.PASSWORD.equalsIgnoreCase(type)) {
-			input.addAttribute("value", getTagValue(value));
-		} else {
-			setTagValue(value, null);
-		}
+        appendRefId(input, id);
+
+        if (Size.SMALL.equalsIgnoreCase(size)) {
+            input.addAttribute("class", Bootstrap.INPUT_SMALL);
+        } else if (Size.LARGE.equalsIgnoreCase(size)) {
+            input.addAttribute("class", Bootstrap.INPUT_LARGE);
+        }
+
+        if (Type.NUMBER.equalsIgnoreCase(type) || Type.RANGE.equalsIgnoreCase(type)) {
+            input.addAttribute("min", minValue)
+                 .addAttribute("max", maxValue)
+                 .addAttribute("step", stepValue);
+        }
+
+        // Add the style class at last
+        if (inputGroup != null) {
+            inputGroup.addAttribute("style", getTagValue(style))
+                .addAttribute("class", getTagValue(styleClass));
+        } else {
+            input.addAttribute("style", getTagValue(style))
+                .addAttribute("class", getTagValue(styleClass));
+        }
+
+        if (!Type.PASSWORD.equalsIgnoreCase(type)) {
+            input.addAttribute("value", getTagValue(value));
+        } else {
+            setTagValue(value, null);
+        }
 
         appendValidator(input);
-		appendRest(input, name);
-		appendEvent(input);
+        appendRest(input, name);
+        appendEvent(input);
 
-		if (inputGroup != null) {
-			inputGroup.addTag(input);
-		} else if (formGroup != null) {
-			formGroup.addTag(input);
-		}
+        if (inputGroup != null) {
+            inputGroup.addTag(input);
+        } else if (formGroup != null) {
+            formGroup.addTag(input);
+        }
 
-		if (!Type.HIDDEN.equalsIgnoreCase(type) && rightAddOn != null) {
+        if (!Type.HIDDEN.equalsIgnoreCase(type) && rightAddOn != null) {
             boolean foundAddOn = false;
 
             for (int i = 0; i < childAddOns.size(); i++) {
@@ -240,99 +240,99 @@ public final class InputTagHandler extends TagHandler {
                     break;
                 }
             }
-			if (!foundAddOn) {
-				Div div = new Div();
-				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText(getTagValue(rightAddOn));
-				inputGroup.addTag(div);
-			}
-		}
+            if (!foundAddOn) {
+                Div div = new Div();
+                div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+                    .addText(getTagValue(rightAddOn));
+                inputGroup.addTag(div);
+            }
+        }
 
-		appendAjax(id);
-		appendBind(id);
-		
-		if (formGroup != null) {
-			appendTooltip(formGroup);
-			appendPopOver(formGroup);
+        appendAjax(id);
+        appendBind(id);
 
-		} else if (inputGroup != null) {
-			appendTooltip(inputGroup);
-			appendPopOver(inputGroup);
+        if (formGroup != null) {
+            appendTooltip(formGroup);
+            appendPopOver(formGroup);
 
-		} else if (!Type.HIDDEN.equalsIgnoreCase(type)) {
-			appendTooltip(input);
-			appendPopOver(input);
-		}
+        } else if (inputGroup != null) {
+            appendTooltip(inputGroup);
+            appendPopOver(inputGroup);
 
-		return formGroup != null ? formGroup : inputGroup != null ? inputGroup : input;
-	}
+        } else if (!Type.HIDDEN.equalsIgnoreCase(type)) {
+            appendTooltip(input);
+            appendPopOver(input);
+        }
 
-	void addChildAddOn(TagHandler childAddOn) {
-		this.childAddOns.add(childAddOn);
-	}
+        return formGroup != null ? formGroup : inputGroup != null ? inputGroup : input;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    void addChildAddOn(TagHandler childAddOn) {
+        this.childAddOns.add(childAddOn);
+    }
 
-	public void setLength(Integer length) {
-		this.length = length;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setLength(Integer length) {
+        this.length = length;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setSize(String size) {
+        this.size = size;
+    }
 
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setTabIndex(Integer tabIndex) {
-		this.tabIndex = tabIndex;
-	}
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
 
-	public void setMask(String mask) {
-		this.mask = mask;
-	}
+    public void setTabIndex(Integer tabIndex) {
+        this.tabIndex = tabIndex;
+    }
 
-	public void setPlaceholder(String placeholder) {
-		this.placeholder = placeholder;
-	}
+    public void setMask(String mask) {
+        this.mask = mask;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
 
-	public void setLeftAddOn(String leftAddOn) {
-		this.leftAddOn = leftAddOn;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setRightAddOn(String rightAddOn) {
-		this.rightAddOn = rightAddOn;
-	}
+    public void setLeftAddOn(String leftAddOn) {
+        this.leftAddOn = leftAddOn;
+    }
 
-	public void setPattern(String pattern) {
-		this.pattern = pattern;
-	}
+    public void setRightAddOn(String rightAddOn) {
+        this.rightAddOn = rightAddOn;
+    }
 
-	public void setAutoFocus(boolean autoFocus) {
-		this.autoFocus = autoFocus;
-	}
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
 
-	public void setMinValue(Integer minValue) {
-		this.minValue = minValue;
-	}
+    public void setAutoFocus(boolean autoFocus) {
+        this.autoFocus = autoFocus;
+    }
 
-	public void setMaxValue(Integer maxValue) {
-		this.maxValue = maxValue;
-	}
+    public void setMinValue(Integer minValue) {
+        this.minValue = minValue;
+    }
 
-	public void setStepValue(Integer stepValue) {
-		this.stepValue = stepValue;
-	}
+    public void setMaxValue(Integer maxValue) {
+        this.maxValue = maxValue;
+    }
+
+    public void setStepValue(Integer stepValue) {
+        this.stepValue = stepValue;
+    }
 
 }

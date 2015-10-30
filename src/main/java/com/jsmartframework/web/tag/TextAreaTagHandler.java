@@ -33,121 +33,121 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class TextAreaTagHandler extends TagHandler {
 
-	private Integer rows;
+    private Integer rows;
 
-	private Integer cols;
-	
-	private String label;
+    private Integer cols;
 
-	private Integer length;
+    private String label;
 
-	private String value;
+    private Integer length;
 
-	private boolean readOnly;
+    private String value;
 
-	private String placeholder;
+    private boolean readOnly;
 
-	private Integer tabIndex;
+    private String placeholder;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    private Integer tabIndex;
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		
-		setRandomId("textarea");
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		Div formGroup = null;
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		JspTag parent = getParent();
-		if (label != null || parent instanceof FormTagHandler || parent instanceof RestTagHandler) {
-			formGroup = new Div();
-			formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
-		}
+        setRandomId("textarea");
 
-		if (label != null) {
-			Label labelTag = new Label();
-			labelTag.addAttribute("for", id)
-					.addAttribute("class", Bootstrap.LABEL_CONTROL)
-					.addText(getTagValue(label));
-			formGroup.addTag(labelTag);
-		}
+        Div formGroup = null;
+
+        JspTag parent = getParent();
+        if (label != null || parent instanceof FormTagHandler || parent instanceof RestTagHandler) {
+            formGroup = new Div();
+            formGroup.addAttribute("class", Bootstrap.FORM_GROUP);
+        }
+
+        if (label != null) {
+            Label labelTag = new Label();
+            labelTag.addAttribute("for", id)
+                    .addAttribute("class", Bootstrap.LABEL_CONTROL)
+                    .addText(getTagValue(label));
+            formGroup.addTag(labelTag);
+        }
 
         String name = getTagName(J_TAG, value) + (readOnly ? EL_PARAM_READ_ONLY : "");
 
-		TextArea textArea = new TextArea();
-		textArea.addAttribute("name", name)
-			 .addAttribute("style", getTagValue(style))
-			 .addAttribute("class", Bootstrap.FORM_CONTROL)
-			 .addAttribute("rows", rows)
-			 .addAttribute("cols", cols)
-			 .addAttribute("tabindex", tabIndex)
-			 .addAttribute("maxlength", length)
-			 .addAttribute("readonly", readOnly ? readOnly : null)
-			 .addAttribute("disabled", isDisabled() ? "disabled" : null)
-			 .addAttribute("placeholder", getTagValue(placeholder))
-			 .addText(getTagValue(value));
-		
-		appendRefId(textArea, id);
-		
-		// Add the style class at last
-		textArea.addAttribute("class", getTagValue(styleClass));
+        TextArea textArea = new TextArea();
+        textArea.addAttribute("name", name)
+             .addAttribute("style", getTagValue(style))
+             .addAttribute("class", Bootstrap.FORM_CONTROL)
+             .addAttribute("rows", rows)
+             .addAttribute("cols", cols)
+             .addAttribute("tabindex", tabIndex)
+             .addAttribute("maxlength", length)
+             .addAttribute("readonly", readOnly ? readOnly : null)
+             .addAttribute("disabled", isDisabled() ? "disabled" : null)
+             .addAttribute("placeholder", getTagValue(placeholder))
+             .addText(getTagValue(value));
 
-		appendValidator(textArea);
-		appendRest(textArea, name);
-		appendEvent(textArea);
-		
-		appendTooltip(textArea);
-		appendPopOver(textArea);
+        appendRefId(textArea, id);
 
-		if (formGroup != null) {
-			formGroup.addTag(textArea);
-		}
+        // Add the style class at last
+        textArea.addAttribute("class", getTagValue(styleClass));
 
-		appendAjax(id);
-		appendBind(id);
+        appendValidator(textArea);
+        appendRest(textArea, name);
+        appendEvent(textArea);
 
-		return formGroup != null ? formGroup : textArea;
-	}
+        appendTooltip(textArea);
+        appendPopOver(textArea);
 
-	public void setRows(Integer rows) {
-		this.rows = rows;
-	}
+        if (formGroup != null) {
+            formGroup.addTag(textArea);
+        }
 
-	public void setCols(Integer cols) {
-		this.cols = cols;
-	}
+        appendAjax(id);
+        appendBind(id);
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+        return formGroup != null ? formGroup : textArea;
+    }
 
-	public void setLength(Integer length) {
-		this.length = length;
-	}
+    public void setRows(Integer rows) {
+        this.rows = rows;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setCols(Integer cols) {
+        this.cols = cols;
+    }
 
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setPlaceholder(String placeholder) {
-		this.placeholder = placeholder;
-	}
+    public void setLength(Integer length) {
+        this.length = length;
+    }
 
-	public void setTabIndex(Integer tabIndex) {
-		this.tabIndex = tabIndex;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public void setTabIndex(Integer tabIndex) {
+        this.tabIndex = tabIndex;
+    }
 
 }

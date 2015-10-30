@@ -37,143 +37,143 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class ModalTagHandler extends TagHandler {
 
-	private String opened;
+    private String opened;
 
-	private String size;
+    private String size;
 
-	private boolean backdrop = true;
+    private boolean backdrop = true;
 
-	private boolean fade = true;
+    private boolean fade = true;
 
-	private String onShow;
+    private String onShow;
 
     private String onShown;
 
-	private String onHide;
+    private String onHide;
 
     private String onHidden;
 
-	private HeaderTagHandler header;
+    private HeaderTagHandler header;
 
-	private FooterTagHandler footer;
+    private FooterTagHandler footer;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (size != null && !Size.validateSmallLarge(size)) {
-			throw InvalidAttributeException.fromPossibleValues("modal", "size", Size.getSmallLargeValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (size != null && !Size.validateSmallLarge(size)) {
+            throw InvalidAttributeException.fromPossibleValues("modal", "size", Size.getSmallLargeValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		Div modal = new Div();
-		modal.addAttribute("id", id)
-			.addAttribute("class", Bootstrap.MODAL)
-			.addAttribute("class", fade ? Bootstrap.FADE : null)
-			.addAttribute("tabindex", "-1")
-			.addAttribute("role", "dialog")
-			.addAttribute("aria-hidden", "true")
-			.addAttribute("data-backdrop", !backdrop ? "static" : null);
-		
-		Div modalDialog = new Div();
-		modalDialog.addAttribute("class", Bootstrap.MODAL_DIALOG)
-			.addAttribute("style", getTagValue(style));
-		
-		if (Size.SMALL.equalsIgnoreCase(size)) {
-			modalDialog.addAttribute("class", Bootstrap.MODAL_SMALL);
-		} else if (Size.LARGE.equalsIgnoreCase(size)) {
-			modalDialog.addAttribute("class", Bootstrap.MODAL_LARGE);
-		}
+        Div modal = new Div();
+        modal.addAttribute("id", id)
+            .addAttribute("class", Bootstrap.MODAL)
+            .addAttribute("class", fade ? Bootstrap.FADE : null)
+            .addAttribute("tabindex", "-1")
+            .addAttribute("role", "dialog")
+            .addAttribute("aria-hidden", "true")
+            .addAttribute("data-backdrop", !backdrop ? "static" : null);
 
-		// At last place the custom style
-		modalDialog.addAttribute("class", getTagValue(styleClass));
-		modal.addTag(modalDialog);
-		
-		Div modalContent = new Div();
-		modalContent.addAttribute("class", Bootstrap.MODAL_CONTENT)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass));
-		modalDialog.addTag(modalContent);
+        Div modalDialog = new Div();
+        modalDialog.addAttribute("class", Bootstrap.MODAL_DIALOG)
+            .addAttribute("style", getTagValue(style));
 
-		if (header != null) {
-			Div modalHeader = new Div();
-			modalHeader.addAttribute("class", Bootstrap.MODAL_HEADER);
-			
-			Button button = new Button();
-			button.addAttribute("type", "button")
-				.addAttribute("class", Bootstrap.CLOSE)
-				.addAttribute("data-dismiss", "modal")
-				.addAttribute("aria-label", "Close");
-			
-			Span span = new Span();
-			span.addAttribute("aria-hidden", "true")
-				.addText("&times;");
-			button.addTag(span);
-			modalHeader.addTag(button);
+        if (Size.SMALL.equalsIgnoreCase(size)) {
+            modalDialog.addAttribute("class", Bootstrap.MODAL_SMALL);
+        } else if (Size.LARGE.equalsIgnoreCase(size)) {
+            modalDialog.addAttribute("class", Bootstrap.MODAL_LARGE);
+        }
 
-			modalHeader.addTag(header.executeTag());
-			modalContent.addTag(modalHeader);
-		}
-		
-		Div modalBody = new Div();
-		modalBody.addAttribute("class", Bootstrap.MODAL_BODY)
-			.addText(sw.toString());
-		modalContent.addTag(modalBody);
-		
-		if (footer != null) {
-			modalContent.addTag(footer.executeTag());
-		}
-		
-		if (onShow != null) {
-			appendDocScript(getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
-		}
+        // At last place the custom style
+        modalDialog.addAttribute("class", getTagValue(styleClass));
+        modal.addTag(modalDialog);
+
+        Div modalContent = new Div();
+        modalContent.addAttribute("class", Bootstrap.MODAL_CONTENT)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass));
+        modalDialog.addTag(modalContent);
+
+        if (header != null) {
+            Div modalHeader = new Div();
+            modalHeader.addAttribute("class", Bootstrap.MODAL_HEADER);
+
+            Button button = new Button();
+            button.addAttribute("type", "button")
+                .addAttribute("class", Bootstrap.CLOSE)
+                .addAttribute("data-dismiss", "modal")
+                .addAttribute("aria-label", "Close");
+
+            Span span = new Span();
+            span.addAttribute("aria-hidden", "true")
+                .addText("&times;");
+            button.addTag(span);
+            modalHeader.addTag(button);
+
+            modalHeader.addTag(header.executeTag());
+            modalContent.addTag(modalHeader);
+        }
+
+        Div modalBody = new Div();
+        modalBody.addAttribute("class", Bootstrap.MODAL_BODY)
+            .addText(sw.toString());
+        modalContent.addTag(modalBody);
+
+        if (footer != null) {
+            modalContent.addTag(footer.executeTag());
+        }
+
+        if (onShow != null) {
+            appendDocScript(getBindFunction(id, "show.bs.modal", new StringBuilder(onShow)));
+        }
         if (onShown != null) {
             appendDocScript(getBindFunction(id, "shown.bs.modal", new StringBuilder(onShown)));
         }
-		if (onHide != null) {
-			appendDocScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
-		}
+        if (onHide != null) {
+            appendDocScript(getBindFunction(id, "hide.bs.modal", new StringBuilder(onHide)));
+        }
         if (onHidden != null) {
             appendDocScript(getBindFunction(id, "hidden.bs.modal", new StringBuilder(onHidden)));
         }
 
-		Object openedVal = getTagValue(opened);
-		if (openedVal != null && Boolean.parseBoolean(openedVal.toString())) {
-			appendDocScript(new StringBuilder(JSMART_MODAL.format(id)));
-		}
-		return modal;
-	}
-	
-	void setHeader(HeaderTagHandler header) {
-		this.header = header;
-	}
+        Object openedVal = getTagValue(opened);
+        if (openedVal != null && Boolean.parseBoolean(openedVal.toString())) {
+            appendDocScript(new StringBuilder(JSMART_MODAL.format(id)));
+        }
+        return modal;
+    }
 
-	void setFooter(FooterTagHandler footer) {
-		this.footer = footer;
-	}
+    void setHeader(HeaderTagHandler header) {
+        this.header = header;
+    }
 
-	public void setOpened(String opened) {
-		this.opened = opened;
-	}
+    void setFooter(FooterTagHandler footer) {
+        this.footer = footer;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setOpened(String opened) {
+        this.opened = opened;
+    }
 
-	public void setBackdrop(boolean backdrop) {
-		this.backdrop = backdrop;
-	}
+    public void setSize(String size) {
+        this.size = size;
+    }
 
-	public void setFade(boolean fade) {
-		this.fade = fade;
-	}
+    public void setBackdrop(boolean backdrop) {
+        this.backdrop = backdrop;
+    }
+
+    public void setFade(boolean fade) {
+        this.fade = fade;
+    }
 
     public void setOnShow(String onShow) {
         this.onShow = onShow;

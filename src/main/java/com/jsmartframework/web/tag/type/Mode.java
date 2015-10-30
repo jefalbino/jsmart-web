@@ -20,33 +20,33 @@ package com.jsmartframework.web.tag.type;
 
 public enum Mode {
 
-	YEARS,
-	MONTHS,
-	DAYS,
-	TIMEONLY;
+    YEARS,
+    MONTHS,
+    DAYS,
+    TIMEONLY;
 
-	public static boolean validate(String mode) {
-		try {
-			Mode.valueOf(mode.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    public static boolean validate(String mode) {
+        try {
+            Mode.valueOf(mode.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	public static String[] getValues() {
-		int index = 0;
-		Mode[] modes = values();
-		String[] values = new String[modes.length];
+    public static String[] getValues() {
+        int index = 0;
+        Mode[] modes = values();
+        String[] values = new String[modes.length];
 
-		for (Mode mode : modes) {
-			values[index++] = mode.name().toLowerCase();
-		}
-		return values;
-	}
+        for (Mode mode : modes) {
+            values[index++] = mode.name().toLowerCase();
+        }
+        return values;
+    }
 
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 
 }

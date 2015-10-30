@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Table extends Tag {
 
-	public Table() {
-		super("table");
-	}
+    public Table() {
+        super("table");
+    }
 }

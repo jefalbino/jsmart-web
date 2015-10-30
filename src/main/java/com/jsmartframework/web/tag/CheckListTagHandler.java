@@ -31,47 +31,47 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class CheckListTagHandler extends TagHandler {
 
-	private String values;
+    private String values;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		Object object = getTagValue(values);
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-		if (object instanceof Map) {
-			Map<Object, Object> map = (Map<Object, Object>) object;
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        Object object = getTagValue(values);
 
-			for (Entry<Object, Object> entry : map.entrySet()) {
+        if (object instanceof Map) {
+            Map<Object, Object> map = (Map<Object, Object>) object;
 
-				CheckTagHandler check = new CheckTagHandler();
-				check.setValue(entry.getKey());
-				check.setLabel(entry.getValue() != null ? entry.getValue().toString() : null);
+            for (Entry<Object, Object> entry : map.entrySet()) {
 
-				if (parent instanceof RadioGroupTagHandler) {
-					((RadioGroupTagHandler) parent).addCheck(check);
+                CheckTagHandler check = new CheckTagHandler();
+                check.setValue(entry.getKey());
+                check.setLabel(entry.getValue() != null ? entry.getValue().toString() : null);
 
-				} else if (parent instanceof CheckGroupTagHandler) {
-					((CheckGroupTagHandler) parent).addCheck(check);
-				}
-			}
-		}
-		return false;
-	}
+                if (parent instanceof RadioGroupTagHandler) {
+                    ((RadioGroupTagHandler) parent).addCheck(check);
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
+                } else if (parent instanceof CheckGroupTagHandler) {
+                    ((CheckGroupTagHandler) parent).addCheck(check);
+                }
+            }
+        }
+        return false;
+    }
 
-	public void setValues(String values) {
-		this.values = values;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
+
+    public void setValues(String values) {
+        this.values = values;
+    }
 
 }

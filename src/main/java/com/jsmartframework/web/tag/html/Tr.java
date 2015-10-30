@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Tr extends Tag {
 
-	public Tr() {
-		super("tr");
-	}
+    public Tr() {
+        super("tr");
+    }
 }

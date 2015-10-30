@@ -30,44 +30,44 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class OptionsTagHandler extends TagHandler {
 
-	private String values;
+    private String values;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		Object object = getTagValue(values);
-		
-		if (object instanceof Map) {
-			Map<Object, Object> map = (Map<Object, Object>) object;
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        Object object = getTagValue(values);
 
-			for (Entry<Object, Object> entry : map.entrySet()) {
+        if (object instanceof Map) {
+            Map<Object, Object> map = (Map<Object, Object>) object;
 
-				OptionTagHandler option = new OptionTagHandler();
-				option.setValue(entry.getKey());
-				option.setLabel(entry.getValue() != null ? entry.getValue().toString() : null);
+            for (Entry<Object, Object> entry : map.entrySet()) {
 
-				if (parent instanceof SelectTagHandler) {
-					((SelectTagHandler) parent).addOption(option);
-				}
-			}
-		}
-		return true;
-	}
+                OptionTagHandler option = new OptionTagHandler();
+                option.setValue(entry.getKey());
+                option.setLabel(entry.getValue() != null ? entry.getValue().toString() : null);
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
+                if (parent instanceof SelectTagHandler) {
+                    ((SelectTagHandler) parent).addOption(option);
+                }
+            }
+        }
+        return true;
+    }
 
-	public void setValues(String values) {
-		this.values = values;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
+
+    public void setValues(String values) {
+        this.values = values;
+    }
 
 }

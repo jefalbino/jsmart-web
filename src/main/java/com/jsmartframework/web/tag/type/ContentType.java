@@ -20,30 +20,30 @@ package com.jsmartframework.web.tag.type;
 
 public enum ContentType {
 
-	JSON,
-	XML;
+    JSON,
+    XML;
 
-	public static boolean validate(String contentType) {
-		try {
-			ContentType.valueOf(contentType.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    public static boolean validate(String contentType) {
+        try {
+            ContentType.valueOf(contentType.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	public static String[] getValues() {
-		int index = 0;
-		ContentType[] contentTypes = values();
-		String[] values = new String[contentTypes.length];
+    public static String[] getValues() {
+        int index = 0;
+        ContentType[] contentTypes = values();
+        String[] values = new String[contentTypes.length];
 
-		for (ContentType contentType : contentTypes) {
-			values[index++] = contentType.name().toLowerCase();
-		}
-		return values;
-	}
-	
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+        for (ContentType contentType : contentTypes) {
+            values[index++] = contentType.name().toLowerCase();
+        }
+        return values;
+    }
+
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 }

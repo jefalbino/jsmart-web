@@ -27,49 +27,45 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-final class TagEncrypter {
+final class AuthEncrypter {
 
-    private static final String KEY_VALUE = "Aq0Sw9De8Fr7GtH6";
-
-    private static final Logger LOGGER = Logger.getLogger(TagEncrypter.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(AuthEncrypter.class.getPackage().getName());
 
     private static Cipher encryptCipher;
 
     private static Cipher decryptCipher;
 
-    static {
-        try {
-            SecretKey key = new SecretKeySpec(KEY_VALUE.getBytes("UTF8"), "AES");
+    private static void createCiphers(String keyValue) throws Exception {
+        if (encryptCipher == null && decryptCipher == null && keyValue != null) {
+            SecretKey key = new SecretKeySpec(keyValue.getBytes("UTF8"), "AES");
 
             encryptCipher = Cipher.getInstance("AES");
             decryptCipher = Cipher.getInstance("AES");
-
             encryptCipher.init(Cipher.ENCRYPT_MODE, key);
             decryptCipher.init(Cipher.DECRYPT_MODE, key);
-        } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to generate key and cipher to encrypt/decrypt "
-                                    + "tag process: " + ex.getMessage());
         }
     }
 
-    static String encrypt(String value) {
+    static String encrypt(String key, Object value) {
         try {
-            byte[] encode = encryptCipher.doFinal(value.getBytes("UTF8"));
+            createCiphers(key);
+            byte[] encode = encryptCipher.doFinal(value.toString().getBytes("UTF8"));
             return new String(Base64.encodeBase64(encode, true, true)).trim();
         } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to encrypt tag: " + value + " " + ex.getMessage());
+            LOGGER.log(Level.INFO, "Failed to encrypt value: " + value + " " + ex.getMessage());
         }
-        return value;
+        return value.toString();
     }
 
-    static String decrypt(String value) {
+    static String decrypt(String key, Object value) {
         try {
-            byte[] decoded = Base64.decodeBase64(value);
+            createCiphers(key);
+            byte[] decoded = Base64.decodeBase64(value.toString());
             return new String(decryptCipher.doFinal(decoded), "UTF8");
         } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to decrypt tag: " + value + " " + ex.getMessage());
+            LOGGER.log(Level.INFO, "Failed to decrypt value: " + value + " " + ex.getMessage());
         }
-        return value;
+        return value.toString();
     }
 
 }

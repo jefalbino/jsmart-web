@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Ol extends Tag {
 
-	public Ol() {
-		super("ol");
-	}
+    public Ol() {
+        super("ol");
+    }
 }

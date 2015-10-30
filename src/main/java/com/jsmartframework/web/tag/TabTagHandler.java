@@ -46,414 +46,414 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
 public final class TabTagHandler extends TagHandler {
-	
-	private String navStyle;
 
-	private String navClass;
+    private String navStyle;
 
-	private String tabValue;
+    private String navClass;
 
-	private String pills;
+    private String tabValue;
 
-	private boolean justified;
-	
-	private boolean fade;
-	
-	private String onShow;
+    private String pills;
+
+    private boolean justified;
+
+    private boolean fade;
+
+    private String onShow;
 
     private String onShown;
-	
-	private String onHide;
+
+    private String onHide;
 
     private String onHidden;
-	
-	private String update;
-	
-	private String beforeSend;
-	
-	private String onError;
-	
-	private String onSuccess;
 
-	private String onComplete;
+    private String update;
 
-	private List<TabPaneTagHandler> tabPanes;
+    private String beforeSend;
 
-	public TabTagHandler() {
-		tabPanes = new ArrayList<TabPaneTagHandler>();
-	}
+    private String onError;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (pills != null && !Type.validateTab(pills)) {
-			throw InvalidAttributeException.fromPossibleValues("tab", "pills", Type.getTabValues());
-		}
-		if (Type.STACKED.name().equalsIgnoreCase(pills) && justified) {
-			throw InvalidAttributeException.fromConflict("tab", "pills", "Attributes [justified] and [pills=stacked] cannot coexist");
-		}
-	}
+    private String onSuccess;
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    private String onComplete;
 
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+    private List<TabPaneTagHandler> tabPanes;
 
-		setRandomId("tab");
+    public TabTagHandler() {
+        tabPanes = new ArrayList<TabPaneTagHandler>();
+    }
 
-		Div tab = new Div();
-		tab.addAttribute("id", id)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass))
-			.addAttribute("role", "tabpanel");
+    @Override
+    public void validateTag() throws JspException {
+        if (pills != null && !Type.validateTab(pills)) {
+            throw InvalidAttributeException.fromPossibleValues("tab", "pills", Type.getTabValues());
+        }
+        if (Type.STACKED.name().equalsIgnoreCase(pills) && justified) {
+            throw InvalidAttributeException.fromConflict("tab", "pills", "Attributes [justified] and [pills=stacked] cannot coexist");
+        }
+    }
 
-		appendEvent(tab);
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		Input input = null;
-		if (tabValue != null) {
-			input = new Input();
-			input.addAttribute("type", "hidden")
-				.addAttribute("name", getTagName(J_TAG, tabValue));
-			tab.addTag(input);
-		}
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		Ul ul = new Ul();
-		ul.addAttribute("role", "tablist")
-			.addAttribute("class", Bootstrap.NAV)
-			.addAttribute("style", getTagValue(navStyle));
+        setRandomId("tab");
 
-		if (pills == null) {
-			ul.addAttribute("class", Bootstrap.NAV_TABS);
-		} else {
-			ul.addAttribute("class", Bootstrap.NAV_PILLS);
-			if (Type.STACKED.equalsIgnoreCase(pills)) {
-				ul.addAttribute("class", Bootstrap.NAV_STACKED);
-			}
-		}
+        Div tab = new Div();
+        tab.addAttribute("id", id)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass))
+            .addAttribute("role", "tabpanel");
 
-		if (justified) {
-			ul.addAttribute("class", Bootstrap.NAV_JUSTIFIED);
-		}
-		
-		// At last the custom style class
-		ul.addAttribute("class", getTagValue(navClass));
+        appendEvent(tab);
 
-		Div content = new Div();
-		content.addAttribute("class", Bootstrap.TAB_CONTENT);
+        Input input = null;
+        if (tabValue != null) {
+            input = new Input();
+            input.addAttribute("type", "hidden")
+                .addAttribute("name", getTagName(J_TAG, tabValue));
+            tab.addTag(input);
+        }
 
-		tab.addTag(ul)
-			.addTag(content);
+        Ul ul = new Ul();
+        ul.addAttribute("role", "tablist")
+            .addAttribute("class", Bootstrap.NAV)
+            .addAttribute("style", getTagValue(navStyle));
 
-		// Value to keep track of what tab pane was opened
-		Object tabVal = getTagValue(tabValue);
+        if (pills == null) {
+            ul.addAttribute("class", Bootstrap.NAV_TABS);
+        } else {
+            ul.addAttribute("class", Bootstrap.NAV_PILLS);
+            if (Type.STACKED.equalsIgnoreCase(pills)) {
+                ul.addAttribute("class", Bootstrap.NAV_STACKED);
+            }
+        }
 
-		for (TabPaneTagHandler tabPane : tabPanes) {
+        if (justified) {
+            ul.addAttribute("class", Bootstrap.NAV_JUSTIFIED);
+        }
 
-			// The execute tag must be called first to decide if there are drop down children
-			StringWriter swPane = new StringWriter();
-			tabPane.setOutputWriter(swPane);
-			tabPane.executeTag();
+        // At last the custom style class
+        ul.addAttribute("class", getTagValue(navClass));
 
-			setRandomId(tabPane, "tabpane");
+        Div content = new Div();
+        content.addAttribute("class", Bootstrap.TAB_CONTENT);
 
-			String liId = getRandomId();
+        tab.addTag(ul)
+            .addTag(content);
 
-			Li li = new Li();
-			li.addAttribute("id", liId)
-				.addAttribute("role", "presentation")
-				.addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
-				.addAttribute("style", getTagValue(tabPane.getTabStyle()))
-				.addAttribute("class", getTagValue(tabPane.getTabClass()));
+        // Value to keep track of what tab pane was opened
+        Object tabVal = getTagValue(tabValue);
 
-			appendAjax(tabPane, liId);
-			appendBind(tabPane, liId);
+        for (TabPaneTagHandler tabPane : tabPanes) {
 
-			A a = new A();
+            // The execute tag must be called first to decide if there are drop down children
+            StringWriter swPane = new StringWriter();
+            tabPane.setOutputWriter(swPane);
+            tabPane.executeTag();
 
-			for (IconTagHandler iconTag : tabPane.getIconTags()) {
-				if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-					a.addTag(iconTag.executeTag());
-					a.addText(" ");
-				}
-			}
+            setRandomId(tabPane, "tabpane");
 
-			a.addText(getTagValue(tabPane.getLabel()));
+            String liId = getRandomId();
 
-			for (IconTagHandler iconTag : tabPane.getIconTags()) {
-				if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-					a.addText(" ");
-					a.addTag(iconTag.executeTag());
-				}
-			}
+            Li li = new Li();
+            li.addAttribute("id", liId)
+                .addAttribute("role", "presentation")
+                .addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
+                .addAttribute("style", getTagValue(tabPane.getTabStyle()))
+                .addAttribute("class", getTagValue(tabPane.getTabClass()));
 
-			// Case drop panes not empty we must include drop down style
-			if (!tabPane.getDropPanes().isEmpty()) {
-				li.addAttribute("class", Bootstrap.DROPDOWN);
-				
-				a.addAttribute("role", "button")
-					.addAttribute("style", "cursor: pointer;")
-					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
-					.addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
-					.addAttribute("data-toggle", "dropdown")
-					.addAttribute("aria-expanded", "false");
-				
-				Span span = new Span();
-				span.addAttribute("class", Bootstrap.CARET);
-				a.addTag(span);
+            appendAjax(tabPane, liId);
+            appendBind(tabPane, liId);
 
-			} else {
-				a.addAttribute("href", "#" + tabPane.getId())
-					.addAttribute("aria-controls", tabPane.getId())
-					.addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
-					.addAttribute("role", "tab")
-					.addAttribute("data-toggle", "tab");
-			}
+            A a = new A();
 
-			li.addTag(a);
-			ul.addTag(li);
+            for (IconTagHandler iconTag : tabPane.getIconTags()) {
+                if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+                    a.addTag(iconTag.executeTag());
+                    a.addText(" ");
+                }
+            }
 
-			// Case dropDowns not empty we must include on drop down li tags
-			if (!tabPane.getDropPanes().isEmpty()) {
-				
-				Ul dropUl = new Ul();
-				dropUl.addAttribute("role", "menu")
-					.addAttribute("class", Bootstrap.DROPDOWN_MENU);
-				li.addTag(dropUl);
+            a.addText(getTagValue(tabPane.getLabel()));
 
-				for (TabPaneTagHandler dropPane : tabPane.getDropPanes()) {
+            for (IconTagHandler iconTag : tabPane.getIconTags()) {
+                if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+                    a.addText(" ");
+                    a.addTag(iconTag.executeTag());
+                }
+            }
 
-					// The execute tag must be called first to decide if there are drop down children
-					StringWriter swDropPane = new StringWriter();
-					dropPane.setOutputWriter(swDropPane);
-					dropPane.executeTag();
+            // Case drop panes not empty we must include drop down style
+            if (!tabPane.getDropPanes().isEmpty()) {
+                li.addAttribute("class", Bootstrap.DROPDOWN);
 
-					Li dropLi = createDropTab(dropUl, dropPane);
-					tabVal = addTabContent(content, dropLi, swDropPane, dropPane, tabVal);
-				}
+                a.addAttribute("role", "button")
+                    .addAttribute("style", "cursor: pointer;")
+                    .addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+                    .addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
+                    .addAttribute("data-toggle", "dropdown")
+                    .addAttribute("aria-expanded", "false");
 
-			} else {
-				tabVal = addTabContent(content, li, swPane, tabPane, tabVal);
-			}
-		}
+                Span span = new Span();
+                span.addAttribute("class", Bootstrap.CARET);
+                a.addTag(span);
 
-		// Case tabValue was specified
-		if (input != null) {
-			input.addAttribute("value", tabVal);
+            } else {
+                a.addAttribute("href", "#" + tabPane.getId())
+                    .addAttribute("aria-controls", tabPane.getId())
+                    .addAttribute("class", tabPane.isDisabled() ? Bootstrap.DISABLED : null)
+                    .addAttribute("role", "tab")
+                    .addAttribute("data-toggle", "tab");
+            }
 
-			appendDocScript(getTabFunction());			
-			if (ajax) {
-				appendDocScript(getTabPaneFunction());
-			}
-		}
+            li.addTag(a);
+            ul.addTag(li);
 
-		if (onShow != null) {
-			appendDocScript(getBindFunction(id, "show.bs.tab", new StringBuilder(onShow)));
-		}
+            // Case dropDowns not empty we must include on drop down li tags
+            if (!tabPane.getDropPanes().isEmpty()) {
+
+                Ul dropUl = new Ul();
+                dropUl.addAttribute("role", "menu")
+                    .addAttribute("class", Bootstrap.DROPDOWN_MENU);
+                li.addTag(dropUl);
+
+                for (TabPaneTagHandler dropPane : tabPane.getDropPanes()) {
+
+                    // The execute tag must be called first to decide if there are drop down children
+                    StringWriter swDropPane = new StringWriter();
+                    dropPane.setOutputWriter(swDropPane);
+                    dropPane.executeTag();
+
+                    Li dropLi = createDropTab(dropUl, dropPane);
+                    tabVal = addTabContent(content, dropLi, swDropPane, dropPane, tabVal);
+                }
+
+            } else {
+                tabVal = addTabContent(content, li, swPane, tabPane, tabVal);
+            }
+        }
+
+        // Case tabValue was specified
+        if (input != null) {
+            input.addAttribute("value", tabVal);
+
+            appendDocScript(getTabFunction());
+            if (ajax) {
+                appendDocScript(getTabPaneFunction());
+            }
+        }
+
+        if (onShow != null) {
+            appendDocScript(getBindFunction(id, "show.bs.tab", new StringBuilder(onShow)));
+        }
         if (onShown != null) {
             appendDocScript(getBindFunction(id, "shown.bs.tab", new StringBuilder(onShown)));
         }
-		if (onHide != null) {
-			appendDocScript(getBindFunction(id, "hide.bs.tab", new StringBuilder(onHide)));
-		}
+        if (onHide != null) {
+            appendDocScript(getBindFunction(id, "hide.bs.tab", new StringBuilder(onHide)));
+        }
         if (onHidden != null) {
             appendDocScript(getBindFunction(id, "hidden.bs.tab", new StringBuilder(onHidden)));
         }
 
-		return tab;
-	}
+        return tab;
+    }
 
-	private Li createDropTab(Ul dropUl, TabPaneTagHandler dropPane) throws JspException, IOException {
-		setRandomId(dropPane, "tabpane");
+    private Li createDropTab(Ul dropUl, TabPaneTagHandler dropPane) throws JspException, IOException {
+        setRandomId(dropPane, "tabpane");
 
-		if (dropPane.getHeader() != null) {
-			Li headerLi = new Li();
-			headerLi.addAttribute("role", "presentation")
-				.addAttribute("class", Bootstrap.DROPDOWN_HEADER)
-				.addText(getTagValue(dropPane.getHeader()));
-			dropUl.addTag(headerLi);
-		}
-		
-		String dropLiId = getRandomId();
-		
-		Li dropLi = new Li();
-		dropLi.addAttribute("id", dropLiId)
-			.addAttribute("role", "presentation")
-			.addAttribute("class", dropPane.isDisabled() ? Bootstrap.DISABLED : null);
+        if (dropPane.getHeader() != null) {
+            Li headerLi = new Li();
+            headerLi.addAttribute("role", "presentation")
+                .addAttribute("class", Bootstrap.DROPDOWN_HEADER)
+                .addText(getTagValue(dropPane.getHeader()));
+            dropUl.addTag(headerLi);
+        }
 
-		appendAjax(dropPane, dropLiId);
-		appendBind(dropPane, dropLiId);
-		
-		A dropA = new A();
-		dropA.addAttribute("href", "#" + dropPane.getId())
-			.addAttribute("tabIndex", "-1")
-			.addAttribute("role", "tab")
-			.addAttribute("class", dropPane.isDisabled() ? Bootstrap.DISABLED : null)
-			.addAttribute("data-toggle", "tab")
-			.addAttribute("aria-controls", dropPane.getId())
-			.addAttribute("aria-expanded", "false");
-		
-		for (IconTagHandler iconTag : dropPane.getIconTags()) {
-			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-				dropA.addTag(iconTag.executeTag());
-				dropA.addText(" ");
-			}
-		}
-		
-		dropA.addText(getTagValue(dropPane.getLabel()));
-		
-		for (IconTagHandler iconTag : dropPane.getIconTags()) {
-			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-				dropA.addText(" ");
-				dropA.addTag(iconTag.executeTag());
-			}
-		}
+        String dropLiId = getRandomId();
 
-		dropLi.addTag(dropA);
-		dropUl.addTag(dropLi);
-		
-		if (dropPane.hasDivider()) {
-			Li dividerLi = new Li();
-			dividerLi.addAttribute("class", Bootstrap.DIVIDER);
-			dropUl.addTag(dividerLi);
-		}
+        Li dropLi = new Li();
+        dropLi.addAttribute("id", dropLiId)
+            .addAttribute("role", "presentation")
+            .addAttribute("class", dropPane.isDisabled() ? Bootstrap.DISABLED : null);
 
-		return dropLi;
-	}
-	
-	private Object addTabContent(Div tab, Li tabLi, StringWriter swContent, TabPaneTagHandler tabPane, Object tabVal) {
+        appendAjax(dropPane, dropLiId);
+        appendBind(dropPane, dropLiId);
 
-		String tabPaneValue = (String) getTagValue(tabPane.getValue());
-		tabLi.addAttribute("tab-value", tabPaneValue != null ? tabPaneValue : tabPane.getId());
+        A dropA = new A();
+        dropA.addAttribute("href", "#" + dropPane.getId())
+            .addAttribute("tabIndex", "-1")
+            .addAttribute("role", "tab")
+            .addAttribute("class", dropPane.isDisabled() ? Bootstrap.DISABLED : null)
+            .addAttribute("data-toggle", "tab")
+            .addAttribute("aria-controls", dropPane.getId())
+            .addAttribute("aria-expanded", "false");
 
-		Div tabContent = new Div();
-		tabContent.addAttribute("id", tabPane.getId())
-			.addAttribute("style", getTagValue(tabPane.getStyle()))
-			.addAttribute("role", "tabpanel")
-			.addAttribute("class", Bootstrap.TAB_PANE)
-			.addAttribute("class", fade ? Bootstrap.FADE : null)
-			.addAttribute("class", getTagValue(tabPane.getStyleClass()));
-		
-		// Include the tab values 
-		if (tabVal == null) {
-			tabVal = tabPaneValue != null ? tabPaneValue : tabPane.getId();
-			tabLi.addAttribute("class", Bootstrap.ACTIVE)
-				.addAttribute("class", fade ? Bootstrap.IN : null);
-			tabContent.addAttribute("class", Bootstrap.ACTIVE);
+        for (IconTagHandler iconTag : dropPane.getIconTags()) {
+            if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+                dropA.addTag(iconTag.executeTag());
+                dropA.addText(" ");
+            }
+        }
 
-		} else if (tabVal.equals(tabPaneValue)) {
-			tabLi.addAttribute("class", Bootstrap.ACTIVE)
-				.addAttribute("class", fade ? Bootstrap.IN : null);
-			tabContent.addAttribute("class", Bootstrap.ACTIVE);
-		}
+        dropA.addText(getTagValue(dropPane.getLabel()));
 
-		tabContent.addText(swContent.toString());
-		tab.addTag(tabContent);		
-		return tabVal;
-	}
+        for (IconTagHandler iconTag : dropPane.getIconTags()) {
+            if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+                dropA.addText(" ");
+                dropA.addTag(iconTag.executeTag());
+            }
+        }
 
-	private StringBuilder getTabFunction() {
-		Ajax jsonAjax = getJsonAjax();
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_TAB.format(getJsonValue(jsonAjax)));
-		return builder;
-	}
+        dropLi.addTag(dropA);
+        dropUl.addTag(dropLi);
 
-	private StringBuilder getTabPaneFunction() {
-		Ajax jsonAjax = getJsonAjax();
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_TABPANE.format(getJsonValue(jsonAjax)));
-		return getDelegateFunction(id, "ul li", Event.CLICK.name(), builder);
-	}
-	
-	private Ajax getJsonAjax() {
-		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
+        if (dropPane.hasDivider()) {
+            Li dividerLi = new Li();
+            dividerLi.addAttribute("class", Bootstrap.DIVIDER);
+            dropUl.addTag(dividerLi);
+        }
 
-		jsonAjax.addParam(new Param(getTagName(J_TAG, tabValue), ""));
-		
-		if (update != null) {
-			jsonAjax.setUpdate(update.trim());
-		}
-		if (beforeSend != null) {
-			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
-		}
-		if (onError != null) {
-			jsonAjax.setError((String) getTagValue(onError.trim()));
-		}
-		if (onSuccess != null) {
-			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
-		}
-		if (onComplete != null) {
-			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
-		}
-		return jsonAjax;
-	}
+        return dropLi;
+    }
 
-	void addTabPane(TabPaneTagHandler tabItem) {
-		tabPanes.add(tabItem);
-	}
+    private Object addTabContent(Div tab, Li tabLi, StringWriter swContent, TabPaneTagHandler tabPane, Object tabVal) {
 
-	public void setNavStyle(String navStyle) {
-		this.navStyle = navStyle;
-	}
+        String tabPaneValue = (String) getTagValue(tabPane.getValue());
+        tabLi.addAttribute("tab-value", tabPaneValue != null ? tabPaneValue : tabPane.getId());
 
-	public void setNavClass(String navClass) {
-		this.navClass = navClass;
-	}
+        Div tabContent = new Div();
+        tabContent.addAttribute("id", tabPane.getId())
+            .addAttribute("style", getTagValue(tabPane.getStyle()))
+            .addAttribute("role", "tabpanel")
+            .addAttribute("class", Bootstrap.TAB_PANE)
+            .addAttribute("class", fade ? Bootstrap.FADE : null)
+            .addAttribute("class", getTagValue(tabPane.getStyleClass()));
 
-	public void setTabValue(String tabValue) {
-		this.tabValue = tabValue;
-	}
+        // Include the tab values
+        if (tabVal == null) {
+            tabVal = tabPaneValue != null ? tabPaneValue : tabPane.getId();
+            tabLi.addAttribute("class", Bootstrap.ACTIVE)
+                .addAttribute("class", fade ? Bootstrap.IN : null);
+            tabContent.addAttribute("class", Bootstrap.ACTIVE);
 
-	public void setPills(String pills) {
-		this.pills = pills;
-	}
+        } else if (tabVal.equals(tabPaneValue)) {
+            tabLi.addAttribute("class", Bootstrap.ACTIVE)
+                .addAttribute("class", fade ? Bootstrap.IN : null);
+            tabContent.addAttribute("class", Bootstrap.ACTIVE);
+        }
 
-	public void setJustified(boolean justified) {
-		this.justified = justified;
-	}
+        tabContent.addText(swContent.toString());
+        tab.addTag(tabContent);
+        return tabVal;
+    }
 
-	public void setFade(boolean fade) {
-		this.fade = fade;
-	}
+    private StringBuilder getTabFunction() {
+        Ajax jsonAjax = getJsonAjax();
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_TAB.format(getJsonValue(jsonAjax)));
+        return builder;
+    }
 
-	public void setOnShow(String onShow) {
-		this.onShow = onShow;
-	}
+    private StringBuilder getTabPaneFunction() {
+        Ajax jsonAjax = getJsonAjax();
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_TABPANE.format(getJsonValue(jsonAjax)));
+        return getDelegateFunction(id, "ul li", Event.CLICK.name(), builder);
+    }
+
+    private Ajax getJsonAjax() {
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
+        jsonAjax.setMethod("post");
+
+        jsonAjax.addParam(new Param(getTagName(J_TAG, tabValue), ""));
+
+        if (update != null) {
+            jsonAjax.setUpdate(update.trim());
+        }
+        if (beforeSend != null) {
+            jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+        }
+        if (onError != null) {
+            jsonAjax.setError((String) getTagValue(onError.trim()));
+        }
+        if (onSuccess != null) {
+            jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+        }
+        if (onComplete != null) {
+            jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+        }
+        return jsonAjax;
+    }
+
+    void addTabPane(TabPaneTagHandler tabItem) {
+        tabPanes.add(tabItem);
+    }
+
+    public void setNavStyle(String navStyle) {
+        this.navStyle = navStyle;
+    }
+
+    public void setNavClass(String navClass) {
+        this.navClass = navClass;
+    }
+
+    public void setTabValue(String tabValue) {
+        this.tabValue = tabValue;
+    }
+
+    public void setPills(String pills) {
+        this.pills = pills;
+    }
+
+    public void setJustified(boolean justified) {
+        this.justified = justified;
+    }
+
+    public void setFade(boolean fade) {
+        this.fade = fade;
+    }
+
+    public void setOnShow(String onShow) {
+        this.onShow = onShow;
+    }
 
     public void setOnShown(String onShown) {
         this.onShown = onShown;
     }
 
-	public void setOnHide(String onHide) {
-		this.onHide = onHide;
-	}
+    public void setOnHide(String onHide) {
+        this.onHide = onHide;
+    }
 
     public void setOnHidden(String onHidden) {
         this.onHidden = onHidden;
     }
 
     public void setUpdate(String update) {
-		this.update = update;
-	}
+        this.update = update;
+    }
 
-	public void setBeforeSend(String beforeSend) {
-		this.beforeSend = beforeSend;
-	}
+    public void setBeforeSend(String beforeSend) {
+        this.beforeSend = beforeSend;
+    }
 
-	public void setOnError(String onError) {
-		this.onError = onError;
-	}
+    public void setOnError(String onError) {
+        this.onError = onError;
+    }
 
-	public void setOnSuccess(String onSuccess) {
-		this.onSuccess = onSuccess;
-	}
+    public void setOnSuccess(String onSuccess) {
+        this.onSuccess = onSuccess;
+    }
 
-	public void setOnComplete(String onComplete) {
-		this.onComplete = onComplete;
-	}
+    public void setOnComplete(String onComplete) {
+        this.onComplete = onComplete;
+    }
 
 }

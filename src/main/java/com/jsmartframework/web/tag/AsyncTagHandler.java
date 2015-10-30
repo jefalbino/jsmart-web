@@ -35,7 +35,7 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class AsyncTagHandler extends TagHandler {
 
-	private String path;
+    private String path;
 
     private Boolean withCredentials;
 
@@ -47,19 +47,19 @@ public final class AsyncTagHandler extends TagHandler {
         events = new ArrayList<AsyncEventTagHandler>(3);
     }
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
         if (events.isEmpty()) {
             throw InvalidAttributeException.fromConflict("async", "asyncevent",
@@ -68,12 +68,12 @@ public final class AsyncTagHandler extends TagHandler {
 
         appendDocScript(getAsyncFunction());
         return null;
-	}
+    }
 
-	private StringBuilder getAsyncFunction() {
-		Async jsonAsync = new Async();
+    private StringBuilder getAsyncFunction() {
+        Async jsonAsync = new Async();
         jsonAsync.setId(id);
-		jsonAsync.setPath(path);
+        jsonAsync.setPath(path);
         jsonAsync.setStart(onStart);
         jsonAsync.setCredentials(withCredentials);
 
@@ -88,9 +88,9 @@ public final class AsyncTagHandler extends TagHandler {
         StringBuilder builder = new StringBuilder();
         builder.append(JSMART_ASYNCEVENT.format(getJsonValue(jsonAsync)));
         return builder;
-	}
+    }
 
-	void addEvent(AsyncEventTagHandler event) {
+    void addEvent(AsyncEventTagHandler event) {
         this.events.add(event);
     }
 

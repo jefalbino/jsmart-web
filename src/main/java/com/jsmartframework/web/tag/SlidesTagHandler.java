@@ -30,63 +30,63 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class SlidesTagHandler extends TagHandler {
 
-	private String values;
+    private String values;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		Object object = getTagValue(values);
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-		if (object instanceof Collection && parent instanceof CarouselTagHandler) {
-			
-			for (SlideAdapter adapter : (Collection<SlideAdapter>) object) {
-				SlideTagHandler slideTag = new SlideTagHandler();
-				slideTag.setParent(parent);
-				slideTag.setActive(adapter.isActive());
-				slideTag.setLabel(adapter.getLabel());
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        Object object = getTagValue(values);
 
-				if (adapter.getHeader() != null) {
-					HeaderTagHandler headerTag = new HeaderTagHandler();
-					headerTag.setParent(slideTag);
-					headerTag.setTitle(adapter.getHeader().getTitle());
-					headerTag.setType(adapter.getHeader().getType());
-					
-					if (adapter.getHeader().getIcon() != null) {
-						IconTagHandler iconTag = new IconTagHandler();
-						iconTag.setParent(headerTag);
-						iconTag.setName(adapter.getHeader().getIcon());
-						headerTag.addIconTag(iconTag);
-					}
-					slideTag.setHeader(headerTag);
-				}
-				
-				if (adapter.getImage() != null) {
+        if (object instanceof Collection && parent instanceof CarouselTagHandler) {
+
+            for (SlideAdapter adapter : (Collection<SlideAdapter>) object) {
+                SlideTagHandler slideTag = new SlideTagHandler();
+                slideTag.setParent(parent);
+                slideTag.setActive(adapter.isActive());
+                slideTag.setLabel(adapter.getLabel());
+
+                if (adapter.getHeader() != null) {
+                    HeaderTagHandler headerTag = new HeaderTagHandler();
+                    headerTag.setParent(slideTag);
+                    headerTag.setTitle(adapter.getHeader().getTitle());
+                    headerTag.setType(adapter.getHeader().getType());
+
+                    if (adapter.getHeader().getIcon() != null) {
+                        IconTagHandler iconTag = new IconTagHandler();
+                        iconTag.setParent(headerTag);
+                        iconTag.setName(adapter.getHeader().getIcon());
+                        headerTag.addIconTag(iconTag);
+                    }
+                    slideTag.setHeader(headerTag);
+                }
+
+                if (adapter.getImage() != null) {
                     slideTag.setImageLib(adapter.getImage().getLib());
                     slideTag.setImageName(adapter.getImage().getName());
-					slideTag.setImageAlt(adapter.getImage().getAlt());
+                    slideTag.setImageAlt(adapter.getImage().getAlt());
                     slideTag.setImageWidth(adapter.getImage().getWidth());
                     slideTag.setImageHeight(adapter.getImage().getHeight());
-				}
-				((CarouselTagHandler) parent).addSlide(slideTag);
-			}
-		}
-		return false;
-	}
+                }
+                ((CarouselTagHandler) parent).addSlide(slideTag);
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
-	public void setValues(String values) {
-		this.values = values;
-	}
+    public void setValues(String values) {
+        this.values = values;
+    }
 
 }

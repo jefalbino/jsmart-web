@@ -34,66 +34,66 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class DropDownTagHandler extends TagHandler {
 
-	private String label;
-	
-	private boolean navbar;
-	
-	private DropMenuTagHandler dropMenu;
+    private String label;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    private boolean navbar;
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    private DropMenuTagHandler dropMenu;
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-		setRandomId("dropdown");
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		Tag dropDown;
-		if (navbar) {
-			dropDown = new Li();
-		} else {
-			dropDown = new Div();
-		}
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
+
+        setRandomId("dropdown");
+
+        Tag dropDown;
+        if (navbar) {
+            dropDown = new Li();
+        } else {
+            dropDown = new Div();
+        }
 
         boolean disabled = isDisabled();
 
-		dropDown.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.DROPDOWN)
-			.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
-			.addAttribute("class", getTagValue(styleClass));
-		
-		appendRefId(dropDown, id);
-		appendEvent(dropDown);
+        dropDown.addAttribute("style", getTagValue(style))
+            .addAttribute("class", Bootstrap.DROPDOWN)
+            .addAttribute("class", disabled ? Bootstrap.DISABLED : null)
+            .addAttribute("class", getTagValue(styleClass));
 
-		A a = new A();
+        appendRefId(dropDown, id);
+        appendEvent(dropDown);
 
-		for (IconTagHandler iconTag : iconTags) {
-			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-				a.addTag(iconTag.executeTag());
-				a.addText(" ");
-			}
-		}		
-		
-		a.addAttribute("href", "#")
-			.addAttribute("data-toggle", "dropdown")
-			.addAttribute("aria-expanded", "false")
-			.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
-			.addText(getTagValue(label));
-		
-		for (IconTagHandler iconTag : iconTags) {
-			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-				a.addText(" ");
-				a.addTag(iconTag.executeTag());
-			}
-		}
+        A a = new A();
+
+        for (IconTagHandler iconTag : iconTags) {
+            if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+                a.addTag(iconTag.executeTag());
+                a.addText(" ");
+            }
+        }
+
+        a.addAttribute("href", "#")
+            .addAttribute("data-toggle", "dropdown")
+            .addAttribute("aria-expanded", "false")
+            .addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+            .addText(getTagValue(label));
+
+        for (IconTagHandler iconTag : iconTags) {
+            if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+                a.addText(" ");
+                a.addTag(iconTag.executeTag());
+            }
+        }
 
         if (dropMenu != null) {
             Span caret = new Span();
@@ -102,30 +102,30 @@ public final class DropDownTagHandler extends TagHandler {
             a.addTag(caret);
         }
 
-		dropDown.addTag(a);
+        dropDown.addTag(a);
 
-		if (dropMenu != null) {
-			Tag ul = dropMenu.executeTag();
-			ul.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
-			dropDown.addTag(ul);
-		}
-		
-		appendAjax(id);
-		appendBind(id);
+        if (dropMenu != null) {
+            Tag ul = dropMenu.executeTag();
+            ul.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
+            dropDown.addTag(ul);
+        }
 
-		return dropDown;
-	}
+        appendAjax(id);
+        appendBind(id);
 
-	void setDropMenu(DropMenuTagHandler dropMenu) {
-		this.dropMenu = dropMenu;
-	}
+        return dropDown;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    void setDropMenu(DropMenuTagHandler dropMenu) {
+        this.dropMenu = dropMenu;
+    }
 
-	public void setNavbar(boolean navbar) {
-		this.navbar = navbar;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setNavbar(boolean navbar) {
+        this.navbar = navbar;
+    }
 
 }

@@ -33,141 +33,141 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class CheckTagHandler extends TagHandler {
 
-	static final String CHECKBOX = "checkbox";
+    static final String CHECKBOX = "checkbox";
 
-	static final String RADIO = "radio";
+    static final String RADIO = "radio";
 
-	private Object value;
+    private Object value;
 
-	private String label;
+    private String label;
 
-	private String type;
+    private String type;
 
-	private String name;
-	
-	private boolean inline;
-	
-	private Long checkIndex;
+    private String name;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
+    private boolean inline;
 
-		if (parent instanceof RadioGroupTagHandler) {
-			((RadioGroupTagHandler) parent).addCheck(this);
+    private Long checkIndex;
 
-		} else if (parent instanceof CheckGroupTagHandler) {
-			((CheckGroupTagHandler) parent).addCheck(this);
-		}
-		return false;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING - type is internal
-	}
+        if (parent instanceof RadioGroupTagHandler) {
+            ((RadioGroupTagHandler) parent).addCheck(this);
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+        } else if (parent instanceof CheckGroupTagHandler) {
+            ((CheckGroupTagHandler) parent).addCheck(this);
+        }
+        return false;
+    }
 
-		Div div = null;
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING - type is internal
+    }
 
-		Label lb = new Label();
-		lb.addAttribute("style", getTagValue(style));
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+
+        Div div = null;
+
+        Label lb = new Label();
+        lb.addAttribute("style", getTagValue(style));
 
         boolean disabled = isDisabled();
-		
-		if (inline) {
-			lb.addAttribute("class", CHECKBOX.equals(type) ? Bootstrap.CHECKBOX_INLINE : Bootstrap.RADION_INLINE);
-		} else {
-			div = new Div();
-			div.addAttribute("class", CHECKBOX.equals(type) ? Bootstrap.CHECKBOX : Bootstrap.RADIO)
-				.addAttribute("disabled", disabled ? "disabled" : null)
-				.addTag(lb);
-		}
 
-		lb.addAttribute("class", getTagValue(styleClass));
+        if (inline) {
+            lb.addAttribute("class", CHECKBOX.equals(type) ? Bootstrap.CHECKBOX_INLINE : Bootstrap.RADION_INLINE);
+        } else {
+            div = new Div();
+            div.addAttribute("class", CHECKBOX.equals(type) ? Bootstrap.CHECKBOX : Bootstrap.RADIO)
+                .addAttribute("disabled", disabled ? "disabled" : null)
+                .addTag(lb);
+        }
 
-		Input input = new Input();
-		input.addAttribute("type", type)
-			.addAttribute("disabled", disabled ? "disabled" : null)
-			.addAttribute("check-index", checkIndex);
-		
-		if (CHECKBOX.equals(type)) {
-			input.addAttribute("checkgroup", "checkgroup");
-		} else if (RADIO.equals(type)) {
-			input.addAttribute("radiogroup", "radiogroup");
-		}
+        lb.addAttribute("class", getTagValue(styleClass));
 
-		String name = getTagName((type == null || type.equals(RADIO) ? J_TAG : J_ARRAY), 
-				this.name != null ? this.name : (value != null ? value.toString() : null));
+        Input input = new Input();
+        input.addAttribute("type", type)
+            .addAttribute("disabled", disabled ? "disabled" : null)
+            .addAttribute("check-index", checkIndex);
 
-		if (name != null) {
-			input.addAttribute("name", name);
-		}
+        if (CHECKBOX.equals(type)) {
+            input.addAttribute("checkgroup", "checkgroup");
+        } else if (RADIO.equals(type)) {
+            input.addAttribute("radiogroup", "radiogroup");
+        }
 
-		appendValidator(input);
-		appendRest(input, this.name);
-		appendEvent(input);
+        String name = getTagName((type == null || type.equals(RADIO) ? J_TAG : J_ARRAY),
+                this.name != null ? this.name : (value != null ? value.toString() : null));
 
-		Object object = getTagValue(value);
-		input.addAttribute("value", object)
-			.addAttribute("checked", verifyCheck(object) ? "checked" : null);
-		
-		lb.addTag(input).addText(getTagValue(label));
-		
-		if (div != null) {
-			appendTooltip(div);
-			appendPopOver(div);
-		} else {
-			appendTooltip(lb);
-			appendPopOver(lb);
-		}
+        if (name != null) {
+            input.addAttribute("name", name);
+        }
 
-		return div != null ? div : lb;
-	}
+        appendValidator(input);
+        appendRest(input, this.name);
+        appendEvent(input);
 
-	@SuppressWarnings("rawtypes")
-	private boolean verifyCheck(Object value) {
-		// Get selected values
-		Object values = getTagValue(name);
+        Object object = getTagValue(value);
+        input.addAttribute("value", object)
+            .addAttribute("checked", verifyCheck(object) ? "checked" : null);
 
-		if (values != null && value != null) {
-			if (values instanceof Collection) {
-				for (Object obj : (Collection) values) {
-					if (obj != null && obj.toString().equals(value.toString())) {
-						return true;
-					}
-				}
-			} else {
-				return values.equals(value);
-			}
-		}
-		return false;
-	}
+        lb.addTag(input).addText(getTagValue(label));
 
-	void setType(String type) {
-		this.type = type;
-	}
+        if (div != null) {
+            appendTooltip(div);
+            appendPopOver(div);
+        } else {
+            appendTooltip(lb);
+            appendPopOver(lb);
+        }
 
-	void setName(String name) {
-		this.name = name;
-	}
-	
-	void setInline(boolean inline) {
-		this.inline = inline;
-	}
-	
-	void setCheckIndex(Long checkIndex) {
-		this.checkIndex = checkIndex;
-	}
+        return div != null ? div : lb;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    @SuppressWarnings("rawtypes")
+    private boolean verifyCheck(Object value) {
+        // Get selected values
+        Object values = getTagValue(name);
 
-	public void setValue(Object value) {
-		this.value = value;
-	}
+        if (values != null && value != null) {
+            if (values instanceof Collection) {
+                for (Object obj : (Collection) values) {
+                    if (obj != null && obj.toString().equals(value.toString())) {
+                        return true;
+                    }
+                }
+            } else {
+                return values.equals(value);
+            }
+        }
+        return false;
+    }
+
+    void setType(String type) {
+        this.type = type;
+    }
+
+    void setName(String name) {
+        this.name = name;
+    }
+
+    void setInline(boolean inline) {
+        this.inline = inline;
+    }
+
+    void setCheckIndex(Long checkIndex) {
+        this.checkIndex = checkIndex;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
 }

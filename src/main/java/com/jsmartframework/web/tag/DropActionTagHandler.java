@@ -28,78 +28,78 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 public class DropActionTagHandler extends TagHandler {
-	
-	private String header;
 
-	private boolean divider;
+    private String header;
 
-	private String label;
+    private boolean divider;
+
+    private String label;
 
     private String outcome;
 
-	private String action;
+    private String action;
 
-	private String update;
+    private String update;
 
-	private String beforeSend;
+    private String beforeSend;
 
-	private String onError;
-	
-	private String onSuccess;
-	
-	private String onComplete;
+    private String onError;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof DropMenuTagHandler) {
+    private String onSuccess;
 
-			// Just to call nested tags for parameters
-			JspFragment body = getJspBody();
-			if (body != null) {
-				body.invoke(null);
-			}
+    private String onComplete;
 
-			((DropMenuTagHandler) parent).addDropAction(this);
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof DropMenuTagHandler) {
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+            // Just to call nested tags for parameters
+            JspFragment body = getJspBody();
+            if (body != null) {
+                body.invoke(null);
+            }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
+            ((DropMenuTagHandler) parent).addDropAction(this);
+            return false;
+        }
+        return true;
+    }
 
-	String getHeader() {
-		return header;
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	public void setHeader(String header) {
-		this.header = header;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
-	boolean hasDivider() {
-		return divider;
-	}
+    String getHeader() {
+        return header;
+    }
 
-	public void setDivider(boolean divider) {
-		this.divider = divider;
-	}
+    public void setHeader(String header) {
+        this.header = header;
+    }
 
-	String getLabel() {
-		return label;
-	}
+    boolean hasDivider() {
+        return divider;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setDivider(boolean divider) {
+        this.divider = divider;
+    }
+
+    String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
     String getOutcome() {
         return outcome;
@@ -110,51 +110,51 @@ public class DropActionTagHandler extends TagHandler {
     }
 
     String getAction() {
-		return action;
-	}
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	String getUpdate() {
-		return update;
-	}
+    String getUpdate() {
+        return update;
+    }
 
-	public void setUpdate(String update) {
-		this.update = update;
-	}
+    public void setUpdate(String update) {
+        this.update = update;
+    }
 
-	String getBeforeSend() {
-		return beforeSend;
-	}
+    String getBeforeSend() {
+        return beforeSend;
+    }
 
-	public void setBeforeSend(String beforeSend) {
-		this.beforeSend = beforeSend;
-	}
+    public void setBeforeSend(String beforeSend) {
+        this.beforeSend = beforeSend;
+    }
 
-	String getOnError() {
-		return onError;
-	}
+    String getOnError() {
+        return onError;
+    }
 
-	public void setOnError(String onError) {
-		this.onError = onError;
-	}
+    public void setOnError(String onError) {
+        this.onError = onError;
+    }
 
-	String getOnSuccess() {
-		return onSuccess;
-	}
+    String getOnSuccess() {
+        return onSuccess;
+    }
 
-	public void setOnSuccess(String onSuccess) {
-		this.onSuccess = onSuccess;
-	}
+    public void setOnSuccess(String onSuccess) {
+        this.onSuccess = onSuccess;
+    }
 
-	String getOnComplete() {
-		return onComplete;
-	}
+    String getOnComplete() {
+        return onComplete;
+    }
 
-	public void setOnComplete(String onComplete) {
-		this.onComplete = onComplete;
-	}
+    public void setOnComplete(String onComplete) {
+        this.onComplete = onComplete;
+    }
 
 }

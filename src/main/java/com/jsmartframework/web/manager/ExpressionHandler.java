@@ -76,7 +76,7 @@ public enum ExpressionHandler {
     private String extractExpression(String param) {
         Matcher matcher = TagHandler.J_TAG_PATTERN.matcher(param);
         if (matcher.find()) {
-            return TagEncrypter.complexDecrypt(matcher.group(2).replace("[]", ""));
+            return TagEncrypter.decrypt(matcher.group(2).replace("[]", ""));
         }
         return null;
     }
@@ -177,7 +177,7 @@ public enum ExpressionHandler {
                 Scroll scroll = null;
 
                 if (valuesMatcher.find()) {
-                    object = getExpressionValue(TagEncrypter.complexDecrypt(valuesMatcher.group(2)));
+                    object = getExpressionValue(TagEncrypter.decrypt(valuesMatcher.group(2)));
                 }
 
                 if (object instanceof ListAdapter) {

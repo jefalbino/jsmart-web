@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Caption extends Tag {
 
-	public Caption() {
-		super("caption");
-	}
+    public Caption() {
+        super("caption");
+    }
 }

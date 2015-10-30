@@ -39,63 +39,63 @@ public final class AjaxTagHandler extends TagHandler {
 
     private String onForm;
 
-	private String event;
+    private String event;
 
-	private String action;
+    private String action;
 
-	private Integer timeout;
+    private Integer timeout;
 
-	private String update;
+    private String update;
 
-	private String beforeSend;
+    private String beforeSend;
 
-	private String onError;
+    private String onError;
 
-	private String onSuccess;
+    private String onSuccess;
 
-	private String onComplete;
+    private String onComplete;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (event != null && !Event.validate(event)) {
-			throw InvalidAttributeException.fromPossibleValues("ajax", "event", Event.getValues());
-		}
-		if (timeout != null && timeout < 0) {
-			throw InvalidAttributeException.fromConstraint("ajax", "timeout", "greater or equal to 0"); 
-		}
-		if (action != null && action.trim().contains(" ")) {
-			throw InvalidAttributeException.fromConflict("ajax", "action", "Value cannot contain space characters");
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (event != null && !Event.validate(event)) {
+            throw InvalidAttributeException.fromPossibleValues("ajax", "event", Event.getValues());
+        }
+        if (timeout != null && timeout < 0) {
+            throw InvalidAttributeException.fromConstraint("ajax", "timeout", "greater or equal to 0");
+        }
+        if (action != null && action.trim().contains(" ")) {
+            throw InvalidAttributeException.fromConflict("ajax", "action", "Value cannot contain space characters");
+        }
+    }
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof TagHandler) {
 
-			// Just to call nested tags
-			JspFragment body = getJspBody();
-			if (body != null) {
-				body.invoke(null);
-			}
+            // Just to call nested tags
+            JspFragment body = getJspBody();
+            if (body != null) {
+                body.invoke(null);
+            }
 
-			((TagHandler) parent).addAjaxTag(this);
-		}
-		return true;
-	}
+            ((TagHandler) parent).addAjaxTag(this);
+        }
+        return true;
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
-	
-	private Ajax getJsonAjax(String id, boolean hasDelegate) {
-		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
+
+    private Ajax getJsonAjax(String id, boolean hasDelegate) {
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
         jsonAjax.setForm(onForm);
-		jsonAjax.setTimeout(timeout);
-		jsonAjax.setTag("ajax");
+        jsonAjax.setTimeout(timeout);
+        jsonAjax.setTag("ajax");
 
         // Params must be considered regardless the action for rest purpose
         if (!hasDelegate) {
@@ -108,127 +108,127 @@ public final class AjaxTagHandler extends TagHandler {
             }
         }
 
-		if (action != null) {
-			jsonAjax.setMethod("post");
-			jsonAjax.setAction(getTagName(J_SBMT, action));
+        if (action != null) {
+            jsonAjax.setMethod("post");
+            jsonAjax.setAction(getTagName(J_SBMT, action));
 
-			String argName = null;
-			if (!args.isEmpty()) {
-				argName = getTagName(J_SBMT_ARGS, action);
-			}
+            String argName = null;
+            if (!args.isEmpty()) {
+                argName = getTagName(J_SBMT_ARGS, action);
+            }
 
-			if (!hasDelegate) {
-				for (Object arg : args.keySet()) {
-					jsonAjax.addArg(new Param(argName, arg, args.get(arg)));
-				}
-			} else {
-				// Do not place parameter value on json ajax because it depends on each tag
-				// being delegate via parent tag
-				if (argName != null) {
-					jsonAjax.addArg(new Param(argName, null));
-				}
-			}
-		} else if (update != null) {
-			jsonAjax.setMethod("get");
-		}
-		if (update != null) {
-			jsonAjax.setUpdate(update.trim());
-		}
-		if (beforeSend != null) {
-			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
-		}
-		if (onError != null) {
-			jsonAjax.setError((String) getTagValue(onError.trim()));
-		}
-		if (onSuccess != null) {
-			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
-		}
-		if (onComplete != null) {
-			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
-		}
-		return jsonAjax;
-	}
+            if (!hasDelegate) {
+                for (Object arg : args.keySet()) {
+                    jsonAjax.addArg(new Param(argName, arg, args.get(arg)));
+                }
+            } else {
+                // Do not place parameter value on json ajax because it depends on each tag
+                // being delegate via parent tag
+                if (argName != null) {
+                    jsonAjax.addArg(new Param(argName, null));
+                }
+            }
+        } else if (update != null) {
+            jsonAjax.setMethod("get");
+        }
+        if (update != null) {
+            jsonAjax.setUpdate(update.trim());
+        }
+        if (beforeSend != null) {
+            jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+        }
+        if (onError != null) {
+            jsonAjax.setError((String) getTagValue(onError.trim()));
+        }
+        if (onSuccess != null) {
+            jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+        }
+        if (onComplete != null) {
+            jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+        }
+        return jsonAjax;
+    }
 
-	@SuppressWarnings("unchecked")
-	public StringBuilder getBindFunction(String id) {
+    @SuppressWarnings("unchecked")
+    public StringBuilder getBindFunction(String id) {
 
-		// It means that the ajax is inside some iterator tag, so the
-		// ajax actions will be set by iterator tag and the event bind
-		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
-		
-		Ajax jsonAjax = getJsonAjax(id, actionStack != null);
+        // It means that the ajax is inside some iterator tag, so the
+        // ajax actions will be set by iterator tag and the event bind
+        // will use the id as tag attribute
+        Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
 
-		if (actionStack != null) {
-			actionStack.peek().addRef(id, event, jsonAjax);
+        Ajax jsonAjax = getJsonAjax(id, actionStack != null);
 
-		} else {
-			StringBuilder builder = new StringBuilder();
-			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-			return getBindFunction(id, event, builder);
-		}
-		return null;
-	}
+        if (actionStack != null) {
+            actionStack.peek().addRef(id, event, jsonAjax);
 
-	@SuppressWarnings("unchecked")
-	public StringBuilder getDelegateFunction(String id, String child) {
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+            return getBindFunction(id, event, builder);
+        }
+        return null;
+    }
 
-		// It means that the ajax is inside some iterator tag, so the
-		// ajax actions will be set by iterator tag and the event bind
-		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
-		
-		Ajax jsonAjax = getJsonAjax(id, actionStack != null);
+    @SuppressWarnings("unchecked")
+    public StringBuilder getDelegateFunction(String id, String child) {
 
-		if (actionStack != null) {
-			actionStack.peek().addRef(id, event, jsonAjax);
+        // It means that the ajax is inside some iterator tag, so the
+        // ajax actions will be set by iterator tag and the event bind
+        // will use the id as tag attribute
+        Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
 
-		} else {
-			StringBuilder builder = new StringBuilder();
-			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-			return getDelegateFunction(id, child, event, builder);
-		}
-		return null;
-	}
+        Ajax jsonAjax = getJsonAjax(id, actionStack != null);
+
+        if (actionStack != null) {
+            actionStack.peek().addRef(id, event, jsonAjax);
+
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+            return getDelegateFunction(id, child, event, builder);
+        }
+        return null;
+    }
 
     public void setOnForm(String onForm) {
         this.onForm = onForm;
     }
 
     public void setEvent(String event) {
-		this.event = event;
-	}
+        this.event = event;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
-	}
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
 
-	public void setUpdate(String update) {
-		this.update = update;
-	}
+    public void setUpdate(String update) {
+        this.update = update;
+    }
 
-	public void setBeforeSend(String beforeSend) {
-		this.beforeSend = beforeSend;
-	}
+    public void setBeforeSend(String beforeSend) {
+        this.beforeSend = beforeSend;
+    }
 
-	public void setOnError(String onError) {
-		this.onError = onError;
-	}
+    public void setOnError(String onError) {
+        this.onError = onError;
+    }
 
-	public void setOnSuccess(String onSuccess) {
-		this.onSuccess = onSuccess;
-	}
+    public void setOnSuccess(String onSuccess) {
+        this.onSuccess = onSuccess;
+    }
 
-	public void setOnComplete(String onComplete) {
-		this.onComplete = onComplete;
-	}
+    public void setOnComplete(String onComplete) {
+        this.onComplete = onComplete;
+    }
 
 }

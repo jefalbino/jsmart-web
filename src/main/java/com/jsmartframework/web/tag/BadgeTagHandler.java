@@ -30,40 +30,40 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class BadgeTagHandler extends TagHandler {
 
-	private String label;
+    private String label;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		setRandomId("badge");
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		Span span = new Span();
-		span.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.BADGE)
-			.addAttribute("class", getTagValue(styleClass))
+        setRandomId("badge");
+
+        Span span = new Span();
+        span.addAttribute("style", getTagValue(style))
+            .addAttribute("class", Bootstrap.BADGE)
+            .addAttribute("class", getTagValue(styleClass))
                 .addText(getTagValue(label));
 
-		appendTooltip(span);
-		appendPopOver(span);
-		
-		appendRefId(span, id);
-		appendAjax(id);
-		appendBind(id);
+        appendTooltip(span);
+        appendPopOver(span);
 
-		return span;
-	}
+        appendRefId(span, id);
+        appendAjax(id);
+        appendBind(id);
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+        return span;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 }

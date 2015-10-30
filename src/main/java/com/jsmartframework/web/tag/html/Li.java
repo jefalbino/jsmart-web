@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Li extends Tag {
 
-	public Li() {
-		super("li");
-	}
+    public Li() {
+        super("li");
+    }
 }

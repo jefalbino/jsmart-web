@@ -31,71 +31,71 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 public final class FooterTagHandler extends TagHandler {
-	
-	private String title;
-	
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof ModalTagHandler) {
-			((ModalTagHandler) parent).setFooter(this);
-			return false;
 
-		} else if (parent instanceof PanelTagHandler) {
-			((PanelTagHandler) parent).setFooter(this);
-			return false;
-		}
-		return true;
-	}
+    private String title;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof ModalTagHandler) {
+            ((ModalTagHandler) parent).setFooter(this);
+            return false;
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+        } else if (parent instanceof PanelTagHandler) {
+            ((PanelTagHandler) parent).setFooter(this);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
+
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
         JspTag parent = getParent();
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		setRandomId("footer");
+        setRandomId("footer");
 
-		Tag footer = new Div();
+        Tag footer = new Div();
 
-		appendRefId(footer, id);
+        appendRefId(footer, id);
 
-		if (parent instanceof ModalTagHandler) {
-			footer.addAttribute("class", Bootstrap.MODAL_FOOTER);
-			
-		} else if (parent instanceof PanelTagHandler) {
-			footer.addAttribute("class", Bootstrap.PANEL_FOOTER);
-		}
+        if (parent instanceof ModalTagHandler) {
+            footer.addAttribute("class", Bootstrap.MODAL_FOOTER);
 
-		footer.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass))
+        } else if (parent instanceof PanelTagHandler) {
+            footer.addAttribute("class", Bootstrap.PANEL_FOOTER);
+        }
+
+        footer.addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass))
                 .addText(getTagValue(title))
                 .addText(sw.toString());
-		
-		if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
+
+        if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
             String tagId = ((TagHandler) parent).getId();
-			appendAjax(tagId);
-			appendBind(tagId);
-		} else {
-			appendAjax(id);
-			appendBind(id);
-		}
+            appendAjax(tagId);
+            appendBind(tagId);
+        } else {
+            appendAjax(id);
+            appendBind(id);
+        }
 
-		return footer;
-	}
+        return footer;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
 }

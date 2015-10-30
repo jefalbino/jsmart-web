@@ -30,77 +30,77 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class ValidateTagHandler extends TagHandler {
 
-	private String text;
+    private String text;
 
-	private String maxLength;
+    private String maxLength;
 
-	private Integer minLength;
-	
-	private String regex;
+    private Integer minLength;
 
-	private String look = Look.ERROR.name().toLowerCase();
+    private String regex;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (look != null && !Look.validateValidate(look) && !isEL(look)) {
-			throw InvalidAttributeException.fromPossibleValues("validate", "look", Look.getValidateValues());
-		}
-	}
+    private String look = Look.ERROR.name().toLowerCase();
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
+    @Override
+    public void validateTag() throws JspException {
+        if (look != null && !Look.validateValidate(look) && !isEL(look)) {
+            throw InvalidAttributeException.fromPossibleValues("validate", "look", Look.getValidateValues());
+        }
+    }
 
-			((TagHandler) parent).setValidatorTag(this);
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof TagHandler) {
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		// DO NOTHING
-		return null;
-	}
+            ((TagHandler) parent).setValidatorTag(this);
+            return false;
+        }
+        return true;
+    }
 
-	public String getText() {
-		return text;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
-	public void setText(String text) {
-		this.text = text;
-	}
+    public String getText() {
+        return text;
+    }
 
-	public String getLook() {
-		return look;
-	}
+    public void setText(String text) {
+        this.text = text;
+    }
 
-	public void setLook(String look) {
-		this.look = look;
-	}
+    public String getLook() {
+        return look;
+    }
 
-	public String getMaxLength() {
-		return maxLength;
-	}
+    public void setLook(String look) {
+        this.look = look;
+    }
 
-	public void setMaxLength(String maxLength) {
-		this.maxLength = maxLength;
-	}
+    public String getMaxLength() {
+        return maxLength;
+    }
 
-	public Integer getMinLength() {
-		return minLength;
-	}
+    public void setMaxLength(String maxLength) {
+        this.maxLength = maxLength;
+    }
 
-	public void setMinLength(Integer minLength) {
-		this.minLength = minLength;
-	}
+    public Integer getMinLength() {
+        return minLength;
+    }
 
-	public String getRegex() {
-		return regex;
-	}
+    public void setMinLength(Integer minLength) {
+        this.minLength = minLength;
+    }
 
-	public void setRegex(String regex) {
-		this.regex = regex;
-	}
+    public String getRegex() {
+        return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
+    }
 }

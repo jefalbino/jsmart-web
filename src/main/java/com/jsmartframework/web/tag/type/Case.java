@@ -20,31 +20,31 @@ package com.jsmartframework.web.tag.type;
 
 public enum Case {
 
-	LOWERCASE,
-	UPPERCASE,
-	CAPITALIZE;
+    LOWERCASE,
+    UPPERCASE,
+    CAPITALIZE;
 
-	public static boolean validate(String box) {
-		try {
-			Case.valueOf(box.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    public static boolean validate(String box) {
+        try {
+            Case.valueOf(box.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	public static String[] getValues() {
-		int index = 0;
-		Case[] boxes = values();
-		String[] values = new String[boxes.length];
+    public static String[] getValues() {
+        int index = 0;
+        Case[] boxes = values();
+        String[] values = new String[boxes.length];
 
-		for (Case box : boxes) {
-			values[index++] = box.name().toLowerCase();
-		}
-		return values;
-	}
+        for (Case box : boxes) {
+            values[index++] = box.name().toLowerCase();
+        }
+        return values;
+    }
 
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 }

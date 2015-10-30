@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class FieldSet extends Tag {
 
-	public FieldSet() {
-		super("fieldset");
-	}
+    public FieldSet() {
+        super("fieldset");
+    }
 }

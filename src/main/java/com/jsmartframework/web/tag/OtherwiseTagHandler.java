@@ -30,29 +30,29 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class OtherwiseTagHandler extends TagHandler {
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof AuthorizeTagHandler) {
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof AuthorizeTagHandler) {
 
-			((AuthorizeTagHandler) parent).setOtherwise(this);
-			return false;
-		}
-		return true;
-	}
+            ((AuthorizeTagHandler) parent).setOtherwise(this);
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		return null;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
+        return null;
+    }
 
 }

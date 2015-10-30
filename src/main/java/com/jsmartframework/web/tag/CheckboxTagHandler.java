@@ -38,154 +38,154 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class CheckboxTagHandler extends TagHandler {
 
-	private String value;
+    private String value;
 
-	private String label;
+    private String label;
 
-	private Integer tabIndex;
-	
-	private String update;
-	
-	private String beforeSend;
-	
-	private String onError;
-	
-	private String onSuccess;
+    private Integer tabIndex;
 
-	private String onComplete;
+    private String update;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    private String beforeSend;
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    private String onError;
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		
-		setRandomId("checkbox");
+    private String onSuccess;
+
+    private String onComplete;
+
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
+
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
+
+        setRandomId("checkbox");
 
         String name = getTagName(J_TAG, value);
         boolean disabled = isDisabled();
 
-		Input input = new Input();
-		input.addAttribute("type", "checkbox")
-			.addAttribute("name", name)
-			.addAttribute("tabindex", tabIndex)
-			.addAttribute("disabled", disabled ? "disabled" : null);
-		
-		appendRefId(input, id);
+        Input input = new Input();
+        input.addAttribute("type", "checkbox")
+            .addAttribute("name", name)
+            .addAttribute("tabindex", tabIndex)
+            .addAttribute("disabled", disabled ? "disabled" : null);
 
-		Label lb = new Label();
-		lb.addTag(input)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass))
+        appendRefId(input, id);
+
+        Label lb = new Label();
+        lb.addTag(input)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass))
                 .addText(getTagValue(label));
 
-		Div div = new Div();
-		div.addAttribute("class", Bootstrap.CHECKBOX)
-			.addAttribute("disabled", disabled ? "disabled" : null)
-			.addTag(lb);
+        Div div = new Div();
+        div.addAttribute("class", Bootstrap.CHECKBOX)
+            .addAttribute("disabled", disabled ? "disabled" : null)
+            .addTag(lb);
 
-		appendValidator(input);
-		appendRest(input, name);
-		appendEvent(input);
+        appendValidator(input);
+        appendRest(input, name);
+        appendEvent(input);
 
-		appendTooltip(div);
-		appendPopOver(div);
+        appendTooltip(div);
+        appendPopOver(div);
 
-		Boolean object = (Boolean) getTagValue(value);
-		if (object != null) {
-			input.addAttribute("value", object)
-				.addAttribute("checked", object ? "true" : null);
-		} else {
-			input.addAttribute("value", "false");
-		}
+        Boolean object = (Boolean) getTagValue(value);
+        if (object != null) {
+            input.addAttribute("value", object)
+                .addAttribute("checked", object ? "true" : null);
+        } else {
+            input.addAttribute("value", "false");
+        }
 
-		if (ajax) {
-			appendDocScript(getAjaxFunction());
-		}
+        if (ajax) {
+            appendDocScript(getAjaxFunction());
+        }
 
-		appendAjax(id);
-		appendBind(id);
+        appendAjax(id);
+        appendBind(id);
 
-		return div; 
-	}
+        return div;
+    }
 
-	@SuppressWarnings("unchecked")
-	private StringBuilder getAjaxFunction() {
-		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
-		jsonAjax.setTag("checkbox");
-		
-		if (update != null) {
-			jsonAjax.setUpdate(update.trim());
-		}
-		if (beforeSend != null) {
-			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
-		}
-		if (onError != null) {
-			jsonAjax.setError((String) getTagValue(onError.trim()));
-		}
-		if (onSuccess != null) {
-			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
-		}
-		if (onComplete != null) {
-			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
-		}
-		
-		// It means that the ajax is inside some iterator tag, so the
-		// ajax actions will be set by iterator tag and the event bind
-		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
-		if (actionStack != null) {
-			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
+    @SuppressWarnings("unchecked")
+    private StringBuilder getAjaxFunction() {
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
+        jsonAjax.setMethod("post");
+        jsonAjax.setTag("checkbox");
 
-		} else {
-			StringBuilder builder = new StringBuilder();
-			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-			return getBindFunction(id, Event.CLICK.name(), builder);
-		}
-		
-		return null;
-	}
+        if (update != null) {
+            jsonAjax.setUpdate(update.trim());
+        }
+        if (beforeSend != null) {
+            jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+        }
+        if (onError != null) {
+            jsonAjax.setError((String) getTagValue(onError.trim()));
+        }
+        if (onSuccess != null) {
+            jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+        }
+        if (onComplete != null) {
+            jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+        }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+        // It means that the ajax is inside some iterator tag, so the
+        // ajax actions will be set by iterator tag and the event bind
+        // will use the id as tag attribute
+        Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
+        if (actionStack != null) {
+            actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+            return getBindFunction(id, Event.CLICK.name(), builder);
+        }
 
-	public void setTabIndex(Integer tabIndex) {
-		this.tabIndex = tabIndex;
-	}
+        return null;
+    }
 
-	public void setUpdate(String update) {
-		this.update = update;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setBeforeSend(String beforeSend) {
-		this.beforeSend = beforeSend;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setOnError(String onError) {
-		this.onError = onError;
-	}
+    public void setTabIndex(Integer tabIndex) {
+        this.tabIndex = tabIndex;
+    }
 
-	public void setOnSuccess(String onSuccess) {
-		this.onSuccess = onSuccess;
-	}
+    public void setUpdate(String update) {
+        this.update = update;
+    }
 
-	public void setOnComplete(String onComplete) {
-		this.onComplete = onComplete;
-	}
+    public void setBeforeSend(String beforeSend) {
+        this.beforeSend = beforeSend;
+    }
+
+    public void setOnError(String onError) {
+        this.onError = onError;
+    }
+
+    public void setOnSuccess(String onSuccess) {
+        this.onSuccess = onSuccess;
+    }
+
+    public void setOnComplete(String onComplete) {
+        this.onComplete = onComplete;
+    }
 
 }

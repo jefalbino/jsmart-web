@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class TBody extends Tag {
 
-	public TBody() {
-		super("tbody");
-	}
+    public TBody() {
+        super("tbody");
+    }
 }

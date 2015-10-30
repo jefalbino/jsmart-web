@@ -32,57 +32,57 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class AuthorizeTagHandler extends TagHandler {
 
-	private List<WhenTagHandler> whens;
+    private List<WhenTagHandler> whens;
 
-	private OtherwiseTagHandler otherwise;
+    private OtherwiseTagHandler otherwise;
 
-	public AuthorizeTagHandler() {
-		whens = new ArrayList<WhenTagHandler>();
-	}
+    public AuthorizeTagHandler() {
+        whens = new ArrayList<WhenTagHandler>();
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		// Execute body to get whens and otherwise
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+        // Execute body to get whens and otherwise
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		Collection<String> userAccess = getUserAuthorizationAccess();
+        Collection<String> userAccess = getUserAuthorizationAccess();
 
-		if (userAccess != null && !userAccess.isEmpty()) {
-			for (WhenTagHandler when : whens) {
+        if (userAccess != null && !userAccess.isEmpty()) {
+            for (WhenTagHandler when : whens) {
 
-				List<String> whenAccess = when.getAccess();
+                List<String> whenAccess = when.getAccess();
 
-				if (whenAccess != null && !whenAccess.isEmpty()) {
-					for (String access : whenAccess) {
-						if (userAccess.contains(access)) {
-							return when.executeTag();
-						}
-					}
-				}
-			}
-		}
+                if (whenAccess != null && !whenAccess.isEmpty()) {
+                    for (String access : whenAccess) {
+                        if (userAccess.contains(access)) {
+                            return when.executeTag();
+                        }
+                    }
+                }
+            }
+        }
 
-		if (otherwise != null)  {
-			return otherwise.executeTag();
-		}
-		return null;
-	}
+        if (otherwise != null)  {
+            return otherwise.executeTag();
+        }
+        return null;
+    }
 
-	void addWhen(WhenTagHandler when) {
-		this.whens.add(when);
-	}
+    void addWhen(WhenTagHandler when) {
+        this.whens.add(when);
+    }
 
-	void setOtherwise(OtherwiseTagHandler otherwise) {
-		this.otherwise = otherwise;
-	}
+    void setOtherwise(OtherwiseTagHandler otherwise) {
+        this.otherwise = otherwise;
+    }
 
 }

@@ -33,63 +33,63 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public class ButtonGroupTagHandler extends TagHandler {
 
-	private boolean inline = true;
+    private boolean inline = true;
 
-	private String size;
+    private String size;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (size != null && !Size.validate(size)) {
-			throw InvalidAttributeException.fromPossibleValues("buttongroup", "size", Size.getValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (size != null && !Size.validate(size)) {
+            throw InvalidAttributeException.fromPossibleValues("buttongroup", "size", Size.getValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		setRandomId("buttongroup");
+        setRandomId("buttongroup");
 
-		Div buttonGroup = new Div();
-		buttonGroup.addAttribute("id", id)
-				.addAttribute("role", "group")
-				.addAttribute("style", style);
+        Div buttonGroup = new Div();
+        buttonGroup.addAttribute("id", id)
+                .addAttribute("role", "group")
+                .addAttribute("style", style);
 
-		if (inline) {
-			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP);
-		} else {
-			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_VERTICAL);
-		}
+        if (inline) {
+            buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP);
+        } else {
+            buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_VERTICAL);
+        }
 
-		if (Size.XSMALL.equalsIgnoreCase(size)) {
-			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-		} else if (Size.SMALL.equalsIgnoreCase(size)) {
-			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-		} else if (Size.LARGE.equalsIgnoreCase(size)) {
-			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
-		} else if (Size.JUSTIFIED.equalsIgnoreCase(size)) {
-			buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
-		}
+        if (Size.XSMALL.equalsIgnoreCase(size)) {
+            buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
+        } else if (Size.SMALL.equalsIgnoreCase(size)) {
+            buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
+        } else if (Size.LARGE.equalsIgnoreCase(size)) {
+            buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
+        } else if (Size.JUSTIFIED.equalsIgnoreCase(size)) {
+            buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
+        }
 
-		buttonGroup.addText(sw.toString());
-		
-		appendTooltip(buttonGroup);
-		appendPopOver(buttonGroup);
+        buttonGroup.addText(sw.toString());
 
-		return buttonGroup;
-	}
+        appendTooltip(buttonGroup);
+        appendPopOver(buttonGroup);
 
-	public void setInline(boolean inline) {
-		this.inline = inline;
-	}
+        return buttonGroup;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setInline(boolean inline) {
+        this.inline = inline;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 
 }

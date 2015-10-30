@@ -32,42 +32,42 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class WhenTagHandler extends TagHandler {
 
-	private String access;
+    private String access;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof AuthorizeTagHandler) {
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof AuthorizeTagHandler) {
 
-			((AuthorizeTagHandler) parent).addWhen(this);
-			return false;
-		}
-		return true;
-	}
+            ((AuthorizeTagHandler) parent).addWhen(this);
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		return null;
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
+        return null;
+    }
 
-	public void setAccess(String roles) {
-		this.access = roles;
-	}
+    public void setAccess(String roles) {
+        this.access = roles;
+    }
 
-	List<String> getAccess() {
-		if (!access.trim().isEmpty()) {
-			return Arrays.asList(access.split(","));
-		}
-		return null;
-	}
+    List<String> getAccess() {
+        if (!access.trim().isEmpty()) {
+            return Arrays.asList(access.split(","));
+        }
+        return null;
+    }
 
 }

@@ -35,37 +35,37 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class IconTagHandler extends TagHandler {
 
-	private String name;
+    private String name;
 
-	private String side = Align.LEFT.name().toLowerCase();
-	
-	private String look;
+    private String side = Align.LEFT.name().toLowerCase();
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
+    private String look;
 
-		if (parent instanceof ButtonTagHandler) {
-			((ButtonTagHandler) parent).addIconTag(this);
-			return false;
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
 
-		} else if (parent instanceof LinkTagHandler) {
-			((LinkTagHandler) parent).addIconTag(this);
-			return false;
+        if (parent instanceof ButtonTagHandler) {
+            ((ButtonTagHandler) parent).addIconTag(this);
+            return false;
 
-		} else if (parent instanceof DropDownTagHandler) {
-			((DropDownTagHandler) parent).addIconTag(this);
-			return false;
+        } else if (parent instanceof LinkTagHandler) {
+            ((LinkTagHandler) parent).addIconTag(this);
+            return false;
 
-		} else if (parent instanceof DropActionTagHandler) {
-			((DropActionTagHandler) parent).addIconTag(this);
-			return false;
+        } else if (parent instanceof DropDownTagHandler) {
+            ((DropDownTagHandler) parent).addIconTag(this);
+            return false;
 
-		} else if (parent instanceof HeaderTagHandler) {
-			((HeaderTagHandler) parent).addIconTag(this);
-			return false;
+        } else if (parent instanceof DropActionTagHandler) {
+            ((DropActionTagHandler) parent).addIconTag(this);
+            return false;
 
-		} else if (parent instanceof TabPaneTagHandler) {
+        } else if (parent instanceof HeaderTagHandler) {
+            ((HeaderTagHandler) parent).addIconTag(this);
+            return false;
+
+        } else if (parent instanceof TabPaneTagHandler) {
             TabPaneTagHandler tabPaneTag = (TabPaneTagHandler) parent;
 
             // Consider only the first child icon tag as tabpane icon,
@@ -74,29 +74,29 @@ public final class IconTagHandler extends TagHandler {
                 tabPaneTag.addIconTag(this);
                 return false;
             }
-		}
-		return true;
-	}
+        }
+        return true;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (side != null && !Align.validateLeftRight(side)) {
-			throw InvalidAttributeException.fromPossibleValues("icon", "side", Align.getLeftRightValues());
-		}
-		if (look != null && !Look.validateLook(look) && !isEL(look)) {
-			throw InvalidAttributeException.fromPossibleValues("icon", "look", Look.getLookValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (side != null && !Align.validateLeftRight(side)) {
+            throw InvalidAttributeException.fromPossibleValues("icon", "side", Align.getLeftRightValues());
+        }
+        if (look != null && !Look.validateLook(look) && !isEL(look)) {
+            throw InvalidAttributeException.fromPossibleValues("icon", "look", Look.getLookValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		setRandomId("icon");
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
+
+        setRandomId("icon");
 
         Span span = new Span();
         span.addAttribute("class", JSmart.ICON);
@@ -108,51 +108,51 @@ public final class IconTagHandler extends TagHandler {
 
         span.addAttribute("class", iconName)
             .addAttribute("style", getTagValue(style))
-			.addAttribute("aria-hidden", "true")
-			.addAttribute("side", side);
-		
-		appendRefId(span, id);
+            .addAttribute("aria-hidden", "true")
+            .addAttribute("side", side);
+
+        appendRefId(span, id);
         appendEvent(span);
-		
-		String lookVal = (String) getTagValue(look);
 
-		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.TEXT_PRIMARY);
-		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.TEXT_SUCCESS);
-		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.TEXT_INFO);
-		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.TEXT_WARNING);
-		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.TEXT_DANGER);
-		}
-		
-		// At last place the style class
-		span.addAttribute("class", getTagValue(styleClass));
+        String lookVal = (String) getTagValue(look);
 
-		appendAjax(id);
-		appendBind(id);
+        if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.TEXT_PRIMARY);
+        } else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.TEXT_SUCCESS);
+        } else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.TEXT_INFO);
+        } else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.TEXT_WARNING);
+        } else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.TEXT_DANGER);
+        }
+
+        // At last place the style class
+        span.addAttribute("class", getTagValue(styleClass));
+
+        appendAjax(id);
+        appendBind(id);
 
         appendTooltip(span);
         appendPopOver(span);
 
-		return span;
-	}
+        return span;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	String getSide() {
-		return side;
-	}
+    String getSide() {
+        return side;
+    }
 
-	public void setSide(String side) {
-		this.side = side;
-	}
+    public void setSide(String side) {
+        this.side = side;
+    }
 
-	public void setLook(String look) {
-		this.look = look;
-	}
+    public void setLook(String look) {
+        this.look = look;
+    }
 }

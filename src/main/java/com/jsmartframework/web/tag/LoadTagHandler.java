@@ -34,20 +34,20 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class LoadTagHandler extends TagHandler {
 
-	private String icon;
+    private String icon;
 
-	private String label;
+    private String label;
 
-	private String type;
+    private String type;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof AutoCompleteTagHandler) {
-			((AutoCompleteTagHandler) parent).setLoadTag(this);
-			return false;
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof AutoCompleteTagHandler) {
+            ((AutoCompleteTagHandler) parent).setLoadTag(this);
+            return false;
 
-		} else if (parent instanceof ButtonTagHandler) {
+        } else if (parent instanceof ButtonTagHandler) {
             ((ButtonTagHandler) parent).setLoadTag(this);
             return false;
 
@@ -63,74 +63,74 @@ public final class LoadTagHandler extends TagHandler {
             ((TableTagHandler) parent).setLoadTag(this);
             return false;
         }
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (type != null && !Output.validateHeader(type)) {
-			throw InvalidAttributeException.fromPossibleValues("load", "type", Output.getHeaderValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (type != null && !Output.validateHeader(type)) {
+            throw InvalidAttributeException.fromPossibleValues("load", "type", Output.getHeaderValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		setRandomId("load");
-		
-		Tag header = null;
-		if (type != null) {
-			header = new Tag(type);
-		} else {
-			header = new Tag(Output.H3.name().toLowerCase());
-		}
+        setRandomId("load");
 
-		header.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass));
+        Tag header = null;
+        if (type != null) {
+            header = new Tag(type);
+        } else {
+            header = new Tag(Output.H3.name().toLowerCase());
+        }
 
-		appendRefId(header, id);
+        header.addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass));
 
-		Span span = new Span();
-		span.addAttribute("role-load-content", "")
+        appendRefId(header, id);
+
+        Span span = new Span();
+        span.addAttribute("role-load-content", "")
             .addAttribute("class", JSmart.ICON)
-			.addAttribute("class", Bootstrap.GLYPHICON)
-			.addAttribute("class", Bootstrap.GLYPHICON_ANIMATE)
-			.addAttribute("aria-hidden", "true");
+            .addAttribute("class", Bootstrap.GLYPHICON)
+            .addAttribute("class", Bootstrap.GLYPHICON_ANIMATE)
+            .addAttribute("aria-hidden", "true");
 
-		if (icon != null) {
-			span.addAttribute("class", getTagValue(icon));
-		} else {
-			span.addAttribute("class", Bootstrap.GLYPHICON_REFRESH);
-		}
+        if (icon != null) {
+            span.addAttribute("class", getTagValue(icon));
+        } else {
+            span.addAttribute("class", Bootstrap.GLYPHICON_REFRESH);
+        }
 
-		header.addTag(span);
+        header.addTag(span);
 
-		if (label != null) { 
-			header.addText(" ")
-				.addText(getTagValue(label));
-		}
-		
-		appendAjax(id);
-		appendBind(id);
+        if (label != null) {
+            header.addText(" ")
+                .addText(getTagValue(label));
+        }
 
-		return header;
-	}
+        appendAjax(id);
+        appendBind(id);
 
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
+        return header;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

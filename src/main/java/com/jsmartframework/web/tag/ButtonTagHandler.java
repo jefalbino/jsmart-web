@@ -48,38 +48,38 @@ public final class ButtonTagHandler extends TagHandler {
 
     private String onForm;
 
-	private String look;
+    private String look;
 
-	private String label;
+    private String label;
 
-	private Integer length;
+    private Integer length;
 
-	private boolean ellipsize;
+    private boolean ellipsize;
 
-	private String size;
+    private String size;
 
-	private String action;
+    private String action;
 
-	private String update;
+    private String update;
 
-	private String beforeSend;
+    private String beforeSend;
 
-	private String onError;
-	
-	private String onSuccess;
-	
-	private String onComplete;
+    private String onError;
 
-	private Integer tabIndex;
+    private String onSuccess;
 
-	private boolean reset;
+    private String onComplete;
 
-	private DropMenuTagHandler dropMenu;
+    private Integer tabIndex;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof InputTagHandler) {
+    private boolean reset;
+
+    private DropMenuTagHandler dropMenu;
+
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof InputTagHandler) {
             ((InputTagHandler) parent).addChildAddOn(this);
             return false;
 
@@ -87,235 +87,235 @@ public final class ButtonTagHandler extends TagHandler {
             ((AutoCompleteTagHandler) parent).addChildAddOn(this);
             return false;
 
-		} else if (parent instanceof DateTagHandler) {
-			((DateTagHandler) parent).addChildAddOn(this);
-			return false;
+        } else if (parent instanceof DateTagHandler) {
+            ((DateTagHandler) parent).addChildAddOn(this);
+            return false;
 
-		} else if (parent instanceof UploadTagHandler) {
-			((UploadTagHandler) parent).addChildAddOn(this);
-			return false;
+        } else if (parent instanceof UploadTagHandler) {
+            ((UploadTagHandler) parent).addChildAddOn(this);
+            return false;
 
-		} else if (parent instanceof SelectTagHandler) {
-			((SelectTagHandler) parent).addChildAddOn(this);
-			return false;
-		}
-		return true;
-	}
+        } else if (parent instanceof SelectTagHandler) {
+            ((SelectTagHandler) parent).addChildAddOn(this);
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (size != null && !Size.validate(size)) {
-			throw InvalidAttributeException.fromPossibleValues("button", "size", Size.getValues());
-		}
-		if (look != null && !Look.validateButton(look) && !isEL(look)) {
-			throw InvalidAttributeException.fromPossibleValues("button", "look", Look.getButtonValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (size != null && !Size.validate(size)) {
+            throw InvalidAttributeException.fromPossibleValues("button", "size", Size.getValues());
+        }
+        if (look != null && !Look.validateButton(look) && !isEL(look)) {
+            throw InvalidAttributeException.fromPossibleValues("button", "look", Look.getButtonValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		JspTag parent = getParent();
-		boolean inputAddOn = parent instanceof InputTagHandler
+        JspTag parent = getParent();
+        boolean inputAddOn = parent instanceof InputTagHandler
                 || parent instanceof AutoCompleteTagHandler
                 || parent instanceof DateTagHandler || parent instanceof SelectTagHandler
                 || parent instanceof UploadTagHandler;
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		setRandomId("button");
+        setRandomId("button");
 
-		Div buttonGroup = null;
+        Div buttonGroup = null;
 
-		if (dropMenu != null || inputAddOn) {
-			buttonGroup = new Div();
-			
-			if (inputAddOn) {
-				buttonGroup.addAttribute("class", Bootstrap.INPUT_GROUP_BUTTON);
-			} else {
-				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP);
-			}
-			
-			if (Size.XSMALL.equalsIgnoreCase(size)) {
-				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
-			} else if (Size.SMALL.equalsIgnoreCase(size)) {
-				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
-			} else if (Size.LARGE.equalsIgnoreCase(size)) {
-				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
-			} else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
-				buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
-			}
-			
-			if (dropMenu != null && dropMenu.isDropUp()) {
-				buttonGroup.addAttribute("class", Bootstrap.DROPUP);
-			}
-		}
+        if (dropMenu != null || inputAddOn) {
+            buttonGroup = new Div();
+
+            if (inputAddOn) {
+                buttonGroup.addAttribute("class", Bootstrap.INPUT_GROUP_BUTTON);
+            } else {
+                buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP);
+            }
+
+            if (Size.XSMALL.equalsIgnoreCase(size)) {
+                buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_XSMALL);
+            } else if (Size.SMALL.equalsIgnoreCase(size)) {
+                buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_SMALL);
+            } else if (Size.LARGE.equalsIgnoreCase(size)) {
+                buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_LARGE);
+            } else if (Size.JUSTIFIED.name().equalsIgnoreCase(size)) {
+                buttonGroup.addAttribute("class", Bootstrap.BUTTON_GROUP_JUSTIFIED);
+            }
+
+            if (dropMenu != null && dropMenu.isDropUp()) {
+                buttonGroup.addAttribute("class", Bootstrap.DROPUP);
+            }
+        }
 
         boolean disabled = isDisabled();
 
-		Button button = new Button();
-		button.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.BUTTON)
-			.addAttribute("tabindex", tabIndex)
-			.addAttribute("disabled", disabled ? "disabled" : null);
+        Button button = new Button();
+        button.addAttribute("style", getTagValue(style))
+            .addAttribute("class", Bootstrap.BUTTON)
+            .addAttribute("tabindex", tabIndex)
+            .addAttribute("disabled", disabled ? "disabled" : null);
 
-		appendRefId(button, id);
+        appendRefId(button, id);
 
-		String lookVal = (String) getTagValue(look);
-		button.addAttribute("class", getButtonLook(lookVal));
-			
-		if (Size.XSMALL.equalsIgnoreCase(size)) {
-			button.addAttribute("class", Bootstrap.BUTTON_XSMALL);
-		} else if (Size.SMALL.equalsIgnoreCase(size)) {
-			button.addAttribute("class", Bootstrap.BUTTON_SMALL);
-		} else if (Size.LARGE.equalsIgnoreCase(size)) {
-			button.addAttribute("class", Bootstrap.BUTTON_LARGE);
-		} else if (Size.JUSTIFIED.equalsIgnoreCase(size)) {
-			button.addAttribute("class", Bootstrap.BUTTON_JUSTIFIED);
-		}
+        String lookVal = (String) getTagValue(look);
+        button.addAttribute("class", getButtonLook(lookVal));
 
-		for (IconTagHandler iconTag : iconTags) {
-			if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-				button.addTag(iconTag.executeTag());
-				button.addText(" ");
-			}
-		}
+        if (Size.XSMALL.equalsIgnoreCase(size)) {
+            button.addAttribute("class", Bootstrap.BUTTON_XSMALL);
+        } else if (Size.SMALL.equalsIgnoreCase(size)) {
+            button.addAttribute("class", Bootstrap.BUTTON_SMALL);
+        } else if (Size.LARGE.equalsIgnoreCase(size)) {
+            button.addAttribute("class", Bootstrap.BUTTON_LARGE);
+        } else if (Size.JUSTIFIED.equalsIgnoreCase(size)) {
+            button.addAttribute("class", Bootstrap.BUTTON_JUSTIFIED);
+        }
 
-		String val = (String) getTagValue(label);
-		if (val != null && length != null && length > 0 && val.length() >= length) {
-			if (ellipsize && length > 4) {
-				val = val.substring(0, length - 4) + " ...";
-			} else {
-				val = val.substring(0, length);
-			}
-		}
-		button.addText(val);
+        for (IconTagHandler iconTag : iconTags) {
+            if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+                button.addTag(iconTag.executeTag());
+                button.addText(" ");
+            }
+        }
 
-		for (IconTagHandler iconTag : iconTags) {
-			if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-				button.addText(" ");
-				button.addTag(iconTag.executeTag());
-			}
-		}
+        String val = (String) getTagValue(label);
+        if (val != null && length != null && length > 0 && val.length() >= length) {
+            if (ellipsize && length > 4) {
+                val = val.substring(0, length - 4) + " ...";
+            } else {
+                val = val.substring(0, length);
+            }
+        }
+        button.addText(val);
 
-		if (buttonGroup != null) {
-			buttonGroup.addTag(button);
-		}
+        for (IconTagHandler iconTag : iconTags) {
+            if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+                button.addText(" ");
+                button.addTag(iconTag.executeTag());
+            }
+        }
 
-		if (loadTag != null) {
-			Tag tag = loadTag.executeTag();
-			tag.addAttribute("style", "display: none;");
-			button.addTag(tag);
-		}
+        if (buttonGroup != null) {
+            buttonGroup.addTag(button);
+        }
 
-		if (dropMenu != null) {
-			Span caret = new Span();
-			caret.addAttribute("class", Bootstrap.CARET);
+        if (loadTag != null) {
+            Tag tag = loadTag.executeTag();
+            tag.addAttribute("style", "display: none;");
+            button.addTag(tag);
+        }
 
-			if (dropMenu.isSegmented()) {
-				Button dropDown = new Button();
-				dropDown.addAttribute("type", "button")
-					.addAttribute("class", Bootstrap.BUTTON)
-					.addAttribute("class", getButtonLook(lookVal))
-					.addAttribute("role", "button")
-					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
-					.addAttribute("class", disabled ? Bootstrap.DISABLED : null)
+        if (dropMenu != null) {
+            Span caret = new Span();
+            caret.addAttribute("class", Bootstrap.CARET);
+
+            if (dropMenu.isSegmented()) {
+                Button dropDown = new Button();
+                dropDown.addAttribute("type", "button")
+                    .addAttribute("class", Bootstrap.BUTTON)
+                    .addAttribute("class", getButtonLook(lookVal))
+                    .addAttribute("role", "button")
+                    .addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+                    .addAttribute("class", disabled ? Bootstrap.DISABLED : null)
                     .addAttribute("class", JSmart.BUTTON_DROPDOWN_TOGGLE)
-					.addAttribute("data-toggle", "dropdown")
-					.addAttribute("aria-expanded", false);
+                    .addAttribute("data-toggle", "dropdown")
+                    .addAttribute("aria-expanded", false);
 
-				dropDown.addText("&zwnj;").addTag(caret);
-				buttonGroup.addTag(dropDown);
-			} else {
-				button.addAttribute("role", "button")
-					.addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
-					.addAttribute("data-toggle", "dropdown")
-					.addAttribute("aria-expanded", false);
+                dropDown.addText("&zwnj;").addTag(caret);
+                buttonGroup.addTag(dropDown);
+            } else {
+                button.addAttribute("role", "button")
+                    .addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
+                    .addAttribute("data-toggle", "dropdown")
+                    .addAttribute("aria-expanded", false);
 
-				button.addText(" ");
-				button.addTag(caret);
-			}
-		}
+                button.addText(" ");
+                button.addTag(caret);
+            }
+        }
 
-		// Add the style class at last
-		button.addAttribute("class", getTagValue(styleClass));
+        // Add the style class at last
+        button.addAttribute("class", getTagValue(styleClass));
 
-		appendEvent(button);
+        appendEvent(button);
 
-		if (ajax) {
-			button.addAttribute("type", "button");
-		} else if (action != null) {
-			button.addAttribute("type", "submit");
-		} else if (reset) {
-			button.addAttribute("type", "reset");
-		} else {
-			button.addAttribute("type", "button");
-		}
+        if (ajax) {
+            button.addAttribute("type", "button");
+        } else if (action != null) {
+            button.addAttribute("type", "submit");
+        } else if (reset) {
+            button.addAttribute("type", "reset");
+        } else {
+            button.addAttribute("type", "button");
+        }
 
-		if (ajax) {		
-			appendDocScript(getFunction(id, action, params));
-		} else if (action != null) {
-			button.addAttribute("name", getTagName(J_SBMT, action));
-		}
+        if (ajax) {
+            appendDocScript(getFunction(id, action, params));
+        } else if (action != null) {
+            button.addAttribute("name", getTagName(J_SBMT, action));
+        }
 
-		if (dropMenu != null) {
-			Tag ul = dropMenu.executeTag();
-			ul.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
-			buttonGroup.addTag(ul);
-		}
+        if (dropMenu != null) {
+            Tag ul = dropMenu.executeTag();
+            ul.addAttribute("class", disabled ? Bootstrap.DISABLED : null);
+            buttonGroup.addTag(ul);
+        }
 
-		appendBind(id);
-		appendAjax(id);
-		
-		if (buttonGroup != null) {
-			appendTooltip(buttonGroup);
-			appendPopOver(buttonGroup);
-		} else {
-			appendTooltip(button);
-			appendPopOver(button);
-		}
+        appendBind(id);
+        appendAjax(id);
 
-		return buttonGroup != null ? buttonGroup : button;
-	}
+        if (buttonGroup != null) {
+            appendTooltip(buttonGroup);
+            appendPopOver(buttonGroup);
+        } else {
+            appendTooltip(button);
+            appendPopOver(button);
+        }
 
-	private String getButtonLook(String lookVal) {
-		String buttonLook = Bootstrap.BUTTON_DEFAULT;
+        return buttonGroup != null ? buttonGroup : button;
+    }
 
-		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
-			buttonLook = Bootstrap.BUTTON_PRIMARY;
-		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
-			buttonLook = Bootstrap.BUTTON_SUCCESS;
-		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
-			buttonLook = Bootstrap.BUTTON_INFO;
-		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
-			buttonLook = Bootstrap.BUTTON_WARNING;
-		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
-			buttonLook = Bootstrap.BUTTON_DANGER;
-		} else if (Look.LINK.equalsIgnoreCase(lookVal)) {
-			buttonLook = Bootstrap.BUTTON_LINK;
-		}
-		return buttonLook;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
-		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
+    private String getButtonLook(String lookVal) {
+        String buttonLook = Bootstrap.BUTTON_DEFAULT;
+
+        if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+            buttonLook = Bootstrap.BUTTON_PRIMARY;
+        } else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+            buttonLook = Bootstrap.BUTTON_SUCCESS;
+        } else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+            buttonLook = Bootstrap.BUTTON_INFO;
+        } else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+            buttonLook = Bootstrap.BUTTON_WARNING;
+        } else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+            buttonLook = Bootstrap.BUTTON_DANGER;
+        } else if (Look.LINK.equalsIgnoreCase(lookVal)) {
+            buttonLook = Bootstrap.BUTTON_LINK;
+        }
+        return buttonLook;
+    }
+
+    @SuppressWarnings("unchecked")
+    private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
         jsonAjax.setForm(onForm);
-		jsonAjax.setTag("button");
+        jsonAjax.setTag("button");
 
         // Params must be considered regardless the action for rest purpose
         for (String name : params.keySet()) {
             jsonAjax.addParam(new Param(name, params.get(name)));
         }
 
-		if (action != null) {
-			jsonAjax.setMethod("post");
-			jsonAjax.setAction(getTagName(J_SBMT, action));
+        if (action != null) {
+            jsonAjax.setMethod("post");
+            jsonAjax.setAction(getTagName(J_SBMT, action));
 
             if (!args.isEmpty()) {
                 String argName = getTagName(J_SBMT_ARGS, action);
@@ -323,99 +323,99 @@ public final class ButtonTagHandler extends TagHandler {
                     jsonAjax.addArg(new Param(argName, arg, args.get(arg)));
                 }
             }
-		} else if (update != null) {
-			jsonAjax.setMethod("get");
-		}
-		if (update != null) {
-			jsonAjax.setUpdate(update.trim());
-		}
-		if (beforeSend != null) {
-			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
-		}
-		if (onError != null) {
-			jsonAjax.setError((String) getTagValue(onError.trim()));
-		}
-		if (onSuccess != null) {
-			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
-		}
-		if (onComplete != null) {
-			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
-		}
-		
-		// It means that the ajax is inside some iterator tag, so the
-		// ajax actions will be set by iterator tag and the event bind
-		// will use the id as tag attribute
-		Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
-		if (actionStack != null) {
-			actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
-			
-		} else {
-			StringBuilder builder = new StringBuilder();
-			builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-			return getBindFunction(id, Event.CLICK.name(), builder);
-		}
+        } else if (update != null) {
+            jsonAjax.setMethod("get");
+        }
+        if (update != null) {
+            jsonAjax.setUpdate(update.trim());
+        }
+        if (beforeSend != null) {
+            jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+        }
+        if (onError != null) {
+            jsonAjax.setError((String) getTagValue(onError.trim()));
+        }
+        if (onSuccess != null) {
+            jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+        }
+        if (onComplete != null) {
+            jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+        }
 
-		return null;
-	}
+        // It means that the ajax is inside some iterator tag, so the
+        // ajax actions will be set by iterator tag and the event bind
+        // will use the id as tag attribute
+        Stack<RefAction> actionStack = (Stack<RefAction>) getMappedValue(DELEGATE_TAG_PARENT);
+        if (actionStack != null) {
+            actionStack.peek().addRef(id, Event.CLICK.name(), jsonAjax);
 
-	void setDropMenu(DropMenuTagHandler dropMenu) {
-		this.dropMenu = dropMenu;
-	}
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+            return getBindFunction(id, Event.CLICK.name(), builder);
+        }
+
+        return null;
+    }
+
+    void setDropMenu(DropMenuTagHandler dropMenu) {
+        this.dropMenu = dropMenu;
+    }
 
     public void setOnForm(String onForm) {
         this.onForm = onForm;
     }
 
     public void setLook(String look) {
-		this.look = look;
-	}
+        this.look = look;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setLength(Integer length) {
-		this.length = length;
-	}
+    public void setLength(Integer length) {
+        this.length = length;
+    }
 
-	public void setEllipsize(boolean ellipsize) {
-		this.ellipsize = ellipsize;
-	}
+    public void setEllipsize(boolean ellipsize) {
+        this.ellipsize = ellipsize;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setSize(String size) {
+        this.size = size;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public void setUpdate(String update) {
-		this.update = update;
-	}
+    public void setUpdate(String update) {
+        this.update = update;
+    }
 
-	public void setBeforeSend(String beforeSend) {
-		this.beforeSend = beforeSend;
-	}
+    public void setBeforeSend(String beforeSend) {
+        this.beforeSend = beforeSend;
+    }
 
-	public void setOnError(String onError) {
-		this.onError = onError;
-	}
+    public void setOnError(String onError) {
+        this.onError = onError;
+    }
 
-	public void setOnSuccess(String onSuccess) {
-		this.onSuccess = onSuccess;
-	}
+    public void setOnSuccess(String onSuccess) {
+        this.onSuccess = onSuccess;
+    }
 
-	public void setOnComplete(String onComplete) {
-		this.onComplete = onComplete;
-	}
+    public void setOnComplete(String onComplete) {
+        this.onComplete = onComplete;
+    }
 
-	public void setTabIndex(Integer tabIndex) {
-		this.tabIndex = tabIndex;
-	}
+    public void setTabIndex(Integer tabIndex) {
+        this.tabIndex = tabIndex;
+    }
 
-	public void setReset(boolean reset) {
-		this.reset = reset;
-	}
+    public void setReset(boolean reset) {
+        this.reset = reset;
+    }
 
 }

@@ -20,43 +20,43 @@ package com.jsmartframework.web.tag.type;
 
 public enum Event {
 
-	SELECT,
-	CHANGE,
-	BLUR,
-	CLICK,
-	DBLCLICK,
-	MOUSEDOWN,
-	MOUSEMOVE,
-	MOUSEOVER,
-	MOUSEOUT,
-	MOUSEUP,
-	KEYDOWN,
-	KEYPRESS,
-	KEYUP,
-	FOCUS,
-	SUBMIT;
+    SELECT,
+    CHANGE,
+    BLUR,
+    CLICK,
+    DBLCLICK,
+    MOUSEDOWN,
+    MOUSEMOVE,
+    MOUSEOVER,
+    MOUSEOUT,
+    MOUSEUP,
+    KEYDOWN,
+    KEYPRESS,
+    KEYUP,
+    FOCUS,
+    SUBMIT;
 
-	public static boolean validate(String event) {
-		try {
-			Event.valueOf(event.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	public static String[] getValues() {
-		int index = 0;
-		Event[] events = values();
-		String[] values = new String[events.length];
+    public static boolean validate(String event) {
+        try {
+            Event.valueOf(event.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-		for (Event event : events) {
-			values[index++] = event.name().toLowerCase();
-		}
-		return values;
-	}
+    public static String[] getValues() {
+        int index = 0;
+        Event[] events = values();
+        String[] values = new String[events.length];
 
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+        for (Event event : events) {
+            values[index++] = event.name().toLowerCase();
+        }
+        return values;
+    }
+
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 }

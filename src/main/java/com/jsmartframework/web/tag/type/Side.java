@@ -20,33 +20,33 @@ package com.jsmartframework.web.tag.type;
 
 public enum Side {
 
-	LEFT,
-	RIGHT,
-	TOP,
-	BOTTOM;
+    LEFT,
+    RIGHT,
+    TOP,
+    BOTTOM;
 
-	public static boolean validate(String side) {
-		try {
-			Side.valueOf(side.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	public static String[] getValues() {
-		int index = 0;
-		Side[] sides = values();
-		String[] values = new String[sides.length];
+    public static boolean validate(String side) {
+        try {
+            Side.valueOf(side.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-		for (Side side : sides) {
-			values[index++] = side.name().toLowerCase();
-		}
-		return values;
-	}
+    public static String[] getValues() {
+        int index = 0;
+        Side[] sides = values();
+        String[] values = new String[sides.length];
 
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+        for (Side side : sides) {
+            values[index++] = side.name().toLowerCase();
+        }
+        return values;
+    }
+
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 
 }

@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Label extends Tag {
 
-	public Label() {
-		super("label");
-	}
+    public Label() {
+        super("label");
+    }
 }

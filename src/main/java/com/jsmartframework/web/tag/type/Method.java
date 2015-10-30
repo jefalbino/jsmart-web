@@ -20,46 +20,46 @@ package com.jsmartframework.web.tag.type;
 
 public enum Method {
 
-	POST,
-	GET,
-	PUT,
-	DELETE,
-	PATCH,
-	OPTIONS,
-	HEAD;
+    POST,
+    GET,
+    PUT,
+    DELETE,
+    PATCH,
+    OPTIONS,
+    HEAD;
 
-	public static boolean validate(String method) {
-		try {
-			Method.valueOf(method.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    public static boolean validate(String method) {
+        try {
+            Method.valueOf(method.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	public static boolean validatePostGet(String method) {
-		return POST.equalsIgnoreCase(method) || GET.equalsIgnoreCase(method);
-	}
+    public static boolean validatePostGet(String method) {
+        return POST.equalsIgnoreCase(method) || GET.equalsIgnoreCase(method);
+    }
 
-	public static String[] getValues() {
-		int index = 0;
-		Method[] methods = values();
-		String[] values = new String[methods.length];
+    public static String[] getValues() {
+        int index = 0;
+        Method[] methods = values();
+        String[] values = new String[methods.length];
 
-		for (Method method : methods) {
-			values[index++] = method.name().toLowerCase();
-		}
-		return values;
-	}
-	
-	public static String[] getPostGetValues() {
-		String[] values = new String[2];
-		values[0] = POST.name().toLowerCase();
-		values[1] = GET.name().toLowerCase();
-		return values;
-	}
-	
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+        for (Method method : methods) {
+            values[index++] = method.name().toLowerCase();
+        }
+        return values;
+    }
+
+    public static String[] getPostGetValues() {
+        String[] values = new String[2];
+        values[0] = POST.name().toLowerCase();
+        values[1] = GET.name().toLowerCase();
+        return values;
+    }
+
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 }

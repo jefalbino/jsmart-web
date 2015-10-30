@@ -30,112 +30,112 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 public final class TabPaneTagHandler extends TagHandler {
-	
-	private String header;
 
-	private String label;
+    private String header;
 
-	private String value;
+    private String label;
 
-	private String tabStyle;
+    private String value;
 
-	private String tabClass;
+    private String tabStyle;
 
-	private boolean divider;
+    private String tabClass;
 
-	private List<TabPaneTagHandler> dropPanes;
+    private boolean divider;
 
-	public TabPaneTagHandler() {
-		dropPanes = new ArrayList<TabPaneTagHandler>();
-	}
+    private List<TabPaneTagHandler> dropPanes;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TabTagHandler) {
-			((TabTagHandler) parent).addTabPane(this);
-			return false;
+    public TabPaneTagHandler() {
+        dropPanes = new ArrayList<TabPaneTagHandler>();
+    }
 
-		} else if (parent instanceof TabPaneTagHandler) {
-			((TabPaneTagHandler) parent).addDropPane(this);
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof TabTagHandler) {
+            ((TabTagHandler) parent).addTabPane(this);
+            return false;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+        } else if (parent instanceof TabPaneTagHandler) {
+            ((TabPaneTagHandler) parent).addDropPane(this);
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(outputWriter);
-		}
-		return null;
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	protected void appendEvent(Tag tag) {
-		super.appendEvent(tag);
-	}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(outputWriter);
+        }
+        return null;
+    }
 
-	String getHeader() {
-		return header;
-	}
+    @Override
+    protected void appendEvent(Tag tag) {
+        super.appendEvent(tag);
+    }
 
-	public void setHeader(String header) {
-		this.header = header;
-	}
+    String getHeader() {
+        return header;
+    }
 
-	String getLabel() {
-		return label;
-	}
+    public void setHeader(String header) {
+        this.header = header;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    String getLabel() {
+        return label;
+    }
 
-	String getValue() {
-		return value;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    String getValue() {
+        return value;
+    }
 
-	String getTabStyle() {
-		return tabStyle;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setTabStyle(String tabStyle) {
-		this.tabStyle = tabStyle;
-	}
+    String getTabStyle() {
+        return tabStyle;
+    }
 
-	String getTabClass() {
-		return tabClass;
-	}
+    public void setTabStyle(String tabStyle) {
+        this.tabStyle = tabStyle;
+    }
 
-	public void setTabClass(String tabClass) {
-		this.tabClass = tabClass;
-	}
+    String getTabClass() {
+        return tabClass;
+    }
 
-	boolean hasDivider() {
-		return divider;
-	}
+    public void setTabClass(String tabClass) {
+        this.tabClass = tabClass;
+    }
 
-	public void setDivider(boolean divider) {
-		this.divider = divider;
-	}
+    boolean hasDivider() {
+        return divider;
+    }
 
-	private void addDropPane(TabPaneTagHandler dropPane) {
-		this.dropPanes.add(dropPane);
-	}
+    public void setDivider(boolean divider) {
+        this.divider = divider;
+    }
 
-	List<TabPaneTagHandler> getDropPanes() {
-		return dropPanes;
-	}
+    private void addDropPane(TabPaneTagHandler dropPane) {
+        this.dropPanes.add(dropPane);
+    }
+
+    List<TabPaneTagHandler> getDropPanes() {
+        return dropPanes;
+    }
 
 }

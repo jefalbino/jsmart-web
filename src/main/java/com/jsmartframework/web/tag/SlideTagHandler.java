@@ -35,9 +35,9 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class SlideTagHandler extends TagHandler {
 
-	private boolean active;
-	
-	private String label;
+    private boolean active;
+
+    private String label;
 
     private String imageLib;
 
@@ -49,48 +49,48 @@ public final class SlideTagHandler extends TagHandler {
 
     private String imageHeight;
 
-	private HeaderTagHandler header;
+    private HeaderTagHandler header;
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
 
-		if (parent instanceof CarouselTagHandler) {
-			((CarouselTagHandler) parent).addSlide(this);
-		}
-		return false;
-	}
+        if (parent instanceof CarouselTagHandler) {
+            ((CarouselTagHandler) parent).addSlide(this);
+        }
+        return false;
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		CarouselTagHandler parent = (CarouselTagHandler) getParent();
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        CarouselTagHandler parent = (CarouselTagHandler) getParent();
 
-		// Just to call nested tags
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+        // Just to call nested tags
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		if (imageName == null && (parent.getWidth() == null || parent.getHeight() == null)) {
-			throw ConstraintTagException.fromConstraint("carousel", "Tag must have attributes [width] and [height] " +
+        if (imageName == null && (parent.getWidth() == null || parent.getHeight() == null)) {
+            throw ConstraintTagException.fromConstraint("carousel", "Tag must have attributes [width] and [height] " +
                     "case [slide] tags does not have [imageName] attribute");
-		}
+        }
 
-		Div div = new Div();
-		div.addAttribute("id", id)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.ITEM)
-			.addAttribute("class", getTagValue(styleClass));
+        Div div = new Div();
+        div.addAttribute("id", id)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", Bootstrap.ITEM)
+            .addAttribute("class", getTagValue(styleClass));
 
-		if (active) {
-			div.addAttribute("class", Bootstrap.ACTIVE);
-		}
+        if (active) {
+            div.addAttribute("class", Bootstrap.ACTIVE);
+        }
 
         ImageTagHandler image = null;
 
@@ -104,34 +104,34 @@ public final class SlideTagHandler extends TagHandler {
             image.setHeight(imageHeight);
         }
 
-		if (image != null) {
-			div.addTag(image.executeTag());
-		}
+        if (image != null) {
+            div.addTag(image.executeTag());
+        }
 
-		Div caption = new Div();
-		caption.addAttribute("class", Bootstrap.CAROUSEL_CAPTION)
-			.addAttribute("class", image == null ? JSmart.CAROUSEL_CAPTION : null);
+        Div caption = new Div();
+        caption.addAttribute("class", Bootstrap.CAROUSEL_CAPTION)
+            .addAttribute("class", image == null ? JSmart.CAROUSEL_CAPTION : null);
 
-		if (header != null) {
-			caption.addTag(header.executeTag());
-		}
+        if (header != null) {
+            caption.addTag(header.executeTag());
+        }
 
-		Object labelVal = getTagValue(label);
-		if (labelVal != null) {
-			P p = new P();
-			p.addText(labelVal);
-			caption.addTag(p);
-		}
+        Object labelVal = getTagValue(label);
+        if (labelVal != null) {
+            P p = new P();
+            p.addText(labelVal);
+            caption.addTag(p);
+        }
 
-		caption.addText(sw);
-		div.addTag(caption);
+        caption.addText(sw);
+        div.addTag(caption);
 
-		return div;
-	}
+        return div;
+    }
 
-	void setHeader(HeaderTagHandler header) {
-		this.header = header;
-	}
+    void setHeader(HeaderTagHandler header) {
+        this.header = header;
+    }
 
     public void setImageLib(String imageLib) {
         this.imageLib = imageLib;
@@ -158,15 +158,15 @@ public final class SlideTagHandler extends TagHandler {
     }
 
     boolean isActive() {
-		return active;
-	}
+        return active;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
 }

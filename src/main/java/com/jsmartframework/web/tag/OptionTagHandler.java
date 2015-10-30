@@ -30,75 +30,75 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class OptionTagHandler extends TagHandler {
 
-	private String name;
+    private String name;
 
-	private String label;
+    private String label;
 
-	private Object value;
+    private Object value;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof SelectTagHandler) {
-			
-			((SelectTagHandler) parent).addOption(this);
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof SelectTagHandler) {
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+            ((SelectTagHandler) parent).addOption(this);
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-		Option option = new Option();
-		option.addAttribute("id", id)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", getTagValue(styleClass))
-			.addAttribute("disabled", isDisabled() ? "disabled" : null)
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+
+        Option option = new Option();
+        option.addAttribute("id", id)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", getTagValue(styleClass))
+            .addAttribute("disabled", isDisabled() ? "disabled" : null)
                 .addText(getTagValue(label));
 
-		Object object = getTagValue(value);
-		option.addAttribute("value", object)
-			.addAttribute("selected", verifySelection(object) ? "selected" : null);
+        Object object = getTagValue(value);
+        option.addAttribute("value", object)
+            .addAttribute("selected", verifySelection(object) ? "selected" : null);
 
-		return option;
-	}
+        return option;
+    }
 
-	@SuppressWarnings("rawtypes")
-	private boolean verifySelection(Object value) {
-		// Get selected values
-		Object values = getTagValue(name);
+    @SuppressWarnings("rawtypes")
+    private boolean verifySelection(Object value) {
+        // Get selected values
+        Object values = getTagValue(name);
 
-		if (values != null && value != null) {
-			if (values instanceof Collection) {
-				for (Object obj : (Collection) values) {
-					if (obj != null && obj.toString().equals(value.toString())) {
-						return true;
-					}
-				}
-			} else {
-				return values.equals(value);
-			}
-		}
+        if (values != null && value != null) {
+            if (values instanceof Collection) {
+                for (Object obj : (Collection) values) {
+                    if (obj != null && obj.toString().equals(value.toString())) {
+                        return true;
+                    }
+                }
+            } else {
+                return values.equals(value);
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	void setName(String name) {
-		this.name = name;
-	}
+    void setName(String name) {
+        this.name = name;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setValue(Object value) {
-		this.value = value;
-	}
+    public void setValue(Object value) {
+        this.value = value;
+    }
 
 }

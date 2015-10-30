@@ -33,39 +33,39 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class LabelTagHandler extends TagHandler {
 
-	private String target;
+    private String target;
 
-	private String value;
+    private String value;
 
-	private String look;
+    private String look;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (look != null && !Look.validateLook(look) && !isEL(look)) {
-			throw InvalidAttributeException.fromPossibleValues("label", "look", Look.getLookValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (look != null && !Look.validateLook(look) && !isEL(look)) {
+            throw InvalidAttributeException.fromPossibleValues("label", "look", Look.getLookValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		JspFragment body = getJspBody();
+        JspFragment body = getJspBody();
         StringWriter writer = new StringWriter();
-		if (body != null) {
-			body.invoke(writer);
-		}
+        if (body != null) {
+            body.invoke(writer);
+        }
 
-		setRandomId("label");
+        setRandomId("label");
 
         String text = writer.toString();
         if (!params.isEmpty() && !text.trim().isEmpty()) {
             text = TextTagHandler.formatText(text, params);
         }
 
-		Span span = new Span();
-		span.addAttribute("style", getTagValue(style))
-			.addAttribute("for", getTagValue(target))
-			.addAttribute("class", Bootstrap.LABEL)
+        Span span = new Span();
+        span.addAttribute("style", getTagValue(style))
+            .addAttribute("for", getTagValue(target))
+            .addAttribute("class", Bootstrap.LABEL)
             .addText(text);
 
         Object labelVal = getTagValue(value);
@@ -78,47 +78,47 @@ public final class LabelTagHandler extends TagHandler {
             span.addText(text);
         }
 
-		appendRefId(span, id);
+        appendRefId(span, id);
 
-		String lookVal = (String) getTagValue(look);
+        String lookVal = (String) getTagValue(look);
 
-		if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.LABEL_PRIMARY);
-		} else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.LABEL_SUCCESS);
-		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.LABEL_INFO);
-		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.LABEL_WARNING);
-		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
-			span.addAttribute("class", Bootstrap.LABEL_DANGER);
-		} else {
-			span.addAttribute("class", Bootstrap.LABEL_DEFAULT);
-		}
+        if (Look.PRIMARY.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.LABEL_PRIMARY);
+        } else if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.LABEL_SUCCESS);
+        } else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.LABEL_INFO);
+        } else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.LABEL_WARNING);
+        } else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+            span.addAttribute("class", Bootstrap.LABEL_DANGER);
+        } else {
+            span.addAttribute("class", Bootstrap.LABEL_DEFAULT);
+        }
 
-		// Add the style class at last
-		span.addAttribute("class", getTagValue(styleClass));
+        // Add the style class at last
+        span.addAttribute("class", getTagValue(styleClass));
 
-		appendEvent(span);
-		appendAjax(id);
-		appendBind(id);
-		
-		appendTooltip(span);
-		appendPopOver(span);
+        appendEvent(span);
+        appendAjax(id);
+        appendBind(id);
 
-		return span;
-	}
+        appendTooltip(span);
+        appendPopOver(span);
 
-	public void setTarget(String target) {
-		this.target = target;
-	}
+        return span;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setTarget(String target) {
+        this.target = target;
+    }
 
-	public void setLook(String look) {
-		this.look = look;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setLook(String look) {
+        this.look = look;
+    }
 
 }

@@ -23,14 +23,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * The {@link PostPreset} annotation is used on a field attribute that needs to be 
- * set before the method annotated with {@link PostConstruct} is invoked.
- * <br>
- * In order to be set the field attribute must be mapped on JSP file currently being submitted.
- */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface PostPreset {
+@Target(ElementType.METHOD)
+public @interface AuthMethod {
 
 }

@@ -28,11 +28,11 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class AsyncEventTagHandler extends TagHandler {
 
-	private String event;
+    private String event;
 
-	private String execute;
+    private String execute;
 
-	private Boolean capture;
+    private Boolean capture;
 
     @Override
     public boolean beforeTag() throws JspException, IOException {
@@ -43,16 +43,16 @@ public final class AsyncEventTagHandler extends TagHandler {
         return false;
     }
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
-
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public void validateTag() throws JspException {
         // DO NOTHING
-		return null;
-	}
+    }
+
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
     String getEvent() {
         return event;

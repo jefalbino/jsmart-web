@@ -54,7 +54,7 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class AutoCompleteTagHandler extends TagHandler {
 
-	private static final int DEFAULT_MIN_LENGTH = 1;
+    private static final int DEFAULT_MIN_LENGTH = 1;
 
     private String var;
 
@@ -111,11 +111,11 @@ public final class AutoCompleteTagHandler extends TagHandler {
         childAddOns = new ArrayList<TagHandler>(2);
     }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (minLength != null && minLength <= 0) {
+    @Override
+    public void validateTag() throws JspException {
+        if (minLength != null && minLength <= 0) {
             throw InvalidAttributeException.fromConstraint("autocomplete", "minLength", "greater than 0");
-		}
+        }
         if (size != null && !Size.validateSmallLarge(size)) {
             throw InvalidAttributeException.fromPossibleValues("autocomplete", "size", Size.getSmallLargeValues());
         }
@@ -125,10 +125,10 @@ public final class AutoCompleteTagHandler extends TagHandler {
         if (scrollSize != null && maxHeight == null) {
             throw InvalidAttributeException.fromConflict("autocomplete", "maxHeight", "Attribute [maxHeight] must be specified");
         }
-	}
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
         // Just to call nested tags
         JspFragment body = getJspBody();
@@ -145,7 +145,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
         set.addTag(inputPart);
         set.addTag(listPart);
         return set;
-	}
+    }
 
     private Tag executeInputPart() throws JspException, IOException {
         Div formGroup = null;
@@ -303,7 +303,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
     }
 
     @SuppressWarnings("unchecked")
-	private Tag executeListPart() throws JspException, IOException {
+    private Tag executeListPart() throws JspException, IOException {
         HttpServletRequest request = getRequest();
 
         Ul ul = new Ul();
@@ -331,8 +331,8 @@ public final class AutoCompleteTagHandler extends TagHandler {
         // It means that the auto complete was requested
         String autoCpltParam = request.getParameter(getTagName(J_AUTOCPLT, fakeTagName(id)));
         if (autoCpltParam != null) {
-        	
-        	// Get the scroll parameters case requested by scroll list
+
+            // Get the scroll parameters case requested by scroll list
             Scroll scroll = null;
 
             // It means that a scroll maybe happened
@@ -341,27 +341,27 @@ public final class AutoCompleteTagHandler extends TagHandler {
                 scroll = GSON.fromJson(scrollParam, Scroll.class);
             }
 
-	        Object object = getListContent(getTagValue(values), scroll);
-	
-	        if (object instanceof List<?>) {
-	            Iterator<Object> iterator = ((List<Object>) object).iterator();
-	
-	            int scrollIndex = scroll != null ? scroll.getIndex() : 0;
-	            int selectIndex = scrollIndex;
-	
-	            while (iterator.hasNext()) {
-	            	Object obj = iterator.next();
-	            	if (obj == null) {
-	            		continue;
-	            	}
-	                request.setAttribute(var, obj);
+            Object object = getListContent(getTagValue(values), scroll);
 
-	                for (RowTagHandler row : rows) {
-	                    row.setSelectable(value != null);
-	                    row.setSelectIndex(selectIndex);
-	                    row.setScrollIndex(scrollIndex);
+            if (object instanceof List<?>) {
+                Iterator<Object> iterator = ((List<Object>) object).iterator();
 
-	                    Tag rowTag = row.executeTag();
+                int scrollIndex = scroll != null ? scroll.getIndex() : 0;
+                int selectIndex = scrollIndex;
+
+                while (iterator.hasNext()) {
+                    Object obj = iterator.next();
+                    if (obj == null) {
+                        continue;
+                    }
+                    request.setAttribute(var, obj);
+
+                    for (RowTagHandler row : rows) {
+                        row.setSelectable(value != null);
+                        row.setSelectIndex(selectIndex);
+                        row.setScrollIndex(scrollIndex);
+
+                        Tag rowTag = row.executeTag();
                         if (inputText != null) {
                             rowTag.addAttribute("to-string", getTagValue(inputText));
                         } else {
@@ -372,12 +372,12 @@ public final class AutoCompleteTagHandler extends TagHandler {
                         if (scrollOffsetVal != null) {
                             rowTag.addAttribute("scroll-offset", scrollOffsetVal);
                         }
-	                    ul.addTag(rowTag);
-	                }
-	                selectIndex++;
-	                request.removeAttribute(var);
-	            }
-	        }
+                        ul.addTag(rowTag);
+                    }
+                    selectIndex++;
+                    request.removeAttribute(var);
+                }
+            }
         }
 
         if (scrollSize != null) {
@@ -420,48 +420,48 @@ public final class AutoCompleteTagHandler extends TagHandler {
     }
 
     private StringBuilder getAjaxFunction() {
-		Ajax jsonAjax = new Ajax();
+        Ajax jsonAjax = new Ajax();
 
-		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
-		jsonAjax.setTag("autocomplete");
-		
-		jsonAjax.addParam(new Param(getTagName(J_AUTOCPLT, fakeTagName(id)), ""));
+        jsonAjax.setId(id);
+        jsonAjax.setMethod("post");
+        jsonAjax.setTag("autocomplete");
 
-		if (update != null) {
-			jsonAjax.setUpdate(update.trim());
-		}
-		if (beforeSend != null) {
-			jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
-		}
-		if (onError != null) {
-			jsonAjax.setError((String) getTagValue(onError.trim()));
-		}
-		if (onSuccess != null) {
-			jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
-		}
-		if (onComplete != null) {
-			jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
-		}
+        jsonAjax.addParam(new Param(getTagName(J_AUTOCPLT, fakeTagName(id)), ""));
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_AUTOCOMPLETE.format(getJsonValue(jsonAjax)));
-		return getBindFunction(id, Event.KEYUP.name(), builder);
-	}
+        if (update != null) {
+            jsonAjax.setUpdate(update.trim());
+        }
+        if (beforeSend != null) {
+            jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+        }
+        if (onError != null) {
+            jsonAjax.setError((String) getTagValue(onError.trim()));
+        }
+        if (onSuccess != null) {
+            jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+        }
+        if (onComplete != null) {
+            jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_AUTOCOMPLETE.format(getJsonValue(jsonAjax)));
+        return getBindFunction(id, Event.KEYUP.name(), builder);
+    }
 
     private StringBuilder getScrollFunction() {
-		Ajax jsonAjax = new Ajax();
-		jsonAjax.setId(id);
-		jsonAjax.setMethod("post");
-		jsonAjax.setTag("autoscroll");
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
+        jsonAjax.setMethod("post");
+        jsonAjax.setTag("autoscroll");
 
-		jsonAjax.addParam(new Param(getTagName(J_AUTOCPLT, fakeTagName(id)), ""));
-		jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
+        jsonAjax.addParam(new Param(getTagName(J_AUTOCPLT, fakeTagName(id)), ""));
+        jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(JSMART_AUTOCPLTSCROLL.format(getJsonValue(jsonAjax)));
-		return builder;
-	}
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_AUTOCPLTSCROLL.format(getJsonValue(jsonAjax)));
+        return builder;
+    }
 
     void addRow(RowTagHandler row) {
         rows.add(row);

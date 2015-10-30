@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Div extends Tag {
 
-	public Div() {
-		super("div");
-	}
+    public Div() {
+        super("div");
+    }
 }

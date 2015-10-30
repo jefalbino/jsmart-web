@@ -20,23 +20,23 @@ package com.jsmartframework.web.tag.html;
 
 public class Script extends Tag {
 
-	public Script() {
-		super("script");
-	}
+    public Script() {
+        super("script");
+    }
 
-	public StringBuilder getHtml() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<").append(name);
+    public StringBuilder getHtml() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<").append(name);
 
-		for (String attr : attributes.keySet()) {
-			builder.append(" ").append(attr).append("=\"").append(attributes.get(attr)).append("\"");
-		}
-		builder.append(">");
+        for (String attr : attributes.keySet()) {
+            builder.append(" ").append(attr).append("=\"").append(attributes.get(attr)).append("\"");
+        }
+        builder.append(">");
 
-		for (Object obj : objects) {
-			builder.append(obj);
-		}
-		builder.append("</").append(name).append(">");
-		return builder;
-	}
+        for (Object obj : objects) {
+            builder.append(obj);
+        }
+        builder.append("</").append(name).append(">");
+        return builder;
+    }
 }

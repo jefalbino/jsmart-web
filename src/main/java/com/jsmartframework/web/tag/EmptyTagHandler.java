@@ -30,28 +30,28 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class EmptyTagHandler extends TagHandler {
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof ListTagHandler) {
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof ListTagHandler) {
             ((ListTagHandler) parent).setEmptyTag(this);
 
         } else if (parent instanceof TableTagHandler) {
             ((TableTagHandler) parent).setEmptyTag(this);
         }
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
-
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public void validateTag() throws JspException {
         // DO NOTHING
-		return null;
-	}
+    }
+
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        // DO NOTHING
+        return null;
+    }
 
     StringWriter getContent() throws JspException, IOException {
         StringWriter sw = new StringWriter();

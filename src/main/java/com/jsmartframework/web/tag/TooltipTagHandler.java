@@ -34,100 +34,100 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class TooltipTagHandler extends TagHandler {
 
-	private String title;
+    private String title;
 
-	private String side = Side.RIGHT.name();
+    private String side = Side.RIGHT.name();
 
-	private String event;
+    private String event;
 
-	private String template;
+    private String template;
 
-	private String selector;
+    private String selector;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof TagHandler) {
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof TagHandler) {
 
-			((TagHandler) parent).setTooltipTag(this);
-		}
-		return true;
-	}
+            ((TagHandler) parent).setTooltipTag(this);
+        }
+        return true;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (side != null && !Side.validate(side)) {
-			throw InvalidAttributeException.fromPossibleValues("tooltip", "side", Side.getValues());
-		}
-		if (event != null && !TipEvent.validate(event)) {
-			throw InvalidAttributeException.fromPossibleValues("tooltip", "event", TipEvent.getValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (side != null && !Side.validate(side)) {
+            throw InvalidAttributeException.fromPossibleValues("tooltip", "side", Side.getValues());
+        }
+        if (event != null && !TipEvent.validate(event)) {
+            throw InvalidAttributeException.fromPossibleValues("tooltip", "event", TipEvent.getValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+    @Override
+    public Tag executeTag() throws JspException, IOException {
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		// Place the tag content as template
-		template = sw.toString();
-		
-		if (template != null && !template.trim().isEmpty()) {
-			setRandomId("tooltip");
+        // Place the tag content as template
+        template = sw.toString();
 
-			// The HTML template must overwrite the title
-			title = null;
-		}
-		return null;
-	}
+        if (template != null && !template.trim().isEmpty()) {
+            setRandomId("tooltip");
 
-	public void printTemplate(TagHandler tag) throws IOException {
-		if (template != null && !template.trim().isEmpty()) {
-			Div div = new Div();
-			div.addAttribute("id", id)
-				.addAttribute("style", "display: none;")
-				.addText(template);
+            // The HTML template must overwrite the title
+            title = null;
+        }
+        return null;
+    }
 
-			printOutput(tag, div.getHtml());
-		}
-	}
+    public void printTemplate(TagHandler tag) throws IOException {
+        if (template != null && !template.trim().isEmpty()) {
+            Div div = new Div();
+            div.addAttribute("id", id)
+                .addAttribute("style", "display: none;")
+                .addText(template);
 
-	public String getTitle() {
-		return title;
-	}
+            printOutput(tag, div.getHtml());
+        }
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public String getSide() {
-		return side;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setSide(String side) {
-		this.side = side;
-	}
+    public String getSide() {
+        return side;
+    }
 
-	public String getEvent() {
-		return event;
-	}
+    public void setSide(String side) {
+        this.side = side;
+    }
 
-	public void setEvent(String event) {
-		this.event = event;
-	}
-	
-	public String getTemplate() {
-		return template;
-	}
+    public String getEvent() {
+        return event;
+    }
 
-	public String getSelector() {
-		return selector;
-	}
+    public void setEvent(String event) {
+        this.event = event;
+    }
 
-	public void setSelector(String selector) {
-		this.selector = selector;
-	}
+    public String getTemplate() {
+        return template;
+    }
+
+    public String getSelector() {
+        return selector;
+    }
+
+    public void setSelector(String selector) {
+        this.selector = selector;
+    }
 }

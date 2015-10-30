@@ -20,42 +20,42 @@ package com.jsmartframework.web.tag.type;
 
 public enum Position {
 
-	VERTICAL,
-	HORIZONTAL,
-	INLINE;
+    VERTICAL,
+    HORIZONTAL,
+    INLINE;
 
-	public static boolean validate(String position) {
-		try {
-			Position.valueOf(position.toUpperCase());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    public static boolean validate(String position) {
+        try {
+            Position.valueOf(position.toUpperCase());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	public static boolean validateVerticalHorizontal(String position) {
-		return VERTICAL.equalsIgnoreCase(position) || HORIZONTAL.equalsIgnoreCase(position);
-	}
+    public static boolean validateVerticalHorizontal(String position) {
+        return VERTICAL.equalsIgnoreCase(position) || HORIZONTAL.equalsIgnoreCase(position);
+    }
 
-	public static String[] getValues() {
-		int index = 0;
-		Position[] positions = values();
-		String[] values = new String[positions.length];
+    public static String[] getValues() {
+        int index = 0;
+        Position[] positions = values();
+        String[] values = new String[positions.length];
 
-		for (Position position : positions) {
-			values[index++] = position.name().toLowerCase();
-		}
-		return values;
-	}
-	
-	public static String[] getVerticalHorizontalValues() {
-		String[] values = new String[2];
-		values[0] = VERTICAL.name().toLowerCase();
-		values[1] = HORIZONTAL.name().toLowerCase();
-		return values;
-	}
-	
-	public boolean equalsIgnoreCase(String string) {
-		return this.name().equalsIgnoreCase(string);
-	}
+        for (Position position : positions) {
+            values[index++] = position.name().toLowerCase();
+        }
+        return values;
+    }
+
+    public static String[] getVerticalHorizontalValues() {
+        String[] values = new String[2];
+        values[0] = VERTICAL.name().toLowerCase();
+        values[1] = HORIZONTAL.name().toLowerCase();
+        return values;
+    }
+
+    public boolean equalsIgnoreCase(String string) {
+        return this.name().equalsIgnoreCase(string);
+    }
 }

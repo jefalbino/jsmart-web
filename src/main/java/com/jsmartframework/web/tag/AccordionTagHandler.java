@@ -31,34 +31,34 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class AccordionTagHandler extends TagHandler {
 
-	public void validateTag() throws JspException {
-		// DO NOTHING
-	}
+    public void validateTag() throws JspException {
+        // DO NOTHING
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		setRandomId("accordion");
+        setRandomId("accordion");
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		Div div = new Div();
-		div.addAttribute("id", id)
-			.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.PANEL_GROUP)
-			.addAttribute("class", getTagValue(styleClass))
-			.addAttribute("role", "tablist")
-			.addAttribute("aria-multiselectable", "true");
-		
-		div.addText(sw.toString());
-		
-		appendEvent(div);
+        Div div = new Div();
+        div.addAttribute("id", id)
+            .addAttribute("style", getTagValue(style))
+            .addAttribute("class", Bootstrap.PANEL_GROUP)
+            .addAttribute("class", getTagValue(styleClass))
+            .addAttribute("role", "tablist")
+            .addAttribute("aria-multiselectable", "true");
 
-		return div;
-	}
+        div.addText(sw.toString());
+
+        appendEvent(div);
+
+        return div;
+    }
 
 }

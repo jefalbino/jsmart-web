@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Section extends Tag {
 
-	public Section() {
-		super("section");
-	}
+    public Section() {
+        super("section");
+    }
 }

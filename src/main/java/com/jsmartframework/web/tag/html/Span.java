@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Span extends Tag {
 
-	public Span() {
-		super("span");
-	}
+    public Span() {
+        super("span");
+    }
 }

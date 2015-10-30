@@ -35,124 +35,124 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class ImageTagHandler extends TagHandler {
 
-	private String lib;
+    private String lib;
 
-	private String name;
+    private String name;
 
-	private String alt;
+    private String alt;
 
-	private String width;
+    private String width;
 
-	private String height;
+    private String height;
 
-	private String caption;
+    private String caption;
 
-	private boolean figure;
+    private boolean figure;
 
-	private String type;
+    private String type;
 
-	@Override
-	public void validateTag() throws JspException {
-		if (type != null && !Type.validateImage(type)) {
-			throw InvalidAttributeException.fromPossibleValues("image", "type", Type.getImageValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (type != null && !Type.validateImage(type)) {
+            throw InvalidAttributeException.fromPossibleValues("image", "type", Type.getImageValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		
-		setRandomId("image");
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		String libValue = (String) getTagValue(lib);
-		String nameValue = (String) getTagValue(name);
+        setRandomId("image");
 
-		Image image = new Image();
-		image.addAttribute("style", getTagValue(style))
-			.addAttribute("width", width)
-			.addAttribute("height", height);
-		
-		appendRefId(image, id);
+        String libValue = (String) getTagValue(lib);
+        String nameValue = (String) getTagValue(name);
 
-		if (libValue != null) {
-			image.addAttribute("src", WebImage.getImage(libValue, nameValue));
-		} else {
-			image.addAttribute("src", nameValue);
-		}
+        Image image = new Image();
+        image.addAttribute("style", getTagValue(style))
+            .addAttribute("width", width)
+            .addAttribute("height", height);
 
-		if (alt != null) {
-			image.addAttribute("alt", getTagValue(alt));
-		} else {
-			image.addAttribute("alt", nameValue);
-		}
-		
-		if (Type.RESPONSIVE.equalsIgnoreCase(type)) {
-			image.addAttribute("class", Bootstrap.IMAGE_RESPONSIVE);
-		} else if (Type.ROUND.equalsIgnoreCase(type)) {
-			image.addAttribute("class", Bootstrap.IMAGE_ROUNDED);
-		} else if (Type.CIRCLE.equalsIgnoreCase(type)) {
-			image.addAttribute("class", Bootstrap.IMAGE_CIRCLE);
-		} else if (Type.THUMBNAIL.equalsIgnoreCase(type)) {
-			image.addAttribute("class", Bootstrap.IMAGE_THUMBNAIL);
-		}
-		
-		// Add the style class at last
-		image.addAttribute("class", getTagValue(styleClass));
+        appendRefId(image, id);
 
-		appendEvent(image);
+        if (libValue != null) {
+            image.addAttribute("src", WebImage.getImage(libValue, nameValue));
+        } else {
+            image.addAttribute("src", nameValue);
+        }
 
-		appendAjax(id);
-		appendBind(id);
+        if (alt != null) {
+            image.addAttribute("alt", getTagValue(alt));
+        } else {
+            image.addAttribute("alt", nameValue);
+        }
 
-		if (figure) {
-			Figure fig = new Figure();
-			fig.addTag(image);
-			
-			if (caption != null) {
-				FigCaption figCaption = new FigCaption();
-				figCaption.addText((String) getTagValue(caption));
-				fig.addTag(figCaption);
-			}
-			return fig;
-		}
+        if (Type.RESPONSIVE.equalsIgnoreCase(type)) {
+            image.addAttribute("class", Bootstrap.IMAGE_RESPONSIVE);
+        } else if (Type.ROUND.equalsIgnoreCase(type)) {
+            image.addAttribute("class", Bootstrap.IMAGE_ROUNDED);
+        } else if (Type.CIRCLE.equalsIgnoreCase(type)) {
+            image.addAttribute("class", Bootstrap.IMAGE_CIRCLE);
+        } else if (Type.THUMBNAIL.equalsIgnoreCase(type)) {
+            image.addAttribute("class", Bootstrap.IMAGE_THUMBNAIL);
+        }
 
-		return image;
-	}
+        // Add the style class at last
+        image.addAttribute("class", getTagValue(styleClass));
 
-	public void setLib(String lib) {
-		this.lib = lib;
-	}
+        appendEvent(image);
 
-	public void setName(String name) {
-		this.name = name;
-	}
+        appendAjax(id);
+        appendBind(id);
 
-	public void setWidth(String width) {
-		this.width = width;
-	}
+        if (figure) {
+            Figure fig = new Figure();
+            fig.addTag(image);
 
-	public void setHeight(String height) {
-		this.height = height;
-	}
+            if (caption != null) {
+                FigCaption figCaption = new FigCaption();
+                figCaption.addText((String) getTagValue(caption));
+                fig.addTag(figCaption);
+            }
+            return fig;
+        }
 
-	public void setAlt(String alt) {
-		this.alt = alt;
-	}
+        return image;
+    }
 
-	public void setCaption(String caption) {
-		this.caption = caption;
-	}
+    public void setLib(String lib) {
+        this.lib = lib;
+    }
 
-	public void setFigure(boolean figure) {
-		this.figure = figure;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setWidth(String width) {
+        this.width = width;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public void setAlt(String alt) {
+        this.alt = alt;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public void setFigure(boolean figure) {
+        this.figure = figure;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

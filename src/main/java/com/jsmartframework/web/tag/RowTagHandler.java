@@ -34,112 +34,112 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 public final class RowTagHandler extends TagHandler {
-	
-	private String look;
 
-	private boolean selectable;
+    private String look;
 
-	private Integer selectIndex;
+    private boolean selectable;
 
-	private Integer scrollIndex;
+    private Integer selectIndex;
 
-	private HeaderTagHandler header;
+    private Integer scrollIndex;
 
-	@Override
-	public boolean beforeTag() throws JspException, IOException {
-		JspTag parent = getParent();
-		if (parent instanceof ListTagHandler) {
-			((ListTagHandler) parent).addRow(this);
-		} else if (parent instanceof AutoCompleteTagHandler) {
+    private HeaderTagHandler header;
+
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof ListTagHandler) {
+            ((ListTagHandler) parent).addRow(this);
+        } else if (parent instanceof AutoCompleteTagHandler) {
             ((AutoCompleteTagHandler) parent).addRow(this);
         }
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (look != null && !Look.validateBasic(look) && !isEL(look)) {
-			throw InvalidAttributeException.fromPossibleValues("row", "look", Look.getBasicValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (look != null && !Look.validateBasic(look) && !isEL(look)) {
+            throw InvalidAttributeException.fromPossibleValues("row", "look", Look.getBasicValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
-		
-		// Need to clear for every list item 
-		// because the tag row is unique
-		clearTagParameters();
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		StringWriter sw = new StringWriter();
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(sw);
-		}
+        // Need to clear for every list item
+        // because the tag row is unique
+        clearTagParameters();
 
-		Tag tag = null;
-		if (selectable) {
-			tag = new A();
-			tag.addAttribute("style", "cursor: pointer;");
-		} else {
-			tag = new Li();
-		}
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
+        }
 
-		setRandomId("row");
+        Tag tag = null;
+        if (selectable) {
+            tag = new A();
+            tag.addAttribute("style", "cursor: pointer;");
+        } else {
+            tag = new Li();
+        }
 
-		tag.addAttribute("style", getTagValue(style))
-			.addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
-			.addAttribute("class", isDisabled() ? Bootstrap.DISABLED : null)
-			.addAttribute("list-index", selectIndex)
-			.addAttribute("scroll-index", scrollIndex);
-		
-		appendRefId(tag, id);
-		
-		String lookVal = (String) getTagValue(look);
+        setRandomId("row");
 
-		if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
-			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_SUCCESS);
-		} else if (Look.INFO.equalsIgnoreCase(lookVal)) {
-			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_INFO);
-		} else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
-			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_WARNING);
-		} else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
-			tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_DANGER);
-		}
+        tag.addAttribute("style", getTagValue(style))
+            .addAttribute("class", Bootstrap.LIST_GROUP_ITEM)
+            .addAttribute("class", isDisabled() ? Bootstrap.DISABLED : null)
+            .addAttribute("list-index", selectIndex)
+            .addAttribute("scroll-index", scrollIndex);
 
-		// At last place the style class
-		tag.addAttribute("class", getTagValue(styleClass));
+        appendRefId(tag, id);
 
-		appendEvent(tag);
+        String lookVal = (String) getTagValue(look);
 
-		if (header != null) {
-			tag.addTag(header.executeTag());
-		}
-		tag.addText(sw.toString());
+        if (Look.SUCCESS.equalsIgnoreCase(lookVal)) {
+            tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_SUCCESS);
+        } else if (Look.INFO.equalsIgnoreCase(lookVal)) {
+            tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_INFO);
+        } else if (Look.WARNING.equalsIgnoreCase(lookVal)) {
+            tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_WARNING);
+        } else if (Look.DANGER.equalsIgnoreCase(lookVal)) {
+            tag.addAttribute("class", Bootstrap.LIST_GROUP_ITEM_DANGER);
+        }
 
-		appendAjax(id);
-		appendBind(id);
+        // At last place the style class
+        tag.addAttribute("class", getTagValue(styleClass));
 
-		return tag;
-	}
+        appendEvent(tag);
 
-	void setHeader(HeaderTagHandler header) {
-		this.header = header;
-	}
-	
-	void setSelectable(boolean selectable) {
-		this.selectable = selectable;
-	}
-	
-	void setScrollIndex(Integer scrollIndex) {
-		this.scrollIndex = scrollIndex;
-	}
-	
-	void setSelectIndex(Integer selectIndex) {
-		this.selectIndex = selectIndex;
-	}
+        if (header != null) {
+            tag.addTag(header.executeTag());
+        }
+        tag.addText(sw.toString());
 
-	public void setLook(String look) {
-		this.look = look;
-	}
+        appendAjax(id);
+        appendBind(id);
+
+        return tag;
+    }
+
+    void setHeader(HeaderTagHandler header) {
+        this.header = header;
+    }
+
+    void setSelectable(boolean selectable) {
+        this.selectable = selectable;
+    }
+
+    void setScrollIndex(Integer scrollIndex) {
+        this.scrollIndex = scrollIndex;
+    }
+
+    void setSelectIndex(Integer selectIndex) {
+        this.selectIndex = selectIndex;
+    }
+
+    public void setLook(String look) {
+        this.look = look;
+    }
 
 }

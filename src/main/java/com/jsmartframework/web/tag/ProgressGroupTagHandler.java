@@ -45,97 +45,97 @@ public final class ProgressGroupTagHandler extends TagHandler {
     private List<String> barValues;
 
     public ProgressGroupTagHandler() {
-    	bars = new ArrayList<ProgressBarTagHandler>(3);
-    	barValues = new ArrayList<String>(3);
+        bars = new ArrayList<ProgressBarTagHandler>(3);
+        barValues = new ArrayList<String>(3);
     }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (interval != null && interval < 0) {
-			throw InvalidAttributeException.fromConstraint("progressgroup", "interval", "greater than 0");
-		}
-		if (onInterval != null && interval == null) {
-			throw InvalidAttributeException.fromConflict("progressgroup", "interval", "Attribute must be specified case [onInterval] attribute is used");
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (interval != null && interval < 0) {
+            throw InvalidAttributeException.fromConstraint("progressgroup", "interval", "greater than 0");
+        }
+        if (onInterval != null && interval == null) {
+            throw InvalidAttributeException.fromConflict("progressgroup", "interval", "Attribute must be specified case [onInterval] attribute is used");
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		setRandomId("progressgroup");
+        setRandomId("progressgroup");
 
-		Div group = new Div();
-		group.addAttribute("id", id)
-				.addAttribute("style", getTagValue(style))
-				.addAttribute("class", Bootstrap.PROGRESS)
-				.addAttribute("class", getTagValue(styleClass));
-		
-		// Save the differences to calculate the relation
-		int total = 0;
-		int[] relation = new int[bars.size()];
+        Div group = new Div();
+        group.addAttribute("id", id)
+                .addAttribute("style", getTagValue(style))
+                .addAttribute("class", Bootstrap.PROGRESS)
+                .addAttribute("class", getTagValue(styleClass));
 
-		for (int i = 0; i < relation.length; i++) {
-			int diff = bars.get(i).initIntValues(true);
-			relation[i] = diff;
-			total += diff;
-		}
+        // Save the differences to calculate the relation
+        int total = 0;
+        int[] relation = new int[bars.size()];
 
-		// Calculate the percentage of each bar related to total bars and execute tag
-		for (int i = 0; i < relation.length; i++) {
-			relation[i] = ((100 * relation[i] / total) | 0);
+        for (int i = 0; i < relation.length; i++) {
+            int diff = bars.get(i).initIntValues(true);
+            relation[i] = diff;
+            total += diff;
+        }
 
-			bars.get(i).setRelation(relation[i]);
-			group.addTag(bars.get(i).executeTag());
-		}
+        // Calculate the percentage of each bar related to total bars and execute tag
+        for (int i = 0; i < relation.length; i++) {
+            relation[i] = ((100 * relation[i] / total) | 0);
 
-		appendEvent(group);
+            bars.get(i).setRelation(relation[i]);
+            group.addTag(bars.get(i).executeTag());
+        }
 
-		appendAjax(id);
-		appendBind(id);
+        appendEvent(group);
 
-		appendTooltip(group);
-		appendPopOver(group);
+        appendAjax(id);
+        appendBind(id);
 
-		if (onInterval != null) {
-			appendDocScript(getIntervalScript(relation));
-		}
-		return group;
-	}
+        appendTooltip(group);
+        appendPopOver(group);
 
-	private StringBuilder getIntervalScript(final int[] relation) {
-		Progress jsonProgress = new Progress();
-		jsonProgress.setId(id);
-		jsonProgress.setMethod("get");
-		jsonProgress.setRequest(ajax);
-		jsonProgress.setInterval(interval);
-		jsonProgress.setOnInterval(onInterval);
-		jsonProgress.setRelation(relation);
-		return new StringBuilder(JSMART_PROGRESSGROUP.format(getJsonValue(jsonProgress)));
-	}
+        if (onInterval != null) {
+            appendDocScript(getIntervalScript(relation));
+        }
+        return group;
+    }
 
-	public void setInterval(Integer interval) {
-		this.interval = interval;
-	}
+    private StringBuilder getIntervalScript(final int[] relation) {
+        Progress jsonProgress = new Progress();
+        jsonProgress.setId(id);
+        jsonProgress.setMethod("get");
+        jsonProgress.setRequest(ajax);
+        jsonProgress.setInterval(interval);
+        jsonProgress.setOnInterval(onInterval);
+        jsonProgress.setRelation(relation);
+        return new StringBuilder(JSMART_PROGRESSGROUP.format(getJsonValue(jsonProgress)));
+    }
 
-	public void setOnInterval(String onInterval) {
-		this.onInterval = onInterval;
-	}
-	
-	void addBar(ProgressBarTagHandler bar) {
-		this.bars.add(bar);
-	}
+    public void setInterval(Integer interval) {
+        this.interval = interval;
+    }
 
-	void addBarValue(String value) {
-		this.barValues.add(value);
-	}
+    public void setOnInterval(String onInterval) {
+        this.onInterval = onInterval;
+    }
 
-	boolean containsBarValue(String value) {
-		return barValues.contains(value);
-	}
+    void addBar(ProgressBarTagHandler bar) {
+        this.bars.add(bar);
+    }
+
+    void addBarValue(String value) {
+        this.barValues.add(value);
+    }
+
+    boolean containsBarValue(String value) {
+        return barValues.contains(value);
+    }
 
 }

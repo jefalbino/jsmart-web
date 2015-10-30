@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class THead extends Tag {
 
-	public THead() {
-		super("thead");
-	}
+    public THead() {
+        super("thead");
+    }
 }

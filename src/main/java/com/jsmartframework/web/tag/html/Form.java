@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Form extends Tag {
 
-	public Form() {
-		super("form");
-	}
+    public Form() {
+        super("form");
+    }
 }

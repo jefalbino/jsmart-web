@@ -20,7 +20,7 @@ package com.jsmartframework.web.tag.html;
 
 public class Option extends Tag {
 
-	public Option() {
-		super("option");
-	}
+    public Option() {
+        super("option");
+    }
 }

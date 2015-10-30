@@ -43,73 +43,73 @@ import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 
 public final class DateTagHandler extends TagHandler {
-	
-	private String dateMode;
-	
-	private boolean hideIcon;
 
-	private String defaultDate;
-	
-	private boolean showWeeks;
+    private String dateMode;
 
-	private String locale;
-	
-	private String linkWith;
+    private boolean hideIcon;
 
-	private String size;
+    private String defaultDate;
 
-	private String value;
+    private boolean showWeeks;
 
-	private boolean readOnly;
+    private String locale;
 
-	private boolean autoFocus;
+    private String linkWith;
 
-	private Integer tabIndex;
-	
-	private String placeholder;
+    private String size;
 
-	private String label;
-	
-	private String leftAddOn;
-	
-	private String rightAddOn;
+    private String value;
 
-	private List<TagHandler> childAddOns;
-	
-	private FormatTagHandler format;
+    private boolean readOnly;
+
+    private boolean autoFocus;
+
+    private Integer tabIndex;
+
+    private String placeholder;
+
+    private String label;
+
+    private String leftAddOn;
+
+    private String rightAddOn;
+
+    private List<TagHandler> childAddOns;
+
+    private FormatTagHandler format;
 
     public DateTagHandler() {
         childAddOns = new ArrayList<TagHandler>(2);
     }
 
-	@Override
-	public void validateTag() throws JspException {
-		if (size != null && !Size.validateSmallLarge(size)) {
-			throw InvalidAttributeException.fromPossibleValues("date", "size", Size.getSmallLargeValues());
-		}
-		if (dateMode != null && !Mode.validate(dateMode)) {
-			throw InvalidAttributeException.fromPossibleValues("date", "dateMode", Mode.getValues());
-		}
-	}
+    @Override
+    public void validateTag() throws JspException {
+        if (size != null && !Size.validateSmallLarge(size)) {
+            throw InvalidAttributeException.fromPossibleValues("date", "size", Size.getSmallLargeValues());
+        }
+        if (dateMode != null && !Mode.validate(dateMode)) {
+            throw InvalidAttributeException.fromPossibleValues("date", "dateMode", Mode.getValues());
+        }
+    }
 
-	@Override
-	public Tag executeTag() throws JspException, IOException {
+    @Override
+    public Tag executeTag() throws JspException, IOException {
 
-		// Just to call nested tags
-		JspFragment body = getJspBody();
-		if (body != null) {
-			body.invoke(null);
-		}
-		
-		setRandomId("date");
+        // Just to call nested tags
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
 
-		JspTag parent = getParent();
+        setRandomId("date");
 
-		Div inputGroup = null;
+        JspTag parent = getParent();
 
-		Div formGroup = new Div();
-		formGroup.addAttribute("class", Bootstrap.FORM_GROUP)
-			.addAttribute("class", JSmart.DATE_FORM_GROUP);
+        Div inputGroup = null;
+
+        Div formGroup = new Div();
+        formGroup.addAttribute("class", Bootstrap.FORM_GROUP)
+            .addAttribute("class", JSmart.DATE_FORM_GROUP);
 
         String size = null;
         if (parent instanceof FormTagHandler) {
@@ -122,35 +122,35 @@ public final class DateTagHandler extends TagHandler {
         } else if (Size.SMALL.equalsIgnoreCase(size)) {
             formGroup.addAttribute("class", Bootstrap.FORM_GROUP_SMALL);
         }
-		
-		if (label != null) {
-			Label labelTag = new Label();
-			labelTag.addAttribute("for", id)
-					.addAttribute("class", Bootstrap.LABEL_CONTROL)
-					.addText(getTagValue(label));
-			formGroup.addTag(labelTag);
-		}
-		
-		if (leftAddOn != null || rightAddOn != null || !hideIcon) {
-			inputGroup = new Div();
-			
-			// Need to pass the wrap id to avoid opening date when addOn button is clicked
-			inputGroup.addAttribute("id", id + "-wrap")
-				.addAttribute("class", Bootstrap.INPUT_GROUP)
-				.addAttribute("class", Bootstrap.DATE);
 
-			if (Size.SMALL.equalsIgnoreCase(size)) {
-				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
-			} else if (Size.LARGE.equalsIgnoreCase(size)) {
-				inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
-			}
+        if (label != null) {
+            Label labelTag = new Label();
+            labelTag.addAttribute("for", id)
+                    .addAttribute("class", Bootstrap.LABEL_CONTROL)
+                    .addText(getTagValue(label));
+            formGroup.addTag(labelTag);
+        }
 
-			if (formGroup != null) {
-				formGroup.addTag(inputGroup);
-			}
-		}
-		
-		if (leftAddOn != null) {
+        if (leftAddOn != null || rightAddOn != null || !hideIcon) {
+            inputGroup = new Div();
+
+            // Need to pass the wrap id to avoid opening date when addOn button is clicked
+            inputGroup.addAttribute("id", id + "-wrap")
+                .addAttribute("class", Bootstrap.INPUT_GROUP)
+                .addAttribute("class", Bootstrap.DATE);
+
+            if (Size.SMALL.equalsIgnoreCase(size)) {
+                inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_SMALL);
+            } else if (Size.LARGE.equalsIgnoreCase(size)) {
+                inputGroup.addAttribute("class", Bootstrap.INPUT_GROUP_LARGE);
+            }
+
+            if (formGroup != null) {
+                formGroup.addTag(inputGroup);
+            }
+        }
+
+        if (leftAddOn != null) {
             boolean foundAddOn = false;
 
             for (int i = 0; i < childAddOns.size(); i++) {
@@ -160,82 +160,82 @@ public final class DateTagHandler extends TagHandler {
                     break;
                 }
             }
-			if (!foundAddOn) {
-				Div div = new Div();
-				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText(getTagValue(leftAddOn));
-				inputGroup.addTag(div);
-			}
-		}
+            if (!foundAddOn) {
+                Div div = new Div();
+                div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+                    .addText(getTagValue(leftAddOn));
+                inputGroup.addTag(div);
+            }
+        }
 
         String name = getTagName(J_DATE, value);
 
-		Input hidden = new Input();
-		hidden.addAttribute("id", id + (inputGroup != null ? "-wrap-date" : "-date"))
-			.addAttribute("name", name + (readOnly ? EL_PARAM_READ_ONLY : ""))
-			.addAttribute("type", Type.HIDDEN.name().toLowerCase());
+        Input hidden = new Input();
+        hidden.addAttribute("id", id + (inputGroup != null ? "-wrap-date" : "-date"))
+            .addAttribute("name", name + (readOnly ? EL_PARAM_READ_ONLY : ""))
+            .addAttribute("type", Type.HIDDEN.name().toLowerCase());
 
-		Input input = new Input();
-		input.addAttribute("type", Type.TEXT.name().toLowerCase())
-			 .addAttribute("date", "date")
-			 .addAttribute("class", Bootstrap.FORM_CONTROL)
-			 .addAttribute("tabindex", tabIndex)
-			 .addAttribute("readonly", readOnly ? readOnly : null)
-			 .addAttribute("disabled", isDisabled() ? "disabled" : null)
-			 .addAttribute("placeholder", getTagValue(placeholder))
-			 .addAttribute("datatype", Type.TEXT.name().toLowerCase())
-			 .addAttribute("autofocus", autoFocus ? autoFocus : null);
+        Input input = new Input();
+        input.addAttribute("type", Type.TEXT.name().toLowerCase())
+             .addAttribute("date", "date")
+             .addAttribute("class", Bootstrap.FORM_CONTROL)
+             .addAttribute("tabindex", tabIndex)
+             .addAttribute("readonly", readOnly ? readOnly : null)
+             .addAttribute("disabled", isDisabled() ? "disabled" : null)
+             .addAttribute("placeholder", getTagValue(placeholder))
+             .addAttribute("datatype", Type.TEXT.name().toLowerCase())
+             .addAttribute("autofocus", autoFocus ? autoFocus : null);
 
-		appendRefId(input, id);
+        appendRefId(input, id);
 
-		if (Size.SMALL.equalsIgnoreCase(size)) {
-			input.addAttribute("class", Bootstrap.INPUT_SMALL);
-		} else if (Size.LARGE.equalsIgnoreCase(size)) {
-			input.addAttribute("class", Bootstrap.INPUT_LARGE);
-		}
+        if (Size.SMALL.equalsIgnoreCase(size)) {
+            input.addAttribute("class", Bootstrap.INPUT_SMALL);
+        } else if (Size.LARGE.equalsIgnoreCase(size)) {
+            input.addAttribute("class", Bootstrap.INPUT_LARGE);
+        }
 
-		// Add the style class at last
-		if (inputGroup != null) {
-			inputGroup.addAttribute("style", getTagValue(style))
-				.addAttribute("class", getTagValue(styleClass));
-		} else {
-			input.addAttribute("style", getTagValue(style))
-				.addAttribute("class", getTagValue(styleClass));
-		}
+        // Add the style class at last
+        if (inputGroup != null) {
+            inputGroup.addAttribute("style", getTagValue(style))
+                .addAttribute("class", getTagValue(styleClass));
+        } else {
+            input.addAttribute("style", getTagValue(style))
+                .addAttribute("class", getTagValue(styleClass));
+        }
 
-		Object dateValue = getTagValue(value);
-		if (dateValue == null) {
-			dateValue = getTagValue(defaultDate);
-		}
-		input.addAttribute("value", dateValue);
-		hidden.addAttribute("value", dateValue);
+        Object dateValue = getTagValue(value);
+        if (dateValue == null) {
+            dateValue = getTagValue(defaultDate);
+        }
+        input.addAttribute("value", dateValue);
+        hidden.addAttribute("value", dateValue);
 
-		appendValidator(input);
-		appendRest(input, name);
-		appendEvent(input);
+        appendValidator(input);
+        appendRest(input, name);
+        appendEvent(input);
 
-		if (inputGroup != null) {
-			inputGroup.addTag(input);
-		} else if (formGroup != null) {
-			formGroup.addTag(input);
-		}
+        if (inputGroup != null) {
+            inputGroup.addTag(input);
+        } else if (formGroup != null) {
+            formGroup.addTag(input);
+        }
 
-		if (!hideIcon) {
-			Div div = new Div();
-			div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON);
+        if (!hideIcon) {
+            Div div = new Div();
+            div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON);
 
-			IconTagHandler icon = new IconTagHandler();
-			if (Mode.TIMEONLY.equalsIgnoreCase(dateMode)) {
-				icon.setName("glyphicon-time");
-			} else {
-				icon.setName("glyphicon-calendar");
-			}
-			div.addTag(icon.executeTag());
+            IconTagHandler icon = new IconTagHandler();
+            if (Mode.TIMEONLY.equalsIgnoreCase(dateMode)) {
+                icon.setName("glyphicon-time");
+            } else {
+                icon.setName("glyphicon-calendar");
+            }
+            div.addTag(icon.executeTag());
 
-			inputGroup.addTag(div);
-		}
+            inputGroup.addTag(div);
+        }
 
-		if (rightAddOn != null) {
+        if (rightAddOn != null) {
             boolean foundAddOn = false;
 
             for (int i = 0; i < childAddOns.size(); i++) {
@@ -245,115 +245,115 @@ public final class DateTagHandler extends TagHandler {
                     break;
                 }
             }
-			if (!foundAddOn) {
-				Div div = new Div();
-				div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
-					.addText(getTagValue(rightAddOn));
-				inputGroup.addTag(div);
-			}
-		}
+            if (!foundAddOn) {
+                Div div = new Div();
+                div.addAttribute("class", Bootstrap.INPUT_GROUP_ADDON)
+                    .addText(getTagValue(rightAddOn));
+                inputGroup.addTag(div);
+            }
+        }
 
-		appendAjax(id);
-		appendBind(id);
-		
-		// Need to pass the wrap id to avoid opening date when addOn button is clicked
-		appendDateScript(inputGroup != null ? id + "-wrap" : id);
+        appendAjax(id);
+        appendBind(id);
 
-		appendTooltip(formGroup);
-		appendPopOver(formGroup);
+        // Need to pass the wrap id to avoid opening date when addOn button is clicked
+        appendDateScript(inputGroup != null ? id + "-wrap" : id);
 
-		Set set = new Set();
-		set.addTag(formGroup).addTag(hidden);
-		return set;
-	}
+        appendTooltip(formGroup);
+        appendPopOver(formGroup);
 
-	private void appendDateScript(String id) {
-		Date jsonDate = new Date();
-		jsonDate.setId(id);		
-		jsonDate.setLinkDate(linkWith);
-		jsonDate.setLocale(locale);
-		jsonDate.setShowWeeks(showWeeks);
+        Set set = new Set();
+        set.addTag(formGroup).addTag(hidden);
+        return set;
+    }
 
-		if (format != null) {
-			jsonDate.setFormat(format.getRegex());
-		}
-		if (dateMode != null) {
-			if (Mode.TIMEONLY.equalsIgnoreCase(dateMode)) {
-				jsonDate.setFormat("LT");
-			} else {
-				jsonDate.setViewMode(dateMode.toLowerCase());
-			}
-		}
-		StringBuilder script = new StringBuilder(JSMART_DATE.format(getJsonValue(jsonDate)));
-		appendDocScript(script);
-	}
+    private void appendDateScript(String id) {
+        Date jsonDate = new Date();
+        jsonDate.setId(id);
+        jsonDate.setLinkDate(linkWith);
+        jsonDate.setLocale(locale);
+        jsonDate.setShowWeeks(showWeeks);
 
-	void addChildAddOn(TagHandler childAddOn) {
-		this.childAddOns.add(childAddOn);
-	}
+        if (format != null) {
+            jsonDate.setFormat(format.getRegex());
+        }
+        if (dateMode != null) {
+            if (Mode.TIMEONLY.equalsIgnoreCase(dateMode)) {
+                jsonDate.setFormat("LT");
+            } else {
+                jsonDate.setViewMode(dateMode.toLowerCase());
+            }
+        }
+        StringBuilder script = new StringBuilder(JSMART_DATE.format(getJsonValue(jsonDate)));
+        appendDocScript(script);
+    }
 
-	void setFormat(FormatTagHandler format) {
-		this.format = format;
-	}
+    void addChildAddOn(TagHandler childAddOn) {
+        this.childAddOns.add(childAddOn);
+    }
 
-	public void setDateMode(String dateMode) {
-		this.dateMode = dateMode;
-	}
+    void setFormat(FormatTagHandler format) {
+        this.format = format;
+    }
 
-	public void setShowWeeks(boolean showWeeks) {
-		this.showWeeks = showWeeks;
-	}
+    public void setDateMode(String dateMode) {
+        this.dateMode = dateMode;
+    }
 
-	public void setHideIcon(boolean hideIcon) {
-		this.hideIcon = hideIcon;
-	}
+    public void setShowWeeks(boolean showWeeks) {
+        this.showWeeks = showWeeks;
+    }
 
-	public void setDefaultDate(String defaultDate) {
-		this.defaultDate = defaultDate;
-	}
+    public void setHideIcon(boolean hideIcon) {
+        this.hideIcon = hideIcon;
+    }
 
-	public void setLocale(String locale) {
-		this.locale = locale;
-	}
+    public void setDefaultDate(String defaultDate) {
+        this.defaultDate = defaultDate;
+    }
 
-	public void setLinkWith(String linkWith) {
-		this.linkWith = linkWith;
-	}
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
 
-	public void setSize(String size) {
-		this.size = size;
-	}
+    public void setLinkWith(String linkWith) {
+        this.linkWith = linkWith;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setSize(String size) {
+        this.size = size;
+    }
 
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setAutoFocus(boolean autoFocus) {
-		this.autoFocus = autoFocus;
-	}
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
 
-	public void setTabIndex(Integer tabIndex) {
-		this.tabIndex = tabIndex;
-	}
+    public void setAutoFocus(boolean autoFocus) {
+        this.autoFocus = autoFocus;
+    }
 
-	public void setPlaceholder(String placeholder) {
-		this.placeholder = placeholder;
-	}
+    public void setTabIndex(Integer tabIndex) {
+        this.tabIndex = tabIndex;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
 
-	public void setLeftAddOn(String leftAddOn) {
-		this.leftAddOn = leftAddOn;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setRightAddOn(String rightAddOn) {
-		this.rightAddOn = rightAddOn;
-	}
+    public void setLeftAddOn(String leftAddOn) {
+        this.leftAddOn = leftAddOn;
+    }
+
+    public void setRightAddOn(String rightAddOn) {
+        this.rightAddOn = rightAddOn;
+    }
 
 }
