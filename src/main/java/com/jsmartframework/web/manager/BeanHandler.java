@@ -24,6 +24,7 @@ import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN;
 import static com.jsmartframework.web.manager.TagHandler.J_TAG_PATTERN;
 import static com.jsmartframework.web.manager.BeanHelper.HELPER;
 
+import com.jsmartframework.web.adapter.CsrfAdapter;
 import com.jsmartframework.web.annotation.AsyncBean;
 import com.jsmartframework.web.annotation.AuthAccess;
 import com.jsmartframework.web.annotation.AuthBean;
@@ -933,6 +934,64 @@ public enum BeanHandler {
         return true;
     }
 
+    Integer checkWebSecurityToken(HttpServletRequest request) {
+        if (securityListeners.isEmpty()) {
+            return null; // It means, valid user access
+        }
+
+        for (String name : securityListeners.keySet()) {
+            WebSecurity webSecurity = securityListeners.get(name).getAnnotation(WebSecurity.class);
+            CsrfRequestListener listener = (CsrfRequestListener) request.getAttribute(name);
+
+            String csrfName = request.getHeader(Constants.CSRF_TOKEN_NAME);
+            if (StringUtils.isBlank(csrfName)) {
+                csrfName = request.getParameter(Constants.CSRF_TOKEN_NAME);
+            }
+            String csrfToken = request.getHeader(Constants.CSRF_TOKEN_VALUE);
+            if (StringUtils.isBlank(csrfToken)) {
+                csrfToken = request.getParameter(Constants.CSRF_TOKEN_VALUE);
+            }
+
+            if (StringUtils.isBlank(csrfName) && StringUtils.isBlank(csrfToken)) {
+                return HttpServletResponse.SC_FORBIDDEN;
+            }
+
+            String csrfNameValue = CsrfEncrypter.decrypt(webSecurity.secretKey(), csrfName);
+            String csrfTokenValue = CsrfEncrypter.decrypt(webSecurity.secretKey(), csrfToken);
+
+            if (!listener.isValidToken(new CsrfAdapter(csrfNameValue, csrfTokenValue))) {
+                return HttpServletResponse.SC_FORBIDDEN;
+            }
+            // We must have only one @webSecurity mapped
+            break;
+        }
+        return null; // It means, valid user access
+    }
+
+    void generateWebSecurityToken(HttpServletRequest request, HttpServletResponse response) {
+        if (request.getAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_NAME) == null) {
+            for (String name : securityListeners.keySet()) {
+
+                WebSecurity webSecurity = securityListeners.get(name).getAnnotation(WebSecurity.class);
+                CsrfRequestListener listener = (CsrfRequestListener) request.getAttribute(name);
+
+                CsrfAdapter csrfAdapter = listener.generateToken();
+                if (csrfAdapter == null || StringUtils.isBlank(csrfAdapter.getName()) || StringUtils.isBlank(csrfAdapter.getToken())) {
+                    LOGGER.warning("Class " + name + " returned invalid token from generateToken method");
+                    return;
+                }
+
+                String encryptName = CsrfEncrypter.encrypt(webSecurity.secretKey(), csrfAdapter.getName());
+                String encryptToken = CsrfEncrypter.encrypt(webSecurity.secretKey(), csrfAdapter.getToken());
+
+                request.setAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_NAME, encryptName);
+                request.setAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_VALUE, encryptToken);
+                // We must have only one @webSecurity mapped
+                break;
+            }
+        }
+    }
+
     private void initAnnotatedBeans() {
         if (CONFIG.getContent().getPackageScan() == null) {
             LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML +
@@ -950,7 +1009,7 @@ public enum BeanHandler {
         initAnnotatedWebServlets(reflections);
         initAnnotatedWebFilters(reflections);
         initAnnotatedWebListeners(reflections);
-        initAnnotatedWebSecurityListeners(reflections);
+        initAnnotatedWebSecurities(reflections);
     }
 
     private void initAnnotatedWebBeans(Reflections reflections) {
@@ -1157,7 +1216,7 @@ public enum BeanHandler {
         }
     }
 
-    private void initAnnotatedWebSecurityListeners(Reflections reflections) {
+    private void initAnnotatedWebSecurities(Reflections reflections) {
         Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebSecurity.class);
 
         for (Class<?> clazz : annotations) {
@@ -1171,7 +1230,7 @@ public enum BeanHandler {
                                                    "must implement CsrfRequestListener interface");
                     }
                     if (StringUtils.isBlank(webSecurity.secretKey())
-                            || webSecurity.secretKey().length() > AuthEncrypter.CYPHER_KEY_LENGTH_MAX) {
+                            || webSecurity.secretKey().length() > CsrfEncrypter.CYPHER_KEY_LENGTH_MAX) {
                         throw new RuntimeException("Mapped WebSecurity annotation for class [" + clazz + "] must " +
                                 "have its secretKey value greater than [0] and less than or " +
                                 "equal to [16] characters");

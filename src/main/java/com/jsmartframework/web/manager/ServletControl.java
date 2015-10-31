@@ -98,7 +98,15 @@ public final class ServletControl extends HttpServlet {
         // Check if user is authorized to access the page. Send HTTP 403 response case they did not have
         Integer httpStatus = HANDLER.checkAuthorization(path);
         if (httpStatus != null) {
-            LOGGER.log(Level.INFO, "WebBean access not authorized on page [" + path + "]");
+            LOGGER.log(Level.INFO, "Access not authorized on page [" + path + "]");
+            response.sendError(httpStatus);
+            return;
+        }
+
+        // Check if user is truly valid by carrying CSRF token if implemented
+        httpStatus = HANDLER.checkWebSecurityToken(request);
+        if (httpStatus != null) {
+            LOGGER.log(Level.INFO, "Possibly invalid access via CSRF attack on page [" + path + "]");
             response.sendError(httpStatus);
             return;
         }
@@ -202,6 +210,9 @@ public final class ServletControl extends HttpServlet {
             return;
         }
 
+        // Generate web security token to prevent CSRF attack
+        HANDLER.generateWebSecurityToken(request, response);
+
         // Initiate beans mentioned on jsp page
         try {
             HANDLER.instantiateBeans(path, null);
@@ -247,10 +258,8 @@ public final class ServletControl extends HttpServlet {
                 LOGGER.log(Level.SEVERE, "Could not find JSP page for path [" + path + "]");
                 return;
             }
-
             // Use Forward request internally case is the same page
             request.getRequestDispatcher(url).forward(request, response);
-
         } else {
             // Use Redirect response internally case page had changed
             response.sendRedirect((path.startsWith("/") ? request.getContextPath() : "") + path);

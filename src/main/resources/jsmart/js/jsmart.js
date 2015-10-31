@@ -30,6 +30,8 @@ var JSmart = (function() {
     var roleAutoLoad = 'role-auto-load';
     var validateTextStyle = 'js5-validate-text';
     var validateGroupStyle = 'js5-validate-group';
+    var csrfName = 'jsmart_csrf_name';
+    var csrfToken = 'jsmart_csrf_token';
 
     // Keep track of scroll binds on table or list components with dynamic scroll, case update is done
     var scrollBinds = {};
@@ -48,7 +50,7 @@ var JSmart = (function() {
         initPopOvers();
         initTooltips();
         initRoleEmpty();
-        initPageAuth();
+        initWebSecurity();
     });
 
     function initPopOvers() {
@@ -148,9 +150,10 @@ var JSmart = (function() {
         });
     }
 
-    function initPageAuth() {
-        //$('form').submit(doFormHeaders(event));
-
+    function initWebSecurity() {
+        $('form').each(function () {
+            doFormSecurity($(this));
+        });
     }
 
     /******************************************************
@@ -324,6 +327,14 @@ var JSmart = (function() {
 
         isEmpty: function(id) {
             return doIsEmpty(id);
+        },
+
+        getCsrfName: function() {
+            return doGetCsrfName();
+        },
+
+        getCsrfToken: function() {
+            return doGetCsrfToken();
         }
     };
 
@@ -1785,19 +1796,49 @@ var JSmart = (function() {
         }
         xhr.setRequestHeader('Update-Ajax', values);
 
-        // TODO: send user and password as headers
+        // Send csrf token via header
+        if (map.method && map.method.toLowerCase() == 'post') {
+            var name = $('meta[name="' + csrfName + '"]').attr('content');
+            if (name && name.length > 0) {
+                var token = $('meta[name="' + csrfToken + '"]').attr('content');
+                xhr.setRequestHeader(csrfName, name);
+                xhr.setRequestHeader(csrfToken, token);
+            }
+        }
     }
 
-    function doFormHeaders(event) {
-//        event.preventDefault();
-//
-//        var token = $('meta[name="jsmart:csrf:token"]').attr('content');
-//        var header = $('meta[name="jsmart:csrf:header"]').attr('content');
-//
-//        var header = $('meta[name="jsmart:csrf:header"]').attr('content');
-//
-//        var form = $(this);
+    function doFormSecurity(form) {
+        var method = form.attr('method');
+        if (!method || method.toLowerCase() != 'post') {
+            return;
+        }
 
+        var name = $('meta[name="' + csrfName + '"]').attr('content');
+        if (name && name.length > 0) {
+            var token = $('meta[name="' + csrfToken + '"]').attr('content');
+            form.append($('<input type="hidden" name="' + csrfName + '" value="' + name + '" />'));
+            form.append($('<input type="hidden" name="' + csrfToken + '" value="' + token + '" />'));
+        }
+    }
+
+    function doGetCsrfName() {
+        var map = {name: '', value: ''};
+        var name = $('meta[name="' + csrfName + '"]').attr('content');
+        if (name && name.length > 0) {
+            map.name = csrfName;
+            map.value = name;
+        }
+        return map;
+    }
+
+    function doGetCsrfToken() {
+        var map = {name: '', value: ''};
+        var token = $('meta[name="' + csrfToken + '"]').attr('content');
+        if (token && token.length > 0) {
+            map.name = csrfToken;
+            map.value = token;
+        }
+        return map;
     }
 
     function doUpdate(update, a) {

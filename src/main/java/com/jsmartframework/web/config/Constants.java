@@ -37,6 +37,11 @@ public final class Constants {
     public static final String SESSION_RESET_ATTR = "jsmart_session_reset_attr";
 
 
+    public static final String CSRF_TOKEN_NAME = "jsmart_csrf_name";
+
+    public static final String CSRF_TOKEN_VALUE = "jsmart_csrf_token";
+
+
     public static final String JSP_EL = "${%s}";
 
     public static final String TAG_EL = "@{%s}";

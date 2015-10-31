@@ -16,14 +16,24 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmartframework.web.listener;
+package com.jsmartframework.web.adapter;
 
-import com.jsmartframework.web.adapter.CsrfAdapter;
+public class CsrfAdapter {
 
-public interface CsrfRequestListener {
+    private String name;
 
-    public CsrfAdapter generateToken();
+    private String token;
 
-    public boolean isValidToken(CsrfAdapter csrfAdapter);
+    public CsrfAdapter(String name, String token) {
+        this.name = name;
+        this.token = token;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getToken() {
+        return token;
+    }
 }

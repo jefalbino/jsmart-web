@@ -19,12 +19,16 @@
 package com.jsmartframework.web.manager;
 
 import static com.jsmartframework.web.config.Config.CONFIG;
+import static com.jsmartframework.web.config.Constants.CSRF_TOKEN_NAME;
+import static com.jsmartframework.web.config.Constants.CSRF_TOKEN_VALUE;
 import static com.jsmartframework.web.config.Constants.FILTER_HEADERS;
 import static com.jsmartframework.web.config.Constants.FILTER_RESOURCES;
 import static com.jsmartframework.web.config.Constants.INDEX_JSP;
 import static com.jsmartframework.web.config.Constants.LIB_FILE_PATH;
 import static com.jsmartframework.web.config.Constants.LIB_JAR_FILE_PATTERN;
 import static com.jsmartframework.web.config.Constants.PATH_SEPARATOR;
+import static com.jsmartframework.web.config.Constants.REQUEST_META_DATA_CSRF_TOKEN_NAME;
+import static com.jsmartframework.web.config.Constants.REQUEST_META_DATA_CSRF_TOKEN_VALUE;
 import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_DOC_SCRIPT_ATTR;
 import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_SCRIPT_ATTR;
 import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
@@ -39,8 +43,10 @@ import com.jsmartframework.web.json.Headers;
 import com.jsmartframework.web.json.Resources;
 import com.jsmartframework.web.tag.html.DocScript;
 import com.jsmartframework.web.tag.html.Head;
+import com.jsmartframework.web.tag.html.Meta;
 import com.jsmartframework.web.tag.html.Script;
 
+import com.jsmartframework.web.tag.html.Tag;
 import org.apache.commons.io.IOUtils;
 import org.reflections.vfs.Vfs;
 import org.reflections.vfs.Vfs.Dir;
@@ -216,12 +222,7 @@ public final class FilterControl implements Filter {
         }
     }
 
-    private void addCsrfMetaData(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
-
-    }
-
     private void addAjaxHeaders(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
-
         // Case redirect via ajax, place tag with path to be handled by java script
         String ajaxPath = (String) httpRequest.getAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR);
         if (ajaxPath != null) {
@@ -266,17 +267,29 @@ public final class FilterControl implements Filter {
         Matcher startHeadMatcher = START_HEAD_PATTERN.matcher(html);
         if (startHeadMatcher.find()) {
             html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(headerStyles.toString()));
-
         } else {
             Head head = new Head();
             head.addText(headerStyles);
             html = htmlMatcher.replaceFirst("$1" + Matcher.quoteReplacement(head.getHtml().toString()));
         }
 
+        // Place the CSRF token as Meta tags
+        String tokenName = (String) httpRequest.getAttribute(REQUEST_META_DATA_CSRF_TOKEN_NAME);
+        if (tokenName != null) {
+            String tokenValue = (String) httpRequest.getAttribute(REQUEST_META_DATA_CSRF_TOKEN_VALUE);
+            startHeadMatcher = START_HEAD_PATTERN.matcher(html);
+
+            Tag csrfName = new Meta().addAttribute("name", CSRF_TOKEN_NAME).addAttribute("content", tokenName);
+            Tag csrfToken = new Meta().addAttribute("name", CSRF_TOKEN_VALUE).addAttribute("content", tokenValue);
+            StringBuilder metaTags = csrfName.getHtml().append(csrfToken.getHtml());
+
+            html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(metaTags.toString()));
+        }
+
         // Stand alone functions mapped via function tag
         Script funcScript = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
 
-        // General document scripts executed on page ready
+        // General page scripts executed when document is ready
         DocScript docScript = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_DOC_SCRIPT_ATTR);
 
         StringBuilder scriptBuilder = new StringBuilder(headerScripts);
