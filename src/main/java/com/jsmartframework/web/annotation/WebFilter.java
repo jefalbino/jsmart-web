@@ -22,14 +22,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
 import javax.servlet.annotation.WebInitParam;
 
 /**
- * The {@link WebFilter} annotation is used on classes to declare {@link Filter}
- * instance. The class must implement {@link Filter}.
- * <br>
- * The classes annotated with {@link WebFilter} allow dependency injection.
+ * This annotation is used on classes to declare {@link javax.servlet.Filter}
+ * instance. The class must implement {@link javax.servlet.Filter} interface.
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebFilter {

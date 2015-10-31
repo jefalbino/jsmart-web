@@ -18,6 +18,10 @@
 
 package com.jsmartframework.web.adapter;
 
+/**
+ * Adapter to return content of {@code slide} header component to populate {@code carousel}
+ * component when response as HTML is being generated to client via JSP.
+ */
 public final class HeaderAdapter {
 
     private String title;

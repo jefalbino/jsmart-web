@@ -23,9 +23,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation is used to map request URL parameters by its name to be
+ * assigned to fields on classes annotated with {@link AuthBean}, {@link WebBean},
+ * {@link AsyncBean} or {@link RequestPath}
+ * <br>
+ * The field must be of type of {@link String}
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface QueryParam {
 
+    /**
+     * Name of URL query parameter for searching for value.
+     */
     String value();
 }

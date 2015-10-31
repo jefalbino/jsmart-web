@@ -22,14 +22,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.List;
 
 /**
- * The {@link AuthAccess} annotation is used on a field attribute of type of {@link List}
- * of {@link String} elements to provide a list of access roles allowed by authenticated user.
+ * This annotation is used on a {@link AuthBean} class field of type of {@link java.util.List}
+ * containing {@link java.lang.String} elements to provide a list of access roles allowed by authenticated user.
  * <br>
- * This values are used to checked against the access roles mapped by each URL pattern 
- * on configuration file.
+ * This values are used to be checked against the access roles mapped by each URL pattern tag
+ * on configuration file {@code webConfig.xml}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

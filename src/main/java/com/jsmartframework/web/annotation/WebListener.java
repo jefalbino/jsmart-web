@@ -22,10 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * The {@link WebListener} annotation is used on classes implementing {@link javax.servlet.http.HttpSessionListener},
+ * This annotation is used on classes implementing {@link javax.servlet.http.HttpSessionListener},
  * {@link javax.servlet.ServletRequestListener} or {@link javax.servlet.ServletContextListener} interfaces.
- * <br>
- * The classes annotated with {@link WebListener} allow dependency injection.
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebListener {

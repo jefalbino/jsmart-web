@@ -23,6 +23,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * This annotation is used on a {@link AuthBean} class method to validate if client
+ * is authenticated considering the fields annotated with {@link AuthField}.
+ * <br>
+ * The method annotated with this annotation must contain the return type of type
+ * {@link Boolean} which is used along with {@link AuthField} to indicate if client is
+ * authenticated.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface AuthMethod {

@@ -52,7 +52,7 @@ import javax.el.ValueExpression;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-public enum ExpressionHandler {
+enum ExpressionHandler {
 
     EXPRESSIONS();
 

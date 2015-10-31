@@ -19,6 +19,7 @@
 package com.jsmartframework.web.util;
 
 import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,6 +29,9 @@ import java.util.Random;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Utility class to help working with URL pah and Cookies.
+ */
 public final class WebUtils {
 
     private static final int DEFAULT_RANDOM_BYTES = 8;
@@ -72,5 +76,21 @@ public final class WebUtils {
             }
         }
         return null;
+    }
+
+    public static String escapeString(String value) {
+        if (value != null) {
+            value = StringEscapeUtils.escapeJavaScript(value);
+            value = StringEscapeUtils.escapeHtml(value);
+        }
+        return value;
+    }
+
+    public static String unescapeString(String value) {
+        if (value != null) {
+            value = StringEscapeUtils.unescapeHtml(value);
+            value = StringEscapeUtils.unescapeJavaScript(value);
+        }
+        return value;
     }
 }

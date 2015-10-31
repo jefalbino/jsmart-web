@@ -21,9 +21,20 @@ package com.jsmartframework.web.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * This annotation is used to map relative URL paths to be integrated with
+ * SpringMVC which are part of same context of the application mapped via
+ * configuration file {@code webConfig.xml}.
+ * <br>
+ * The url path mapped via this annotation do not need to be specified as
+ * URL Pattern on {@code webConfig.xml} and it must end with {@value /*}
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestPath {
 
+    /**
+     * Relative URL path to map this request path with must end with {@value /*}
+     */
     String value();
 
 }

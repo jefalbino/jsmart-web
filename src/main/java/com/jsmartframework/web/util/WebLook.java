@@ -18,6 +18,10 @@
 
 package com.jsmartframework.web.util;
 
+/**
+ * Utility class to provide possible look and feel for components
+ * when generating response as HTML via JSP.
+ */
 public enum WebLook {
 
     DEFAULT, PRIMARY, SUCCESS, INFO, WARNING, DANGER, MUTED, LINK, ERROR;

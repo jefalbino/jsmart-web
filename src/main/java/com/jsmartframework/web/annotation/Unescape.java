@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The {@link Unescape} annotation is used on a methods which need their {@link String}
+ * This annotation is used on a methods which you want their {@link String}
  * parameters to be unescaped. By default all {@link String} values carried on request
  * are escaped.
  */

@@ -24,13 +24,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The {@link PostSubmit} annotation is used on a method that needs to be executed 
+ * This annotation is used on methods which you want to be executed
  * after the submit method mapped on JSP file is invoked.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PostSubmit {
 
+    /**
+     * List of action methods which the method annotated with
+     * {@link PostSubmit} must be invoked
+     */
     String[] onActions() default {};
 
 }

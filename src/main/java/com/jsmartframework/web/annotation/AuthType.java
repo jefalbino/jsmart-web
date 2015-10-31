@@ -18,6 +18,9 @@
 
 package com.jsmartframework.web.annotation;
 
+/**
+ * Enum of possible types for the authentication mechanism mapped via {@link AuthBean}
+ */
 public enum AuthType {
 
     REQUEST, SESSION

@@ -21,16 +21,22 @@ package com.jsmartframework.web.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * This annotation is used on classes responsible to validate the request by
+ * implementing the interface {@link com.jsmartframework.web.listener.CsrfRequestListener}
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebSecurity {
 
     /**
-     *
+     * Secret key used to encrypt CSRF name and token. We recommend you
+     * to define your own private secret key which must contain 16 characters.
      */
     String secretKey() default "4zK7koRONFkbtRK6";
 
     /**
-     *
+     * Boolean value to disable CSRF token encryption, so if the token name and value
+     * will be carried on as text plain.
      */
     boolean disableEncrypt() default false;
 

@@ -18,7 +18,12 @@
 
 package com.jsmartframework.web.adapter;
 
-public class CsrfAdapter {
+/**
+ * Adapter to carry CSRF name and token to validate the request case
+ * any action is sent via POST HTTP method. This class is meant to be
+ * used along with {@link com.jsmartframework.web.listener.CsrfRequestListener}
+ */
+public final class CsrfAdapter {
 
     private String name;
 

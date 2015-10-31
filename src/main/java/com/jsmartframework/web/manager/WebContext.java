@@ -19,7 +19,6 @@
 package com.jsmartframework.web.manager;
 
 import com.google.gson.Gson;
-import com.jsmartframework.web.annotation.WebBean;
 import com.jsmartframework.web.util.WebAlert;
 import com.jsmartframework.web.util.WebUtils;
 
@@ -57,12 +56,12 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 /**
- * This class represents the context of the request being currently processed and it allows {@link WebBean}
+ * This class represents the context of the request being currently processed and it allows beans
  * to get an instance of {@link ServletContext}, {@link HttpSession}, {@link HttpServletRequest} or 
  * {@link HttpServletResponse}.
  * <br>
  * This class also include methods to add message to client side, check if request is Ajax request or 
- * retrieve attributes from the request, session or application.
+ * retrieve attributes from the request, session or application among other utilities.
  */
 public final class WebContext implements Serializable {
 
@@ -188,6 +187,11 @@ public final class WebContext implements Serializable {
         return context != null ? context.request : null;
     }
 
+    /**
+     * Returns the current query parameters associated to the request being processed.
+     *
+     * @return Map containing name and values of URL query parameters
+     */
     public static Map<String, String> getQueryParams() {
         WebContext context = getCurrentInstance();
         if (context == null) {
@@ -234,10 +238,10 @@ public final class WebContext implements Serializable {
     /**
      * Redirect the request to the specified link path after the current request is processed.
      * <br>
-     * Case this method is called on {@link PostConstruct} annotated method, the redirect is done after the
-     * {@link PostConstruct} annotated method execution.
+     * Case this method is called on {@link PostConstruct} annotated method, the redirect is done
+     * after method execution.
      *
-     * @param path path mapped on configuration file or general valid URL link.
+     * @param path path mapped on configuration file {@code webConfig.xml} or general valid URL link.
      */
     public static void redirectTo(String path) {
         WebContext context = getCurrentInstance();
@@ -246,6 +250,15 @@ public final class WebContext implements Serializable {
         }
     }
 
+    /**
+     * Redirect the request to the specified link path after the current request is processed on a
+     * new window on clients browser.
+     * <br>
+     * Case this method is called on {@link PostConstruct} annotated method, the redirect is done
+     * after method execution.
+     *
+     * @param path path mapped on configuration file {@code webConfig.xml} or general valid URL link.
+     */
     public static void redirectToWindow(String path) {
         WebContext context = getCurrentInstance();
         if (context != null) {
@@ -256,8 +269,7 @@ public final class WebContext implements Serializable {
 
     /**
      * Calling this method will cause the current {@link HttpSession} to be invalidated after the request
-     * processing is done. It means that the session will be invalidated after {@link WebBean} life cycle
-     * is completed.
+     * processing is done. It means that the session will be invalidated after request is completed.
      * <br>
      * Case there is a need to invalidate the session at the moment of the execution, use {@link HttpSession}
      * invalidate method instead.
@@ -295,6 +307,16 @@ public final class WebContext implements Serializable {
         return context != null ? context.alerts.get(id) : null;
     }
 
+    /**
+     * Add info alert to be presented on client side after the response is returned.
+     * <br>
+     * This method only take effect if the alert tag is mapped with specified id on JSP page.
+     * <br>
+     * The message is placed on the same position where the {@code alert} is mapped.
+     *
+     * @param id of the alert to receive the message.
+     * @param alert object containg alert details such as title, message, header and icon.
+     */
     public static void addAlert(String id, WebAlert alert) {
         WebContext context = getCurrentInstance();
         if (context != null && id != null && alert != null) {
@@ -309,12 +331,11 @@ public final class WebContext implements Serializable {
     /**
      * Add info alert to be presented on client side after the response is returned.
      * <br>
-     * This method only take effect if the alert tag is mapped with specified id and with position fixed
-     * on the page returned to the client.
+     * This method only take effect if the alert tag is mapped with specified id on JSP page.
      * <br>
-     * The message is placed on the same position where the the message tag is mapped.
+     * The message is placed on the same position where the  {@code alert} tag is mapped.
      *
-     * @param id of the tag to receive the message.
+     * @param id of the alert to receive the message.
      * @param message to be presented on the client side.
      */
     public static void addInfo(String id, String message) {
@@ -326,12 +347,11 @@ public final class WebContext implements Serializable {
     /**
      * Add warning alert to be presented on client side after the response is returned.
      * <br>
-     * This method only take effect if the alert tag is mapped with specified id and with position fixed
-     * on the page returned to the client.
+     * This method only take effect if the alert tag is mapped with specified id on JSP page.
      * <br>
-     * The message is placed on the same position where the the message tag is mapped.
+     * The message is placed on the same position where the {@code alert} tag is mapped.
      *
-     * @param id of the tag to receive the message.
+     * @param id of the alert to receive the message.
      * @param message to be presented on the client side.
      */
     public static void addWarning(String id, String message) {
@@ -343,12 +363,11 @@ public final class WebContext implements Serializable {
     /**
      * Add success alert to be presented on client side after the response is returned.
      * <br>
-     * This method only take effect if the alert tag is mapped with specified id and with position fixed
-     * on the page returned to the client.
+     * This method only take effect if the alert tag is mapped with specified id on JSP page.
      * <br>
-     * The message is placed on the same position where the the message tag is mapped.
+     * The message is placed on the same position where the {@code alert} tag is mapped.
      *
-     * @param id of the tag to receive the message.
+     * @param id of the alert to receive the message.
      * @param message to be presented on the client side.
      */
     public static void addSuccess(String id, String message) {
@@ -360,12 +379,11 @@ public final class WebContext implements Serializable {
     /**
      * Add error alert to be presented on client side after the response is returned.
      * <br>
-     * This method only take effect if the alert tag is mapped with specified id and with position fixed
-     * on the page returned to the client.
+     * This method only take effect if the alert tag is mapped with specified id on JSP page.
      * <br>
-     * The message is placed on the same position where the the message tag is mapped.
+     * The message is placed on the same position where the {@code alert} message tag is mapped.
      *
-     * @param id of the tag to receive the message.
+     * @param id of the alert to receive the message.
      * @param message to be presented on the client side.
      */
     public static void addError(String id, String message) {
@@ -457,6 +475,14 @@ public final class WebContext implements Serializable {
         return false;
     }
 
+    /**
+     * Given that the current request has ReCaptcha content to be verified use this method
+     * to check if the ReCaptcha input is valid on server side.
+     *
+     * @param secretKey for ReCaptcha based on your domain registered
+     *
+     * @return true if the ReCaptcha input is valid, false otherwise
+     */
     public static boolean checkReCaptcha(String secretKey) {
         String responseField = (String) getMappedValue(ReCaptchaHandler.RESPONSE_V1_FIELD_NAME);
         if (responseField != null) {
@@ -470,22 +496,12 @@ public final class WebContext implements Serializable {
         throw new RuntimeException("ReCaptcha not found on this submit. Plase make sure the recaptcha tag is included on submitted form");
     }
 
-    public static String escapeString(String value) {
-        if (value != null) {
-            value = StringEscapeUtils.escapeJavaScript(value);
-            value = StringEscapeUtils.escapeHtml(value);
-        }
-        return value;
-    }
-
-    public static String unescapeString(String value) {
-        if (value != null) {
-            value = StringEscapeUtils.unescapeHtml(value);
-            value = StringEscapeUtils.unescapeJavaScript(value);
-        }
-        return value;
-    }
-
+    /**
+     * Returns the request content as String
+     *
+     * @return request content as String
+     * @throws IOException
+     */
     public static String getContentAsString() throws IOException {
         WebContext context = getCurrentInstance();
         if (context == null) {
@@ -504,10 +520,30 @@ public final class WebContext implements Serializable {
         return context.bodyContent;
     }
 
+    /**
+     * Get request content from JSON and convert it to class mapping
+     * the content.
+     *
+     * @param clazz - Class mapping the request content.
+     * @param <T> - type of class to convert JSON into class.
+     *
+     * @return content from JSON to object
+     * @throws IOException
+     */
     public static <T> T getContentFromJson(Class<T> clazz) throws IOException {
         return gson.fromJson(getContentAsString(), clazz);
     }
 
+    /**
+     * Get request content from XML and convert it to class mapping
+     * the content.
+     *
+     * @param clazz - Class mapping the request content.
+     * @param <T> - type of class to convert XML into class.
+     *
+     * @return content from JSON to object
+     * @throws IOException
+     */
     public static <T> T getContentFromXml(Class<T> clazz) throws IOException, JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -520,6 +556,13 @@ public final class WebContext implements Serializable {
         return context != null ? context.responseWritten : false;
     }
 
+    /**
+     * Write response directly as String. Note that by using this method the response
+     * as HTML will not be generated and the response will be what you have defined.
+     *
+     * @param response String to write in the response
+     * @throws IOException
+     */
     public static void writeResponseAsString(String response) throws IOException {
         WebContext context = getCurrentInstance();
         if (context != null && response != null) {
@@ -530,6 +573,13 @@ public final class WebContext implements Serializable {
         }
     }
 
+    /**
+     * Write response directly as JSON from Object. Note that by using this method the response
+     * as HTML will not be generated and the response will be what you have defined.
+     *
+     * @param object Object to convert into JSON to write in the response
+     * @throws IOException
+     */
     public static void writeResponseAsJson(Object object) throws IOException {
         WebContext context = getCurrentInstance();
         if (context != null && object != null) {
@@ -541,6 +591,13 @@ public final class WebContext implements Serializable {
         }
     }
 
+    /**
+     * Write response directly as XML from Object. Note that by using this method the response
+     * as HTML will not be generated and the response will be what you have defined.
+     *
+     * @param object Object to convert into XML to write in the response
+     * @throws IOException
+     */
     public static void writeResponseAsXml(Object object) throws IOException, JAXBException {
         WebContext context = getCurrentInstance();
         if (context != null && object != null) {
@@ -555,11 +612,29 @@ public final class WebContext implements Serializable {
         }
     }
 
+    /**
+     * Write response directly as Event-Stream for Server Sent Events.
+     *
+     * @param asyncContext - Asynchronous Context
+     * @param event - Name of event to be written on response
+     * @param data - Content of event ot be written on response
+     * @throws IOException
+     */
     public static void writeResponseAsEventStream(AsyncContext asyncContext, String event,
             Object data) throws IOException {
         writeResponseAsEventStream(asyncContext, event, data, null);
     }
 
+    /**
+     * Write response directly as Event-Stream for Server Sent Events.
+     *
+     * @param asyncContext - Asynchronous Context
+     * @param event - Name of event to be written on response
+     * @param data - Content of event ot be written on response
+     * @param retry - Time in (milliseconds) for client rety opening connection
+     *              after asynchronous context is closed.
+     * @throws IOException
+     */
     public static void writeResponseAsEventStream(AsyncContext asyncContext, String event, Object data,
             Long retry) throws IOException {
         if (asyncContext != null && event != null && data != null) {
@@ -577,6 +652,15 @@ public final class WebContext implements Serializable {
         }
     }
 
+    /**
+     * Write response as file stream when you want to provide download functionality.
+     * Note that by using this method the response as HTML will not be generated and
+     * the response will be what you have defined.
+     *
+     * @param file - File to be written on response
+     * @param bufferSize - Buffer size to write the response. Recommended 2048 bytes.
+     * @throws IOException
+     */
     public static void writeResponseAsFileStream(File file, int bufferSize) throws IOException {
         WebContext context = getCurrentInstance();
         if (context != null && file != null && bufferSize > 0) {

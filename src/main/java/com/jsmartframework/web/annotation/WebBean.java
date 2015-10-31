@@ -22,10 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * The {@link WebBean} annotation is used on a class that contains the business
+ * This annotation is used on a class that contains the business
  * logic and can be used as a bean object to be mapped on JSP files.
- * <br>
- * The classes annotated with {@link WebBean} allow dependency injection.
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebBean {
@@ -39,8 +37,6 @@ public @interface WebBean {
 
     /**
      * The scope of the bean.
-     * <br>
-     * Default value is ScopeType.REQUEST
      */
     ScopeType scope() default ScopeType.REQUEST;
 

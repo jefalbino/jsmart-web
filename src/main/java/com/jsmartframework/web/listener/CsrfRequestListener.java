@@ -20,10 +20,31 @@ package com.jsmartframework.web.listener;
 
 import com.jsmartframework.web.adapter.CsrfAdapter;
 
+/**
+ * Listener to provide token name and value to prevent CSRF attacks.
+ * This listener is meant to work together with {@link com.jsmartframework.web.annotation.WebSecurity}
+ * to provide request authentication.
+ */
 public interface CsrfRequestListener {
 
+    /**
+     * This method is called every GET to provide token name and value per customer.
+     * <br>
+     * We recommend that the token is regenerated from time to time and also you should
+     * manage its storage if using session or another external resource.
+     *
+     * @return CsrfAdapter containing token name and value
+     */
     public CsrfAdapter generateToken();
 
+    /**
+     * This method is called every POST and it carries the token name and value for
+     * request validation.
+     *
+     * @param csrfAdapter - CsrfAdapter containing token name and value
+     *
+     * @return true if request is valid false otherwise
+     */
     public boolean isValidToken(CsrfAdapter csrfAdapter);
 
 }

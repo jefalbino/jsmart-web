@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-public enum BeanHelper {
+enum BeanHelper {
 
     HELPER();
 

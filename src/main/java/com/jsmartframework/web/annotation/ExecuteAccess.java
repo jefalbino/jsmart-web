@@ -24,9 +24,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The {@link ExecuteAccess} annotation is used on method mapped as submit method on JSP file. 
+ * This annotation is used on method mapped as submit method on JSP file.
  * <br>
- * This annotation specify the access roles needed by authenticated user to execute the method.
+ * Also this annotation must specify the access roles needed by authenticated client
+ * to execute the method.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -34,6 +35,8 @@ public @interface ExecuteAccess {
 
     /**
      * List of access roles allowed to execute the method.
+     * <br>
+     * This access role are the same as specified on URL Patterns on {@code webConfig.xml}
      */
     String[] access() default {};
 

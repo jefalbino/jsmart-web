@@ -18,6 +18,10 @@
 
 package com.jsmartframework.web.adapter;
 
+/**
+ * Adapter to return content of image component to populate {@code slide}
+ * on {@code carousel} component when response as HTML is being generated to client via JSP.
+ */
 public final class ImageAdapter {
 
     private String lib;

@@ -21,15 +21,11 @@ package com.jsmartframework.web.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import javax.servlet.Servlet;
 import javax.servlet.annotation.WebInitParam;
-import javax.servlet.http.HttpServlet;
 
 /**
- * The {@link WebServlet} annotation is used on classes to declare {@link Servlet}
- * instance. The class must extends {@link HttpServlet}.
- * <br>
- * The classes annotated with {@link WebServlet} allow dependency injection.
+ * This annotation is used on classes to declare {@link javax.servlet.Servlet} instance.
+ * The class must extends {@link javax.servlet.http.HttpServlet}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebServlet {

@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * based on the different {@link Locale} mapped for those resources.
  * <br>
  * Each text properties file is mapped as resource in this container according to what
- * was mapped on configuration. 
+ * was mapped on configuration via {@code webConfig.xml}.
  */
 public enum WebText {
 

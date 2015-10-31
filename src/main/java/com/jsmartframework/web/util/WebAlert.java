@@ -18,6 +18,12 @@
 
 package com.jsmartframework.web.util;
 
+/**
+ * Utility class to provide alert information from server to client
+ * via {@code alert} component. This class is meant to be used along
+ * with {@link com.jsmartframework.web.manager.WebContext} to send feedback
+ * to client side using specific alert by its id.
+ */
 public final class WebAlert {
 
     private AlertType type;

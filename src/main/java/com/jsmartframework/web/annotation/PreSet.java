@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The {@link PreSet} annotation is used on a field attribute that needs to be
+ * This annotation is used on a field attributes which you want to be
  * set before the method annotated with {@link javax.annotation.PostConstruct} is invoked.
  * <br>
  * In order to be set the field attribute must be mapped on JSP file currently being submitted.
