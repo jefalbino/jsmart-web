@@ -335,6 +335,10 @@ var JSmart = (function() {
 
         getCsrfToken: function() {
             return doGetCsrfToken();
+        },
+
+        setCsrfHeader: function(xhr) {
+            doSetCsrfHeader(xhr)
         }
     };
 
@@ -1798,12 +1802,7 @@ var JSmart = (function() {
 
         // Send csrf token via header
         if (map.method && map.method.toLowerCase() == 'post') {
-            var name = $('meta[name="' + csrfName + '"]').attr('content');
-            if (name && name.length > 0) {
-                var token = $('meta[name="' + csrfToken + '"]').attr('content');
-                xhr.setRequestHeader(csrfName, name);
-                xhr.setRequestHeader(csrfToken, token);
-            }
+            doSetCsrfHeader(xhr);
         }
     }
 
@@ -1839,6 +1838,17 @@ var JSmart = (function() {
             map.value = token;
         }
         return map;
+    }
+
+    function doSetCsrfHeader(xhr) {
+        if ($.type(xhr) === 'object') {
+            var name = $('meta[name="' + csrfName + '"]').attr('content');
+            if (name && name.length > 0) {
+                var token = $('meta[name="' + csrfToken + '"]').attr('content');
+                xhr.setRequestHeader(csrfName, name);
+                xhr.setRequestHeader(csrfToken, token);
+            }
+        }
     }
 
     function doUpdate(update, a) {

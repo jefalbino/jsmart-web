@@ -24,6 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebSecurity {
 
+    /**
+     *
+     */
     String secretKey() default "4zK7koRONFkbtRK6";
+
+    /**
+     *
+     */
+    boolean disableEncrypt() default false;
 
 }

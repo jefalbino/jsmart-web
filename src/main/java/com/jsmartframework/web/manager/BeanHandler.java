@@ -26,19 +26,15 @@ import static com.jsmartframework.web.manager.BeanHelper.HELPER;
 
 import com.jsmartframework.web.adapter.CsrfAdapter;
 import com.jsmartframework.web.annotation.AsyncBean;
-import com.jsmartframework.web.annotation.AuthAccess;
 import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
-import com.jsmartframework.web.annotation.AuthMethod;
 import com.jsmartframework.web.annotation.AuthType;
 import com.jsmartframework.web.annotation.ExecuteAccess;
-import com.jsmartframework.web.annotation.PreSet;
 import com.jsmartframework.web.annotation.PostSubmit;
 import com.jsmartframework.web.annotation.PreSubmit;
 import com.jsmartframework.web.annotation.QueryParam;
 import com.jsmartframework.web.annotation.RequestPath;
 import com.jsmartframework.web.annotation.ScopeType;
-import com.jsmartframework.web.annotation.Unescape;
 import com.jsmartframework.web.annotation.WebBean;
 import com.jsmartframework.web.annotation.WebFilter;
 import com.jsmartframework.web.annotation.WebListener;
@@ -63,7 +59,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -634,8 +629,12 @@ public enum BeanHandler {
                     AuthField authField = field.getAnnotation(AuthField.class);
                     field.setAccessible(true);
                     String cookieValue = WebUtils.getCookie(request, authField.value());
+
                     if (cookieValue != null) {
-                        field.set(bean, AuthEncrypter.decrypt(authBean.secretKey(), cookieValue));
+                        if (!authBean.disableEncrypt()) {
+                            cookieValue = AuthEncrypter.decrypt(authBean.secretKey(), cookieValue);
+                        }
+                        field.set(bean, cookieValue);
                     }
                     continue;
                 }
@@ -700,9 +699,12 @@ public enum BeanHandler {
                         if (value != null) {
                             // Return encrypted auth fields as cookies to check if customer is still
                             // logged on next request
-                            String cookieValue = AuthEncrypter.encrypt(authBean.secretKey(), value);
-                            Cookie cookie = getAuthenticationCookie(authField.value(), cookieValue,
-                                                                    -1);
+                            String cookieValue = value.toString();
+
+                            if (!authBean.disableEncrypt()) {
+                                cookieValue = AuthEncrypter.encrypt(authBean.secretKey(), value);
+                            }
+                            Cookie cookie = getAuthenticationCookie(authField.value(), cookieValue, -1);
                             response.addCookie(cookie);
                         } else {
                             // Case value is null we force Cookie deletion on client side
@@ -956,10 +958,11 @@ public enum BeanHandler {
                 return HttpServletResponse.SC_FORBIDDEN;
             }
 
-            String csrfNameValue = CsrfEncrypter.decrypt(webSecurity.secretKey(), csrfName);
-            String csrfTokenValue = CsrfEncrypter.decrypt(webSecurity.secretKey(), csrfToken);
-
-            if (!listener.isValidToken(new CsrfAdapter(csrfNameValue, csrfTokenValue))) {
+            if (!webSecurity.disableEncrypt()) {
+                csrfName = CsrfEncrypter.decrypt(webSecurity.secretKey(), csrfName);
+                csrfToken = CsrfEncrypter.decrypt(webSecurity.secretKey(), csrfToken);
+            }
+            if (!listener.isValidToken(new CsrfAdapter(csrfName, csrfToken))) {
                 return HttpServletResponse.SC_FORBIDDEN;
             }
             // We must have only one @webSecurity mapped
@@ -981,11 +984,15 @@ public enum BeanHandler {
                     return;
                 }
 
-                String encryptName = CsrfEncrypter.encrypt(webSecurity.secretKey(), csrfAdapter.getName());
-                String encryptToken = CsrfEncrypter.encrypt(webSecurity.secretKey(), csrfAdapter.getToken());
+                String csrfName = csrfAdapter.getName();
+                String csrfToken = csrfAdapter.getToken();
 
-                request.setAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_NAME, encryptName);
-                request.setAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_VALUE, encryptToken);
+                if (!webSecurity.disableEncrypt()) {
+                    csrfName = CsrfEncrypter.encrypt(webSecurity.secretKey(), csrfAdapter.getName());
+                    csrfToken = CsrfEncrypter.encrypt(webSecurity.secretKey(), csrfAdapter.getToken());
+                }
+                request.setAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_NAME, csrfName);
+                request.setAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_VALUE, csrfToken);
                 // We must have only one @webSecurity mapped
                 break;
             }
@@ -1047,11 +1054,10 @@ public enum BeanHandler {
                     throw new RuntimeException("Mapped AuthBean class [" + clazz + "] of type AuthType.SESSION " +
                                                "must implement java.io.Serializable interface");
                 }
-                if (StringUtils.isBlank(authBean.secretKey())
-                        || authBean.secretKey().length() > AuthEncrypter.CYPHER_KEY_LENGTH_MAX) {
+                if (authBean.secretKey().length() != AuthEncrypter.CYPHER_KEY_LENGTH) {
                     throw new RuntimeException("Mapped AuthBean annotation for class [" + clazz + "] must " +
-                                               "have its secretKey value greater than [0] and less than or " +
-                                               "equal to [16] characters");
+                                               "have its secretKey value with [" + AuthEncrypter.CYPHER_KEY_LENGTH +
+                                               "] characters");
                 }
 
                 HELPER.setBeanFields(clazz);
@@ -1080,6 +1086,7 @@ public enum BeanHandler {
         if (authBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "AuthBean was not mapped!");
         }
+        checkWebBeanConstraint(annotations, "@AuthBean");
     }
 
     private void initAnnotatedRequestPaths(Reflections reflections) {
@@ -1106,6 +1113,16 @@ public enum BeanHandler {
         if (requestPaths.isEmpty()) {
             LOGGER.log(Level.INFO, "RequestPaths were not mapped!");
         }
+
+        for (Class<?> pathClazz : requestPaths.values()) {
+            for (Class<?> webClazz : webBeans.values()) {
+                if (webClazz == pathClazz) {
+                    LOGGER.log(Level.SEVERE, "@WebBean class [" + webClazz + "] cannot be annotated with @RequestPath");
+                }
+            }
+        }
+        checkWebBeanConstraint(annotations, "@RequestPath");
+        checkAuthBeanConstraint(annotations, "@RequestPath");
     }
 
     private void initAnnotatedAsyncBeans(Reflections reflections) {
@@ -1130,6 +1147,9 @@ public enum BeanHandler {
         if (asyncBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "AsyncBeans were not mapped!");
         }
+        checkWebBeanConstraint(annotations, "@AsyncBean");
+        checkAuthBeanConstraint(annotations, "@AsyncBean");
+        checkRequestPathConstraint(annotations, "@AsyncBean");
     }
 
     private void initAnnotatedWebServlets(Reflections reflections) {
@@ -1152,6 +1172,10 @@ public enum BeanHandler {
         if (webServlets.isEmpty()) {
             LOGGER.log(Level.INFO, "WebServlets were not mapped!");
         }
+        checkWebBeanConstraint(annotations, "@WebServlet");
+        checkAuthBeanConstraint(annotations, "@WebServlet");
+        checkRequestPathConstraint(annotations, "@WebServlet");
+        checkAsyncBeanConstraint(annotations, "@WebServlet");
     }
 
     private void initAnnotatedWebFilters(Reflections reflections) {
@@ -1174,6 +1198,10 @@ public enum BeanHandler {
         if (webFilters.isEmpty()) {
             LOGGER.log(Level.INFO, "WebFilters were not mapped!");
         }
+        checkWebBeanConstraint(annotations, "@WebFilter");
+        checkAuthBeanConstraint(annotations, "@WebFilter");
+        checkRequestPathConstraint(annotations, "@WebFilter");
+        checkAsyncBeanConstraint(annotations, "@WebFilter");
     }
 
     private void initAnnotatedWebListeners(Reflections reflections) {
@@ -1214,6 +1242,10 @@ public enum BeanHandler {
         if (contextListeners.isEmpty() && sessionListeners.isEmpty() && requestListeners.isEmpty()) {
             LOGGER.log(Level.INFO, "WebListeners were not mapped!");
         }
+        checkWebBeanConstraint(annotations, "@WebListener");
+        checkAuthBeanConstraint(annotations, "@WebListener");
+        checkRequestPathConstraint(annotations, "@WebListener");
+        checkAsyncBeanConstraint(annotations, "@WebListener");
     }
 
     private void initAnnotatedWebSecurities(Reflections reflections) {
@@ -1229,11 +1261,10 @@ public enum BeanHandler {
                         throw new RuntimeException("Mapped WebSecurity class [" + clazz + "] " +
                                                    "must implement CsrfRequestListener interface");
                     }
-                    if (StringUtils.isBlank(webSecurity.secretKey())
-                            || webSecurity.secretKey().length() > CsrfEncrypter.CYPHER_KEY_LENGTH_MAX) {
+                    if (webSecurity.secretKey().length() != CsrfEncrypter.CYPHER_KEY_LENGTH) {
                         throw new RuntimeException("Mapped WebSecurity annotation for class [" + clazz + "] must " +
-                                "have its secretKey value greater than [0] and less than or " +
-                                "equal to [16] characters");
+                                                   "have its secretKey value with [" + CsrfEncrypter.CYPHER_KEY_LENGTH +
+                                                   "] characters");
                     }
 
                     HELPER.setBeanFields(clazz);
@@ -1250,6 +1281,52 @@ public enum BeanHandler {
 
         if (securityListeners.isEmpty()) {
             LOGGER.log(Level.INFO, "WebSecurities were not mapped!");
+        }
+        checkRequestPathConstraint(annotations, "@WebSecurity");
+        checkAsyncBeanConstraint(annotations, "@WebSecurity");
+    }
+
+    private void checkWebBeanConstraint(Set<Class<?>> resources, String resourceName) {
+        for (Class<?> clazz : resources) {
+            for (Class<?> webClazz : webBeans.values()) {
+                if (webClazz == clazz) {
+                    LOGGER.log(Level.SEVERE, "@WebBean class [" + webClazz + "] cannot be annotated with " +
+                                             resourceName);
+                }
+            }
+        }
+    }
+
+    private void checkAuthBeanConstraint(Set<Class<?>> resources, String resourceName) {
+        for (Class<?> clazz : resources) {
+            for (Class<?> authClazz : authBeans.values()) {
+                if (authClazz == clazz) {
+                    LOGGER.log(Level.SEVERE, "@AuthBean class [" + authClazz + "] cannot be annotated with " +
+                                             resourceName);
+                }
+            }
+        }
+    }
+
+    private void checkRequestPathConstraint(Set<Class<?>> resources, String resourceName) {
+        for (Class<?> clazz : resources) {
+            for (Class<?> pathClazz : requestPaths.values()) {
+                if (pathClazz == clazz) {
+                    LOGGER.log(Level.SEVERE, "@RequestPath class [" + pathClazz + "] cannot be annotated with " +
+                            resourceName);
+                }
+            }
+        }
+    }
+
+    private void checkAsyncBeanConstraint(Set<Class<?>> resources, String resourceName) {
+        for (Class<?> clazz : resources) {
+            for (Class<?> asyncClazz : asyncBeans.values()) {
+                if (asyncClazz == clazz) {
+                    LOGGER.log(Level.SEVERE, "@AsyncBean class [" + asyncClazz + "] cannot be annotated with " +
+                            resourceName);
+                }
+            }
         }
     }
 

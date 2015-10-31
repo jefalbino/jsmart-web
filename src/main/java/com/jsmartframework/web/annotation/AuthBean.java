@@ -46,6 +46,11 @@ public @interface AuthBean {
     String secretKey() default "gtDw9AVj3jla8hIT";
 
     /**
+     *
+     */
+    boolean disableEncrypt() default false;
+
+    /**
      * The mapped path on configuration file to specify the login
      * path of the application case user is not authenticated.
      */

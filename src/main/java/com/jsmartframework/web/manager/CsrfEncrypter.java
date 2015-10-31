@@ -30,7 +30,7 @@ final class CsrfEncrypter {
 
     private static final Logger LOGGER = Logger.getLogger(CsrfEncrypter.class.getPackage().getName());
 
-    static final int CYPHER_KEY_LENGTH_MAX = 16;
+    static final int CYPHER_KEY_LENGTH = 16;
 
     private static Cipher encryptCipher;
 
