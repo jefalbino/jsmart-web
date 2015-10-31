@@ -1,6 +1,6 @@
 /*
  * JSmart Framework - Java Web Development Framework
- * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
+ * Copyright (c) 2015, Jeferson Albino da Silva, All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 package com.jsmartframework.web.manager;
 
 import com.jsmartframework.web.annotation.AuthAccess;
+import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
 import com.jsmartframework.web.annotation.AuthMethod;
 import com.jsmartframework.web.annotation.ExecuteAccess;
@@ -26,6 +27,10 @@ import com.jsmartframework.web.annotation.PostSubmit;
 import com.jsmartframework.web.annotation.PreSet;
 import com.jsmartframework.web.annotation.PreSubmit;
 import com.jsmartframework.web.annotation.Unescape;
+import com.jsmartframework.web.annotation.WebBean;
+import com.jsmartframework.web.annotation.WebFilter;
+import com.jsmartframework.web.annotation.WebSecurity;
+import com.jsmartframework.web.annotation.WebServlet;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -72,6 +77,46 @@ public enum BeanHelper {
 
     private Map<Class<?>, Method[]> authMethods = new ConcurrentHashMap<>();
 
+    String getClassName(String name) {
+        return name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toLowerCase());
+    }
+
+    String getClassName(WebBean webBean, Class<?> beanClass) {
+        if (webBean.name().trim().isEmpty()) {
+            String beanName = beanClass.getSimpleName();
+            return getClassName(beanName);
+        }
+        return webBean.name();
+    }
+
+    String getClassName(AuthBean authBean, Class<?> authClass) {
+        if (authBean.name().trim().isEmpty()) {
+            String beanName = authClass.getSimpleName();
+            return getClassName(beanName);
+        }
+        return authBean.name();
+    }
+
+    String getClassName(WebServlet servlet, Class<?> servletClass) {
+        if (servlet.name() == null || servlet.name().trim().isEmpty()) {
+            String servletName = servletClass.getSimpleName();
+            return getClassName(servletName);
+        }
+        return servlet.name();
+    }
+
+    String getClassName(WebFilter filter, Class<?> filterClass) {
+        if (filter.name() == null || filter.name().trim().isEmpty()) {
+            String filterName = filterClass.getSimpleName();
+            return getClassName(filterName);
+        }
+        return filter.name();
+    }
+
+    String getClassName(WebSecurity security, Class<?> securityClass) {
+        String securityName = securityClass.getSimpleName();
+        return getClassName(securityName);
+    }
 
     Field[] getBeanFields(Class<?> clazz) {
         if (!beanFields.containsKey(clazz)) {
@@ -230,10 +275,10 @@ public enum BeanHelper {
                 if (!method.isAnnotationPresent(AuthMethod.class)) {
                     continue;
                 }
-                if (Boolean.class != method.getReturnType()) {
-                    continue;
+                Class<?> returnType = method.getReturnType();
+                if (Boolean.class == returnType || boolean.class == returnType) {
+                    methods.add(method);
                 }
-                methods.add(method);
             }
             authMethods.put(clazz, methods.toArray(new Method[methods.size()]));
         }

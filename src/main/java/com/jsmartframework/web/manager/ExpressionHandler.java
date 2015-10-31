@@ -1,6 +1,6 @@
 /*
  * JSmart Framework - Java Web Development Framework
- * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
+ * Copyright (c) 2015, Jeferson Albino da Silva, All rights reserved.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -114,13 +114,14 @@ public enum ExpressionHandler {
 
             String beanMethod = matcher.group(1);
             String[] methodSign = beanMethod.split(Constants.EL_SEPARATOR);
+            HttpServletRequest request = WebContext.getRequest();
 
             if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
                 Object bean = getExpressionBean(methodSign[0]);
                 beanMethod = String.format(Constants.JSP_EL, beanMethod);
 
                 // Check authorization to execute method
-                if (!HANDLER.checkExecuteAuthorization(bean, beanMethod)) {
+                if (!HANDLER.checkExecuteAuthorization(bean, beanMethod, request)) {
                     return responsePath;
                 }
 
@@ -128,7 +129,7 @@ public enum ExpressionHandler {
                 if (HANDLER.executePreSubmit(bean, methodSign[methodSign.length -1])) {
 
                     Object[] arguments = null;
-                    String[] paramArgs = WebContext.getRequest().getParameterValues(TagHandler.J_SBMT_ARGS + jParam);
+                    String[] paramArgs = request.getParameterValues(TagHandler.J_SBMT_ARGS + jParam);
 
                     if (paramArgs != null) {
                         boolean unescape = HANDLER.containsUnescapeMethod(methodSign);

@@ -1,6 +1,6 @@
 /*
  * JSmart Framework - Java Web Development Framework
- * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
+ * Copyright (c) 2015, Jeferson Albino da Silva, All rights reserved.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,8 @@ import javax.crypto.spec.SecretKeySpec;
 final class AuthEncrypter {
 
     private static final Logger LOGGER = Logger.getLogger(AuthEncrypter.class.getPackage().getName());
+
+    static final int CYPHER_KEY_LENGTH_MAX = 16;
 
     private static Cipher encryptCipher;
 

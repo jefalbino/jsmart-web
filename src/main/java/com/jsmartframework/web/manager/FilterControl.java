@@ -1,6 +1,6 @@
 /*
  * JSmart Framework - Java Web Development Framework
- * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
+ * Copyright (c) 2015, Jeferson Albino da Silva, All rights reserved.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -122,8 +122,11 @@ public final class FilterControl implements Filter {
         // Initiate bean context based on current thread instance
         WebContext.initCurrentInstance(httpRequest, httpResponse);
 
-        // Instantiate request scoped auth bean
+        // Instantiate request scoped authentication bean
         HANDLER.instantiateAuthBean(httpRequest);
+
+        // Instantiate web security for request extra validation
+        HANDLER.instantiateWebSecurity(httpRequest);
 
         // Anonymous subclass to wrap HTTP response to print output
         WebFilterResponseWrapper responseWrapper = new WebFilterResponseWrapper(httpResponse);
@@ -211,6 +214,10 @@ public final class FilterControl implements Filter {
             httpResponse.setContentLength(html.getBytes().length);
             httpResponse.getWriter().write(html);
         }
+    }
+
+    private void addCsrfMetaData(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
+
     }
 
     private void addAjaxHeaders(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {

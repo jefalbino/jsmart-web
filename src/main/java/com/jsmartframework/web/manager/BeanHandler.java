@@ -1,6 +1,6 @@
 /*
  * JSmart Framework - Java Web Development Framework
- * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
+ * Copyright (c) 2015, Jeferson Albino da Silva, All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,12 +41,15 @@ import com.jsmartframework.web.annotation.Unescape;
 import com.jsmartframework.web.annotation.WebBean;
 import com.jsmartframework.web.annotation.WebFilter;
 import com.jsmartframework.web.annotation.WebListener;
+import com.jsmartframework.web.annotation.WebSecurity;
 import com.jsmartframework.web.annotation.WebServlet;
 import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.config.UrlPattern;
+import com.jsmartframework.web.listener.CsrfRequestListener;
 import com.jsmartframework.web.listener.WebAsyncListener;
 import com.jsmartframework.web.util.WebUtils;
 
+import org.apache.commons.lang.StringUtils;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -120,6 +123,8 @@ public enum BeanHandler {
 
     Map<String, Class<?>> requestPaths = new ConcurrentHashMap<>();
 
+    Map<String, Class<?>> securityListeners = new ConcurrentHashMap<>();
+
     Set<ServletContextListener> contextListeners = new HashSet<>();
 
     Set<HttpSessionListener> sessionListeners = new HashSet<>();
@@ -139,7 +144,7 @@ public enum BeanHandler {
     void init(ServletContext context) {
         checkWebXmlPath(context);
         initJndiMapping();
-        initAnnotatedBeans(context);
+        initAnnotatedBeans();
         initForwardPaths(context);
         initJspPageBeans(context);
     }
@@ -153,6 +158,7 @@ public enum BeanHandler {
             webServlets.clear();
             webFilters.clear();
             requestPaths.clear();
+            securityListeners.clear();
             contextListeners.clear();
             sessionListeners.clear();
             requestListeners.clear();
@@ -375,48 +381,12 @@ public enum BeanHandler {
         return null;
     }
 
-    private String getClassName(String name) {
-        return name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toLowerCase());
-    }
-
-    private String getClassName(WebBean webBean, Class<?> beanClass) {
-        if (webBean.name().trim().isEmpty()) {
-            String beanName = beanClass.getSimpleName();
-            return getClassName(beanName);
-        }
-        return webBean.name();
-    }
-
-    private String getClassName(AuthBean authBean, Class<?> authClass) {
-        if (authBean.name().trim().isEmpty()) {
-            String beanName = authClass.getSimpleName();
-            return getClassName(beanName);
-        }
-        return authBean.name();
-    }
-
-    private String getClassName(WebServlet servlet, Class<?> servletClass) {
-        if (servlet.name() == null || servlet.name().trim().isEmpty()) {
-            String servletName = servletClass.getSimpleName();
-            return getClassName(servletName);
-        }
-        return servlet.name();
-    }
-
-    private String getClassName(WebFilter filter, Class<?> filterClass) {
-        if (filter.name() == null || filter.name().trim().isEmpty()) {
-            String filterName = filterClass.getSimpleName();
-            return getClassName(filterName);
-        }
-        return filter.name();
-    }
-
-    void executeInjection(Object bean) {
+    void executeInjection(Object object) {
         try {
             HttpSession session = WebContext.getSession();
             HttpServletRequest request = WebContext.getRequest();
 
-            for (Field field : HELPER.getBeanFields(bean.getClass())) {
+            for (Field field : HELPER.getBeanFields(object.getClass())) {
                 if (field.getAnnotations().length == 0) {
                     continue;
                 }
@@ -425,7 +395,7 @@ public enum BeanHandler {
                     WebBean webBean = field.getType().getAnnotation(WebBean.class);
                     if (webBean != null) {
                         field.setAccessible(true);
-                        field.set(bean, instantiateBean(getClassName(webBean, field.getType()), null));
+                        field.set(object, instantiateBean(HELPER.getClassName(webBean, field.getType()), null));
                         continue;
                     }
 
@@ -433,10 +403,10 @@ public enum BeanHandler {
                     if (authBean != null) {
                         field.setAccessible(true);
                         if (authBean.type() == AuthType.SESSION) {
-                            field.set(bean, instantiateAuthBean(getClassName(authBean, field.getType()), session));
+                            field.set(object, instantiateAuthBean(HELPER.getClassName(authBean, field.getType()), session));
 
                         } else if (authBean.type() == AuthType.REQUEST) {
-                            field.set(bean, instantiateAuthBean(getClassName(authBean, field.getType()), request));
+                            field.set(object, instantiateAuthBean(HELPER.getClassName(authBean, field.getType()), request));
                         }
                         continue;
                     }
@@ -449,7 +419,7 @@ public enum BeanHandler {
 
                     if (paramValue != null) {
                         field.setAccessible(true);
-                        field.set(bean, ExpressionHandler.EXPRESSIONS.decodeUrl(paramValue));
+                        field.set(object, ExpressionHandler.EXPRESSIONS.decodeUrl(paramValue));
                     }
                     continue;
                 }
@@ -457,25 +427,25 @@ public enum BeanHandler {
                 // Inject dependencies
                 if (initialContext != null && jndiMapping.containsKey(field.getType())) {
                     field.setAccessible(true);
-                    field.set(bean, initialContext.lookup(jndiMapping.get(field.getType())));
+                    field.set(object, initialContext.lookup(jndiMapping.get(field.getType())));
                     continue;
                 }
 
                 if (springContext != null) {
-                    if (springContext.containsBean(getClassName(field.getType().getSimpleName()))) {
+                    if (springContext.containsBean(HELPER.getClassName(field.getType().getSimpleName()))) {
                         field.setAccessible(true);
-                        field.set(bean, springContext.getBean(field.getType()));
+                        field.set(object, springContext.getBean(field.getType()));
 
                     } else if (field.isAnnotationPresent(Value.class)) {
                         String propertyName = field.getAnnotation(Value.class).value();
                         propertyName = SPRING_VALUE_PATTERN.matcher(propertyName).replaceAll("");
                         field.setAccessible(true);
-                        field.set(bean, springContext.getEnvironment().getProperty(propertyName, field.getType()));
+                        field.set(object, springContext.getEnvironment().getProperty(propertyName, field.getType()));
                     }
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Injection on WebBean " + bean + " failed: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Injection on object " + object + " failed: " + ex.getMessage());
         }
     }
 
@@ -503,7 +473,7 @@ public enum BeanHandler {
             executePreDestroy(bean);
             finalizeInjection(bean, servletContext);
             WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
-            servletContext.removeAttribute(getClassName(webBean, bean.getClass()));
+            servletContext.removeAttribute(HELPER.getClassName(webBean, bean.getClass()));
         }
     }
 
@@ -531,7 +501,7 @@ public enum BeanHandler {
             executePreDestroy(bean);
             finalizeInjection(bean, session);
             WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
-            session.removeAttribute(getClassName(webBean, bean.getClass()));
+            session.removeAttribute(HELPER.getClassName(webBean, bean.getClass()));
         }
     }
 
@@ -547,6 +517,9 @@ public enum BeanHandler {
 
             } else if (bean.getClass().isAnnotationPresent(AuthBean.class)) {
                 finalizeAuthBean(bean, request);
+
+            } else if (bean.getClass().isAnnotationPresent(WebSecurity.class)) {
+                finalizeWebSecurity(bean, request);
             }
         }
     }
@@ -556,7 +529,7 @@ public enum BeanHandler {
             executePreDestroy(bean);
             finalizeInjection(bean, request);
             WebBean webBean = bean.getClass().getAnnotation(WebBean.class);
-            request.removeAttribute(getClassName(webBean, bean.getClass()));
+            request.removeAttribute(HELPER.getClassName(webBean, bean.getClass()));
         }
     }
 
@@ -673,7 +646,7 @@ public enum BeanHandler {
                 }
 
                 if (springContext != null) {
-                    if (springContext.containsBean(getClassName(field.getType().getSimpleName()))) {
+                    if (springContext.containsBean(HELPER.getClassName(field.getType().getSimpleName()))) {
                         field.setAccessible(true);
                         field.set(bean, springContext.getBean(field.getType()));
 
@@ -695,7 +668,6 @@ public enum BeanHandler {
 
     private void finalizeAuthBean(Object bean, HttpSession session) {
         executePreDestroy(bean);
-
         try {
             for (Field field : HELPER.getBeanFields(bean.getClass())) {
                 if (field.getAnnotations().length > 0) {
@@ -706,9 +678,8 @@ public enum BeanHandler {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failed: " + ex.getMessage());
         }
-
         AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
-        session.removeAttribute(getClassName(authBean, bean.getClass()));
+        session.removeAttribute(HELPER.getClassName(authBean, bean.getClass()));
     }
 
     private void finalizeAuthBean(Object bean, HttpServletRequest request) {
@@ -744,7 +715,7 @@ public enum BeanHandler {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failed: " + ex.getMessage());
         }
-        request.removeAttribute(getClassName(authBean, bean.getClass()));
+        request.removeAttribute(HELPER.getClassName(authBean, bean.getClass()));
     }
 
     private Cookie getAuthenticationCookie(String name, String value, int age) {
@@ -753,6 +724,42 @@ public enum BeanHandler {
         cookie.setPath("/");
         cookie.setMaxAge(age);
         return cookie;
+    }
+
+    void instantiateWebSecurity(HttpServletRequest request) {
+        for (String name : securityListeners.keySet()) {
+            WebSecurity webSecurity = securityListeners.get(name).getAnnotation(WebSecurity.class);
+
+            Object listener = request.getAttribute(name);
+            if (listener == null) {
+                try {
+                    listener = securityListeners.get(name).newInstance();
+                    executeInjection(listener);
+                    executePostConstruct(listener);
+                    request.setAttribute(name, listener);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, "Injection on WebSecurity " + name + " failed: " + ex.getMessage());
+                }
+            }
+            // We must have only one @WebSecurity mapped
+            break;
+        }
+    }
+
+    private void finalizeWebSecurity(Object listener, HttpServletRequest request) {
+        executePreDestroy(listener);
+        try {
+            for (Field field : HELPER.getBeanFields(listener.getClass())) {
+                if (field.getAnnotations().length > 0) {
+                    field.setAccessible(true);
+                    field.set(listener, null);
+                }
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Finalize injection on WebSecurity " + listener + " failed: " + ex.getMessage());
+        }
+        WebSecurity webSecurity = listener.getClass().getAnnotation(WebSecurity.class);
+        request.removeAttribute(HELPER.getClassName(webSecurity, listener.getClass()));
     }
 
     String checkAuthentication(String path) throws ServletException {
@@ -815,10 +822,10 @@ public enum BeanHandler {
             return authenticated;
         }
 
+        // Look for fields in order to check if the request is already authenticated
         for (Field field : HELPER.getAuthFields(bean.getClass())) {
             try {
                 field.setAccessible(true);
-
                 // If field is not set it means that user is not authenticated
                 if (field.get(bean) == null) {
                     authenticated = false;
@@ -829,14 +836,13 @@ public enum BeanHandler {
             }
         }
 
-        if (authenticated) {
-            for (Method method : HELPER.getAuthMethods(bean.getClass())) {
-                try {
-                    Boolean auth = (Boolean) method.invoke(bean);
-                    authenticated &= auth != null ? auth : false;
-                } catch (Exception ex) {
-                    throw new ServletException("AuthMethod not accessible: " + ex.getMessage(), ex);
-                }
+        // Check authenticate methods to validate credentials
+        for (Method method : HELPER.getAuthMethods(bean.getClass())) {
+            try {
+                Boolean auth = (Boolean) method.invoke(bean);
+                authenticated &= auth != null ? auth : false;
+            } catch (Exception ex) {
+                throw new ServletException("AuthMethod not accessible: " + ex.getMessage(), ex);
             }
         }
         return authenticated;
@@ -845,24 +851,8 @@ public enum BeanHandler {
     @SuppressWarnings("all")
     Integer checkAuthorization(String path) {
         if (CONFIG.getContent().containsSecureUrl(path) && !authBeans.isEmpty()) {
-
             AuthBean authBean = null;
-            Collection<String> userAccess = null;
-            for (String name : authBeans.keySet()) {
-                authBean = authBeans.get(name).getAnnotation(AuthBean.class);
-
-                if (authBean.type() == AuthType.SESSION) {
-                    HttpSession session = WebContext.getSession();
-                    synchronized (session) {
-                        userAccess = getUserAuthorizationAccess(session.getAttribute(name));
-                    }
-                } else if (authBean.type() == AuthType.REQUEST) {
-                    HttpServletRequest request = WebContext.getRequest();
-                    userAccess = getUserAuthorizationAccess(request.getAttribute(name));
-                }
-                // We must have only one @AuthBean mapped
-                break;
-            }
+            Collection<String> userAccess = getUserAuthorizationAccess();
 
             // Check mapped urls
             UrlPattern urlPattern = CONFIG.getContent().getUrlPattern(path);
@@ -880,13 +870,27 @@ public enum BeanHandler {
     }
 
     Collection<String> getUserAuthorizationAccess() {
+        HttpServletRequest request = WebContext.getRequest();
 
+        for (String name : authBeans.keySet()) {
+            AuthBean authBean = authBeans.get(name).getAnnotation(AuthBean.class);
+
+            if (authBean.type() == AuthType.SESSION) {
+                HttpSession session = WebContext.getSession();
+                synchronized (session) {
+                    return getUserAuthorizationAccess(session.getAttribute(name), request);
+                }
+            } else if (authBean.type() == AuthType.REQUEST) {
+                return getUserAuthorizationAccess(request.getAttribute(name), request);
+            }
+            // We must have only one @AuthBean mapped
+            break;
+        }
+        return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")
-    Collection<String> getUserAuthorizationAccess(Object bean) {
-        HttpServletRequest request = WebContext.getRequest();
-
+    Collection<String> getUserAuthorizationAccess(Object bean, HttpServletRequest request) {
         if (request.getAttribute(Constants.REQUEST_USER_ACCESS) == null) {
             Collection<String> userAccess = new HashSet<>();
 
@@ -908,12 +912,12 @@ public enum BeanHandler {
         return (Collection<String>) request.getAttribute(Constants.REQUEST_USER_ACCESS);
     }
 
-    boolean checkExecuteAuthorization(Object bean, String expression) {
+    boolean checkExecuteAuthorization(Object bean, String expression, HttpServletRequest request) {
         for (Method method : HELPER.getExecuteAccessMethods(bean.getClass())) {
             ExecuteAccess execAccess = method.getAnnotation(ExecuteAccess.class);
 
             if (execAccess.access().length > 0 && expression.contains(method.getName())) {
-                Collection<String> userAccess = getUserAuthorizationAccess(bean);
+                Collection<String> userAccess = getUserAuthorizationAccess(bean, request);
 
                 if (!userAccess.isEmpty()) {
                     for (String access : execAccess.access()) {
@@ -929,7 +933,7 @@ public enum BeanHandler {
         return true;
     }
 
-    private void initAnnotatedBeans(ServletContext context) {
+    private void initAnnotatedBeans() {
         if (CONFIG.getContent().getPackageScan() == null) {
             LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML +
                                      " file! Skipping package scanning.");
@@ -946,6 +950,7 @@ public enum BeanHandler {
         initAnnotatedWebServlets(reflections);
         initAnnotatedWebFilters(reflections);
         initAnnotatedWebListeners(reflections);
+        initAnnotatedWebSecurityListeners(reflections);
     }
 
     private void initAnnotatedWebBeans(Reflections reflections) {
@@ -962,7 +967,7 @@ public enum BeanHandler {
 
             HELPER.setBeanFields(clazz);
             HELPER.setBeanMethods(clazz);
-            String className = getClassName(bean, clazz);
+            String className = HELPER.getClassName(bean, clazz);
             webBeans.put(className, clazz);
         }
 
@@ -983,6 +988,12 @@ public enum BeanHandler {
                     throw new RuntimeException("Mapped AuthBean class [" + clazz + "] of type AuthType.SESSION " +
                                                "must implement java.io.Serializable interface");
                 }
+                if (StringUtils.isBlank(authBean.secretKey())
+                        || authBean.secretKey().length() > AuthEncrypter.CYPHER_KEY_LENGTH_MAX) {
+                    throw new RuntimeException("Mapped AuthBean annotation for class [" + clazz + "] must " +
+                                               "have its secretKey value greater than [0] and less than or " +
+                                               "equal to [16] characters");
+                }
 
                 HELPER.setBeanFields(clazz);
                 HELPER.setBeanMethods(clazz);
@@ -1000,9 +1011,8 @@ public enum BeanHandler {
                                                "and returns boolean value to return authentication status");
                 }
 
-                String className = getClassName(authBean, clazz);
+                String className = HELPER.getClassName(authBean, clazz);
                 authBeans.put(className, clazz);
-                continue;
             } else {
                 LOGGER.log(Level.SEVERE, "Only one AuthBean can be declared! Skipping class " + clazz);
             }
@@ -1077,7 +1087,7 @@ public enum BeanHandler {
 
             HELPER.setBeanFields(clazz);
             HELPER.setBeanMethods(clazz);
-            webServlets.put(getClassName(servlet, clazz), clazz);
+            webServlets.put(HELPER.getClassName(servlet, clazz), clazz);
         }
 
         if (webServlets.isEmpty()) {
@@ -1099,7 +1109,7 @@ public enum BeanHandler {
 
             HELPER.setBeanFields(clazz);
             HELPER.setBeanMethods(clazz);
-            webFilters.put(getClassName(filter, clazz), clazz);
+            webFilters.put(HELPER.getClassName(filter, clazz), clazz);
         }
 
         if (webFilters.isEmpty()) {
@@ -1144,6 +1154,43 @@ public enum BeanHandler {
 
         if (contextListeners.isEmpty() && sessionListeners.isEmpty() && requestListeners.isEmpty()) {
             LOGGER.log(Level.INFO, "WebListeners were not mapped!");
+        }
+    }
+
+    private void initAnnotatedWebSecurityListeners(Reflections reflections) {
+        Set<Class<?>> annotations = reflections.getTypesAnnotatedWith(WebSecurity.class);
+
+        for (Class<?> clazz : annotations) {
+            try {
+                WebSecurity webSecurity = clazz.getAnnotation(WebSecurity.class);
+                if (securityListeners.isEmpty()) {
+                    LOGGER.log(Level.INFO, "Mapping WebSecurity class [" + clazz + "]");
+
+                    if (!CsrfRequestListener.class.isAssignableFrom(clazz)) {
+                        throw new RuntimeException("Mapped WebSecurity class [" + clazz + "] " +
+                                                   "must implement CsrfRequestListener interface");
+                    }
+                    if (StringUtils.isBlank(webSecurity.secretKey())
+                            || webSecurity.secretKey().length() > AuthEncrypter.CYPHER_KEY_LENGTH_MAX) {
+                        throw new RuntimeException("Mapped WebSecurity annotation for class [" + clazz + "] must " +
+                                "have its secretKey value greater than [0] and less than or " +
+                                "equal to [16] characters");
+                    }
+
+                    HELPER.setBeanFields(clazz);
+                    HELPER.setBeanMethods(clazz);
+                    securityListeners.put(HELPER.getClassName(webSecurity, clazz), clazz);
+                } else {
+                    throw new RuntimeException("Only one WebSecurity can be declared! Skipping class " + clazz);
+                }
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "WebSecurity class [" + clazz.getName() + "] " +
+                                         "could not be instantiated!");
+            }
+        }
+
+        if (securityListeners.isEmpty()) {
+            LOGGER.log(Level.INFO, "WebSecurities were not mapped!");
         }
     }
 

@@ -16,11 +16,14 @@
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.jsmartframework.web.tag.html;
+package com.jsmartframework.web.annotation;
 
-public class Figure extends Tag {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    public Figure() {
-        super("figure");
-    }
+@Retention(RetentionPolicy.RUNTIME)
+public @interface WebSecurity {
+
+    String secretKey() default "4zK7koRONFkbtRK6";
+
 }

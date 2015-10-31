@@ -1,6 +1,6 @@
 /*
  * JSmart Framework - Java Web Development Framework
- * Copyright (c) 2014, Jeferson Albino da Silva, All rights reserved.
+ * Copyright (c) 2015, Jeferson Albino da Silva, All rights reserved.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,10 @@ public final class Constants {
     public static final String REQUEST_PAGE_SCRIPT_ATTR = "jsmart_page_script_attr";
 
     public static final String REQUEST_REDIRECT_PATH_AJAX_ATTR = "jsmart_request_redirect_path_ajax_attr";
+
+    public static final String REQUEST_META_DATA_CSRF_TOKEN_NAME = "jsmart_request_meta_data_csrf_token_name_attr";
+
+    public static final String REQUEST_META_DATA_CSRF_TOKEN_VALUE = "jsmart_request_meta_data_csrf_token_value_attr";
 
     public static final String REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR = "jsmart_request_redirect_window_path_ajax_attr";
 
