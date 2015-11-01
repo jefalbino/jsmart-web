@@ -46,8 +46,6 @@ public final class Constants {
 
     public static final String TAG_EL = "@{%s}";
 
-    public static final String POINT = ".";
-
     public static final String EL_SEPARATOR = "\\.";
 
     public static final String EL_PARAM_READ_ONLY = "#";

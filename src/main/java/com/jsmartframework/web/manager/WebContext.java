@@ -23,6 +23,7 @@ import com.jsmartframework.web.util.WebAlert;
 import com.jsmartframework.web.util.WebUtils;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -201,7 +202,7 @@ public final class WebContext implements Serializable {
             context.queryParams = new ConcurrentHashMap<String, String>();
 
             String queryParam = context.request.getQueryString();
-            if (queryParam == null || queryParam.trim().isEmpty()) {
+            if (StringUtils.isBlank(queryParam)) {
                 return context.queryParams;
             }
 

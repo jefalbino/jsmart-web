@@ -31,6 +31,7 @@ import com.jsmartframework.web.annotation.WebBean;
 import com.jsmartframework.web.annotation.WebFilter;
 import com.jsmartframework.web.annotation.WebSecurity;
 import com.jsmartframework.web.annotation.WebServlet;
+import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -82,7 +83,7 @@ enum BeanHelper {
     }
 
     String getClassName(WebBean webBean, Class<?> beanClass) {
-        if (webBean.name().trim().isEmpty()) {
+        if (StringUtils.isBlank(webBean.name())) {
             String beanName = beanClass.getSimpleName();
             return getClassName(beanName);
         }
@@ -90,7 +91,7 @@ enum BeanHelper {
     }
 
     String getClassName(AuthBean authBean, Class<?> authClass) {
-        if (authBean.name().trim().isEmpty()) {
+        if (StringUtils.isBlank(authBean.name())) {
             String beanName = authClass.getSimpleName();
             return getClassName(beanName);
         }
@@ -98,7 +99,7 @@ enum BeanHelper {
     }
 
     String getClassName(WebServlet servlet, Class<?> servletClass) {
-        if (servlet.name() == null || servlet.name().trim().isEmpty()) {
+        if (StringUtils.isBlank(servlet.name())) {
             String servletName = servletClass.getSimpleName();
             return getClassName(servletName);
         }
@@ -106,7 +107,7 @@ enum BeanHelper {
     }
 
     String getClassName(WebFilter filter, Class<?> filterClass) {
-        if (filter.name() == null || filter.name().trim().isEmpty()) {
+        if (StringUtils.isBlank(filter.name())) {
             String filterName = filterClass.getSimpleName();
             return getClassName(filterName);
         }

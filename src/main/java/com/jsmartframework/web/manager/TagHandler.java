@@ -44,6 +44,7 @@ import com.jsmartframework.web.tag.util.RefAction;
 import com.jsmartframework.web.util.WebAlert;
 import com.jsmartframework.web.util.WebText;
 import com.jsmartframework.web.util.WebUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -808,7 +809,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     protected void appendRest(Tag tag, String name) throws JspException, IOException {
         tag.addAttribute("rest", getTagValue(rest));
-        if (name == null || name.trim().isEmpty()) {
+        if (StringUtils.isBlank(name)) {
             tag.setAttribute("name", tag.getAttribute("rest"));
         }
     }

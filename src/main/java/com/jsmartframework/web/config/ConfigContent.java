@@ -18,6 +18,8 @@
 
 package com.jsmartframework.web.config;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +85,7 @@ public final class ConfigContent {
     }
 
     public void setWelcomeUrl(String welcomeUrl) {
-        if (welcomeUrl != null && !welcomeUrl.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(welcomeUrl)) {
             this.welcomeUrl = welcomeUrl.trim();
         }
     }
@@ -94,7 +96,7 @@ public final class ConfigContent {
     }
 
     public void setAssetsUrl(String assetsUrl) {
-        if (assetsUrl != null && !assetsUrl.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(assetsUrl)) {
             if (!assetsUrl.endsWith("/")) {
                 assetsUrl += "/";
             }
@@ -109,7 +111,7 @@ public final class ConfigContent {
     }
 
     public UrlPattern getUrlPattern(String url) {
-        if (url != null && !url.trim().isEmpty() && urlPatterns != null) {
+        if (StringUtils.isNotBlank(url) && urlPatterns != null) {
             for (UrlPattern urlPattern : urlPatterns) {
                 if (urlPattern.getUrl().equals(url.trim())) {
                     return urlPattern;
@@ -143,14 +145,14 @@ public final class ConfigContent {
     }
 
     public boolean containsSecureUrl(String url) {
-        if (url != null && !url.trim().isEmpty() && secureUrls != null) {
+        if (StringUtils.isNotBlank(url) && secureUrls != null) {
             return secureUrls.contains(url);
         }
         return false;
     }
 
     public boolean containsNonSecureUrlOnly(String url) {
-        if (url != null && !url.trim().isEmpty() && nonSecureUrlsOnly != null) {
+        if (StringUtils.isNotBlank(url) && nonSecureUrlsOnly != null) {
             return nonSecureUrlsOnly.contains(url);
         }
         return false;
@@ -204,7 +206,7 @@ public final class ConfigContent {
     }
 
     public void setDefaultLocale(String defaultLocale) {
-        if (defaultLocale != null && !defaultLocale.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(defaultLocale)) {
             this.defaultLocale = defaultLocale.trim();
         }
     }
@@ -289,7 +291,7 @@ public final class ConfigContent {
     }
 
     public void setPackageScan(String packageScan) {
-        if (packageScan != null && !packageScan.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(packageScan)) {
             this.packageScan = packageScan;
         }
     }
@@ -300,7 +302,7 @@ public final class ConfigContent {
     }
 
     public void setEjbLookup(String ejbLookup) {
-        if (ejbLookup != null && !ejbLookup.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(ejbLookup)) {
             this.ejbLookup = ejbLookup;
         }
     }
@@ -312,7 +314,7 @@ public final class ConfigContent {
     }
 
     public CachePattern getCachePattern(String file) {
-        if (file != null && !file.trim().isEmpty() && cachePatterns != null) {
+        if (StringUtils.isNotBlank(file) && cachePatterns != null) {
             for (CachePattern cachePattern : cachePatterns) {
                 if (cachePattern.isEndedIn(file)) {
                     return cachePattern;

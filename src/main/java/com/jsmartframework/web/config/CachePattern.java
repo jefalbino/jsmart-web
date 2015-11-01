@@ -18,6 +18,8 @@
 
 package com.jsmartframework.web.config;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -34,7 +36,7 @@ public final class CachePattern {
     }
 
     public void setCacheControl(String cacheControl) {
-        if (cacheControl != null && !cacheControl.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(cacheControl)) {
             this.cacheControl = cacheControl;
         }
     }

@@ -60,13 +60,7 @@ public @interface AuthBean {
      * Secret key used to encrypt the fields annotated with {@link AuthField}. We recommend you
      * to define your own private secret key which must contain 16 characters.
      */
-    String secretKey() default "gtDw9AVj3jla8hIT";
-
-    /**
-     * Boolean value to disable {@link AuthField} encryption, so if using request type the fields
-     * will be set as plain text.
-     */
-    boolean disableEncrypt() default false;
+    String secretKey() default "";
 
     /**
      * The mapped path on configuration file {@code webConfig.xml} to specify the login

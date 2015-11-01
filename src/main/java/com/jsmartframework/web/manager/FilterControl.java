@@ -48,6 +48,7 @@ import com.jsmartframework.web.tag.html.Script;
 
 import com.jsmartframework.web.tag.html.Tag;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.reflections.vfs.Vfs;
 import org.reflections.vfs.Vfs.Dir;
 
@@ -199,7 +200,7 @@ public final class FilterControl implements Filter {
             throw new ServletException(throwable);
         }
 
-        if (html == null || html.trim().isEmpty()) {
+        if (StringUtils.isBlank(html)) {
             return;
         }
 
@@ -238,7 +239,6 @@ public final class FilterControl implements Filter {
         // Case session reset, place tag to force java script reset the page
         HttpSession session = httpRequest.getSession();
         synchronized (session) {
-
             if (session.getAttribute(SESSION_RESET_ATTR) != null) {
                 if (ajaxPath == null && WebContext.isAjaxRequest()) {
                     response.addHeader("Reset-Ajax", "Session");

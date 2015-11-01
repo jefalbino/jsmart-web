@@ -29,6 +29,7 @@ import com.jsmartframework.web.json.Scroll;
 import com.jsmartframework.web.util.WebText;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.DateTime;
 
@@ -337,9 +338,8 @@ enum ExpressionHandler {
                 ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
                 String value = WebContext.getRequest().getParameter(TagHandler.J_DATE + jParam);
 
-                if (value != null && !value.trim().isEmpty()) {
+                if (StringUtils.isNotBlank(value)) {
                     Throwable throwable = null;
-
                     try {
                         valueExpr.setValue(context, value);
                         return;

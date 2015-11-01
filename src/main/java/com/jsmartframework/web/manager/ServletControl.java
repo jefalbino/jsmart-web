@@ -25,6 +25,7 @@ import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
 import com.jsmartframework.web.listener.WebAsyncListener;
 import com.jsmartframework.web.listener.WebAsyncListener.Reason;
 import com.jsmartframework.web.util.WebUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -252,17 +253,26 @@ public final class ServletControl extends HttpServlet {
 
     private void sendRedirect(String path, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (request.getServletPath().equals(path)) {
-
             String url = HANDLER.getForwardPath(path);
             if (url == null) {
                 LOGGER.log(Level.SEVERE, "Could not find JSP page for path [" + path + "]");
                 return;
             }
+
             // Use Forward request internally case is the same page
             request.getRequestDispatcher(url).forward(request, response);
         } else {
-            // Use Redirect response internally case page had changed
-            response.sendRedirect((path.startsWith("/") ? request.getContextPath() : "") + path);
+            boolean sameDomain = path.startsWith("/");
+            // Only send redirect with encrypted auth parameters via URL in case is not Ajax request for same domain
+            if (sameDomain && !"XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+
+                String pathParams = HANDLER.getAuthenticationParams(request);
+                if (StringUtils.isNotBlank(pathParams)) {
+                    path += (path.contains("?") ? "&" : "?") + pathParams;
+                }
+            }
+            // Use Redirect response case page had changed
+            response.sendRedirect((sameDomain ? request.getContextPath() : "") + path);
         }
     }
 

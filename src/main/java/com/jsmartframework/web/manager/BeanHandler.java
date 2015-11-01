@@ -616,6 +616,7 @@ public enum BeanHandler {
     private Object initializeAuthBean(String name, HttpServletRequest request) {
         Object bean = null;
         try {
+            int index = 0;
             bean = authBeans.get(name).newInstance();
             AuthBean authBean = authBeans.get(name).getAnnotation(AuthBean.class);
 
@@ -628,14 +629,18 @@ public enum BeanHandler {
                 if (request != null && field.isAnnotationPresent(AuthField.class)) {
                     AuthField authField = field.getAnnotation(AuthField.class);
                     field.setAccessible(true);
-                    String cookieValue = WebUtils.getCookie(request, authField.value());
+                    String fieldValue = WebUtils.getCookie(request, authField.value());
 
-                    if (cookieValue != null) {
-                        if (!authBean.disableEncrypt()) {
-                            cookieValue = AuthEncrypter.decrypt(authBean.secretKey(), cookieValue);
+                    if (fieldValue != null) {
+                        fieldValue = AuthEncrypter.decrypt(authBean.secretKey(), fieldValue);
+                    } else {
+                        String paramValue = request.getParameter(String.valueOf(index++));
+                        if (paramValue != null) {
+                            fieldValue = AuthEncrypter.decrypt(authBean.secretKey(), paramValue)
+                                                      .replaceFirst(authField.value(), "");
                         }
-                        field.set(bean, cookieValue);
                     }
+                    field.set(bean, fieldValue);
                     continue;
                 }
 
@@ -699,16 +704,13 @@ public enum BeanHandler {
                         if (value != null) {
                             // Return encrypted auth fields as cookies to check if customer is still
                             // logged on next request
-                            String cookieValue = value.toString();
+                            String cookieValue = AuthEncrypter.encrypt(authBean.secretKey(), value);
 
-                            if (!authBean.disableEncrypt()) {
-                                cookieValue = AuthEncrypter.encrypt(authBean.secretKey(), value);
-                            }
-                            Cookie cookie = getAuthenticationCookie(authField.value(), cookieValue, -1);
+                            Cookie cookie = getAuthenticationCookie(request, authField.value(), cookieValue, -1);
                             response.addCookie(cookie);
                         } else {
                             // Case value is null we force Cookie deletion on client side
-                            Cookie cookie = getAuthenticationCookie(authField.value(), null, 0);
+                            Cookie cookie = getAuthenticationCookie(request, authField.value(), null, 0);
                             response.addCookie(cookie);
                         }
                     }
@@ -721,12 +723,48 @@ public enum BeanHandler {
         request.removeAttribute(HELPER.getClassName(authBean, bean.getClass()));
     }
 
-    private Cookie getAuthenticationCookie(String name, String value, int age) {
+    private Cookie getAuthenticationCookie(HttpServletRequest request, String name, String value, int age) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(age);
         return cookie;
+    }
+
+    String getAuthenticationParams(HttpServletRequest request) {
+        AuthBean authBean = null;
+        Object bean = null;
+        StringBuilder authParams = new StringBuilder();
+
+        for (String name : authBeans.keySet()) {
+            authBean = authBeans.get(name).getAnnotation(AuthBean.class);
+            if (authBean.type() == AuthType.REQUEST) {
+                bean = request.getAttribute(name);
+            }
+            // We must have only one @AuthBean mapped
+            break;
+        }
+        // In case there is not request authentication just return empty query parameters
+        if (bean == null) {
+            return authParams.toString();
+        }
+
+        try {
+            int index = 0;
+            for (Field field : HELPER.getAuthFields(bean.getClass())) {
+                field.setAccessible(true);
+                AuthField authField = field.getAnnotation(AuthField.class);
+                Object value = field.get(bean);
+
+                if (value != null) {
+                    String paramValue = AuthEncrypter.encrypt(authBean.secretKey(), authField.value() + value.toString());
+                    authParams.append(index == 0 ? "" : "&").append(index++).append("=").append(paramValue);
+                }
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Redirect authentication params for AuthBean " + bean + " failed: " + ex.getMessage());
+        }
+        return authParams.toString();
     }
 
     void instantiateWebSecurity(HttpServletRequest request) {
@@ -1054,7 +1092,7 @@ public enum BeanHandler {
                     throw new RuntimeException("Mapped AuthBean class [" + clazz + "] of type AuthType.SESSION " +
                                                "must implement java.io.Serializable interface");
                 }
-                if (authBean.secretKey().length() != AuthEncrypter.CYPHER_KEY_LENGTH) {
+                if (authBean.type() == AuthType.REQUEST && authBean.secretKey().length() != AuthEncrypter.CYPHER_KEY_LENGTH) {
                     throw new RuntimeException("Mapped AuthBean annotation for class [" + clazz + "] must " +
                                                "have its secretKey value with [" + AuthEncrypter.CYPHER_KEY_LENGTH +
                                                "] characters");
@@ -1371,7 +1409,7 @@ public enum BeanHandler {
     private void overrideForwardPaths() {
         for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
 
-            if (urlPattern.getJsp() != null && !urlPattern.getJsp().trim().isEmpty()) {
+            if (StringUtils.isNotBlank(urlPattern.getJsp())) {
                 String prevJsp = forwardPaths.put(urlPattern.getUrl(), urlPattern.getJsp());
 
                 if (prevJsp != null) {

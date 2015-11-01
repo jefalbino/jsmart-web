@@ -24,6 +24,7 @@ import com.jsmartframework.web.tag.html.Div;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Side;
 import com.jsmartframework.web.tag.type.TipEvent;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -77,7 +78,7 @@ public final class PopOverTagHandler extends TagHandler {
         // Place the tag content as template
         template = sw.toString();
 
-        if (template != null && !template.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(template)) {
             setRandomId("popover");
 
             // The HTML template must overwrite the content
@@ -87,7 +88,7 @@ public final class PopOverTagHandler extends TagHandler {
     }
 
     public void printTemplate(TagHandler tag) throws IOException {
-        if (template != null && !template.trim().isEmpty()) {
+        if (StringUtils.isNotBlank(template)) {
             Div div = new Div();
             div.addAttribute("id", id)
                 .addAttribute("style", "display: none;")
