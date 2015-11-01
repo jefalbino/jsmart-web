@@ -73,6 +73,8 @@ public final class ConfigContent {
 
     private List<String> nonSecureUrlsOnly;
 
+    private String tagSecretKey;
+
     ConfigContent() {
         secureUrls = new ArrayList<String>();
         nonSecureUrls = new ArrayList<String>();
@@ -339,4 +341,14 @@ public final class ConfigContent {
         this.contentEncode = contentEncode;
     }
 
+    @XmlElement(name = "tag-secret-key")
+    public String getTagSecretKey() {
+        return tagSecretKey;
+    }
+
+    public void setTagSecretKey(String tagSecretKey) {
+        if (StringUtils.isNotBlank(tagSecretKey)) {
+            this.tagSecretKey = tagSecretKey;
+        }
+    }
 }

@@ -33,41 +33,44 @@ final class AuthEncrypter {
 
     static final int CYPHER_KEY_LENGTH = 16;
 
-    private static Cipher encryptCipher;
+    private static Cipher getEncryptCipher(String key) throws Exception {
+        SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), "AES");
+        Cipher encryptCipher = Cipher.getInstance("AES");
+        encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        return encryptCipher;
+    }
 
-    private static Cipher decryptCipher;
-
-    private static void createCiphers(String keyValue) throws Exception {
-        if (encryptCipher == null && decryptCipher == null && keyValue != null) {
-            SecretKey key = new SecretKeySpec(keyValue.getBytes("UTF8"), "AES");
-
-            encryptCipher = Cipher.getInstance("AES");
-            decryptCipher = Cipher.getInstance("AES");
-            encryptCipher.init(Cipher.ENCRYPT_MODE, key);
-            decryptCipher.init(Cipher.DECRYPT_MODE, key);
-        }
+    private static Cipher getDecryptCipher(String key) throws Exception {
+        SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), "AES");
+        Cipher decryptCipher = Cipher.getInstance("AES");
+        decryptCipher.init(Cipher.DECRYPT_MODE, secretKey);
+        return decryptCipher;
     }
 
     static String encrypt(String key, Object value) {
-        try {
-            createCiphers(key);
-            byte[] encode = encryptCipher.doFinal(value.toString().getBytes("UTF8"));
-            return new String(Base64.encodeBase64(encode, true, true)).trim();
-        } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to encrypt value: " + value + " " + ex.getMessage());
+        if (key != null && value != null) {
+            try {
+                byte[] encode = getEncryptCipher(key).doFinal(value.toString().getBytes("UTF8"));
+                return new String(Base64.encodeBase64(encode, true, true)).trim();
+            } catch (Exception ex) {
+                LOGGER.log(Level.INFO, "Failed to encrypt value: " + value + " " + ex.getMessage());
+            }
+            return value.toString();
         }
-        return value.toString();
+        return null;
     }
 
     static String decrypt(String key, Object value) {
-        try {
-            createCiphers(key);
-            byte[] decoded = Base64.decodeBase64(value.toString());
-            return new String(decryptCipher.doFinal(decoded), "UTF8");
-        } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to decrypt value: " + value + " " + ex.getMessage());
+        if (key != null && value != null) {
+            try {
+                byte[] decoded = Base64.decodeBase64(value.toString());
+                return new String(getDecryptCipher(key).doFinal(decoded), "UTF8");
+            } catch (Exception ex) {
+                LOGGER.log(Level.INFO, "Failed to decrypt value: " + value + " " + ex.getMessage());
+            }
+            return value.toString();
         }
-        return value.toString();
+        return null;
     }
 
 }

@@ -18,8 +18,12 @@
 
 package com.jsmartframework.web.manager;
 
-import org.apache.commons.codec.binary.Base64;
+import static com.jsmartframework.web.config.Config.CONFIG;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
+
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,45 +33,65 @@ import javax.crypto.spec.SecretKeySpec;
 
 final class TagEncrypter {
 
-    private static final String KEY_VALUE = "Aq0Sw9De8Fr7GtH6";
-
     private static final Logger LOGGER = Logger.getLogger(TagEncrypter.class.getPackage().getName());
 
-    private static Cipher encryptCipher;
+    private static final String DEFAULT_KEY = "Aq0Sw9De8Fr7GtH6";
 
-    private static Cipher decryptCipher;
+    private static final int CYPHER_KEY_LENGTH = 16;
 
-    static {
+    private static SecretKey secretKey;
+
+    static void init() {
         try {
-            SecretKey key = new SecretKeySpec(KEY_VALUE.getBytes("UTF8"), "AES");
+            String customKey = CONFIG.getContent().getTagSecretKey();
+            if (StringUtils.isNotBlank(customKey)) {
 
-            encryptCipher = Cipher.getInstance("AES");
-            decryptCipher = Cipher.getInstance("AES");
-
-            encryptCipher.init(Cipher.ENCRYPT_MODE, key);
-            decryptCipher.init(Cipher.DECRYPT_MODE, key);
-        } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to generate key and cipher to encrypt/decrypt "
-                                    + "tag process: " + ex.getMessage());
+                if (customKey.length() != CYPHER_KEY_LENGTH) {
+                    throw new RuntimeException("Custom tag-secret-key must have its value " +
+                                               "with [" + CYPHER_KEY_LENGTH + "] characters");
+                }
+                secretKey = new SecretKeySpec(customKey.getBytes("UTF8"), "AES");
+            } else {
+                secretKey = new SecretKeySpec(DEFAULT_KEY.getBytes("UTF8"), "AES");
+            }
+        } catch (UnsupportedEncodingException ex) {
+            LOGGER.log(Level.INFO, "Failed to generate key secret for tag: " + ex.getMessage());
         }
     }
 
+    private static Cipher getEncryptCipher() throws Exception {
+        Cipher encryptCipher = Cipher.getInstance("AES");
+        encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        return encryptCipher;
+    }
+
+    private static Cipher getDecryptCipher() throws Exception {
+        Cipher decryptCipher = Cipher.getInstance("AES");
+        decryptCipher.init(Cipher.DECRYPT_MODE, secretKey);
+        return decryptCipher;
+    }
+
     static String encrypt(String value) {
-        try {
-            byte[] encode = encryptCipher.doFinal(value.getBytes("UTF8"));
-            return new String(Base64.encodeBase64(encode, true, true)).trim();
-        } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to encrypt tag: " + value + " " + ex.getMessage());
+        if (value != null) {
+            try {
+                byte[] encode = getEncryptCipher().doFinal(value.getBytes("UTF8"));
+                return new String(Base64.encodeBase64(encode, true, true)).trim();
+            } catch (Exception ex) {
+                LOGGER.log(Level.INFO, "Failed to encrypt tag: " + value + " " + ex.getMessage());
+            }
         }
         return value;
     }
 
     static String decrypt(String value) {
-        try {
-            byte[] decoded = Base64.decodeBase64(value);
-            return new String(decryptCipher.doFinal(decoded), "UTF8");
-        } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to decrypt tag: " + value + " " + ex.getMessage());
+        if (value != null) {
+            try {
+                byte[] decoded = Base64.decodeBase64(value);
+                return new String(getDecryptCipher().doFinal(decoded), "UTF8");
+            } catch (Exception ex) {
+                LOGGER.log(Level.INFO, "Failed to decrypt tag: " + value + " " + ex.getMessage());
+
+            }
         }
         return value;
     }

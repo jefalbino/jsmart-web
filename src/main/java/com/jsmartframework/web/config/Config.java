@@ -57,8 +57,4 @@ public enum Config {
         mappedUrls.addAll(urls);
     }
 
-    public boolean containsMappedUrl(String url) {
-        return mappedUrls.contains(url);
-    }
-
 }
