@@ -147,7 +147,7 @@ public final class FilterControl implements Filter {
         }
 
         // Finalize request scoped web and auth beans
-        HANDLER.finalizeBeans(httpRequest);
+        HANDLER.finalizeBeans(httpRequest, responseWrapper);
 
         // Check if response was written before closing the WebContext
         boolean responseWritten = WebContext.isResponseWritten();

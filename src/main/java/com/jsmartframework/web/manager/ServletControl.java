@@ -113,7 +113,7 @@ public final class ServletControl extends HttpServlet {
         }
 
         // Decrypt expressions if needed
-        Map<String, String> expressions = HANDLER.getRequestExpressions();
+        Map<String, String> expressions = HANDLER.getRequestExpressions(request);
 
         // Initiate beans mentioned on jsp page (Case request scope beans)
         try {

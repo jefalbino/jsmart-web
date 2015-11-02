@@ -63,10 +63,10 @@ enum ExpressionHandler {
 
     private static final Gson GSON = new Gson();
 
-    Map<String, String> getRequestExpressions() {
-        Map<String, String> expressions = new LinkedHashMap<String, String>();
-        for (String param : WebContext.getRequest().getParameterMap().keySet()) {
-            String expr = extractExpression(param);
+    Map<String, String> getRequestExpressions(HttpServletRequest request) {
+        Map<String, String> expressions = new LinkedHashMap<>();
+        for (String param : request.getParameterMap().keySet()) {
+            String expr = extractExpression(request, param);
             if (expr != null) {
                 expressions.put(param, expr);
             }
@@ -74,10 +74,10 @@ enum ExpressionHandler {
         return expressions;
     }
 
-    private String extractExpression(String param) {
+    private String extractExpression(HttpServletRequest request, String param) {
         Matcher matcher = TagHandler.J_TAG_PATTERN.matcher(param);
         if (matcher.find()) {
-            return TagEncrypter.decrypt(matcher.group(2).replace("[]", ""));
+            return TagEncrypter.decrypt(request, matcher.group(2).replace("[]", ""));
         }
         return null;
     }
@@ -179,7 +179,7 @@ enum ExpressionHandler {
                 Scroll scroll = null;
 
                 if (valuesMatcher.find()) {
-                    object = getExpressionValue(TagEncrypter.decrypt(valuesMatcher.group(2)));
+                    object = getExpressionValue(TagEncrypter.decrypt(request, valuesMatcher.group(2)));
                 }
 
                 if (object instanceof ListAdapter) {

@@ -18,13 +18,17 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.config.Constants.REQUEST_CSRF_ENCRYPT_CIPHER;
+import static com.jsmartframework.web.config.Constants.REQUEST_CSRF_DECRYPT_CIPHER;
+
 import org.apache.commons.codec.binary.Base64;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 
 final class CsrfEncrypter {
 
@@ -32,24 +36,32 @@ final class CsrfEncrypter {
 
     static final int CYPHER_KEY_LENGTH = 16;
 
-    private static Cipher getEncryptCipher(String key) throws Exception {
-        SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), "AES");
-        Cipher encryptCipher = Cipher.getInstance("AES");
-        encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+    private static Cipher getEncryptCipher(HttpServletRequest request, String key) throws Exception {
+        Cipher encryptCipher = (Cipher) request.getAttribute(REQUEST_CSRF_ENCRYPT_CIPHER);
+        if (encryptCipher == null) {
+            encryptCipher = Cipher.getInstance("AES");
+            SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), "AES");
+            encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            request.setAttribute(REQUEST_CSRF_ENCRYPT_CIPHER, encryptCipher);
+        }
         return encryptCipher;
     }
 
-    private static Cipher getDecryptCipher(String key) throws Exception {
-        SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), "AES");
-        Cipher decryptCipher = Cipher.getInstance("AES");
-        decryptCipher.init(Cipher.DECRYPT_MODE, secretKey);
+    private static Cipher getDecryptCipher(HttpServletRequest request, String key) throws Exception {
+        Cipher decryptCipher = (Cipher) request.getAttribute(REQUEST_CSRF_DECRYPT_CIPHER);
+        if (decryptCipher == null) {
+            decryptCipher = Cipher.getInstance("AES");
+            SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), "AES");
+            decryptCipher.init(Cipher.DECRYPT_MODE, secretKey);
+            request.setAttribute(REQUEST_CSRF_DECRYPT_CIPHER, decryptCipher);
+        }
         return decryptCipher;
     }
 
-    static String encrypt(String key, Object value) {
+    static String encrypt(HttpServletRequest request, String key, Object value) {
         if (key != null && value != null) {
             try {
-                byte[] encode = getEncryptCipher(key).doFinal(value.toString().getBytes("UTF8"));
+                byte[] encode = getEncryptCipher(request, key).doFinal(value.toString().getBytes("UTF8"));
                 return new String(Base64.encodeBase64(encode, true, true)).trim();
             } catch (Exception ex) {
                 LOGGER.log(Level.INFO, "Failed to encrypt value: " + value + " " + ex.getMessage());
@@ -59,11 +71,11 @@ final class CsrfEncrypter {
         return null;
     }
 
-    static String decrypt(String key, Object value) {
+    static String decrypt(HttpServletRequest request, String key, Object value) {
         if (key != null && value != null) {
             try {
                 byte[] decoded = Base64.decodeBase64(value.toString());
-                return new String(getDecryptCipher(key).doFinal(decoded), "UTF8");
+                return new String(getDecryptCipher(request, key).doFinal(decoded), "UTF8");
             } catch (Exception ex) {
                 LOGGER.log(Level.INFO, "Failed to decrypt value: " + value + " " + ex.getMessage());
             }

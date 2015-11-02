@@ -34,6 +34,19 @@ public final class Constants {
 
     public static final String REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR = "jsmart_request_redirect_window_path_ajax_attr";
 
+    public static final String REQUEST_TAG_ENCRYPT_CIPHER = "jsmart_request_tag_encrypt_cipher";
+
+    public static final String REQUEST_TAG_DECRYPT_CIPHER = "jsmart_request_tag_decrypt_cipher";
+
+    public static final String REQUEST_AUTH_ENCRYPT_CIPHER = "jsmart_request_auth_encrypt_cipher";
+
+    public static final String REQUEST_AUTH_DECRYPT_CIPHER = "jsmart_request_auth_decrypt_cipher";
+
+    public static final String REQUEST_CSRF_ENCRYPT_CIPHER = "jsmart_request_csrf_encrypt_cipher";
+
+    public static final String REQUEST_CSRF_DECRYPT_CIPHER = "jsmart_request_csrf_decrypt_cipher";
+
+
     public static final String SESSION_RESET_ATTR = "jsmart_session_reset_attr";
 
 

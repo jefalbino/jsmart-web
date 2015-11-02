@@ -276,8 +276,8 @@ public enum BeanHandler {
         return false;
     }
 
-    Map<String, String> getRequestExpressions() {
-        return EXPRESSIONS.getRequestExpressions();
+    Map<String, String> getRequestExpressions(HttpServletRequest request) {
+        return EXPRESSIONS.getRequestExpressions(request);
     }
 
     String handleRequestExpressions(Map<String, String> expressions) throws ServletException, IOException {
@@ -501,7 +501,7 @@ public enum BeanHandler {
         }
     }
 
-    public void finalizeBeans(HttpServletRequest request) {
+    public void finalizeBeans(HttpServletRequest request, HttpServletResponse response) {
         List<String> names = Collections.list(request.getAttributeNames());
         for (String name : names) {
             Object bean = request.getAttribute(name);
@@ -512,7 +512,7 @@ public enum BeanHandler {
                 finalizeWebBean(bean, request);
 
             } else if (bean.getClass().isAnnotationPresent(AuthBean.class)) {
-                finalizeAuthBean(bean, request);
+                finalizeAuthBean(bean, request, response);
 
             } else if (bean.getClass().isAnnotationPresent(WebSecurity.class)) {
                 finalizeWebSecurity(bean, request);
@@ -632,11 +632,11 @@ public enum BeanHandler {
                     String fieldValue = WebUtils.getCookie(request, authField.value());
 
                     if (fieldValue != null) {
-                        fieldValue = AuthEncrypter.decrypt(authBean.secretKey(), fieldValue);
+                        fieldValue = AuthEncrypter.decrypt(request, authBean.secretKey(), fieldValue);
                     } else {
                         String paramValue = request.getParameter(String.valueOf(index++));
                         if (paramValue != null) {
-                            fieldValue = AuthEncrypter.decrypt(authBean.secretKey(), paramValue)
+                            fieldValue = AuthEncrypter.decrypt(request, authBean.secretKey(), paramValue)
                                                       .replaceFirst(authField.value(), "");
                         }
                     }
@@ -687,11 +687,9 @@ public enum BeanHandler {
         session.removeAttribute(HELPER.getClassName(authBean, bean.getClass()));
     }
 
-    private void finalizeAuthBean(Object bean, HttpServletRequest request) {
+    private void finalizeAuthBean(Object bean, HttpServletRequest request, HttpServletResponse response) {
         executePreDestroy(bean);
         AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
-        HttpServletResponse response = WebContext.getResponse();
-
         try {
             for (Field field : HELPER.getBeanFields(bean.getClass())) {
                 if (field.getAnnotations().length > 0) {
@@ -704,7 +702,7 @@ public enum BeanHandler {
                         if (value != null) {
                             // Return encrypted auth fields as cookies to check if customer is still
                             // logged on next request
-                            String cookieValue = AuthEncrypter.encrypt(authBean.secretKey(), value);
+                            String cookieValue = AuthEncrypter.encrypt(request, authBean.secretKey(), value);
 
                             Cookie cookie = getAuthenticationCookie(request, authField.value(), cookieValue, -1);
                             response.addCookie(cookie);
@@ -757,7 +755,7 @@ public enum BeanHandler {
                 Object value = field.get(bean);
 
                 if (value != null) {
-                    String paramValue = AuthEncrypter.encrypt(authBean.secretKey(), authField.value() + value.toString());
+                    String paramValue = AuthEncrypter.encrypt(request, authBean.secretKey(), authField.value() + value.toString());
                     authParams.append(index == 0 ? "" : "&").append(index++).append("=").append(paramValue);
                 }
             }
@@ -997,8 +995,8 @@ public enum BeanHandler {
             }
 
             if (!webSecurity.disableEncrypt()) {
-                csrfName = CsrfEncrypter.decrypt(webSecurity.secretKey(), csrfName);
-                csrfToken = CsrfEncrypter.decrypt(webSecurity.secretKey(), csrfToken);
+                csrfName = CsrfEncrypter.decrypt(request, webSecurity.secretKey(), csrfName);
+                csrfToken = CsrfEncrypter.decrypt(request, webSecurity.secretKey(), csrfToken);
             }
             if (!listener.isValidToken(new CsrfAdapter(csrfName, csrfToken))) {
                 return HttpServletResponse.SC_FORBIDDEN;
@@ -1026,8 +1024,8 @@ public enum BeanHandler {
                 String csrfToken = csrfAdapter.getToken();
 
                 if (!webSecurity.disableEncrypt()) {
-                    csrfName = CsrfEncrypter.encrypt(webSecurity.secretKey(), csrfAdapter.getName());
-                    csrfToken = CsrfEncrypter.encrypt(webSecurity.secretKey(), csrfAdapter.getToken());
+                    csrfName = CsrfEncrypter.encrypt(request, webSecurity.secretKey(), csrfAdapter.getName());
+                    csrfToken = CsrfEncrypter.encrypt(request, webSecurity.secretKey(), csrfAdapter.getToken());
                 }
                 request.setAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_NAME, csrfName);
                 request.setAttribute(Constants.REQUEST_META_DATA_CSRF_TOKEN_VALUE, csrfToken);

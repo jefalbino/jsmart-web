@@ -507,7 +507,7 @@ public abstract class TagHandler extends SimpleTagSupport {
         if (name != null) {
             Matcher matcher = ExpressionHandler.EL_PATTERN.matcher(name);
             if (matcher.find()) {
-                return prefix + TagEncrypter.encrypt(name);
+                return prefix + TagEncrypter.encrypt(WebContext.getRequest(), name);
             }
         }
         return name;
@@ -667,7 +667,6 @@ public abstract class TagHandler extends SimpleTagSupport {
     }
 
     protected void appendRefId(Tag tag, String id, Boolean isParent) {
-
         if (ajaxTags.isEmpty() && bindTags.isEmpty()) {
             if (!isParent) {
                 tag.addAttribute("id", id);
@@ -677,7 +676,6 @@ public abstract class TagHandler extends SimpleTagSupport {
 
         boolean isDelegate = isDelegate();
         if (isDelegate || WebContext.isAjaxRequest()) {
-
             if (isDelegate) {
                 tag.addAttribute("role-delegate", id);
             } else {
