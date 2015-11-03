@@ -110,7 +110,7 @@ public final class EncodeFilter implements Filter {
                 return;
             }
 
-            SmartEncodingResponseWrapper responseWrapper = new SmartEncodingResponseWrapper(httpResponse, gzipOutputStream);
+            EncodingResponseWrapper responseWrapper = new EncodingResponseWrapper(httpResponse, gzipOutputStream);
 
             filterChain.doFilter(request, responseWrapper);
 
@@ -193,15 +193,15 @@ public final class EncodeFilter implements Filter {
         return null;
     }
 
-    private class SmartEncodingResponseWrapper extends HttpServletResponseWrapper {
+    private class EncodingResponseWrapper extends HttpServletResponseWrapper {
 
         private PrintWriter writer;
 
         private final ServletOutputStream outputStream;
 
-        public SmartEncodingResponseWrapper(HttpServletResponse servletResponse, DeflaterOutputStream outputStream) {
+        public EncodingResponseWrapper(HttpServletResponse servletResponse, DeflaterOutputStream outputStream) {
             super(servletResponse);
-            this.outputStream = new SmartEncodingServletOutputStream(outputStream);
+            this.outputStream = new EncodingServletOutputStream(outputStream);
         }
 
         @Override
@@ -226,13 +226,13 @@ public final class EncodeFilter implements Filter {
         }
     }
 
-    private class SmartEncodingServletOutputStream extends ServletOutputStream {
+    private class EncodingServletOutputStream extends ServletOutputStream {
 
         private final OutputStream outputStream;
 
         private WriteListener writeListener;
 
-        public SmartEncodingServletOutputStream(OutputStream outputStream) {
+        public EncodingServletOutputStream(OutputStream outputStream) {
             this.outputStream = outputStream;
         }
 

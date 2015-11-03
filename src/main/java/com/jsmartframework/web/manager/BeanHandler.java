@@ -633,12 +633,6 @@ public enum BeanHandler {
 
                     if (fieldValue != null) {
                         fieldValue = AuthEncrypter.decrypt(request, authBean.secretKey(), fieldValue);
-                    } else {
-                        String paramValue = request.getParameter(String.valueOf(index++));
-                        if (paramValue != null) {
-                            fieldValue = AuthEncrypter.decrypt(request, authBean.secretKey(), paramValue)
-                                                      .replaceFirst(authField.value(), "");
-                        }
                     }
                     field.set(bean, fieldValue);
                     continue;
@@ -727,42 +721,6 @@ public enum BeanHandler {
         cookie.setPath("/");
         cookie.setMaxAge(age);
         return cookie;
-    }
-
-    String getAuthenticationParams(HttpServletRequest request) {
-        AuthBean authBean = null;
-        Object bean = null;
-        StringBuilder authParams = new StringBuilder();
-
-        for (String name : authBeans.keySet()) {
-            authBean = authBeans.get(name).getAnnotation(AuthBean.class);
-            if (authBean.type() == AuthType.REQUEST) {
-                bean = request.getAttribute(name);
-            }
-            // We must have only one @AuthBean mapped
-            break;
-        }
-        // In case there is not request authentication just return empty query parameters
-        if (bean == null) {
-            return authParams.toString();
-        }
-
-        try {
-            int index = 0;
-            for (Field field : HELPER.getAuthFields(bean.getClass())) {
-                field.setAccessible(true);
-                AuthField authField = field.getAnnotation(AuthField.class);
-                Object value = field.get(bean);
-
-                if (value != null) {
-                    String paramValue = AuthEncrypter.encrypt(request, authBean.secretKey(), authField.value() + value.toString());
-                    authParams.append(index == 0 ? "" : "&").append(index++).append("=").append(paramValue);
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Redirect authentication params for AuthBean " + bean + " failed: " + ex.getMessage());
-        }
-        return authParams.toString();
     }
 
     void instantiateWebSecurity(HttpServletRequest request) {
