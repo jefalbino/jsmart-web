@@ -257,12 +257,13 @@ public final class ServletControl extends HttpServlet {
                 LOGGER.log(Level.SEVERE, "Could not find JSP page for path [" + path + "]");
                 return;
             }
-
             // Use Forward request internally case is the same page
             request.getRequestDispatcher(url).forward(request, response);
+
         } else {
-            // Use Redirect response case page had changed
-            response.sendRedirect((path.startsWith("/") ? request.getContextPath() : "") + path);
+            // Use Redirect response case page had changed (Do not use status 302 once cookies are not set)
+            response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+            response.setHeader("Location", (path.startsWith("/") ? request.getContextPath() : "") + path);
         }
     }
 
