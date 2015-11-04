@@ -210,9 +210,6 @@ public final class ServletControl extends HttpServlet {
             return;
         }
 
-        // Generate web security token to prevent CSRF attack
-        HANDLER.generateWebSecurityToken(request, response);
-
         // Initiate beans mentioned on jsp page
         try {
             HANDLER.instantiateBeans(path, null);
@@ -247,6 +244,11 @@ public final class ServletControl extends HttpServlet {
             LOGGER.log(Level.SEVERE, "Could not find JSP page for path [" + path + "]");
             return;
         }
+
+        // Generate web security token to prevent CSRF attack
+        HANDLER.generateWebSecurityToken(request, response);
+
+        // Use Forward request internally case is the same page
         request.getRequestDispatcher(url).forward(request, response);
     }
 
@@ -257,6 +259,10 @@ public final class ServletControl extends HttpServlet {
                 LOGGER.log(Level.SEVERE, "Could not find JSP page for path [" + path + "]");
                 return;
             }
+
+            // Generate web security token to prevent CSRF attack
+            HANDLER.generateWebSecurityToken(request, response);
+
             // Use Forward request internally case is the same page
             request.getRequestDispatcher(url).forward(request, response);
 
