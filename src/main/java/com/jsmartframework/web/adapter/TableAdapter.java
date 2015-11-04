@@ -33,13 +33,13 @@ public abstract class TableAdapter<T> {
      * Method to load content based on following criteria
      * <br>
      * @param offsetIndex - Index of last object on table when scroll is performed on component.
-     *                    It is {@value 0} in case table is empty.
-     * @param offset - Last object on table when scroll is performed on component. It is {@value null} in case
+     *                    It is 0 in case table is empty.
+     * @param offset - Last object on table when scroll is performed on component. It is null in case
      *               table is empty. The object content can be specified by using {@code scrollOffset} attribute
      *               on component declaration.
      * @param size - Quantity of objects on list to be loaded. The size is specified via {@code scrollSize} attribute.
      * @param sort - Sort object field name to sort the loaded list with.
-     * @param order - Sort order of the loaded list. Possible values are {@value -1, 0 or 1}.
+     * @param order - Sort order of the loaded list. Possible values are -1, 0 or 1.
      * @param filters - Map of table filters to load content. The key contains the object field name to filter with
      *                and the value is the value to be filtered for the specified object field name.
      * <br>

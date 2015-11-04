@@ -32,8 +32,8 @@ public abstract class ListAdapter<T> {
      * Method to load content based on following criteria
      * <br>
      * @param offsetIndex - Index of last object on list when scroll is performed on component.
-     *                    It is {@value 0} in case list is empty.
-     * @param offset - Last object on list when scroll is performed on component. It is {@value null} in case
+     *                    It is 0 in case list is empty.
+     * @param offset - Last object on list when scroll is performed on component. It is null in case
      *               list is empty. The object content can be specified by using {@code scrollOffset} attribute
      *               on component declaration.
      * @param size - Quantity of objects on list to be loaded. The size is specified via {@code scrollSize} attribute.

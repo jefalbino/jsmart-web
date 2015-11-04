@@ -27,13 +27,13 @@ import java.lang.annotation.RetentionPolicy;
  * configuration file {@code webConfig.xml}.
  * <br>
  * The url path mapped via this annotation do not need to be specified as
- * URL Pattern on {@code webConfig.xml} and it must end with {@value /*}
+ * URL Pattern on {@code webConfig.xml} and it must end with /*
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestPath {
 
     /**
-     * Relative URL path to map this request path with must end with {@value /*}
+     * Relative URL path to map this request path with must end with /*
      */
     String value();
 

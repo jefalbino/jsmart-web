@@ -34,7 +34,7 @@ import java.lang.annotation.RetentionPolicy;
  * cookies to be carried on further requests.
  * <br>
  * In both cases the fields annotated with {@link AuthField} must be used by {@link AuthMethod} to validate if
- * client is authenticated. If those fields are set as {@value null} it means that it is not authenticated
+ * client is authenticated. If those fields are set as null it means that it is not authenticated
  * and the secure URL Patterns cannot be accessed and any tentative of doing that will be redirected to login
  * page specified via {@code loginPath} attribute on this annotation.
  */
