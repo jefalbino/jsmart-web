@@ -36,7 +36,7 @@ public @interface AuthField {
 
     /**
      * Specify the name of cookie to store the field value in case authentication
-     * mechanism if of type of request.
+     * mechanism is of type of request.
      */
     String value();
 }

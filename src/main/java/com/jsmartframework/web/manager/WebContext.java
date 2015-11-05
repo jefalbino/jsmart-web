@@ -242,7 +242,7 @@ public final class WebContext implements Serializable {
      * Case this method is called on {@link PostConstruct} annotated method, the redirect is done
      * after method execution.
      *
-     * @param path path mapped on configuration file {@code webConfig.xml} or general valid URL link.
+     * @param path mapped on configuration file {@code webConfig.xml} or general valid URL link.
      */
     public static void redirectTo(String path) {
         WebContext context = getCurrentInstance();
@@ -253,12 +253,12 @@ public final class WebContext implements Serializable {
 
     /**
      * Redirect the request to the specified link path after the current request is processed on a
-     * new window on clients browser.
+     * new window on client browser.
      * <br>
      * Case this method is called on {@link PostConstruct} annotated method, the redirect is done
      * after method execution.
      *
-     * @param path path mapped on configuration file {@code webConfig.xml} or general valid URL link.
+     * @param path mapped on configuration file {@code webConfig.xml} or general valid URL link.
      */
     public static void redirectToWindow(String path) {
         WebContext context = getCurrentInstance();
@@ -293,8 +293,8 @@ public final class WebContext implements Serializable {
     }
 
     /**
-     * Returns <code>true</code> if the request being process was triggered by Ajax on client side,
-     * <code>false</code> otherwise.
+     * Returns true if the request being process was triggered by Ajax on client side,
+     * false otherwise.
      *
      * @return boolean value indicating if request was done using Ajax.
      */
@@ -316,7 +316,7 @@ public final class WebContext implements Serializable {
      * The message is placed on the same position where the {@code alert} is mapped.
      *
      * @param id of the alert to receive the message.
-     * @param alert object containg alert details such as title, message, header and icon.
+     * @param alert object containing alert details such as title, message, header and icon.
      */
     public static void addAlert(String id, WebAlert alert) {
         WebContext context = getCurrentInstance();
@@ -334,7 +334,7 @@ public final class WebContext implements Serializable {
      * <br>
      * This method only take effect if the alert tag is mapped with specified id on JSP page.
      * <br>
-     * The message is placed on the same position where the  {@code alert} tag is mapped.
+     * The message is placed on the same position where the {@code alert} tag is mapped.
      *
      * @param id of the alert to receive the message.
      * @param message to be presented on the client side.
@@ -452,8 +452,8 @@ public final class WebContext implements Serializable {
      * instances associated with current request being processed.
      *
      * @param name name of the attribute.
-     * @return <code>true</code> if the attribute is contained in one of the instances {@link HttpServletRequest},
-     * {@link HttpSession} or {@link ServletContext}, <code>false</code> otherwise.
+     * @return true if the attribute is contained in one of the instances {@link HttpServletRequest},
+     * {@link HttpSession} or {@link ServletContext}, false otherwise.
      */
     public static boolean containsAttribute(String name) {
         if (name != null) {
@@ -542,7 +542,7 @@ public final class WebContext implements Serializable {
      * @param clazz - Class mapping the request content.
      * @param <T> - type of class to convert XML into class.
      *
-     * @return content from JSON to object
+     * @return content from XML to object
      * @throws IOException
      */
     public static <T> T getContentFromXml(Class<T> clazz) throws IOException, JAXBException {
@@ -632,7 +632,7 @@ public final class WebContext implements Serializable {
      * @param asyncContext - Asynchronous Context
      * @param event - Name of event to be written on response
      * @param data - Content of event ot be written on response
-     * @param retry - Time in (milliseconds) for client rety opening connection
+     * @param retry - Time in (milliseconds) for client retry opening connection
      *              after asynchronous context is closed.
      * @throws IOException
      */
@@ -659,7 +659,7 @@ public final class WebContext implements Serializable {
      * the response will be what you have defined.
      *
      * @param file - File to be written on response
-     * @param bufferSize - Buffer size to write the response. Recommended 2048 bytes.
+     * @param bufferSize - Buffer size to write the response. Example 2048 bytes.
      * @throws IOException
      */
     public static void writeResponseAsFileStream(File file, int bufferSize) throws IOException {

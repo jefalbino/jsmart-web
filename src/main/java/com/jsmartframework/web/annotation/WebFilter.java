@@ -38,6 +38,7 @@ public @interface WebFilter {
 
     /**
      * The order in which this filter will be called before Servlet execution.
+     * The order is also relative to other filters declared in your application.
      */
     int order();
 

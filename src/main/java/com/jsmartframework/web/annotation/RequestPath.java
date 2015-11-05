@@ -26,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
  * SpringMVC which are part of same context of the application mapped via
  * configuration file {@code webConfig.xml}.
  * <br>
- * The url path mapped via this annotation do not need to be specified as
+ * The url path mapped via this annotation does not need to be specified as
  * URL Pattern on {@code webConfig.xml} and it must end with /*
  */
 @Retention(RetentionPolicy.RUNTIME)

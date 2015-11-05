@@ -24,9 +24,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used on method mapped as submit method on JSP file.
+ * This annotation is used on a method mapped as submit method on JSP file.
  * <br>
- * Also this annotation must specify the access roles needed by authenticated client
+ * Also this annotation must specify the access roles needed by authenticated customer
  * to execute the method.
  */
 @Retention(RetentionPolicy.RUNTIME)

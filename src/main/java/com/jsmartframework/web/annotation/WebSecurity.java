@@ -35,8 +35,8 @@ public @interface WebSecurity {
     String secretKey() default "4zK7koRONFkbtRK6";
 
     /**
-     * Boolean value to disable CSRF token encryption, so if the token name and value
-     * will be carried on as text plain.
+     * Boolean value to disable CSRF token encryption, so if it is true the token
+     * name and value will be carried on as text plain, otherwise they will be encrypted.
      */
     boolean disableEncrypt() default false;
 

@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * This annotation is used on class to provide authentication of type {@link AuthType} for session
+ * This annotation is used on a class to provide authentication of type {@link AuthType} for session
  * or request mechanism.
  * <br>
  * If using the session type the class annotated with this annotation must implement {@link java.io.Serializable}
@@ -35,7 +35,7 @@ import java.lang.annotation.RetentionPolicy;
  * <br>
  * In both cases the fields annotated with {@link AuthField} must be used by {@link AuthMethod} to validate if
  * client is authenticated. If those fields are set as null it means that it is not authenticated
- * and the secure URL Patterns cannot be accessed and any tentative of doing that will be redirected to login
+ * and the secure URL Patterns cannot be accessed, so any tentative of doing that will be redirected to login
  * page specified via {@code loginPath} attribute on this annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)
