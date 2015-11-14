@@ -269,6 +269,10 @@ var JSmart = (function() {
             return doRemoveRow(id, key);
         },
 
+        refreshTable: function(id) {
+            doTableRefresh(id);
+        },
+
         clear: function(id) {
             doClear(id);
         },
@@ -713,6 +717,13 @@ var JSmart = (function() {
             } else {
                 $.ajax(options);
             }
+        }
+    }
+
+    function doTableRefresh(id) {
+        var table = $(getId(id));
+        if (table && table.length > 0) {
+            table.find('tbody>tr').width(table.width());
         }
     }
 
