@@ -139,24 +139,21 @@ public final class ContextControl implements ServletContextListener {
             FilterRegistration.Dynamic errorFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("ErrorFilter", errorFilter);
 
             errorFilterReg.setAsyncSupported(true);
-            errorFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD,
-                    DispatcherType.ERROR, DispatcherType.INCLUDE), true, "/*");
+            errorFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ERROR), true, "/*");
 
             // EncodeFilter -> @WebFilter(urlPatterns = {"/*"})
             Filter encodeFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmartframework.web.filter.EncodeFilter"));
             FilterRegistration.Dynamic encodeFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("EncodeFilter", encodeFilter);
 
             encodeFilterReg.setAsyncSupported(true);
-            encodeFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR,
-                    DispatcherType.INCLUDE), true, "/*");
+            encodeFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR), true, "/*");
 
             // CacheFilter -> @WebFilter(urlPatterns = {"/*"})
             Filter cacheFilter = servletContext.createFilter((Class<? extends Filter>) Class.forName("com.jsmartframework.web.filter.CacheFilter"));
             FilterRegistration.Dynamic cacheFilterReg = (FilterRegistration.Dynamic) servletContext.addFilter("CacheFilter", cacheFilter);
 
             cacheFilterReg.setAsyncSupported(true);
-            cacheFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR,
-                    DispatcherType.INCLUDE), true, "/*");
+            cacheFilterReg.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR), true, "/*");
 
             // Add custom filters defined by client
             for (String filterName : sortCustomFilters()) {
