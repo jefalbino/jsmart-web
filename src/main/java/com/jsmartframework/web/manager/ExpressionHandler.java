@@ -244,18 +244,20 @@ enum ExpressionHandler {
     }
 
     void setAttributeValue(String expr, Object value) {
-        Matcher matcher = EL_PATTERN.matcher(expr);
-        if (matcher.find()) {
+        if (expr != null) {
+            Matcher matcher = EL_PATTERN.matcher(expr);
+            if (matcher.find()) {
 
-            String beanMethod = matcher.group(1);
-            String[] methodSign = beanMethod.split(Constants.EL_SEPARATOR);
+                String beanMethod = matcher.group(1);
+                String[] methodSign = beanMethod.split(Constants.EL_SEPARATOR);
 
-            if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
-                beanMethod = String.format(Constants.JSP_EL, beanMethod);
+                if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
+                    beanMethod = String.format(Constants.JSP_EL, beanMethod);
 
-                ELContext context = WebContext.getPageContext().getELContext();
-                ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
-                valueExpr.setValue(context, value);
+                    ELContext context = WebContext.getPageContext().getELContext();
+                    ValueExpression valueExpr = WebContext.getExpressionFactory().createValueExpression(context, beanMethod, Object.class);
+                    valueExpr.setValue(context, value);
+                }
             }
         }
     }
