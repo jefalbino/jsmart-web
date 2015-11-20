@@ -26,6 +26,7 @@ import com.jsmartframework.web.tag.type.Align;
 import com.jsmartframework.web.tag.type.Output;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -76,9 +77,10 @@ public final class HeaderTagHandler extends TagHandler {
 
         JspTag parent = getParent();
 
+        StringWriter sw = new StringWriter();
         JspFragment body = getJspBody();
         if (body != null) {
-            body.invoke(null);
+            body.invoke(sw);
         }
 
         setRandomId("header");
@@ -134,6 +136,9 @@ public final class HeaderTagHandler extends TagHandler {
                 header.addTag(iconTag.executeTag());
             }
         }
+
+        // Add any other content inside header tag
+        header.addText(sw);
 
         if (parent instanceof TagHandler && getMappedValue(DELEGATE_TAG_PARENT) == null) {
             String tagId = ((TagHandler) parent).getId();
