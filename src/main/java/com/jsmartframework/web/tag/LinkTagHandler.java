@@ -266,7 +266,7 @@ public final class LinkTagHandler extends TagHandler {
     private StringBuilder getFunction(String url) {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
-        jsonAjax.setForm(onForm);
+        jsonAjax.setForm((String) getTagValue(onForm));
         jsonAjax.setTag("link");
 
         // Params must be considered regardless the action for rest purpose

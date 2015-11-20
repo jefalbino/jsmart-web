@@ -718,6 +718,8 @@ public abstract class TagHandler extends SimpleTagSupport {
                 throw InvalidAttributeException.fromConstraint(tag, "id", "specified because tag contains [bind] tags");
             }
             tagHandler.id = WebUtils.randomId();
+        } else {
+            tagHandler.id = (String) getTagValue(tagHandler.id);
         }
     }
 

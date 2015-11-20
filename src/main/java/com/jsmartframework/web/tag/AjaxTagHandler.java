@@ -93,7 +93,7 @@ public final class AjaxTagHandler extends TagHandler {
     private Ajax getJsonAjax(String id, boolean hasDelegate) {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
-        jsonAjax.setForm(onForm);
+        jsonAjax.setForm((String) getTagValue(onForm));
         jsonAjax.setTimeout(timeout);
         jsonAjax.setTag("ajax");
 

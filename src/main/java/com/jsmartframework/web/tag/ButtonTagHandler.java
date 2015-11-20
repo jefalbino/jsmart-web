@@ -305,7 +305,7 @@ public final class ButtonTagHandler extends TagHandler {
     private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
-        jsonAjax.setForm(onForm);
+        jsonAjax.setForm((String) getTagValue(onForm));
         jsonAjax.setTag("button");
 
         // Params must be considered regardless the action for rest purpose
