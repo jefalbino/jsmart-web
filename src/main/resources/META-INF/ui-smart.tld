@@ -1568,6 +1568,14 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>var</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>values</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>onClick</name>
             <required>false</required>
         </attribute>

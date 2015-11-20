@@ -41,6 +41,16 @@ public final class PanelTagHandler extends TagHandler {
 
     private FooterTagHandler footer;
 
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof AccordionTagHandler && ((AccordionTagHandler) parent).hasValues()) {
+            ((AccordionTagHandler) parent).addPanel(this);
+            return false;
+        }
+        return true;
+    }
+
     public void validateTag() throws JspException {
         if (look != null && !Look.validateLook(look) && !isEL(look)) {
             throw InvalidAttributeException.fromPossibleValues("panel", "look", Look.getLookValues());
@@ -130,7 +140,6 @@ public final class PanelTagHandler extends TagHandler {
         if (footer != null) {
             panel.addTag(footer.executeTag());
         }
-
         return panel;
     }
 
