@@ -1508,10 +1508,37 @@ public enum BeanHandler {
             // Read include page resources
             for (String include : includes) {
                 String includeOwner = getForwardPath(path);
-                include = includeOwner.substring(0, includeOwner.lastIndexOf(Constants.PATH_SEPARATOR) + 1) + include;
+                includeOwner = includeOwner.substring(0, includeOwner.lastIndexOf(Constants.PATH_SEPARATOR) + 1);
+
+                include = getRelativeIncludePath(includeOwner, include);
                 readJspPageResource(context, include, jspPageBean);
             }
         }
+    }
+
+    private String getRelativeIncludePath(String includeOwner, String include) {
+        int index = 0;
+        int pathSeparators = 0;
+
+        while (index != -1) {
+            index = include.indexOf(Constants.PREVIOUS_PATH, index);
+            if (index != -1) {
+                pathSeparators++;
+                index += Constants.PREVIOUS_PATH.length();
+            }
+        }
+        if (pathSeparators != 0) {
+            String[] ownerPath = includeOwner.split(Constants.PATH_SEPARATOR);
+            if (ownerPath.length > pathSeparators) {
+                includeOwner = includeOwner.substring(0, includeOwner.lastIndexOf(ownerPath[ownerPath.length - pathSeparators]));
+            } else {
+                includeOwner = Constants.PATH_SEPARATOR;
+            }
+        }
+        if (include.startsWith(Constants.PATH_SEPARATOR)) {
+            include = include.replaceFirst(Constants.PATH_SEPARATOR, "");
+        }
+        return includeOwner + include.replace(Constants.PREVIOUS_PATH, "");
     }
 
     private class JspPageBean {

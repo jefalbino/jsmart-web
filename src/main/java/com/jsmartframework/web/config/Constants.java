@@ -70,6 +70,8 @@ public final class Constants {
 
     public static final String PATH_SEPARATOR = "/";
 
+    public static final String PREVIOUS_PATH = "../";
+
     public static final String LIB_FILE_PATH = WEB_INF + PATH_SEPARATOR + "lib";
 
     public static final String LIB_JAR_FILE_PATTERN = ".*jsmart.*\\.jar";
