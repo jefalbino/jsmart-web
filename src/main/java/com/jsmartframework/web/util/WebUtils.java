@@ -18,6 +18,7 @@
 
 package com.jsmartframework.web.util;
 
+import com.google.common.html.HtmlEscapers;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -80,8 +81,7 @@ public final class WebUtils {
 
     public static String escapeString(String value) {
         if (value != null) {
-            value = StringEscapeUtils.escapeJavaScript(value);
-            value = StringEscapeUtils.escapeHtml(value);
+            value = HtmlEscapers.htmlEscaper().escape(value);
         }
         return value;
     }
@@ -89,7 +89,6 @@ public final class WebUtils {
     public static String unescapeString(String value) {
         if (value != null) {
             value = StringEscapeUtils.unescapeHtml(value);
-            value = StringEscapeUtils.unescapeJavaScript(value);
         }
         return value;
     }

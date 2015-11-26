@@ -21,6 +21,7 @@ package com.jsmartframework.web.manager;
 import static com.jsmartframework.web.config.Config.CONFIG;
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
 
+import com.google.common.html.HtmlEscapers;
 import com.google.gson.Gson;
 import com.jsmartframework.web.adapter.ListAdapter;
 import com.jsmartframework.web.adapter.TableAdapter;
@@ -28,7 +29,6 @@ import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.json.Scroll;
 import com.jsmartframework.web.util.WebText;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.DateTime;
@@ -460,8 +460,7 @@ enum ExpressionHandler {
 
     private Object escapeValue(String value) {
         if (value != null && CONFIG.getContent().isEscapeRequest()) {
-            value = StringEscapeUtils.escapeJavaScript(value);
-            value = StringEscapeUtils.escapeHtml(value);
+            value = HtmlEscapers.htmlEscaper().escape(value);
         }
         return value;
     }

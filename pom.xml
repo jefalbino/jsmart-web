@@ -103,7 +103,14 @@
     		<version>2.3.1</version>
 		</dependency>
 
-		<!-- Reflections powered by google -->
+        <!-- Guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+
+        <!-- Reflections powered by google -->
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
