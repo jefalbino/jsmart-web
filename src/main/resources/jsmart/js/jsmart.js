@@ -1965,7 +1965,7 @@ var JSmart = (function() {
 
                 var spanLoadClone = spanLoad.clone();
                 spanLoadClone.css({'margin-right': '4px'});
-                el.prepend(spanLoadClone.show());
+                el.prepend(spanLoadClone.css({'display': 'inline-block'}));
             }
         }
     }

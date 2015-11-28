@@ -154,6 +154,8 @@ public final class TableTagHandler extends TagHandler {
         }
 
         THead thead = new THead();
+        thead.addAttribute("class", JSmart.TABLE_HEAD);
+
         TBody tbody = new TBody();
         tbody.addAttribute("scroll-size", scrollSize);
 

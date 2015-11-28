@@ -107,6 +107,11 @@
 	position: relative;
 }
 
+.js5-table-head {
+    width: 100%;
+    display: inline-block;
+}
+
 .js5-table-scroll {
 	
 }

@@ -46,6 +46,8 @@ public final class JSmart {
 
     public static final String DATE_FORM_GROUP = "js5-date-form-group";
 
+    public static final String TABLE_HEAD = "js5-table-head";
+
     public static final String TABLE_SCROLL = "js5-table-scroll";
 
     public static final String TABLE_HEADER_FILTER_BY = "js5-table-header-filter-by";

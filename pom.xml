@@ -208,8 +208,8 @@
                 				</configuration>
             				</execution>
 						</executions>
-    				</plugin> -->
-    				<!-- END DEBUG MODE -->
+    				</plugin>
+    				END DEBUG MODE -->
 
     				<!-- BEGIN RELEASE MODE -->
 					<plugin>
@@ -239,7 +239,7 @@
 	
 									<jsSourceDir>resources/jsmart</jsSourceDir>
 									<jsSourceFiles>
-										<jsSourceFile>jquery-1.11.2/jquery-1.11.2.js</jsSourceFile>
+										<jsSourceFile>jquery-1.11.3/jquery-1.11.3.js</jsSourceFile>
 										<jsSourceFile>jquery-form-3.51.0/jquery.form-3.51.0.js</jsSourceFile>
 										<jsSourceFile>momentjs-2.9.0/js/moment-locales.js</jsSourceFile>
 										<jsSourceFile>bootstrap-3.3.5/js/bootstrap.js</jsSourceFile>
@@ -276,7 +276,7 @@
 										<delete dir="${basedir}/target/classes/descriptors" />
                     					<delete dir="${basedir}/target/classes/jsmart/bootstrap-3.3.5" />
                     					<delete dir="${basedir}/target/classes/jsmart/bootstrap-datetime-4.7.14" />
-                    					<delete dir="${basedir}/target/classes/jsmart/jquery-1.11.2" />
+                    					<delete dir="${basedir}/target/classes/jsmart/jquery-1.11.3" />
                     					<delete dir="${basedir}/target/classes/jsmart/jquery-form-3.51.0" />
                     					<delete dir="${basedir}/target/classes/jsmart/momentjs-2.9.0" />
                     					<delete>

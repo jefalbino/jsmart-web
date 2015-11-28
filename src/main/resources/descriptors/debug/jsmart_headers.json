@@ -5,7 +5,7 @@
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart/css/jsmart.css\"/>"
 	],
 	"scripts": [
-		"<script type=\"text/javascript\" src=\"%sjsmart/jquery-1.11.2/jquery-1.11.2.js\"></script>",
+		"<script type=\"text/javascript\" src=\"%sjsmart/jquery-1.11.3/jquery-1.11.3.js\"></script>",
 		"<script type=\"text/javascript\" src=\"%sjsmart/jquery-form-3.51.0/jquery.form-3.51.0.js\"></script>",
 		"<script type=\"text/javascript\" src=\"%sjsmart/momentjs-2.9.0/js/moment-locales.js\"></script>",
 		"<script type=\"text/javascript\" src=\"%sjsmart/bootstrap-3.3.5/js/bootstrap.js\"></script>",
