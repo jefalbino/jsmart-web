@@ -72,13 +72,11 @@ public final class AjaxTagHandler extends TagHandler {
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
         if (parent instanceof TagHandler) {
-
             // Just to call nested tags
             JspFragment body = getJspBody();
             if (body != null) {
                 body.invoke(null);
             }
-
             ((TagHandler) parent).addAjaxTag(this);
         }
         return true;

@@ -19,7 +19,9 @@
 package com.jsmartframework.web.tag;
 
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
+import static com.jsmartframework.web.manager.BeanHandler.AnnotatedAction;
 
+import com.jsmartframework.web.annotation.Arg;
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Ajax;
 import com.jsmartframework.web.json.Param;
@@ -35,6 +37,7 @@ import com.jsmartframework.web.tag.type.Event;
 import com.jsmartframework.web.tag.type.Look;
 import com.jsmartframework.web.tag.type.Size;
 import com.jsmartframework.web.tag.util.RefAction;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -71,6 +74,8 @@ public final class ButtonTagHandler extends TagHandler {
     private String onComplete;
 
     private Integer tabIndex;
+
+    private Integer timeout;
 
     private boolean reset;
 
@@ -110,11 +115,13 @@ public final class ButtonTagHandler extends TagHandler {
         if (look != null && !Look.validateButton(look) && !isEL(look)) {
             throw InvalidAttributeException.fromPossibleValues("button", "look", Look.getButtonValues());
         }
+        if (timeout != null && timeout < 0) {
+            throw InvalidAttributeException.fromConstraint("button", "timeout", "greater or equal to 0");
+        }
     }
 
     @Override
     public Tag executeTag() throws JspException, IOException {
-
         JspTag parent = getParent();
         boolean inputAddOn = parent instanceof InputTagHandler
                 || parent instanceof AutoCompleteTagHandler
@@ -278,7 +285,6 @@ public final class ButtonTagHandler extends TagHandler {
             appendTooltip(button);
             appendPopOver(button);
         }
-
         return buttonGroup != null ? buttonGroup : button;
     }
 
@@ -301,11 +307,42 @@ public final class ButtonTagHandler extends TagHandler {
         return buttonLook;
     }
 
+    @Override
+    protected void checkAnnotatedAction() {
+        AnnotatedAction annotatedAction = getAnnotatedAction(id);
+        if (annotatedAction != null) {
+            action = annotatedAction.getMethod();
+            ajax = annotatedAction.getAction().ajax();
+            timeout = annotatedAction.getAction().timeout();
+
+            if (StringUtils.isNotBlank(annotatedAction.getAction().onForm())) {
+                onForm = annotatedAction.getAction().onForm();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getBeforeSend())) {
+                beforeSend = annotatedAction.getBeforeSend();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnSuccess())) {
+                onSuccess = annotatedAction.getOnSuccess();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnComplete())) {
+                onComplete = annotatedAction.getOnComplete();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnError())) {
+                onError = annotatedAction.getOnError();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getUpdate())) {
+                update = annotatedAction.getUpdate();
+            }
+            setArgs(annotatedAction.getArguments());
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private StringBuilder getFunction(String id, String action, Map<String, Object> params) {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
         jsonAjax.setForm((String) getTagValue(onForm));
+        jsonAjax.setTimeout(timeout);
         jsonAjax.setTag("button");
 
         // Params must be considered regardless the action for rest purpose
@@ -364,6 +401,10 @@ public final class ButtonTagHandler extends TagHandler {
 
     public void setOnForm(String onForm) {
         this.onForm = onForm;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
     }
 
     public void setLook(String look) {

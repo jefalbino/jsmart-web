@@ -1,17 +1,17 @@
 /*
  * JSmart Framework - Java Web Development Framework
  * Copyright (c) 2015, Jeferson Albino da Silva, All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3.0 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -24,24 +24,29 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used on methods that you want to be executed
- * before the action method mapped on JSP file or via {@link Action}
- * annotation is invoked.
- * <br>
- * Also the method annotated with this annotation can return the type
- * of {@link Boolean} to indicate if the action method should be invoked.
- * <br>
- * Use {@link PreAction} annotation that is semantically correct.
+ * This annotation is used along with {@link Function} annotation
+ * to specify the arguments which JavaScript function call may receive.
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface PreSubmit {
+public @interface Arg {
 
     /**
-     * List of action methods which the method annotated with
-     * {@link PreSubmit} must be invoked
+     * Specify the name of the argument.
+     * It accepts Expression language and/or text values.
      */
-    String[] onActions() default {};
+    String name() default "";
 
+    /**
+     * Specify the value for the argument, case bindTo attribute is specified the value is ignored.
+     * It accepts Expression language and/or text values.
+     */
+    String value() default "";
+
+    /**
+     * Id of HTML input element to bind to, so when Ajax request is executed
+     * the framework will capture the value of specified component and carry it
+     * along with the request as method argument.
+     */
+    String bindTo() default "";
 }

@@ -21,20 +21,26 @@ package com.jsmartframework.web.manager;
 import static com.jsmartframework.web.config.Config.CONFIG;
 import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
 import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN;
+import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN_FORMAT;
 import static com.jsmartframework.web.manager.TagHandler.J_TAG_PATTERN;
 import static com.jsmartframework.web.manager.BeanHelper.HELPER;
 
 import com.jsmartframework.web.adapter.CsrfAdapter;
+import com.jsmartframework.web.annotation.Arg;
 import com.jsmartframework.web.annotation.AsyncBean;
 import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
 import com.jsmartframework.web.annotation.AuthType;
 import com.jsmartframework.web.annotation.ExecuteAccess;
+import com.jsmartframework.web.annotation.Function;
+import com.jsmartframework.web.annotation.PostAction;
 import com.jsmartframework.web.annotation.PostSubmit;
+import com.jsmartframework.web.annotation.PreAction;
 import com.jsmartframework.web.annotation.PreSubmit;
 import com.jsmartframework.web.annotation.QueryParam;
 import com.jsmartframework.web.annotation.RequestPath;
 import com.jsmartframework.web.annotation.ScopeType;
+import com.jsmartframework.web.annotation.Action;
 import com.jsmartframework.web.annotation.WebBean;
 import com.jsmartframework.web.annotation.WebFilter;
 import com.jsmartframework.web.annotation.WebListener;
@@ -55,10 +61,12 @@ import org.springframework.stereotype.Controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -127,6 +135,10 @@ public enum BeanHandler {
 
     Set<ServletRequestListener> requestListeners = new HashSet<>();
 
+    private Map<String, List<AnnotatedFunction>> annotatedFunctions = new ConcurrentHashMap<>();
+
+    private Map<String, AnnotatedAction> annotatedActions = new ConcurrentHashMap<>();
+
     private Map<String, String> forwardPaths = new ConcurrentHashMap<>();
 
     private Map<Class<?>, String> jndiMapping = new ConcurrentHashMap<>();
@@ -160,6 +172,8 @@ public enum BeanHandler {
             requestListeners.clear();
             forwardPaths.clear();
             jspPageBeans.clear();
+            annotatedFunctions.clear();
+            annotatedActions.clear();
             jndiMapping.clear();
             initialContext = null;
             springContext = null;
@@ -172,7 +186,7 @@ public enum BeanHandler {
         this.springContext = springContext;
     }
 
-    @SuppressWarnings("all")
+    @Deprecated
     boolean executePreSubmit(Object bean, String action) {
         for (Method method : HELPER.getPreSubmitMethods(bean.getClass())) {
             for (String onAction : method.getAnnotation(PreSubmit.class).onActions()) {
@@ -189,7 +203,23 @@ public enum BeanHandler {
         return true;
     }
 
-    @SuppressWarnings("all")
+    boolean executePreAction(Object bean, String action) {
+        for (Method method : HELPER.getPreActionMethods(bean.getClass())) {
+            for (String onAction : method.getAnnotation(PreAction.class).onActions()) {
+                try {
+                    if (action.equalsIgnoreCase(onAction)) {
+                        Boolean result = (Boolean) method.invoke(bean, null);
+                        return result != null && result;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+
+    @Deprecated
     void executePostSubmit(Object bean, String action) {
         for (Method method : HELPER.getPostSubmitMethods(bean.getClass())) {
             for (String onAction : method.getAnnotation(PostSubmit.class).onActions()) {
@@ -206,7 +236,22 @@ public enum BeanHandler {
         }
     }
 
-    @SuppressWarnings("all")
+    void executePostAction(Object bean, String action) {
+        for (Method method : HELPER.getPostActionMethods(bean.getClass())) {
+            for (String onAction : method.getAnnotation(PostAction.class).onActions()) {
+                try {
+                    if (action.equalsIgnoreCase(onAction)) {
+                        method.invoke(bean, null);
+                        return;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return;
+        }
+    }
+
     void executePreDestroy(Object bean) {
         for (Method method : HELPER.getPreDestroyMethods(bean.getClass())) {
             if (method.isAnnotationPresent(PreDestroy.class)) {
@@ -220,7 +265,6 @@ public enum BeanHandler {
         }
     }
 
-    @SuppressWarnings("all")
     void executePostConstruct(Object bean) {
         for (Method method : HELPER.getPostConstructMethods(bean.getClass())) {
             if (method.isAnnotationPresent(PostConstruct.class)) {
@@ -1029,10 +1073,53 @@ public enum BeanHandler {
             HELPER.setBeanMethods(clazz);
             String className = HELPER.getClassName(bean, clazz);
             webBeans.put(className, clazz);
+
+            initAnnotatedActionMethods(className, clazz);
         }
 
         if (webBeans.isEmpty()) {
             LOGGER.log(Level.INFO, "WebBeans were not mapped!");
+        }
+    }
+
+    private void initAnnotatedActionMethods(String className, Class<?> clazz) {
+        for (Method method : HELPER.getBeanMethods(clazz)) {
+            List<Arg> arguments = new ArrayList<>();
+
+            for (Annotation[] annotations : method.getParameterAnnotations()) {
+                for (Annotation annotation : annotations) {
+                    if (annotation instanceof Arg) {
+                        arguments.add((Arg) annotation);
+                    }
+                }
+            }
+
+            if (method.isAnnotationPresent(Function.class)) {
+                AnnotatedFunction annotatedFunction = new AnnotatedFunction(method.getAnnotation(Function.class),
+                        String.format(EL_PATTERN_FORMAT, className, method.getName()), arguments);
+
+                for (String urlPattern : annotatedFunction.getFunction().forPaths()) {
+                    // Functions are created per Url-Pattern
+                    String path = getCleanPath(urlPattern);
+                    path = matchUrlPattern(path);
+
+                    List<AnnotatedFunction> pathFunctions = annotatedFunctions.get(path);
+                    if (pathFunctions == null) {
+                        pathFunctions = new ArrayList<>();
+                        annotatedFunctions.put(path, pathFunctions);
+                    }
+                    pathFunctions.add(annotatedFunction);
+                }
+            }
+
+            if (method.isAnnotationPresent(Action.class)) {
+                AnnotatedAction annotatedAction = new AnnotatedAction(method.getAnnotation(Action.class),
+                        String.format(EL_PATTERN_FORMAT, className, method.getName()), arguments);
+
+                for (String id : annotatedAction.getAction().forIds()) {
+                    annotatedActions.put(id, annotatedAction);
+                }
+            }
         }
     }
 
@@ -1072,6 +1159,8 @@ public enum BeanHandler {
 
                 String className = HELPER.getClassName(authBean, clazz);
                 authBeans.put(className, clazz);
+
+                initAnnotatedActionMethods(className, clazz);
             } else {
                 LOGGER.log(Level.SEVERE, "Only one AuthBean can be declared! Skipping class " + clazz);
             }
@@ -1349,6 +1438,21 @@ public enum BeanHandler {
         return path;
     }
 
+    AnnotatedAction getAnnotatedAction(String id) {
+        if (id != null) {
+            return annotatedActions.get(id);
+        }
+        return null;
+    }
+
+    List<AnnotatedFunction> getAnnotatedFunctions(String path) {
+        if (path != null) {
+            List<AnnotatedFunction> functions = annotatedFunctions.get(path);
+            return functions != null ? functions : Collections.EMPTY_LIST;
+        }
+        return Collections.EMPTY_LIST;
+    }
+
     private String getCleanPath(String path) {
         Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
         if (matcher.find()) {
@@ -1558,4 +1662,127 @@ public enum BeanHandler {
         }
     }
 
+    public static class AnnotatedFunction {
+
+        private Function function;
+
+        private List<Arg> arguments;
+
+        private String method;
+
+        private String beforeSend;
+
+        private String onSuccess;
+
+        private String onComplete;
+
+        private String onError;
+
+        private String update;
+
+        public AnnotatedFunction(Function function, String method, List<Arg> arguments) {
+            this.function = function;
+            this.method = method;
+            this.beforeSend = StringUtils.join(function.beforeSend(), ";");
+            this.onSuccess = StringUtils.join(function.onSuccess(), ";");
+            this.onComplete = StringUtils.join(function.onComplete(), ";");
+            this.onError = StringUtils.join(function.onError(), ";");
+            this.update = StringUtils.join(function.update(), ",");
+            this.arguments = arguments;
+        }
+
+        public Function getFunction() {
+            return function;
+        }
+
+        public List<Arg> getArguments() {
+            return arguments;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public String getBeforeSend() {
+            return beforeSend;
+        }
+
+        public String getOnSuccess() {
+            return onSuccess;
+        }
+
+        public String getOnComplete() {
+            return onComplete;
+        }
+
+        public String getOnError() {
+            return onError;
+        }
+
+        public String getUpdate() {
+            return update;
+        }
+    }
+
+    public static class AnnotatedAction {
+
+        private Action action;
+
+        private List<Arg> arguments;
+
+        private String method;
+
+        private String beforeSend;
+
+        private String onSuccess;
+
+        private String onComplete;
+
+        private String onError;
+
+        private String update;
+
+        public AnnotatedAction(Action action, String method, List<Arg> arguments) {
+            this.action = action;
+            this.method = method;
+            this.beforeSend = StringUtils.join(action.beforeSend(), ";");
+            this.onSuccess = StringUtils.join(action.onSuccess(), ";");
+            this.onComplete = StringUtils.join(action.onComplete(), ";");
+            this.onError = StringUtils.join(action.onError(), ";");
+            this.update = StringUtils.join(action.update(), ",");
+            this.arguments = arguments;
+        }
+
+        public Action getAction() {
+            return action;
+        }
+
+        public List<Arg> getArguments() {
+            return arguments;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public String getBeforeSend() {
+            return beforeSend;
+        }
+
+        public String getOnSuccess() {
+            return onSuccess;
+        }
+
+        public String getOnComplete() {
+            return onComplete;
+        }
+
+        public String getOnError() {
+            return onError;
+        }
+
+        public String getUpdate() {
+            return update;
+        }
+    }
 }

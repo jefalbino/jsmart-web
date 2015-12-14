@@ -19,19 +19,24 @@
 package com.jsmartframework.web.manager;
 
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+import static com.jsmartframework.web.manager.BeanHandler.AnnotatedAction;
 import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_BIND;
 
 import com.google.gson.Gson;
+import com.jsmartframework.web.annotation.Arg;
 import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Ajax;
 import com.jsmartframework.web.json.Bind;
 import com.jsmartframework.web.tag.AjaxTagHandler;
 import com.jsmartframework.web.tag.BindTagHandler;
+import com.jsmartframework.web.tag.ButtonTagHandler;
 import com.jsmartframework.web.tag.EmptyTagHandler;
+import com.jsmartframework.web.tag.FunctionTagHandler;
 import com.jsmartframework.web.tag.IconTagHandler;
+import com.jsmartframework.web.tag.LinkTagHandler;
 import com.jsmartframework.web.tag.LoadTagHandler;
 import com.jsmartframework.web.tag.PopOverTagHandler;
 import com.jsmartframework.web.tag.TooltipTagHandler;
@@ -192,6 +197,9 @@ public abstract class TagHandler extends SimpleTagSupport {
                 validateTag();
                 clearTagParameters();
 
+                // Check Actions case mapped on WebBeans for specific components
+                checkAnnotatedAction();
+
                 if (beforeTag()) {
                     Tag tag = executeTag();
                     if (tag != null) {
@@ -227,6 +235,40 @@ public abstract class TagHandler extends SimpleTagSupport {
         return true;
     }
 
+    protected void checkAnnotatedAction() throws JspException {
+        AnnotatedAction annotatedAction = HANDLER.getAnnotatedAction(id);
+        if (annotatedAction == null) {
+            return;
+        }
+
+        AjaxTagHandler ajaxTag = new AjaxTagHandler();
+        ajaxTag.setEvent(annotatedAction.getAction().event());
+        ajaxTag.setTimeout(annotatedAction.getAction().timeout());
+        ajaxTag.setAction(annotatedAction.getMethod());
+
+        if (StringUtils.isNotBlank(annotatedAction.getAction().onForm())) {
+            ajaxTag.setOnForm(annotatedAction.getAction().onForm());
+        }
+        if (StringUtils.isNotBlank(annotatedAction.getBeforeSend())) {
+            ajaxTag.setBeforeSend(annotatedAction.getBeforeSend());
+        }
+        if (StringUtils.isNotBlank(annotatedAction.getOnComplete())) {
+            ajaxTag.setOnComplete(annotatedAction.getOnComplete());
+        }
+        if (StringUtils.isNotBlank(annotatedAction.getOnError())) {
+            ajaxTag.setOnError(annotatedAction.getOnError());
+        }
+        if (StringUtils.isNotBlank(annotatedAction.getOnSuccess())) {
+            ajaxTag.setOnSuccess(annotatedAction.getOnSuccess());
+        }
+        if (StringUtils.isNotBlank(annotatedAction.getUpdate())) {
+            ajaxTag.setUpdate(annotatedAction.getUpdate());
+        }
+        ajaxTag.setArgs(annotatedAction.getArguments());
+        ajaxTag.validateTag();
+        addAjaxTag(ajaxTag);
+    }
+
     // Only applied for List and Table
     protected boolean shallExecuteTag() {
         HttpServletRequest request = getRequest();
@@ -250,6 +292,27 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     public void addArg(Object arg, String bind) {
         this.args.put(arg, bind);
+    }
+
+    public void setArgs(List<Arg> args) {
+        char argName = 'a';
+        for (Arg arg : args) {
+            String argValue = StringUtils.isBlank(arg.value()) ? null : arg.value();
+
+            String nameVal = (String) getTagValue(arg.name());
+            if (StringUtils.isBlank(nameVal)) {
+                nameVal = String.valueOf(argName++);
+            }
+
+            if (this instanceof FunctionTagHandler && argValue == null && StringUtils.isBlank(arg.bindTo())) {
+                addArg(nameVal, null);
+                ((FunctionTagHandler) this).appendFunctionArg(nameVal);
+            } else if (StringUtils.isNotBlank(arg.bindTo())) {
+                addArg(nameVal, (String) getTagValue(arg.bindTo()));
+            } else {
+                addArg(getTagValue(argValue), (String) getTagValue(arg.bindTo()));
+            }
+        }
     }
 
     public Map<Object, String> getArgs() {
@@ -504,10 +567,14 @@ public abstract class TagHandler extends SimpleTagSupport {
     }
 
     protected String getTagName(String prefix, String name) {
+        return getTagName(WebContext.getRequest(), prefix, name);
+    }
+
+    protected String getTagName(HttpServletRequest httpRequest, String prefix, String name) {
         if (name != null) {
             Matcher matcher = ExpressionHandler.EL_PATTERN.matcher(name);
             if (matcher.find()) {
-                return prefix + TagEncrypter.encrypt(WebContext.getRequest(), name);
+                return prefix + TagEncrypter.encrypt(httpRequest, name);
             }
         }
         return name;
@@ -533,6 +600,10 @@ public abstract class TagHandler extends SimpleTagSupport {
         return HANDLER.getUserAuthorizationAccess();
     }
 
+    protected AnnotatedAction getAnnotatedAction(String id) {
+        return HANDLER.getAnnotatedAction(id);
+    }
+
     protected List<WebAlert> getAlerts(String id) {
         return WebContext.getAlerts(id);
     }
@@ -545,7 +616,11 @@ public abstract class TagHandler extends SimpleTagSupport {
         return GSON.toJson(object).replace("\"", "'");
     }
 
-    protected StringBuilder getFunction(String name, String arguments, String vars, StringBuilder script) {
+    protected String asCommaSeparated(String[] array) {
+        return StringUtils.join(array, ",");
+    }
+
+    protected StringBuilder getFunction(String name, StringBuilder arguments, StringBuilder vars, StringBuilder script) {
         StringBuilder builder = new StringBuilder();
         builder.append("function").append(" ").append(name).append("(").append(arguments).append(")").append("{");
         builder.append(vars);
@@ -574,10 +649,12 @@ public abstract class TagHandler extends SimpleTagSupport {
     }
 
     protected void appendFunction(StringBuilder builder) {
-        if (builder != null) {
-            HttpServletRequest httpRequest = getRequest();
-            Script script = (Script) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);
+        appendFunction(getRequest(), builder);
+    }
 
+    protected void appendFunction(HttpServletRequest httpRequest, StringBuilder builder) {
+        if (builder != null) {
+            Script script = (Script) httpRequest.getAttribute(Constants.REQUEST_PAGE_SCRIPT_ATTR);
             if (script == null) {
                 script = new Script();
                 script.addAttribute("type", "text/javascript");

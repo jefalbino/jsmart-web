@@ -18,8 +18,10 @@
 
 package com.jsmartframework.web.tag;
 
+import com.jsmartframework.web.manager.BeanHandler;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.html.Tag;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 
@@ -75,6 +77,31 @@ public class DropActionTagHandler extends TagHandler {
     public Tag executeTag() throws JspException, IOException {
         // DO NOTHING
         return null;
+    }
+
+    @Override
+    protected void checkAnnotatedAction() {
+        BeanHandler.AnnotatedAction annotatedAction = getAnnotatedAction(id);
+        if (annotatedAction != null) {
+            action = annotatedAction.getMethod();
+
+            if (StringUtils.isNotBlank(annotatedAction.getBeforeSend())) {
+                beforeSend = annotatedAction.getBeforeSend();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnSuccess())) {
+                onSuccess = annotatedAction.getOnSuccess();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnComplete())) {
+                onComplete = annotatedAction.getOnComplete();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnError())) {
+                onError = annotatedAction.getOnError();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getUpdate())) {
+                update = annotatedAction.getUpdate();
+            }
+            setArgs(annotatedAction.getArguments());
+        }
     }
 
     String getHeader() {

@@ -24,23 +24,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used on methods that you want to be executed
+ * This annotation is used on a methods that you want to be executed
  * before the action method mapped on JSP file or via {@link Action}
  * annotation is invoked.
  * <br>
  * Also the method annotated with this annotation can return the type
  * of {@link Boolean} to indicate if the action method should be invoked.
- * <br>
- * Use {@link PreAction} annotation that is semantically correct.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-public @interface PreSubmit {
+public @interface PreAction {
 
     /**
      * List of action methods which the method annotated with
-     * {@link PreSubmit} must be invoked
+     * {@link PreAction} must be invoked
      */
     String[] onActions() default {};
 

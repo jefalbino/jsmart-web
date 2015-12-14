@@ -20,17 +20,20 @@ package com.jsmartframework.web.tag;
 
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_FUNCTION_VAR;
+import static com.jsmartframework.web.manager.BeanHandler.AnnotatedFunction;
 
+import com.jsmartframework.web.annotation.Arg;
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Ajax;
 import com.jsmartframework.web.json.Param;
 import com.jsmartframework.web.manager.TagHandler;
-import com.jsmartframework.web.tag.html.Input;
+import com.jsmartframework.web.manager.WebContext;
 import com.jsmartframework.web.tag.html.Tag;
-import com.jsmartframework.web.tag.type.Type;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 
@@ -73,38 +76,49 @@ public final class FunctionTagHandler extends TagHandler {
 
     @Override
     public Tag executeTag() throws JspException, IOException {
-
         // Just to call nested tags
         JspFragment body = getJspBody();
         if (body != null) {
             body.invoke(null);
         }
 
-        Input input = new Input();
-        input.addAttribute("id", id)
-            .addAttribute("type", Type.HIDDEN.name().toLowerCase())
-            .addAttribute("disabled", "disabled")
-            .addAttribute("readonly", true);
-
-        if (!args.isEmpty()) {
-            String actionName = getTagName(J_SBMT_ARGS, action);
-            input.addUniqueAttribute(actionName, getJsonHtmlValue(args.keySet()));
-        }
-
-        for (String param : params.keySet()) {
-            input.addUniqueAttribute(param, params.get(param));
-        }
-
-        Ajax jsonAjax = getJsonAjax(id);
-        StringBuilder builder = new StringBuilder();
-        builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-
-        appendFunction(getFunction(name, functionArgs.toString(), functionVars.toString(), builder));
-
-        return input;
+        Ajax jsonAjax = getJsonAjax(WebContext.getRequest(), id);
+        StringBuilder builder = new StringBuilder(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+        appendFunction(getFunction(name, functionArgs, functionVars, builder));
+        return null;
     }
 
-    private Ajax getJsonAjax(String id) {
+    public void executeTag(HttpServletRequest httpRequest, AnnotatedFunction annotatedFunction) throws JspException, IOException {
+        setRandomId("function");
+        name = annotatedFunction.getFunction().name();
+        action = annotatedFunction.getMethod();
+        timeout = annotatedFunction.getFunction().timeout();
+
+        if (StringUtils.isNotBlank(annotatedFunction.getBeforeSend())) {
+            beforeSend = annotatedFunction.getBeforeSend();
+        }
+        if (StringUtils.isNotBlank(annotatedFunction.getOnSuccess())) {
+            onSuccess = annotatedFunction.getOnSuccess();
+        }
+        if (StringUtils.isNotBlank(annotatedFunction.getOnComplete())) {
+            onComplete = annotatedFunction.getOnComplete();
+        }
+        if (StringUtils.isNotBlank(annotatedFunction.getOnError())) {
+            onError = annotatedFunction.getOnError();
+        }
+        if (StringUtils.isNotBlank(annotatedFunction.getUpdate())) {
+            update = annotatedFunction.getUpdate();
+        }
+
+        setArgs(annotatedFunction.getArguments());
+        validateTag();
+
+        Ajax jsonAjax = getJsonAjax(httpRequest, id);
+        StringBuilder builder = new StringBuilder(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+        appendFunction(httpRequest, getFunction(name, functionArgs, functionVars, builder));
+    }
+
+    private Ajax getJsonAjax(HttpServletRequest httpRequest, String id) {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
         jsonAjax.setTimeout(timeout);
@@ -117,10 +131,10 @@ public final class FunctionTagHandler extends TagHandler {
 
         if (action != null) {
             jsonAjax.setMethod("post");
-            jsonAjax.setAction(getTagName(J_SBMT, action));
+            jsonAjax.setAction(getTagName(httpRequest, J_SBMT, action));
 
             if (!args.isEmpty()) {
-                String name = getTagName(J_SBMT_ARGS, action);
+                String name = getTagName(httpRequest, J_SBMT_ARGS, action);
 
                 for (Object arg : args.keySet()) {
                     jsonAjax.addArg(new Param(name, arg, args.get(arg)));
@@ -147,7 +161,7 @@ public final class FunctionTagHandler extends TagHandler {
         return jsonAjax;
     }
 
-    void appendFunctionArg(String functionArg) {
+    public void appendFunctionArg(String functionArg) {
         if (functionArgs.length() != 0) {
             functionArgs.append(",");
         }

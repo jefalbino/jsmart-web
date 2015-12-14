@@ -19,7 +19,9 @@
 package com.jsmartframework.web.tag;
 
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
+import static com.jsmartframework.web.manager.BeanHandler.AnnotatedAction;
 
+import com.jsmartframework.web.annotation.Arg;
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.json.Ajax;
 import com.jsmartframework.web.json.Param;
@@ -35,6 +37,7 @@ import com.jsmartframework.web.tag.type.Look;
 import com.jsmartframework.web.tag.type.Size;
 import com.jsmartframework.web.tag.util.RefAction;
 import com.jsmartframework.web.util.WebUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -71,6 +74,8 @@ public final class LinkTagHandler extends TagHandler {
 
     private String onComplete;
 
+    private Integer timeout;
+
     private Integer tabIndex;
 
     private String size;
@@ -89,7 +94,6 @@ public final class LinkTagHandler extends TagHandler {
 
     @Override
     public Tag executeTag() throws JspException, IOException {
-
         StringWriter sw = new StringWriter();
 
         // Just to call nested tags
@@ -258,7 +262,6 @@ public final class LinkTagHandler extends TagHandler {
             appendTooltip(link);
             appendPopOver(link);
         }
-
         return linkGroup != null ? linkGroup : link;
     }
 
@@ -266,6 +269,7 @@ public final class LinkTagHandler extends TagHandler {
     private StringBuilder getFunction(String url) {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
+        jsonAjax.setTimeout(timeout);
         jsonAjax.setForm((String) getTagValue(onForm));
         jsonAjax.setTag("link");
 
@@ -323,12 +327,45 @@ public final class LinkTagHandler extends TagHandler {
         return null;
     }
 
+    @Override
+    protected void checkAnnotatedAction() {
+        AnnotatedAction annotatedAction = getAnnotatedAction(id);
+        if (annotatedAction != null) {
+            action = annotatedAction.getMethod();
+            timeout = annotatedAction.getAction().timeout();
+
+            if (StringUtils.isNotBlank(annotatedAction.getAction().onForm())) {
+                onForm = annotatedAction.getAction().onForm();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getBeforeSend())) {
+                beforeSend = annotatedAction.getBeforeSend();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnSuccess())) {
+                onSuccess = annotatedAction.getOnSuccess();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnComplete())) {
+                onComplete = annotatedAction.getOnComplete();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getOnError())) {
+                onError = annotatedAction.getOnError();
+            }
+            if (StringUtils.isNotBlank(annotatedAction.getUpdate())) {
+                update = annotatedAction.getUpdate();
+            }
+            setArgs(annotatedAction.getArguments());
+        }
+    }
+
     void setDropMenu(DropMenuTagHandler dropMenu) {
         this.dropMenu = dropMenu;
     }
 
     public void setOnForm(String onForm) {
         this.onForm = onForm;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
     }
 
     public void setLook(String look) {

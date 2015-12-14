@@ -61,6 +61,8 @@ enum ExpressionHandler {
 
     public static final Pattern EL_PATTERN = Pattern.compile("@\\{(.[^@\\{\\}]*)\\}");
 
+    public static final String EL_PATTERN_FORMAT = "@{%s.%s}";
+
     private static final Gson GSON = new Gson();
 
     Map<String, String> getRequestExpressions(HttpServletRequest request) {
@@ -126,9 +128,11 @@ enum ExpressionHandler {
                     return responsePath;
                 }
 
-                // Call mapped method with @PreSubmit annotation for specific action
-                if (HANDLER.executePreSubmit(bean, methodSign[methodSign.length -1])) {
+                // Call mapped method with @PreSubmit / @PreAction annotation for specific action
+                boolean preActionValidated = HANDLER.executePreSubmit(bean, methodSign[methodSign.length -1]);
+                preActionValidated &= HANDLER.executePreAction(bean, methodSign[methodSign.length -1]);
 
+                if (preActionValidated) {
                     Object[] arguments = null;
                     String[] paramArgs = request.getParameterValues(TagHandler.J_SBMT_ARGS + jParam);
 
@@ -149,8 +153,9 @@ enum ExpressionHandler {
 
                     responsePath = (String) methodExpr.invoke(context, arguments);
 
-                    // Call mapped method with @PostSubmit annotation for specific action
+                    // Call mapped method with @PostSubmit / @PostAction annotation for specific action
                     HANDLER.executePostSubmit(bean, methodSign[methodSign.length -1]);
+                    HANDLER.executePostAction(bean, methodSign[methodSign.length -1]);
                 }
             }
         }

@@ -25,10 +25,14 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation is used on methods which you want to be executed
- * after the submit method mapped on JSP file is invoked.
+ * after the action method mapped on JSP file or via {@link Action}
+ * annotation is invoked.
+ * <br>
+ * Use {@link PostAction} annotation that is semantically correct.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
 public @interface PostSubmit {
 
     /**

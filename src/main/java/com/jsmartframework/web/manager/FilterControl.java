@@ -35,12 +35,14 @@ import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJA
 import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
 import static com.jsmartframework.web.config.Constants.SESSION_RESET_ATTR;
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+import static com.jsmartframework.web.manager.BeanHandler.AnnotatedFunction;
 
 import com.google.gson.Gson;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import com.jsmartframework.web.config.HtmlCompress;
 import com.jsmartframework.web.json.Headers;
 import com.jsmartframework.web.json.Resources;
+import com.jsmartframework.web.tag.FunctionTagHandler;
 import com.jsmartframework.web.tag.html.DocScript;
 import com.jsmartframework.web.tag.html.Head;
 import com.jsmartframework.web.tag.html.Meta;
@@ -62,6 +64,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Level;
@@ -82,6 +85,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.JspException;
 
 public final class FilterControl implements Filter {
 
@@ -287,7 +291,7 @@ public final class FilterControl implements Filter {
         }
 
         // Stand alone functions mapped via function tag
-        Script funcScript = (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
+        Script funcScript = getFunctionScripts(httpRequest);
 
         // General page scripts executed when document is ready
         DocScript docScript = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_DOC_SCRIPT_ATTR);
@@ -311,8 +315,22 @@ public final class FilterControl implements Filter {
         if (!bodyMatcher.find()) {
             throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
         }
-
         return bodyMatcher.replaceFirst(Matcher.quoteReplacement(scriptBuilder.toString()) + "$1");
+    }
+
+    private Script getFunctionScripts(HttpServletRequest httpRequest) {
+        String requestPath = httpRequest.getServletPath();
+        List<AnnotatedFunction> annotatedFunctions = HANDLER.getAnnotatedFunctions(requestPath);
+
+        for (AnnotatedFunction annotatedFunction : annotatedFunctions) {
+            try {
+                new FunctionTagHandler().executeTag(httpRequest, annotatedFunction);
+            } catch (JspException | IOException e) {
+                LOGGER.log(Level.SEVERE, "Annotated Function could not be generated for path ["
+                        + requestPath + "]: " + e.getMessage());
+            }
+        }
+        return (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
     }
 
     private void initHeaders() {

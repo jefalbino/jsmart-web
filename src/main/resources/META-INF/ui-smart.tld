@@ -116,6 +116,10 @@
             <required>false</required>
 		</attribute>
         <attribute>
+            <name>timeout</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>update</name>
             <required>false</required>
 		</attribute>
@@ -534,6 +538,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>timeout</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>tabIndex</name>
             <required>false</required>
         </attribute>
@@ -661,7 +669,7 @@
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>name</name>

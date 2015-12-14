@@ -23,7 +23,9 @@ import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
 import com.jsmartframework.web.annotation.AuthMethod;
 import com.jsmartframework.web.annotation.ExecuteAccess;
+import com.jsmartframework.web.annotation.PostAction;
 import com.jsmartframework.web.annotation.PostSubmit;
+import com.jsmartframework.web.annotation.PreAction;
 import com.jsmartframework.web.annotation.PreSet;
 import com.jsmartframework.web.annotation.PreSubmit;
 import com.jsmartframework.web.annotation.Unescape;
@@ -66,7 +68,11 @@ enum BeanHelper {
 
     private Map<Class<?>, Method[]> preSubmitMethods = new ConcurrentHashMap<>();
 
+    private Map<Class<?>, Method[]> preActionMethods = new ConcurrentHashMap<>();
+
     private Map<Class<?>, Method[]> postSubmitMethods = new ConcurrentHashMap<>();
+
+    private Map<Class<?>, Method[]> postActionMethods = new ConcurrentHashMap<>();
 
     private Map<Class<?>, String[]> unescapeMethods = new ConcurrentHashMap<>();
 
@@ -160,13 +166,25 @@ enum BeanHelper {
         return methods != null ? methods : new Method[]{};
     }
 
+    @Deprecated
     Method[] getPostSubmitMethods(Class<?> clazz) {
         Method[] methods = postSubmitMethods.get(clazz);
         return methods != null ? methods : new Method[]{};
     }
 
+    Method[] getPostActionMethods(Class<?> clazz) {
+        Method[] methods = postActionMethods.get(clazz);
+        return methods != null ? methods : new Method[]{};
+    }
+
+    @Deprecated
     Method[] getPreSubmitMethods(Class<?> clazz) {
         Method[] methods = preSubmitMethods.get(clazz);
+        return methods != null ? methods : new Method[]{};
+    }
+
+    Method[] getPreActionMethods(Class<?> clazz) {
+        Method[] methods = preActionMethods.get(clazz);
         return methods != null ? methods : new Method[]{};
     }
 
@@ -187,7 +205,9 @@ enum BeanHelper {
             List<Method> postConstructs = new ArrayList<>();
             List<Method> preDestroys = new ArrayList<>();
             List<Method> postSubmits = new ArrayList<>();
+            List<Method> postActions = new ArrayList<>();
             List<Method> preSubmits = new ArrayList<>();
+            List<Method> preActions = new ArrayList<>();
             List<String> unescapes = new ArrayList<>();
             List<Method> executeAccess = new ArrayList<>();
 
@@ -201,8 +221,14 @@ enum BeanHelper {
                 if (method.isAnnotationPresent(PostSubmit.class)) {
                     postSubmits.add(method);
                 }
+                if (method.isAnnotationPresent(PostAction.class)) {
+                    postActions.add(method);
+                }
                 if (method.isAnnotationPresent(PreSubmit.class)) {
                     preSubmits.add(method);
+                }
+                if (method.isAnnotationPresent(PreAction.class)) {
+                    preActions.add(method);
                 }
                 if (method.isAnnotationPresent(Unescape.class)) {
                     Matcher matcher = SET_METHOD_PATTERN.matcher(method.getName());
@@ -220,7 +246,9 @@ enum BeanHelper {
             postConstructMethods.put(clazz, postConstructs.toArray(new Method[postConstructs.size()]));
             preDestroyMethods.put(clazz, preDestroys.toArray(new Method[preDestroys.size()]));
             postSubmitMethods.put(clazz, postSubmits.toArray(new Method[postSubmits.size()]));
+            postActionMethods.put(clazz, postActions.toArray(new Method[postActions.size()]));
             preSubmitMethods.put(clazz, preSubmits.toArray(new Method[preSubmits.size()]));
+            preActionMethods.put(clazz, preActions.toArray(new Method[preActions.size()]));
             unescapeMethods.put(clazz, unescapes.toArray(new String[unescapes.size()]));
         }
     }
