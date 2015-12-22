@@ -321,6 +321,14 @@ var JSmart = (function() {
             doHideModal(id);
         },
 
+        showAlert: function(id, msg, type, head, icon) {
+            return doShowAlert(id, msg, type, head, icon);
+        },
+
+        hideAlert: function(id) {
+            doHideAlert(id);
+        },
+
         showEmpty: function(id) {
             doShowEmpty(id);
         },
@@ -2030,6 +2038,11 @@ var JSmart = (function() {
                             $(this).closest('div[checkgroup]').removeClass(look);
                         }
 
+                        if (!$(this).is(':visible') || $(this).attr('readonly') || $(this).attr('disabled')) {
+                            // Continue in the looping on each() function
+                            return;
+                        }
+
                         if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
 
                             if ($(this).closest('div[checkgroup]').attr('inline')) {
@@ -2052,6 +2065,11 @@ var JSmart = (function() {
                             $(this).closest('div[radiogroup]').removeClass(look);
                         }
 
+                        if (!$(this).is(':visible') || $(this).attr('readonly') || $(this).attr('disabled')) {
+                            // Continue in the looping on each() function
+                            return;
+                        }
+
                         if (value.length == 0 || !value[0].value || value[0].value.length == 0) {
 
                             if ($(this).closest('div[radiogroup]').attr('inline')) {
@@ -2064,6 +2082,11 @@ var JSmart = (function() {
                 } else if ($(this).is('input:checkbox')) {
 
                     $(this).closest('div.checkbox').removeClass(look);
+
+                    if (!$(this).is(':visible') || $(this).attr('readonly') || $(this).attr('disabled')) {
+                        // Continue in the looping on each() function
+                        return;
+                    }
 
                     if (value.length == 0 || !value[0].value || value[0].value == 'false') {
                         addValidate($(this), text, 'checkbox', look, textLook);
@@ -2081,6 +2104,11 @@ var JSmart = (function() {
 
                     } else {
                         $(this).removeClass(look);
+                    }
+
+                    if (!$(this).is(':visible') || $(this).attr('readonly') || $(this).attr('disabled')) {
+                        // Continue in the looping on each() function
+                        return;
                     }
 
                     if ($(this).is('input:file')) {
@@ -2181,7 +2209,7 @@ var JSmart = (function() {
     }
 
     /******************************************************
-     * MODAL FUNCTIONS
+     * EXPOSED FUNCTIONS
      ******************************************************/
 
     function doShowModal(id) {
@@ -2192,9 +2220,51 @@ var JSmart = (function() {
         $(getId(id)).modal('hide');
     }
 
-    /******************************************************
-     * EXPOSED FUNCTIONS
-     ******************************************************/
+    function doShowAlert(id, msg, type, head, icon) {
+        if (!id || $.trim(id).length == 0) {
+            return null;
+        }
+        var alertWrap = $(getId(id + '-wrap')).removeAttr('role').empty();
+
+        var alert = $('<div id="' + id + '"></div>');
+        alert.addClass('alert fade in alert-dismissible').attr('role', 'alert');
+
+        if (type) {
+            if (type.toLowerCase() == 'error') {
+                type = 'danger';
+            }
+            alert.addClass('alert-' + type);
+        } else {
+            alert.addClass('alert-info');
+        }
+
+        var closeBtn = $('<button></button>').addClass('close').attr('type', 'button').attr('data-dismiss', 'alert')
+                            .attr('aria-label', 'close').attr('onClick', 'JSmart.hideAlert(\'' + id + '\')');
+        closeBtn.append($('<span>x</span>').attr('aria-hidden', 'true'));
+        alert.append(closeBtn);
+
+        if (head || icon) {
+            var span = '';
+            if (icon) {
+                span = '<span class="js5-icon ' + (icon.indexOf('glyphicon') == 0 ? 'glyphicon ' : ' ') + icon + '"></span>';
+            }
+            var h4 = $('<h4>' + (icon ? span : '') + ' ' + (head ? head : '') + '</h4>');
+            alert.append(h4);
+        }
+
+        if (msg) {
+            var p = $('<p></p>').text(msg);
+            alert.append(p);
+        }
+        alertWrap.append(alert).show();
+        return alert;
+    }
+
+    function doHideAlert(id) {
+        if (id && id.length > 0) {
+            $(getId(id + '-wrap')).attr('role', 'alert-wrap').hide();
+        }
+    }
 
     function doCreateRow(id, template) {
         var element = $(getId(id));
