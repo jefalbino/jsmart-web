@@ -61,6 +61,8 @@ enum ExpressionHandler {
 
     public static final Pattern EL_PATTERN = Pattern.compile("@\\{(.[^@\\{\\}]*)\\}");
 
+    public static final Pattern ID_PATTERN = Pattern.compile("id=\"(.[^\"]*)\"");
+
     public static final String EL_PATTERN_FORMAT = "@{%s.%s}";
 
     private static final Gson GSON = new Gson();

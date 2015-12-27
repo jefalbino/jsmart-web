@@ -21,6 +21,7 @@ package com.jsmartframework.web.manager;
 import static com.jsmartframework.web.config.Config.CONFIG;
 import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
 import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN;
+import static com.jsmartframework.web.manager.ExpressionHandler.ID_PATTERN;
 import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN_FORMAT;
 import static com.jsmartframework.web.manager.TagHandler.J_TAG_PATTERN;
 import static com.jsmartframework.web.manager.BeanHelper.HELPER;
@@ -109,7 +110,7 @@ public enum BeanHandler {
 
     private static final Pattern INCLUDE_PATTERN = Pattern.compile("<%@*.include.*file=\"(.*)\".*%>");
 
-    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern());
+    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern() + "|" + ID_PATTERN.pattern());
 
     private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
 
@@ -1096,7 +1097,7 @@ public enum BeanHandler {
 
             if (method.isAnnotationPresent(Function.class)) {
                 AnnotatedFunction annotatedFunction = new AnnotatedFunction(method.getAnnotation(Function.class),
-                        String.format(EL_PATTERN_FORMAT, className, method.getName()), arguments);
+                        className, String.format(EL_PATTERN_FORMAT, className, method.getName()), arguments);
 
                 for (String urlPattern : annotatedFunction.getFunction().forPaths()) {
                     // Functions are created per Url-Pattern
@@ -1114,7 +1115,7 @@ public enum BeanHandler {
 
             if (method.isAnnotationPresent(Action.class)) {
                 AnnotatedAction annotatedAction = new AnnotatedAction(method.getAnnotation(Action.class),
-                        String.format(EL_PATTERN_FORMAT, className, method.getName()), arguments);
+                        className, String.format(EL_PATTERN_FORMAT, className, method.getName()), arguments);
 
                 for (String id : annotatedAction.getAction().forIds()) {
                     annotatedActions.put(id, annotatedAction);
@@ -1569,6 +1570,12 @@ public enum BeanHandler {
             JspPageBean jspPageBean = new JspPageBean();
 
             readJspPageResource(context, path, jspPageBean);
+
+            // Included the mapped bean containing function into jspPageBeans
+            // so they can be initialized properly
+            for(AnnotatedFunction annotatedFunction : getAnnotatedFunctions(path)) {
+                jspPageBean.addBeanName(annotatedFunction.getClassName());
+            }
             jspPageBeans.put(path, jspPageBean);
         }
     }
@@ -1602,6 +1609,14 @@ public enum BeanHandler {
                             if (webBeans.containsKey(name.trim())) {
                                 jspPageBean.addBeanName(name.trim());
                             }
+                        }
+                    }
+
+                    matcher = ExpressionHandler.ID_PATTERN.matcher(lineScan);
+                    while (matcher.find()) {
+                        AnnotatedAction annotatedAction = getAnnotatedAction(matcher.group(1));
+                        if (annotatedAction != null) {
+                            jspPageBean.addBeanName(annotatedAction.getClassName());
                         }
                     }
                 }
@@ -1666,6 +1681,8 @@ public enum BeanHandler {
 
         private Function function;
 
+        private String className;
+
         private List<Arg> arguments;
 
         private String method;
@@ -1680,8 +1697,9 @@ public enum BeanHandler {
 
         private String update;
 
-        public AnnotatedFunction(Function function, String method, List<Arg> arguments) {
+        public AnnotatedFunction(Function function, String className, String method, List<Arg> arguments) {
             this.function = function;
+            this.className = className;
             this.method = method;
             this.beforeSend = StringUtils.join(function.beforeSend(), ";");
             this.onSuccess = StringUtils.join(function.onSuccess(), ";");
@@ -1697,6 +1715,10 @@ public enum BeanHandler {
 
         public List<Arg> getArguments() {
             return arguments;
+        }
+
+        public String getClassName() {
+            return className;
         }
 
         public String getMethod() {
@@ -1730,6 +1752,8 @@ public enum BeanHandler {
 
         private List<Arg> arguments;
 
+        private String className;
+
         private String method;
 
         private String beforeSend;
@@ -1742,8 +1766,9 @@ public enum BeanHandler {
 
         private String update;
 
-        public AnnotatedAction(Action action, String method, List<Arg> arguments) {
+        public AnnotatedAction(Action action, String className, String method, List<Arg> arguments) {
             this.action = action;
+            this.className = className;
             this.method = method;
             this.beforeSend = StringUtils.join(action.beforeSend(), ";");
             this.onSuccess = StringUtils.join(action.onSuccess(), ";");
@@ -1759,6 +1784,10 @@ public enum BeanHandler {
 
         public List<Arg> getArguments() {
             return arguments;
+        }
+
+        public String getClassName() {
+            return className;
         }
 
         public String getMethod() {
