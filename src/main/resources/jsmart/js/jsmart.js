@@ -1623,12 +1623,14 @@ var JSmart = (function() {
 
                 } else if (map.args[i].value !== undefined) {
 
-                    if (functionVars[map.args[i].value] !== undefined) {
+                    var functionValue = functionVars[map.args[i].value];
+                    if (functionValue !== undefined) {
                         var name = $.trim(map.args[i].name);
-                        params.push({name: name, value: functionVars[map.args[i].value]});
+                        params.push({name: name, value: functionValue});
                     } else {
                         var name = $.trim(map.args[i].name);
-                        params.push({name: name, value: map.args[i].value});
+                        var value = map.args[i].value;
+                        params.push({name: name, value: (value && value.indexOf('__') == 0 ? null : value)});
                     }
                 }
             }

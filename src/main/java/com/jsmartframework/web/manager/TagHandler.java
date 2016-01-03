@@ -301,7 +301,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 
             String nameVal = (String) getTagValue(arg.name());
             if (StringUtils.isBlank(nameVal)) {
-                nameVal = String.valueOf(argName++);
+                nameVal = "__" + String.valueOf(argName++);
             }
 
             if (this instanceof FunctionTagHandler && argValue == null && StringUtils.isBlank(arg.bindTo())) {

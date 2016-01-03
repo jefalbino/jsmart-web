@@ -50,7 +50,7 @@ public final class ArgTagHandler extends TagHandler {
 
         String nameVal = (String) getTagValue(name);
         if (StringUtils.isBlank(nameVal)) {
-            nameVal = String.valueOf(argName + parent.getArgs().size());
+            nameVal = "__" + String.valueOf(argName + parent.getArgs().size());
         }
 
         if (parent instanceof FunctionTagHandler && value == null && StringUtils.isBlank(bindTo)) {
