@@ -36,7 +36,7 @@ public class Scroll {
     private Map<String, String> filters;
 
     public Integer getIndex() {
-        return index;
+        return index != null ? index : 0;
     }
 
     public void setIndex(Integer index) {
