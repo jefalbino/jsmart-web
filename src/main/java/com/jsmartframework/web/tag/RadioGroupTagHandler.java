@@ -113,7 +113,7 @@ public final class RadioGroupTagHandler extends TagHandler {
 
         Div div = new Div();
         div.addAttribute("align", align)
-            .addAttribute("radiogroup", "")
+            .addAttribute("radiogroup", "radiogroup")
             .addAttribute("inline", inline ? inline : null);
 
         appendRefId(div, id);

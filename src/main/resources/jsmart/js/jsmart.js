@@ -1965,6 +1965,7 @@ var JSmart = (function() {
             if (spanLoad.length > 0) {
                 return;
             }
+            el.prop('disabled', true);
 
             spanLoad = el.find('span[' + roleLoadContent + ']');
             if (spanLoad.length > 0) {
@@ -1983,6 +1984,8 @@ var JSmart = (function() {
     function removeLoadIcon(map) {
         if (map.tag && (map.tag == 'button' || map.tag == 'link' || map.tag == 'ajax')) {
             var el = $(getId(map.id));
+            el.prop('disabled', false);
+
             el.find('>span[' + roleLoadContent + ']').remove();
 
             var leftIcon = el.find('span.js5-icon[side="left"]:first');
@@ -2006,6 +2009,12 @@ var JSmart = (function() {
             var validateArray = element.find('*[vldt-req]');
             if (!element.is('form') && element.attr('vldt-req') && element.attr('vldt-req').length > 0) {
                 validateArray = element;
+                $('em[vldt-ref="' + id + '"]').remove();
+            }
+
+            // Clear radiogroup and checkgroup which do not hold vldt-req attribute
+            if (element.attr('radiogroup') && element.attr('radiogroup').length > 0 ||
+                    element.attr('checkgroup') && element.attr('checkgroup').length > 0) {
                 $('em[vldt-ref="' + id + '"]').remove();
             }
 
@@ -2187,13 +2196,15 @@ var JSmart = (function() {
             }
 
             if (text && text.length > 0) {
-                element.closest('div[' + type + ']').after($('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text));
+                var id = element.attr('id') ? element.attr('id') : element.attr('name');
+                element.closest('div[' + type + ']').after($('<em vldt-ref="' + id + '"></em>').addClass(textLook).text(text));
             }
 
         } else if (type == 'checkbox') {
             element.closest('div.checkbox').addClass(look);
             if (text && text.length > 0) {
-                element.closest('div.checkbox').after($('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text));
+                var id = element.attr('id') ? element.attr('id') : element.attr('name');
+                element.closest('div.checkbox').after($('<em vldt-ref="' + id + '"></em>').addClass(textLook).text(text));
             }
 
         } else if (type == 'form-group' || type == 'input-group') {
