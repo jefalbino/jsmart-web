@@ -55,6 +55,7 @@ import com.jsmartframework.web.util.WebUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -473,7 +474,8 @@ public enum BeanHandler {
                 }
 
                 if (springContext != null) {
-                    if (springContext.containsBean(HELPER.getClassName(field.getType().getSimpleName()))) {
+                    String beanName = HELPER.getClassName(field.getType().getSimpleName());
+                    if (springContext.containsBean(beanName) || field.isAnnotationPresent(Qualifier.class)) {
                         field.setAccessible(true);
                         field.set(object, springContext.getBean(field.getType()));
 
@@ -690,7 +692,8 @@ public enum BeanHandler {
                 }
 
                 if (springContext != null) {
-                    if (springContext.containsBean(HELPER.getClassName(field.getType().getSimpleName()))) {
+                    String beanName = HELPER.getClassName(field.getType().getSimpleName());
+                    if (springContext.containsBean(beanName) || field.isAnnotationPresent(Qualifier.class)) {
                         field.setAccessible(true);
                         field.set(bean, springContext.getBean(field.getType()));
 
