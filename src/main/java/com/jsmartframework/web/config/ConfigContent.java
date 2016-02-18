@@ -112,6 +112,17 @@ public final class ConfigContent {
         return urlPatterns;
     }
 
+    public String[] getUrlPatternsArray() {
+        if (urlPatterns != null) {
+            String[] urls = new String[urlPatterns.length];
+            for (int i = 0; i < urlPatterns.length; i++) {
+                urls[i] = urlPatterns[i].getUrl();
+            }
+            return urls;
+        }
+        return new String[]{};
+    }
+
     public UrlPattern getUrlPattern(String url) {
         if (StringUtils.isNotBlank(url) && urlPatterns != null) {
             for (UrlPattern urlPattern : urlPatterns) {

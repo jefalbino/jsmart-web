@@ -83,7 +83,7 @@ public class DropActionTagHandler extends TagHandler {
     protected void checkAnnotatedAction() {
         BeanHandler.AnnotatedAction annotatedAction = getAnnotatedAction(id);
         if (annotatedAction != null) {
-            action = annotatedAction.getMethod();
+            action = annotatedAction.getBeanMethod();
 
             if (StringUtils.isNotBlank(annotatedAction.getBeforeSend())) {
                 beforeSend = annotatedAction.getBeforeSend();

@@ -23,6 +23,7 @@ import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
 import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN;
 import static com.jsmartframework.web.manager.ExpressionHandler.ID_PATTERN;
 import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN_FORMAT;
+import static com.jsmartframework.web.manager.ExpressionHandler.BEAN_METHOD_NAME_FORMAT;
 import static com.jsmartframework.web.manager.TagHandler.J_TAG_PATTERN;
 import static com.jsmartframework.web.manager.BeanHelper.HELPER;
 
@@ -137,6 +138,8 @@ public enum BeanHandler {
 
     Set<ServletRequestListener> requestListeners = new HashSet<>();
 
+    Map<String, AnnotatedFunction> beanMethodFunctions = new ConcurrentHashMap<>();
+
     private Map<String, List<AnnotatedFunction>> annotatedFunctions = new ConcurrentHashMap<>();
 
     private Map<String, AnnotatedAction> annotatedActions = new ConcurrentHashMap<>();
@@ -175,6 +178,7 @@ public enum BeanHandler {
             forwardPaths.clear();
             jspPageBeans.clear();
             annotatedFunctions.clear();
+            beanMethodFunctions.clear();
             annotatedActions.clear();
             jndiMapping.clear();
             initialContext = null;
@@ -1099,10 +1103,18 @@ public enum BeanHandler {
             }
 
             if (method.isAnnotationPresent(Function.class)) {
-                AnnotatedFunction annotatedFunction = new AnnotatedFunction(method.getAnnotation(Function.class),
-                        className, String.format(EL_PATTERN_FORMAT, className, method.getName()), arguments);
+                AnnotatedFunction annotatedFunction = new AnnotatedFunction(method, className, arguments);
 
-                for (String urlPattern : annotatedFunction.getFunction().forPaths()) {
+                // Keep track of functions per bean method
+                beanMethodFunctions.put(String.format(BEAN_METHOD_NAME_FORMAT, className, method.getName()),
+                        annotatedFunction);
+
+                String[] urlPaths = annotatedFunction.getFunction().forPaths();
+                if (urlPaths.length == 1 && "/*".equals(urlPaths[0].trim())) {
+                    urlPaths = CONFIG.getContent().getUrlPatternsArray();
+                }
+
+                for (String urlPattern : urlPaths) {
                     // Functions are created per Url-Pattern
                     String path = getCleanPath(urlPattern);
                     path = matchUrlPattern(path);
@@ -1117,9 +1129,7 @@ public enum BeanHandler {
             }
 
             if (method.isAnnotationPresent(Action.class)) {
-                AnnotatedAction annotatedAction = new AnnotatedAction(method.getAnnotation(Action.class),
-                        className, String.format(EL_PATTERN_FORMAT, className, method.getName()), arguments);
-
+                AnnotatedAction annotatedAction = new AnnotatedAction(method, className, arguments);
                 for (String id : annotatedAction.getAction().forIds()) {
                     annotatedActions.put(id, annotatedAction);
                 }
@@ -1684,11 +1694,13 @@ public enum BeanHandler {
 
         private Function function;
 
+        private Method method;
+
         private String className;
 
         private List<Arg> arguments;
 
-        private String method;
+        private String beanMethod;
 
         private String beforeSend;
 
@@ -1700,10 +1712,11 @@ public enum BeanHandler {
 
         private String update;
 
-        public AnnotatedFunction(Function function, String className, String method, List<Arg> arguments) {
-            this.function = function;
-            this.className = className;
+        public AnnotatedFunction(Method method, String className, List<Arg> arguments) {
             this.method = method;
+            this.className = className;
+            this.function = method.getAnnotation(Function.class);
+            this.beanMethod = String.format(EL_PATTERN_FORMAT, className, method.getName());
             this.beforeSend = StringUtils.join(function.beforeSend(), ";");
             this.onSuccess = StringUtils.join(function.onSuccess(), ";");
             this.onComplete = StringUtils.join(function.onComplete(), ";");
@@ -1716,16 +1729,31 @@ public enum BeanHandler {
             return function;
         }
 
+        public String getFunctionName() {
+            if (StringUtils.isBlank(function.name())) {
+                return method.getName();
+            }
+            return function.name();
+        }
+
         public List<Arg> getArguments() {
             return arguments;
+        }
+
+        public Class<?> getArgumentType(int index) {
+            Class<?>[] parameters = method.getParameterTypes();
+            if (parameters.length > index) {
+                return parameters[index];
+            }
+            return null;
         }
 
         public String getClassName() {
             return className;
         }
 
-        public String getMethod() {
-            return method;
+        public String getBeanMethod() {
+            return beanMethod;
         }
 
         public String getBeforeSend() {
@@ -1753,11 +1781,13 @@ public enum BeanHandler {
 
         private Action action;
 
+        private Method method;
+
         private List<Arg> arguments;
 
         private String className;
 
-        private String method;
+        private String beanMethod;
 
         private String beforeSend;
 
@@ -1769,10 +1799,11 @@ public enum BeanHandler {
 
         private String update;
 
-        public AnnotatedAction(Action action, String className, String method, List<Arg> arguments) {
-            this.action = action;
-            this.className = className;
+        public AnnotatedAction(Method method, String className, List<Arg> arguments) {
             this.method = method;
+            this.className = className;
+            this.action = method.getAnnotation(Action.class);
+            this.beanMethod = String.format(EL_PATTERN_FORMAT, className, method.getName());
             this.beforeSend = StringUtils.join(action.beforeSend(), ";");
             this.onSuccess = StringUtils.join(action.onSuccess(), ";");
             this.onComplete = StringUtils.join(action.onComplete(), ";");
@@ -1793,8 +1824,8 @@ public enum BeanHandler {
             return className;
         }
 
-        public String getMethod() {
-            return method;
+        public String getBeanMethod() {
+            return beanMethod;
         }
 
         public String getBeforeSend() {

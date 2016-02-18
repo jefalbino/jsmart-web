@@ -90,8 +90,8 @@ public final class FunctionTagHandler extends TagHandler {
 
     public void executeTag(HttpServletRequest httpRequest, AnnotatedFunction annotatedFunction) throws JspException, IOException {
         setRandomId("function");
-        name = annotatedFunction.getFunction().name();
-        action = annotatedFunction.getMethod();
+        name = annotatedFunction.getFunctionName();
+        action = annotatedFunction.getBeanMethod();
         timeout = annotatedFunction.getFunction().timeout();
 
         if (StringUtils.isNotBlank(annotatedFunction.getBeforeSend())) {

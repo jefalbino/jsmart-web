@@ -34,7 +34,7 @@ public @interface Function {
     /**
      * Name of JavaScript function to be invoked on client side
      */
-    String name();
+    String name() default "";
 
     /**
      * Specifies the timeout in milliseconds to wait before Ajax request is performed.

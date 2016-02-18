@@ -1626,7 +1626,13 @@ var JSmart = (function() {
                     var functionValue = functionVars[map.args[i].value];
                     if (functionValue !== undefined) {
                         var name = $.trim(map.args[i].name);
-                        params.push({name: name, value: functionValue});
+
+                        // Serialize into json case it is object or array
+                        if ($.type(functionValue) === 'object' || $.type(functionValue) === 'array') {
+                            params.push({name: name, value: JSON.stringify(functionValue)});
+                        } else {
+                            params.push({name: name, value: functionValue});
+                        }
                     } else {
                         var name = $.trim(map.args[i].name);
                         var value = map.args[i].value;

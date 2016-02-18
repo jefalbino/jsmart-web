@@ -244,7 +244,7 @@ public abstract class TagHandler extends SimpleTagSupport {
         AjaxTagHandler ajaxTag = new AjaxTagHandler();
         ajaxTag.setEvent(annotatedAction.getAction().event());
         ajaxTag.setTimeout(annotatedAction.getAction().timeout());
-        ajaxTag.setAction(annotatedAction.getMethod());
+        ajaxTag.setAction(annotatedAction.getBeanMethod());
 
         if (StringUtils.isNotBlank(annotatedAction.getAction().onForm())) {
             ajaxTag.setOnForm(annotatedAction.getAction().onForm());

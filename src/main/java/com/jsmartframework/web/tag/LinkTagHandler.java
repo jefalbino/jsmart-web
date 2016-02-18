@@ -331,7 +331,7 @@ public final class LinkTagHandler extends TagHandler {
     protected void checkAnnotatedAction() {
         AnnotatedAction annotatedAction = getAnnotatedAction(id);
         if (annotatedAction != null) {
-            action = annotatedAction.getMethod();
+            action = annotatedAction.getBeanMethod();
             timeout = annotatedAction.getAction().timeout();
 
             if (StringUtils.isNotBlank(annotatedAction.getAction().onForm())) {

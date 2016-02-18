@@ -20,9 +20,11 @@ package com.jsmartframework.web.manager;
 
 import static com.jsmartframework.web.config.Config.CONFIG;
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+import static com.jsmartframework.web.manager.BeanHandler.AnnotatedFunction;
 
 import com.google.common.html.HtmlEscapers;
 import com.google.gson.Gson;
+import com.google.gson.internal.Primitives;
 import com.jsmartframework.web.adapter.ListAdapter;
 import com.jsmartframework.web.adapter.TableAdapter;
 import com.jsmartframework.web.config.Constants;
@@ -64,6 +66,8 @@ enum ExpressionHandler {
     public static final Pattern ID_PATTERN = Pattern.compile("id=\"(.[^\"]*)\"");
 
     public static final String EL_PATTERN_FORMAT = "@{%s.%s}";
+
+    public static final String BEAN_METHOD_NAME_FORMAT = "%s.%s";
 
     private static final Gson GSON = new Gson();
 
@@ -123,10 +127,10 @@ enum ExpressionHandler {
 
             if (methodSign.length > 0 && WebContext.containsAttribute(methodSign[0])) {
                 Object bean = getExpressionBean(methodSign[0]);
-                beanMethod = String.format(Constants.JSP_EL, beanMethod);
+                String elBeanMethod = String.format(Constants.JSP_EL, beanMethod);
 
                 // Check authorization to execute method
-                if (!HANDLER.checkExecuteAuthorization(bean, beanMethod, request)) {
+                if (!HANDLER.checkExecuteAuthorization(bean, elBeanMethod, request)) {
                     return responsePath;
                 }
 
@@ -139,10 +143,20 @@ enum ExpressionHandler {
                     String[] paramArgs = request.getParameterValues(TagHandler.J_SBMT_ARGS + jParam);
 
                     if (paramArgs != null) {
-                        boolean unescape = HANDLER.containsUnescapeMethod(methodSign);
                         arguments = new Object[paramArgs.length];
+                        boolean unescape = HANDLER.containsUnescapeMethod(methodSign);
+
+                        AnnotatedFunction function = HANDLER.beanMethodFunctions.get(beanMethod);
 
                         for (int i = 0; i < paramArgs.length; i++) {
+                            if (function != null) {
+                                Class<?> argClass = function.getArgumentType(i);
+
+                                if (argClass != null && !Primitives.isPrimitive(argClass) && !argClass.equals(String.class)) {
+                                    arguments[i] = GSON.fromJson(paramArgs[i], argClass);
+                                    continue;
+                                }
+                            }
                             arguments[i] = unescape ? paramArgs[i] : escapeValue(paramArgs[i]);
                         }
                     }
@@ -150,7 +164,7 @@ enum ExpressionHandler {
                     // Call submit method
                     ELContext context = WebContext.getPageContext().getELContext();
 
-                    MethodExpression methodExpr = WebContext.getExpressionFactory().createMethodExpression(context, beanMethod,
+                    MethodExpression methodExpr = WebContext.getExpressionFactory().createMethodExpression(context, elBeanMethod,
                             null, arguments != null ? new Class<?>[arguments.length] : new Class<?>[]{});
 
                     responsePath = (String) methodExpr.invoke(context, arguments);
