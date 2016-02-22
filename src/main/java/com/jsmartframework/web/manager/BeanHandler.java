@@ -199,7 +199,7 @@ public enum BeanHandler {
                 try {
                     if (action.equalsIgnoreCase(onAction)) {
                         Boolean result = (Boolean) method.invoke(bean, null);
-                        return result != null && result;
+                        return result != null ? result : true;
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -215,7 +215,7 @@ public enum BeanHandler {
                 try {
                     if (action.equalsIgnoreCase(onAction)) {
                         Boolean result = (Boolean) method.invoke(bean, null);
-                        return result != null && result;
+                        return result != null ? result : true;
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
