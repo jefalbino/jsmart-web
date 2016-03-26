@@ -64,7 +64,6 @@ public final class CacheFilter implements Filter {
         if (cachePattern != null && cachePattern.getCacheControl() != null) {
             httpResponse.setHeader(HEADER_CACHE_CONTROL, cachePattern.getCacheControl());
         }
-
         filterChain.doFilter(httpRequest, httpResponse);
     }
 

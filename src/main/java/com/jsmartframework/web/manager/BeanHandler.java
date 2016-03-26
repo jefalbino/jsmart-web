@@ -1598,10 +1598,10 @@ public enum BeanHandler {
 
         if (is != null) {
             Scanner fileScanner = new Scanner(is);
-            Set<String> includes = new LinkedHashSet<String>();
+            Set<String> includes = new LinkedHashSet<>();
 
             try {
-                String lineScan = null;
+                String lineScan;
                 while ((lineScan = fileScanner.findWithinHorizon(HANDLER_EL_PATTERN, 0)) != null) {
 
                     boolean hasInclude = false;

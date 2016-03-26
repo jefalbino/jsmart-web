@@ -22,9 +22,12 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class CachePattern {
+
+    private static Pattern filesPattern;
 
     private String cacheControl;
 
@@ -48,18 +51,31 @@ public final class CachePattern {
     }
 
     public boolean isEndedIn(String file) {
-        if (files != null && file != null) {
-            for (String fl : files) {
-                if (file.endsWith("." + fl)) {
-                    return true;
-                }
-            }
+        if (filesPattern != null && file != null) {
+            Matcher matcher = filesPattern.matcher(file);
+            return matcher.find();
         }
         return false;
     }
 
     public void setFiles(String[] files) {
         this.files = files;
+        if (files == null || files.length == 0) {
+            return;
+        }
+
+        StringBuilder patternBuilder = new StringBuilder("[^\\s]+(\\.(");
+        for (int index = 0; index < files.length; index++) {
+            if (files[index].contains(".")) {
+                files[index] = files[index].replace(".", "");
+            }
+            if (index != 0) {
+                patternBuilder.append("|");
+            }
+            patternBuilder.append(files[index]);
+        }
+        patternBuilder.append("))$");
+        filesPattern = Pattern.compile(patternBuilder.toString());
     }
 
 }

@@ -27,6 +27,7 @@ import static com.jsmartframework.web.config.Constants.INDEX_JSP;
 import static com.jsmartframework.web.config.Constants.LIB_FILE_PATH;
 import static com.jsmartframework.web.config.Constants.LIB_JAR_FILE_PATTERN;
 import static com.jsmartframework.web.config.Constants.PATH_SEPARATOR;
+import static com.jsmartframework.web.config.Constants.ROOT_PATH;
 import static com.jsmartframework.web.config.Constants.REQUEST_META_DATA_CSRF_TOKEN_NAME;
 import static com.jsmartframework.web.config.Constants.REQUEST_META_DATA_CSRF_TOKEN_VALUE;
 import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_DOC_SCRIPT_ATTR;
@@ -39,6 +40,7 @@ import static com.jsmartframework.web.manager.BeanHandler.AnnotatedFunction;
 
 import com.google.gson.Gson;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
+import com.jsmartframework.web.config.FileVersion;
 import com.jsmartframework.web.config.HtmlCompress;
 import com.jsmartframework.web.json.Headers;
 import com.jsmartframework.web.json.Resources;
@@ -63,10 +65,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -107,14 +112,17 @@ public final class FilterControl implements Filter {
 
     private static final Pattern JAR_FILE_PATTERN = Pattern.compile(LIB_JAR_FILE_PATTERN);
 
-    private static final StringBuilder headerScripts = new StringBuilder();;
+    private static Map<String, Pattern> versionFilePatterns = new ConcurrentHashMap<>();
 
-    private static final StringBuilder headerStyles = new StringBuilder();
+    private static StringBuilder headerScripts = new StringBuilder();
+
+    private static StringBuilder headerStyles = new StringBuilder();
 
     @Override
     public void init(FilterConfig config) throws ServletException {
         initHeaders();
         initResources(config);
+        versionResources(config);
     }
 
     @Override
@@ -189,7 +197,7 @@ public final class FilterControl implements Filter {
 
         // Generate HTML after flushing the response wrapper buffer
         responseWrapper.flushBuffer();
-        String html = getCompleteHtml(httpRequest, responseWrapper);
+        String html = completeHtml(httpRequest, responseWrapper);
 
         // Close current outputStream on responseWrapper
         responseWrapper.close();
@@ -252,7 +260,7 @@ public final class FilterControl implements Filter {
         }
     }
 
-    private String getCompleteHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
+    private String completeHtml(HttpServletRequest httpRequest, HttpServletResponseWrapper response) {
         String html = response.toString();
 
         // Ajax request do not use scripts returned on html body
@@ -260,13 +268,19 @@ public final class FilterControl implements Filter {
             return html;
         }
 
-        Matcher htmlMatcher = HTML_PATTERN.matcher(html);
-
         // Check if it is a valid html, if not just return the html
+        Matcher htmlMatcher = HTML_PATTERN.matcher(html);
         if (!htmlMatcher.find()) {
             return html;
         }
 
+        html = completeHeader(httpRequest, htmlMatcher, html);
+        html = completeScripts(httpRequest, html);
+        html = completeVersions(httpRequest, html);
+        return html;
+    }
+
+    private String completeHeader(HttpServletRequest httpRequest, Matcher htmlMatcher, String html) {
         // Try to place the css as the first link in the head tag
         Matcher startHeadMatcher = START_HEAD_PATTERN.matcher(html);
         if (startHeadMatcher.find()) {
@@ -289,7 +303,10 @@ public final class FilterControl implements Filter {
 
             html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(metaTags.toString()));
         }
+        return html;
+    }
 
+    private String completeScripts(HttpServletRequest httpRequest, String html) {
         // Stand alone functions mapped via function tag
         Script funcScript = getFunctionScripts(httpRequest);
 
@@ -316,6 +333,18 @@ public final class FilterControl implements Filter {
             throw new RuntimeException("HTML tag [body] could not be find. Please insert the body tag in your JSP");
         }
         return bodyMatcher.replaceFirst(Matcher.quoteReplacement(scriptBuilder.toString()) + "$1");
+    }
+
+    private String completeVersions(HttpServletRequest httpRequest, String html) {
+        if (versionFilePatterns.isEmpty()) {
+            return html;
+        }
+        for (String version : versionFilePatterns.keySet()) {
+            Pattern filePattern = versionFilePatterns.get(version);
+            Matcher fileMatcher = filePattern.matcher(html);
+            html = fileMatcher.replaceAll("$1" + Matcher.quoteReplacement("?" + version));
+        }
+        return html;
     }
 
     private Script getFunctionScripts(HttpServletRequest httpRequest) {
@@ -407,7 +436,6 @@ public final class FilterControl implements Filter {
 
                 // Copy js, css and font resources to specific location
                 for (String resource : jsonResources.getResources()) {
-
                     String resourcePath = resource.replace("*", "");
 
                     if (file.getRelativePath().startsWith(resourcePath)) {
@@ -434,6 +462,52 @@ public final class FilterControl implements Filter {
                     dir.mkdir();
                 }
             }
+        }
+    }
+
+    private void versionResources(FilterConfig config) {
+        try {
+            if (CONFIG.getContent().getFileVersions() == null) {
+                LOGGER.log(Level.INFO, "Not using files version control.");
+                return;
+            }
+
+            ServletContext context = config.getServletContext();
+            File libFile = new File(context.getRealPath(ROOT_PATH));
+            Dir content = Vfs.fromURL(libFile.toURI().toURL());
+
+            Map<String, StringBuilder> patternBuilders = new HashMap<>();
+            Iterator<Vfs.File> files = content.getFiles().iterator();
+
+            while (files.hasNext()) {
+                Vfs.File file = files.next();
+                String relativePath = file.getRelativePath();
+
+                FileVersion fileVersion = CONFIG.getContent().getFileVersion(relativePath);
+                if (fileVersion != null && !fileVersion.isOnExcludeFolders(relativePath)) {
+                    if (!fileVersion.isIncludeMinified() && fileVersion.isMinifiedFile(relativePath)) {
+                        continue;
+                    }
+
+                    StringBuilder patternBuilder = patternBuilders.get(fileVersion.getVersion());
+                    if (patternBuilder == null) {
+                        patternBuilder = new StringBuilder("(");
+                        patternBuilders.put(fileVersion.getVersion(), patternBuilder);
+                    }
+
+                    if (patternBuilder.length() > 1) {
+                        patternBuilder.append("|");
+                    }
+                    patternBuilder.append(relativePath.replace(".", "\\."));
+                }
+            }
+
+            for (String version : patternBuilders.keySet()) {
+                StringBuilder patternBuilder = patternBuilders.get(version).append(")");
+                versionFilePatterns.put(version, Pattern.compile(patternBuilder.toString(), Pattern.DOTALL));
+            }
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage());
         }
     }
 

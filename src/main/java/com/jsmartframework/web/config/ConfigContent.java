@@ -55,6 +55,8 @@ public final class ConfigContent {
 
     private CachePattern[] cachePatterns;
 
+    private FileVersion[] fileVersions;
+
     private ContentEncode contentEncode;
 
     private boolean escapeRequest = true;
@@ -340,6 +342,29 @@ public final class ConfigContent {
     public void setCachePatterns(CachePattern[] cachePatterns) {
         if (cachePatterns != null && cachePatterns.length > 0) {
             this.cachePatterns = cachePatterns;
+        }
+    }
+
+    @XmlElement(name = "file-version")
+    @XmlElementWrapper(name = "file-versions")
+    public FileVersion[] getFileVersions() {
+        return fileVersions;
+    }
+
+    public FileVersion getFileVersion(String file) {
+        if (StringUtils.isNotBlank(file) && fileVersions != null) {
+            for (FileVersion fileVersion : fileVersions) {
+                if (fileVersion.hasExtension(file)) {
+                    return fileVersion;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setFileVersions(FileVersion[] fileVersions) {
+        if (fileVersions != null && fileVersions.length > 0) {
+            this.fileVersions = fileVersions;
         }
     }
 

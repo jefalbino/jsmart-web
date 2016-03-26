@@ -40,8 +40,6 @@ public final class ErrorFilter implements Filter {
 
     private static final Logger LOGGER = Logger.getLogger(ErrorFilter.class.getPackage().getName());
 
-    private static final String HEADER_E_TAG = "ETag";
-
     @Override
     public void init(FilterConfig config) throws ServletException {
         // DO NOTHING
@@ -59,17 +57,13 @@ public final class ErrorFilter implements Filter {
 
         final String requestPath = httpRequest.getServletPath();
 
-        // Wrapper to change the default ETag-based validated caching to faster max-age-caching,
-        // we need to prevent the ETag-header from being added to the response object.
-        // Also it is necessary to avoid error 404 (not found) to be set by container,
-        // in order to allow 404 page customization by framework settings
+        // It is necessary to avoid HTTP error codes to be set by container,
+        // so we allow error code page customization by framework settings
         HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(httpResponse) {
 
             @Override
             public void setHeader(String name, String value) {
-                if (!HEADER_E_TAG.equals(name)) {
-                    httpResponse.setHeader(name, value);
-                }
+                httpResponse.setHeader(name, value);
             }
 
             @Override
