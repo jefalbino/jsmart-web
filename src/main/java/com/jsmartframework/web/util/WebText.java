@@ -42,6 +42,8 @@ public enum WebText {
 
     TEXTS();
 
+    public static final String NOT_FOUND = "???";
+
     private static final Logger LOGGER = Logger.getLogger(WebText.class.getPackage().getName());
 
     private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
@@ -98,7 +100,7 @@ public enum WebText {
         } catch (MissingResourceException ex) {
             LOGGER.log(Level.INFO, "Message for " + key + " not found: " + ex.getMessage());
         }
-        return "???";
+        return NOT_FOUND;
     }
 
     public static String getString(final String res, final String key, final Object ... params) {

@@ -459,6 +459,11 @@ enum ExpressionHandler {
             return expr;
         }
 
+        String[] exprs = expr.split(Constants.EL_SEPARATOR, 2);
+        if (exprs.length == 2 && WebText.containsResource(exprs[0])) {
+            return WebText.getString(exprs[0], exprs[1]);
+        }
+
         String jspExpr = String.format(Constants.JSP_EL, expr);
 
         ELContext context = WebContext.getPageContext().getELContext();
@@ -471,16 +476,7 @@ enum ExpressionHandler {
                 return WebText.getString(objs[0], objs[1]);
             }
         }
-
-        if (obj != null) {
-            return obj;
-        }
-
-        String[] exprs = expr.split(Constants.EL_SEPARATOR, 2);
-        if (exprs.length == 2 && WebText.containsResource(exprs[0])) {
-            return WebText.getString(exprs[0], exprs[1]);
-        }
-        return null;
+        return obj;
     }
 
     private Object getExpressionBean(String name) {
