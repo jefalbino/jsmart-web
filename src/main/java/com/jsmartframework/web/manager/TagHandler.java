@@ -32,13 +32,12 @@ import com.jsmartframework.web.json.Ajax;
 import com.jsmartframework.web.json.Bind;
 import com.jsmartframework.web.tag.AjaxTagHandler;
 import com.jsmartframework.web.tag.BindTagHandler;
-import com.jsmartframework.web.tag.ButtonTagHandler;
 import com.jsmartframework.web.tag.EmptyTagHandler;
 import com.jsmartframework.web.tag.FunctionTagHandler;
 import com.jsmartframework.web.tag.IconTagHandler;
-import com.jsmartframework.web.tag.LinkTagHandler;
 import com.jsmartframework.web.tag.LoadTagHandler;
 import com.jsmartframework.web.tag.PopOverTagHandler;
+import com.jsmartframework.web.tag.RepeatTagHandler;
 import com.jsmartframework.web.tag.TooltipTagHandler;
 import com.jsmartframework.web.tag.ValidateTagHandler;
 import com.jsmartframework.web.tag.html.DocScript;
@@ -69,6 +68,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public abstract class TagHandler extends SimpleTagSupport {
@@ -116,6 +117,8 @@ public abstract class TagHandler extends SimpleTagSupport {
     protected final Map<Object, String> args;
 
     protected ValidateTagHandler validatorTag;
+
+    protected RepeatTagHandler repeatTag;
 
     protected LoadTagHandler loadTag;
 
@@ -222,6 +225,16 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     // Available for overriding to stop tag being processed
     public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+        if (parent instanceof RepeatTagHandler) {
+
+            JspFragment body = getJspBody();
+            if (body != null) {
+                body.invoke(null);
+            }
+            ((RepeatTagHandler) parent).addTag(this);
+            return false;
+        }
         return true;
     }
 
@@ -321,6 +334,10 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     public void setValidatorTag(ValidateTagHandler validatorTag) {
         this.validatorTag = validatorTag;
+    }
+
+    public void setRepeatTag(RepeatTagHandler repeatTag) {
+        this.repeatTag = repeatTag;
     }
 
     public void setLoadTag(LoadTagHandler loadTag) {
@@ -845,6 +862,12 @@ public abstract class TagHandler extends SimpleTagSupport {
             for (BindTagHandler bind : tagHandler.bindTags) {
                 appendDocScript(bind.getDelegateFunction(id, child));
             }
+        }
+    }
+
+    protected void appendRepeatChild(Tag tag) throws JspException, IOException {
+        if (repeatTag != null) {
+            tag.addTag(repeatTag.executeTag());
         }
     }
 

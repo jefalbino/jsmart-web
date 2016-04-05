@@ -18,9 +18,18 @@
 
 package com.jsmartframework.web.tag;
 
+import com.jsmartframework.web.json.Ajax;
+import com.jsmartframework.web.json.Param;
 import com.jsmartframework.web.manager.BeanHandler;
 import com.jsmartframework.web.manager.TagHandler;
+import com.jsmartframework.web.tag.css.Bootstrap;
+import com.jsmartframework.web.tag.html.A;
+import com.jsmartframework.web.tag.html.Li;
+import com.jsmartframework.web.tag.html.Set;
 import com.jsmartframework.web.tag.html.Tag;
+import com.jsmartframework.web.tag.type.Align;
+import com.jsmartframework.web.tag.type.Event;
+import com.jsmartframework.web.util.WebUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
@@ -28,6 +37,8 @@ import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
+
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
 
 public class DropActionTagHandler extends TagHandler {
 
@@ -56,16 +67,14 @@ public class DropActionTagHandler extends TagHandler {
         JspTag parent = getParent();
         if (parent instanceof DropMenuTagHandler) {
 
-            // Just to call nested tags for parameters
             JspFragment body = getJspBody();
             if (body != null) {
                 body.invoke(null);
             }
-
             ((DropMenuTagHandler) parent).addDropAction(this);
             return false;
         }
-        return true;
+        return super.beforeTag();
     }
 
     @Override
@@ -75,8 +84,118 @@ public class DropActionTagHandler extends TagHandler {
 
     @Override
     public Tag executeTag() throws JspException, IOException {
-        // DO NOTHING
-        return null;
+        Set set = new Set();
+        if (id == null) {
+            setRandomId("dropaction");
+        }
+
+        if (header != null) {
+            Li headerLi = new Li();
+            headerLi.addAttribute("role", "presentation")
+                    .addAttribute("class", Bootstrap.DROPDOWN_HEADER)
+                    .addText(getTagValue(header));
+            set.addTag(headerLi);
+        }
+
+        Li li = new Li();
+        li.addAttribute("id", id)
+                .addAttribute("role", "presentation")
+                .addAttribute("class", disabled ? Bootstrap.DISABLED : null);
+        set.addTag(li);
+
+        appendEvent(li);
+
+        A a = new A();
+        a.addAttribute("style", "cursor: pointer;");
+        li.addTag(a);
+
+        for (IconTagHandler iconTag : iconTags) {
+            if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
+                a.addTag(iconTag.executeTag());
+                a.addText(" ");
+            }
+        }
+
+        a.addText(getTagValue(label));
+
+        for (IconTagHandler iconTag : iconTags) {
+            if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
+                a.addText(" ");
+                a.addTag(iconTag.executeTag());
+            }
+        }
+
+        if (divider) {
+            Li dividerLi = new Li();
+            dividerLi.addAttribute("class", Bootstrap.DIVIDER);
+            set.addTag(dividerLi);
+        }
+
+        StringBuilder urlParams = new StringBuilder("?");
+        for (String key : params.keySet()) {
+            urlParams.append(key + "=" + params.get(key) + "&");
+        }
+
+        String url = "";
+        String outcomeVal = WebUtils.decodePath((String) getTagValue(outcome));
+        if (outcomeVal != null) {
+            url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal)
+                    + urlParams.substring(0, urlParams.length() -1);
+        }
+
+        String href = "#";
+        if (action == null && !url.isEmpty()) {
+            href = (!url.startsWith("http") && !url.startsWith("mailto") && !url.startsWith("#") ?
+                    getRequest().getContextPath() + "/" : "") + url;
+            a.addAttribute("href", href);
+        } else {
+            appendDocScript(getFunction());
+        }
+        return set;
+    }
+
+    private StringBuilder getFunction() {
+        Ajax jsonAjax = new Ajax();
+        jsonAjax.setId(id);
+        jsonAjax.setTag("dropaction");
+
+        // Params must be considered regardless the action for rest purpose
+        for (String name : params.keySet()) {
+            jsonAjax.addParam(new Param(name, params.get(name)));
+        }
+
+        if (action != null) {
+            jsonAjax.setMethod("post");
+            jsonAjax.setAction(getTagName(J_SBMT, action));
+
+            if (!args.isEmpty()) {
+                String argName = getTagName(J_SBMT_ARGS, action);
+                for (Object arg : args.keySet()) {
+                    jsonAjax.addArg(new Param(argName, arg, args.get(arg)));
+                }
+            }
+        } else if (update != null) {
+            jsonAjax.setMethod("get");
+        }
+        if (update != null) {
+            jsonAjax.setUpdate(update.trim());
+        }
+        if (beforeSend != null) {
+            jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
+        }
+        if (onError != null) {
+            jsonAjax.setError((String) getTagValue(onError.trim()));
+        }
+        if (onSuccess != null) {
+            jsonAjax.setSuccess((String) getTagValue(onSuccess.trim()));
+        }
+        if (onComplete != null) {
+            jsonAjax.setComplete((String) getTagValue(onComplete.trim()));
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+        return getBindFunction(id, Event.CLICK.name(), builder);
     }
 
     @Override
@@ -104,80 +223,40 @@ public class DropActionTagHandler extends TagHandler {
         }
     }
 
-    String getHeader() {
-        return header;
-    }
-
     public void setHeader(String header) {
         this.header = header;
-    }
-
-    boolean hasDivider() {
-        return divider;
     }
 
     public void setDivider(boolean divider) {
         this.divider = divider;
     }
 
-    String getLabel() {
-        return label;
-    }
-
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    String getOutcome() {
-        return outcome;
     }
 
     public void setOutcome(String outcome) {
         this.outcome = outcome;
     }
 
-    String getAction() {
-        return action;
-    }
-
     public void setAction(String action) {
         this.action = action;
-    }
-
-    String getUpdate() {
-        return update;
     }
 
     public void setUpdate(String update) {
         this.update = update;
     }
 
-    String getBeforeSend() {
-        return beforeSend;
-    }
-
     public void setBeforeSend(String beforeSend) {
         this.beforeSend = beforeSend;
-    }
-
-    String getOnError() {
-        return onError;
     }
 
     public void setOnError(String onError) {
         this.onError = onError;
     }
 
-    String getOnSuccess() {
-        return onSuccess;
-    }
-
     public void setOnSuccess(String onSuccess) {
         this.onSuccess = onSuccess;
-    }
-
-    String getOnComplete() {
-        return onComplete;
     }
 
     public void setOnComplete(String onComplete) {

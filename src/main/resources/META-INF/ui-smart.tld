@@ -1558,10 +1558,10 @@
             <required>false</required>
         </attribute>
 	</tag>
-    
+
     <tag>
-        <name>accordion</name>
-        <tag-class>com.jsmartframework.web.tag.AccordionTagHandler</tag-class>
+        <name>repeat</name>
+        <tag-class>com.jsmartframework.web.tag.RepeatTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>id</name>
@@ -1577,10 +1577,28 @@
         </attribute>
         <attribute>
             <name>var</name>
-            <required>false</required>
+            <required>true</required>
         </attribute>
         <attribute>
             <name>values</name>
+            <required>true</required>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>accordion</name>
+        <tag-class>com.jsmartframework.web.tag.AccordionTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>id</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
             <required>false</required>
         </attribute>
         <attribute>

@@ -18,20 +18,12 @@
 
 package com.jsmartframework.web.tag;
 
-import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
-
 import com.jsmartframework.web.exception.InvalidAttributeException;
-import com.jsmartframework.web.json.Ajax;
-import com.jsmartframework.web.json.Param;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.css.Bootstrap;
-import com.jsmartframework.web.tag.html.A;
-import com.jsmartframework.web.tag.html.Li;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.html.Ul;
 import com.jsmartframework.web.tag.type.Align;
-import com.jsmartframework.web.tag.type.Event;
-import com.jsmartframework.web.util.WebUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,121 +97,11 @@ public final class DropMenuTagHandler extends TagHandler {
         ul.addAttribute("class", getTagValue(styleClass));
 
         for (DropActionTagHandler dropAction : dropActions) {
-
-            if (dropAction.getId() == null) {
-                setRandomId(dropAction, "dropaction");
-            }
-
-            if (dropAction.getHeader() != null) {
-                Li headerLi = new Li();
-                headerLi.addAttribute("role", "presentation")
-                    .addAttribute("class", Bootstrap.DROPDOWN_HEADER)
-                    .addText(getTagValue(dropAction.getHeader()));
-                ul.addTag(headerLi);
-            }
-
-            Li li = new Li();
-            li.addAttribute("id", dropAction.getId())
-                .addAttribute("role", "presentation")
-                .addAttribute("class", dropAction.isDisabled() ? Bootstrap.DISABLED : null);
-            ul.addTag(li);
-
-            appendEvent(li, dropAction);
-
-            A a = new A();
-            a.addAttribute("style", "cursor: pointer;");
-            li.addTag(a);
-
-            for (IconTagHandler iconTag : dropAction.getIconTags()) {
-                if (Align.LEFT.equalsIgnoreCase(iconTag.getSide())) {
-                    a.addTag(iconTag.executeTag());
-                    a.addText(" ");
-                }
-            }
-
-            a.addText(getTagValue(dropAction.getLabel()));
-
-            for (IconTagHandler iconTag : dropAction.getIconTags()) {
-                if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
-                    a.addText(" ");
-                    a.addTag(iconTag.executeTag());
-                }
-            }
-
-            if (dropAction.hasDivider()) {
-                Li dividerLi = new Li();
-                dividerLi.addAttribute("class", Bootstrap.DIVIDER);
-                ul.addTag(dividerLi);
-            }
-
-            StringBuilder urlParams = new StringBuilder("?");
-            for (String key : dropAction.getParams().keySet()) {
-                urlParams.append(key + "=" + dropAction.getParams().get(key) + "&");
-            }
-
-            String url = "";
-
-            String outcomeVal = WebUtils.decodePath((String) getTagValue(dropAction.getOutcome()));
-            if (outcomeVal != null) {
-                url = (outcomeVal.startsWith("/") ? outcomeVal.replaceFirst("/", "") : outcomeVal)
-                        + urlParams.substring(0, urlParams.length() -1);
-            }
-
-            String href = "#";
-            if (dropAction.getAction() == null && !url.isEmpty()) {
-                href = (!url.startsWith("http") && !url.startsWith("mailto") && !url.startsWith("#") ?
-                        getRequest().getContextPath() + "/" : "") + url;
-                a.addAttribute("href", href);
-            } else {
-                appendDocScript(getFunction(dropAction));
-            }
+            ul.addTag(dropAction.executeTag());
         }
 
+        appendRepeatChild(ul);
         return ul;
-    }
-
-    private StringBuilder getFunction(DropActionTagHandler dropAction) {
-        Ajax jsonAjax = new Ajax();
-        jsonAjax.setId(dropAction.getId());
-        jsonAjax.setTag("dropaction");
-
-        // Params must be considered regardless the action for rest purpose
-        for (String name : dropAction.getParams().keySet()) {
-            jsonAjax.addParam(new Param(name, dropAction.getParams().get(name)));
-        }
-
-        if (dropAction.getAction() != null) {
-            jsonAjax.setMethod("post");
-            jsonAjax.setAction(getTagName(J_SBMT, dropAction.getAction()));
-
-            if (!dropAction.getArgs().isEmpty()) {
-                String argName = getTagName(J_SBMT_ARGS, dropAction.getAction());
-                for (Object arg : dropAction.getArgs().keySet()) {
-                    jsonAjax.addArg(new Param(argName, arg, dropAction.getArgs().get(arg)));
-                }
-            }
-        } else if (dropAction.getUpdate() != null) {
-            jsonAjax.setMethod("get");
-        }
-        if (dropAction.getUpdate() != null) {
-            jsonAjax.setUpdate(dropAction.getUpdate().trim());
-        }
-        if (dropAction.getBeforeSend() != null) {
-            jsonAjax.setBefore((String) getTagValue(dropAction.getBeforeSend().trim()));
-        }
-        if (dropAction.getOnError() != null) {
-            jsonAjax.setError((String) getTagValue(dropAction.getOnError().trim()));
-        }
-        if (dropAction.getOnSuccess() != null) {
-            jsonAjax.setSuccess((String) getTagValue(dropAction.getOnSuccess().trim()));
-        }
-        if (dropAction.getOnComplete() != null) {
-            jsonAjax.setComplete((String) getTagValue(dropAction.getOnComplete().trim()));
-        }
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-        return getBindFunction(dropAction.getId(), Event.CLICK.name(), builder);
     }
 
     void addDropAction(DropActionTagHandler dropAction) {

@@ -42,23 +42,6 @@ public final class TextTagHandler extends TagHandler {
         // DO NOTHING
     }
 
-    @Override
-    public boolean beforeTag() throws JspException, IOException {
-        // Look for parameters
-        JspFragment body = getJspBody();
-        if (body != null) {
-            body.invoke(null);
-        }
-
-        String message = getResourceString(res, key);
-
-        if (!params.isEmpty()) {
-            message = formatText(message, params);
-        }
-        printOutput(message);
-        return true;
-    }
-
     static String formatText(final String message, final Map<String, Object> params) {
         if (BRACKETS.matcher(message).find()) {
             return MessageFormat.format(message, params.values().toArray());
@@ -71,7 +54,20 @@ public final class TextTagHandler extends TagHandler {
 
     @Override
     public Tag executeTag() throws JspException, IOException {
-        // DO NOTHING
+        // Look for parameters
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(null);
+        }
+
+        String resource = (String) getTagValue(res);
+        String resourceKey = (String) getTagValue(key);
+
+        String message = getResourceString(resource, resourceKey);
+        if (!params.isEmpty()) {
+            message = formatText(message, params);
+        }
+        printOutput(message);
         return null;
     }
 
