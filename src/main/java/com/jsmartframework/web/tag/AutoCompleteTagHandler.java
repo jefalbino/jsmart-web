@@ -361,6 +361,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
                         row.setSelectIndex(selectIndex);
                         row.setScrollIndex(scrollIndex);
 
+                        row.clearTagParameters();
                         Tag rowTag = row.executeTag();
                         if (inputText != null) {
                             rowTag.addAttribute("to-string", getTagValue(inputText));

@@ -83,6 +83,7 @@ public class RepeatTagHandler extends TagHandler {
                 request.setAttribute(var, obj);
 
                 for (TagHandler tag : tags) {
+                    tag.clearTagParameters();
                     set.addTag(tag.executeTag());
                 }
                 request.removeAttribute(var);

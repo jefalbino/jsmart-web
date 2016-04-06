@@ -184,7 +184,7 @@ public abstract class TagHandler extends SimpleTagSupport {
         args = new LinkedHashMap<>(3);
     }
 
-    protected void clearTagParameters() {
+    public void clearTagParameters() {
         ajaxTags.clear();
         iconTags.clear();
         bindTags.clear();
@@ -227,11 +227,6 @@ public abstract class TagHandler extends SimpleTagSupport {
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
         if (parent instanceof RepeatTagHandler) {
-
-            JspFragment body = getJspBody();
-            if (body != null) {
-                body.invoke(null);
-            }
             ((RepeatTagHandler) parent).addTag(this);
             return false;
         }

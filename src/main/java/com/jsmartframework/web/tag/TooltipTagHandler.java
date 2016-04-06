@@ -49,7 +49,6 @@ public final class TooltipTagHandler extends TagHandler {
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
         if (parent instanceof TagHandler) {
-
             ((TagHandler) parent).setTooltipTag(this);
         }
         return true;

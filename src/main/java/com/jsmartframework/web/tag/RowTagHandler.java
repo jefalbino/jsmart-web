@@ -65,18 +65,14 @@ public final class RowTagHandler extends TagHandler {
 
     @Override
     public Tag executeTag() throws JspException, IOException {
-
-        // Need to clear for every list item
-        // because the tag row is unique
-        clearTagParameters();
-
         StringWriter sw = new StringWriter();
+
         JspFragment body = getJspBody();
         if (body != null) {
             body.invoke(sw);
         }
 
-        Tag tag = null;
+        Tag tag;
         if (selectable) {
             tag = new A();
             tag.addAttribute("style", "cursor: pointer;");

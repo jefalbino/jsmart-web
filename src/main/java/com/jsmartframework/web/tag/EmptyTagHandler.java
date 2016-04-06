@@ -41,6 +41,9 @@ public final class EmptyTagHandler extends TagHandler {
 
         } else if (parent instanceof AccordionTagHandler) {
             ((AccordionTagHandler) parent).setEmptyTag(this);
+
+        } else if (parent instanceof RepeatTagHandler) {
+            ((RepeatTagHandler) parent).setEmptyTag(this);
         }
         return false;
     }

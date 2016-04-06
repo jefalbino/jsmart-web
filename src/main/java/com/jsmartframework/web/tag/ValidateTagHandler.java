@@ -50,8 +50,8 @@ public final class ValidateTagHandler extends TagHandler {
     @Override
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
-        if (parent instanceof TagHandler) {
 
+        if (parent instanceof TagHandler) {
             ((TagHandler) parent).setValidatorTag(this);
             return false;
         }

@@ -63,7 +63,7 @@ public final class LoadTagHandler extends TagHandler {
             ((TableTagHandler) parent).setLoadTag(this);
             return false;
         }
-        return true;
+        return super.beforeTag();
     }
 
     @Override

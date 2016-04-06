@@ -37,8 +37,8 @@ public final class WhenTagHandler extends TagHandler {
     @Override
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
-        if (parent instanceof AuthorizeTagHandler) {
 
+        if (parent instanceof AuthorizeTagHandler) {
             ((AuthorizeTagHandler) parent).addWhen(this);
             return false;
         }

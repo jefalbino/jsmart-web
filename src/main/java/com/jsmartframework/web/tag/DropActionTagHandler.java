@@ -80,13 +80,9 @@ public class DropActionTagHandler extends TagHandler {
 
     @Override
     public Tag executeTag() throws JspException, IOException {
-
-        // Need to clear for every list item
-        // because the tag row is unique
-        clearTagParameters();
+        StringWriter sw = new StringWriter();
 
         // Just to call nested tags
-        StringWriter sw = new StringWriter();
         JspFragment body = getJspBody();
         if (body != null) {
             body.invoke(sw);

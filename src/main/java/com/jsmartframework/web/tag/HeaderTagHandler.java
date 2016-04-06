@@ -62,7 +62,7 @@ public final class HeaderTagHandler extends TagHandler {
             ((SlideTagHandler) parent).setHeader(this);
             return false;
         }
-        return true;
+        return super.beforeTag();
     }
 
     @Override

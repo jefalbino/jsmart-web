@@ -45,7 +45,7 @@ public final class FooterTagHandler extends TagHandler {
             ((PanelTagHandler) parent).setFooter(this);
             return false;
         }
-        return true;
+        return super.beforeTag();
     }
 
     @Override

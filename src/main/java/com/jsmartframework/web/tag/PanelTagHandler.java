@@ -54,9 +54,11 @@ public final class PanelTagHandler extends TagHandler {
         String contentId = null;
 
         JspTag parent = getParent();
-        if (parent instanceof AccordionTagHandler) {
-            parentId = ((AccordionTagHandler) parent).getId();
-            contentId = getRandomId();
+        if (parent instanceof AccordionTagHandler || parent instanceof RepeatTagHandler) {
+            parentId = ((TagHandler) parent).getId();
+            if (parentId != null) {
+                contentId = getRandomId();
+            }
         }
 
         StringWriter sw = new StringWriter();

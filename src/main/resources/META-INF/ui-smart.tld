@@ -1564,18 +1564,6 @@
         <tag-class>com.jsmartframework.web.tag.RepeatTagHandler</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
-            <name>id</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>style</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
-            <name>styleClass</name>
-            <required>false</required>
-        </attribute>
-        <attribute>
             <name>var</name>
             <required>true</required>
         </attribute>

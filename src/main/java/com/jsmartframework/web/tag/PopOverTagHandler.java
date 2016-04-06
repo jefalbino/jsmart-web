@@ -51,7 +51,6 @@ public final class PopOverTagHandler extends TagHandler {
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
         if (parent instanceof TagHandler) {
-
             ((TagHandler) parent).setPopOverTag(this);
         }
         return true;

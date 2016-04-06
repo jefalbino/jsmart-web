@@ -55,6 +55,7 @@ public final class AccordionTagHandler extends TagHandler {
                 .addAttribute("aria-multiselectable", "true");
 
         if (repeatTag != null) {
+            repeatTag.setId(id);
             div.addTag(repeatTag.executeTag());
         } else {
             div.addText(sw.toString());

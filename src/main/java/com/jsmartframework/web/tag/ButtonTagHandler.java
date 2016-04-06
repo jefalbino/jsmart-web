@@ -104,7 +104,7 @@ public final class ButtonTagHandler extends TagHandler {
             ((SelectTagHandler) parent).addChildAddOn(this);
             return false;
         }
-        return true;
+        return super.beforeTag();
     }
 
     @Override

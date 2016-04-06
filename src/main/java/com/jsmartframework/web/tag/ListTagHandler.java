@@ -186,8 +186,9 @@ public final class ListTagHandler extends TagHandler {
                     row.setSelectable(selectValue != null);
                     row.setSelectIndex(selectIndex);
                     row.setScrollIndex(scrollIndex);
-                     setEvents(row);
+                    setEvents(row);
 
+                    row.clearTagParameters();
                     Tag rowTag = row.executeTag();
                     Object scrollOffsetVal = getTagValue(scrollOffset);
                     if (scrollOffsetVal != null) {
@@ -252,6 +253,7 @@ public final class ListTagHandler extends TagHandler {
             row.setSelectable(selectValue != null);
             setEvents(row);
 
+            row.clearTagParameters();
             Tag rowTag = row.executeTag();
             rowTag.addAttribute("style", "display: none;")
                 .addAttribute("role-template", i);

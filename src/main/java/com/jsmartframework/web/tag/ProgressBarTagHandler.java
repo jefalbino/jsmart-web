@@ -91,7 +91,7 @@ public final class ProgressBarTagHandler extends TagHandler {
             ((ProgressGroupTagHandler) parent).addBar(this);
             return false;
         }
-        return true;
+        return super.beforeTag();
     }
 
     @Override

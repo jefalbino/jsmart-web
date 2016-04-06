@@ -75,7 +75,7 @@ public final class IconTagHandler extends TagHandler {
                 return false;
             }
         }
-        return true;
+        return super.beforeTag();
     }
 
     @Override
