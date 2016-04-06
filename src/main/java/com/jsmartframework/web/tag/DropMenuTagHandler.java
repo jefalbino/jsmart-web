@@ -44,7 +44,7 @@ public final class DropMenuTagHandler extends TagHandler {
     private List<DropActionTagHandler> dropActions;
 
     public DropMenuTagHandler() {
-        dropActions = new ArrayList<DropActionTagHandler>();
+        dropActions = new ArrayList<>();
     }
 
     @Override

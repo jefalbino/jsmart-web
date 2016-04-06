@@ -33,6 +33,7 @@ import com.jsmartframework.web.util.WebUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
@@ -66,11 +67,6 @@ public class DropActionTagHandler extends TagHandler {
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
         if (parent instanceof DropMenuTagHandler) {
-
-            JspFragment body = getJspBody();
-            if (body != null) {
-                body.invoke(null);
-            }
             ((DropMenuTagHandler) parent).addDropAction(this);
             return false;
         }
@@ -84,10 +80,20 @@ public class DropActionTagHandler extends TagHandler {
 
     @Override
     public Tag executeTag() throws JspException, IOException {
-        Set set = new Set();
-        if (id == null) {
-            setRandomId("dropaction");
+
+        // Need to clear for every list item
+        // because the tag row is unique
+        clearTagParameters();
+
+        // Just to call nested tags
+        StringWriter sw = new StringWriter();
+        JspFragment body = getJspBody();
+        if (body != null) {
+            body.invoke(sw);
         }
+
+        Set set = new Set();
+        setRandomId("dropaction");
 
         if (header != null) {
             Li headerLi = new Li();
@@ -116,6 +122,7 @@ public class DropActionTagHandler extends TagHandler {
             }
         }
 
+        a.addText(sw.toString());
         a.addText(getTagValue(label));
 
         for (IconTagHandler iconTag : iconTags) {

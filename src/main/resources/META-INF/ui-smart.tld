@@ -343,7 +343,7 @@
 		</attribute>
         <attribute>
             <name>label</name>
-            <required>true</required>
+            <required>false</required>
 		</attribute>
         <attribute>
             <name>outcome</name>
