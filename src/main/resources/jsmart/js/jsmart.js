@@ -1898,33 +1898,41 @@ var JSmart = (function() {
         }
     }
 
-    function doExecute(func, a, b, c) {
+    function doExecute(fn, a, b, c) {
+        var executes = [];
+        var callbacks = [];
         var showModals = [];
         var hideModals = [];
-        var callbacks = [];
-        var execute = '';
 
-        if (typeof func === 'function') {
-            callbacks.push(func);
+        if (typeof fn === 'function') {
+            callbacks.push({exec: fn});
 
-        } else if (func && func.length > 0) {
-            var funcs = func.split(';');
+        } else if (fn && fn.length > 0) {
+            var fns = fn.split(';');
 
-            for (var i = 0; i < funcs.length; i++) {
-                if (funcs[i].indexOf(modalShow) >= 0) {
-                    showModals.push(funcs[i].substring(0, funcs[i].indexOf('.')));
+            for (var i = 0; i < fns.length; i++) {
+                if (fns[i].indexOf(modalShow) >= 0) {
+                    showModals.push(fns[i].substring(0, fns[i].indexOf('.')));
+                    continue;
+                }
+                if (fns[i].indexOf(modalHide) >= 0) {
+                    hideModals.push(fns[i].substring(0, fns[i].indexOf('.')));
+                    continue;
+                }
 
-                } else if (funcs[i].indexOf(modalHide) >= 0) {
-                    hideModals.push(funcs[i].substring(0, funcs[i].indexOf('.')));
+                var objects = fns[i].split('.');
+                var context = window[objects[0]];
 
-                } else {
-                    var callback = window[funcs[i]];
-
-                    if (typeof callback === 'function') {
-                        callbacks.push(callback);
-                    } else {
-                        execute += funcs[i] + ";";
+                if ($.type(context) === 'function' || $.type(context) === 'object') {
+                    for (var j = 1; j < objects.length; j++) {
+                        var ctx = context[objects[j]];
+                        if ($.type(ctx) === 'function' || $.type(ctx) === 'object') {
+                            context = ctx;
+                        }
                     }
+                    callbacks.push(context);
+                } else {
+                    executes.push(fns[i]);
                 }
             }
         }
@@ -1936,10 +1944,9 @@ var JSmart = (function() {
                 showOnConsole(err.message);
             }
         }
-
-        if (execute.length > 0) {
+        for (var i = 0; i < executes.length; i++) {
             try {
-                eval(execute);
+                eval(executes[i])(a, b, c);
             } catch(err) {
                 showOnConsole(err.message);
             }
