@@ -1905,7 +1905,7 @@ var JSmart = (function() {
         var hideModals = [];
 
         if (typeof fn === 'function') {
-            callbacks.push({exec: fn});
+            callbacks.push(fn);
 
         } else if (fn && fn.length > 0) {
             var fns = fn.split(';');
