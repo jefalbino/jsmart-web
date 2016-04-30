@@ -607,11 +607,6 @@ public enum BeanHandler {
                         continue;
                     }
                 }
-
-                if (field.getAnnotations().length > 0) {
-                    field.setAccessible(true);
-                    field.set(bean, null);
-                }
             }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Finalize injection on WebBean " + bean + " failed: " + ex.getMessage());
@@ -719,16 +714,6 @@ public enum BeanHandler {
 
     private void finalizeAuthBean(Object bean, HttpSession session) {
         executePreDestroy(bean);
-        try {
-            for (Field field : HELPER.getBeanFields(bean.getClass())) {
-                if (field.getAnnotations().length > 0) {
-                    field.setAccessible(true);
-                    field.set(bean, null);
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failed: " + ex.getMessage());
-        }
         AuthBean authBean = bean.getClass().getAnnotation(AuthBean.class);
         session.removeAttribute(HELPER.getClassName(authBean, bean.getClass()));
     }
@@ -797,16 +782,6 @@ public enum BeanHandler {
 
     private void finalizeWebSecurity(Object listener, HttpServletRequest request) {
         executePreDestroy(listener);
-        try {
-            for (Field field : HELPER.getBeanFields(listener.getClass())) {
-                if (field.getAnnotations().length > 0) {
-                    field.setAccessible(true);
-                    field.set(listener, null);
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Finalize injection on WebSecurity " + listener + " failed: " + ex.getMessage());
-        }
         WebSecurity webSecurity = listener.getClass().getAnnotation(WebSecurity.class);
         request.removeAttribute(HELPER.getClassName(webSecurity, listener.getClass()));
     }
@@ -1164,6 +1139,10 @@ public enum BeanHandler {
                 if (HELPER.getAuthFields(clazz).length == 0) {
                     throw new RuntimeException("Mapped AuthBean class [" + clazz + "] must contain at " +
                                                "least one field annotated with @AuthField");
+                }
+                if (HELPER.hasPrimitiveAuthFields(clazz)) {
+                    throw new RuntimeException("Mapped AuthBean class [" + clazz + "] must have all fields " +
+                            "annotated with @AuthField as non primitive type");
                 }
                 if (HELPER.getAuthMethods(clazz).length == 0) {
                     throw new RuntimeException("Mapped AuthBean class [" + clazz + "] must contain at " +

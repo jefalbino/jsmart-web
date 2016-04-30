@@ -18,6 +18,7 @@
 
 package com.jsmartframework.web.manager;
 
+import com.google.gson.internal.Primitives;
 import com.jsmartframework.web.annotation.AuthAccess;
 import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
@@ -256,6 +257,16 @@ enum BeanHelper {
     Field[] getAuthFields(Class<?> clazz) {
         Field[] fields = authFields.get(clazz);
         return fields != null ? fields : new Field[]{};
+    }
+
+    boolean hasPrimitiveAuthFields(Class<?> clazz) {
+        Field[] fields = getAuthFields(clazz);
+        for (int i = 0; i < fields.length; i++) {
+            if (Primitives.isPrimitive(fields[i].getGenericType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void setAuthFields(Class<?> clazz) {
