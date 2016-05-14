@@ -24,6 +24,7 @@ import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
 import com.jsmartframework.web.annotation.AuthMethod;
 import com.jsmartframework.web.annotation.ExecuteAccess;
+import com.jsmartframework.web.annotation.ExposeVar;
 import com.jsmartframework.web.annotation.PostAction;
 import com.jsmartframework.web.annotation.PostSubmit;
 import com.jsmartframework.web.annotation.PreAction;
@@ -62,6 +63,8 @@ enum BeanHelper {
     private Map<Class<?>, Method[]> beanMethods = new ConcurrentHashMap<>();
 
     private Map<Class<?>, Field[]> preSetFields = new ConcurrentHashMap<>();
+
+    private Map<Class<?>, Field[]> exposeVarFields = new ConcurrentHashMap<>();
 
     private Map<Class<?>, Method[]> postConstructMethods = new ConcurrentHashMap<>();
 
@@ -137,18 +140,31 @@ enum BeanHelper {
         if (!beanFields.containsKey(clazz)) {
 
             List<Field> preSets = new ArrayList<>();
+            List<Field> exposeVars = new ArrayList<>();
+
             for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
                 if (field.isAnnotationPresent(PreSet.class)) {
                     preSets.add(field);
                 }
+                if (field.isAnnotationPresent(ExposeVar.class)) {
+                    exposeVars.add(field);
+                }
             }
+
             beanFields.put(clazz, clazz.getDeclaredFields());
             preSetFields.put(clazz, preSets.toArray(new Field[preSets.size()]));
+            exposeVarFields.put(clazz, exposeVars.toArray(new Field[exposeVars.size()]));
         }
     }
 
     Field[] getPreSetFields(Class<?> clazz) {
         Field[] fields = preSetFields.get(clazz);
+        return fields != null ? fields : new Field[]{};
+    }
+
+    Field[] getExposeVarFields(Class<?> clazz) {
+        Field[] fields = exposeVarFields.get(clazz);
         return fields != null ? fields : new Field[]{};
     }
 

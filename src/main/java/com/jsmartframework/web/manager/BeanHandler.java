@@ -19,6 +19,7 @@
 package com.jsmartframework.web.manager;
 
 import static com.jsmartframework.web.config.Config.CONFIG;
+import static com.jsmartframework.web.config.Constants.REQUEST_EXPOSE_VARS_ATTR;
 import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
 import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN;
 import static com.jsmartframework.web.manager.ExpressionHandler.ID_PATTERN;
@@ -492,7 +493,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Injection on object " + object + " failed: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Injection on object " + object + " failed", ex);
         }
     }
 
@@ -559,6 +560,16 @@ public enum BeanHandler {
             if (bean == null) {
                 continue;
             }
+
+            Field[] exposeVars = HELPER.getExposeVarFields(bean.getClass());
+            for (int i = 0; i < exposeVars.length; i++) {
+                try {
+                    setExposeVarAttribute(request, exposeVars[i].getName(), exposeVars[i].get(bean));
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, "Could not expose var " + exposeVars[i], ex);
+                }
+            }
+
             if (bean.getClass().isAnnotationPresent(WebBean.class)) {
                 finalizeWebBean(bean, request);
 
@@ -569,6 +580,14 @@ public enum BeanHandler {
                 finalizeWebSecurity(bean, request);
             }
         }
+    }
+
+    private void setExposeVarAttribute(HttpServletRequest request, String name, Object value) {
+        Map<String, Object> exposeVars = (Map) request.getAttribute(REQUEST_EXPOSE_VARS_ATTR);
+        if (exposeVars == null) {
+            request.setAttribute(REQUEST_EXPOSE_VARS_ATTR, (exposeVars = new ConcurrentHashMap<>()));
+        }
+        exposeVars.put(name, value);
     }
 
     private void finalizeWebBean(Object bean, HttpServletRequest request) {

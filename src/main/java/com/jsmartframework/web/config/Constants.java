@@ -38,6 +38,8 @@ public final class Constants {
 
     public static final String REQUEST_TAG_DECRYPT_CIPHER = "jsmart_request_tag_decrypt_cipher";
 
+    public static final String REQUEST_EXPOSE_VARS_ATTR = "jsmart_request_expose_vars_attr";
+
     public static final String REQUEST_AUTH_ENCRYPT_CIPHER = "jsmart_request_auth_encrypt_cipher";
 
     public static final String REQUEST_AUTH_DECRYPT_CIPHER = "jsmart_request_auth_decrypt_cipher";

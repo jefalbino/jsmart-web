@@ -34,6 +34,7 @@ import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_DOC_SCRIPT_A
 import static com.jsmartframework.web.config.Constants.REQUEST_PAGE_SCRIPT_ATTR;
 import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
 import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
+import static com.jsmartframework.web.config.Constants.REQUEST_EXPOSE_VARS_ATTR;
 import static com.jsmartframework.web.config.Constants.SESSION_RESET_ATTR;
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
 import static com.jsmartframework.web.manager.BeanHandler.AnnotatedFunction;
@@ -301,6 +302,20 @@ public final class FilterControl implements Filter {
             Tag csrfToken = new Meta().addAttribute("name", CSRF_TOKEN_VALUE).addAttribute("content", tokenValue);
             StringBuilder metaTags = csrfName.getHtml().append(csrfToken.getHtml());
 
+            html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(metaTags.toString()));
+        }
+
+        // Place exposed vars as Meta tags
+        Map<String, Object> exposeVars = (Map) httpRequest.getAttribute(REQUEST_EXPOSE_VARS_ATTR);
+        if (exposeVars != null && !exposeVars.isEmpty()) {
+            startHeadMatcher = START_HEAD_PATTERN.matcher(html);
+
+            StringBuilder metaTags = new StringBuilder();
+            for (String key : exposeVars.keySet()) {
+                Tag meta = new Meta().addAttribute("name", key).addAttribute("content", exposeVars.get(key))
+                        .addAttribute("expose-var", true);
+                metaTags.append(meta.getHtml());
+            }
             html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(metaTags.toString()));
         }
         return html;
