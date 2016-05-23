@@ -110,7 +110,7 @@ public final class RowTagHandler extends TagHandler {
         if (header != null) {
             tag.addTag(header.executeTag());
         }
-        tag.addText(sw.toString());
+        tag.addText(executeExpressions(sw.toString()));
 
         appendAjax(id);
         appendBind(id);

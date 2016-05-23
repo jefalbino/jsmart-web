@@ -123,7 +123,7 @@ public final class SlideTagHandler extends TagHandler {
             caption.addTag(p);
         }
 
-        caption.addText(sw);
+        caption.addText(executeExpressions(sw.toString()));
         div.addTag(caption);
 
         return div;

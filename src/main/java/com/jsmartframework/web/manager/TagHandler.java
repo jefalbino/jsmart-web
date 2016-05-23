@@ -243,6 +243,20 @@ public abstract class TagHandler extends SimpleTagSupport {
         return true;
     }
 
+    protected String executeExpressions(String html) {
+        if (html == null || html.isEmpty()) {
+            return html;
+        }
+
+        Matcher outputMatcher = ExpressionHandler.EL_PATTERN.matcher(html);
+        while (outputMatcher.find()) {
+            String expression = outputMatcher.group();
+            Object value = EXPRESSIONS.getExpressionValue(expression);
+            html = html.replace(expression, value != null ? value.toString() : "");
+        }
+        return html;
+    }
+
     protected void checkAnnotatedAction() throws JspException {
         AnnotatedAction annotatedAction = HANDLER.getAnnotatedAction(id);
         if (annotatedAction == null) {

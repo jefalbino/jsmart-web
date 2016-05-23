@@ -348,7 +348,7 @@ public final class TabTagHandler extends TagHandler {
             tabContent.addAttribute("class", Bootstrap.ACTIVE);
         }
 
-        tabContent.addText(swContent.toString());
+        tabContent.addText(executeExpressions(swContent.toString()));
         tab.addTag(tabContent);
         return tabVal;
     }
