@@ -64,9 +64,16 @@ public final class WhenTagHandler extends TagHandler {
     }
 
     List<String> getAccess() {
-        String accessValue = (String) getTagValue(access);
-        if (accessValue != null && !accessValue.trim().isEmpty()) {
-            return Arrays.asList(accessValue.split(","));
+        Object accessValue = getTagValue(access);
+        if (accessValue instanceof List) {
+            return (List) accessValue;
+
+        } else if (accessValue instanceof String) {
+            String accessStr = (String) accessValue;
+
+            if (!accessStr.trim().isEmpty()) {
+                return Arrays.asList(accessStr.split(","));
+            }
         }
         return null;
     }
