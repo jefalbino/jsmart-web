@@ -58,7 +58,6 @@ public final class AuthorizeTagHandler extends TagHandler {
 
         if (userAccess != null && !userAccess.isEmpty()) {
             for (WhenTagHandler when : whens) {
-
                 List<String> whenAccess = when.getAccess();
 
                 if (whenAccess != null && !whenAccess.isEmpty()) {

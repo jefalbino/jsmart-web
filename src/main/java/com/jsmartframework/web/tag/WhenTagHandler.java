@@ -64,8 +64,9 @@ public final class WhenTagHandler extends TagHandler {
     }
 
     List<String> getAccess() {
-        if (!access.trim().isEmpty()) {
-            return Arrays.asList(access.split(","));
+        String accessValue = (String) getTagValue(access);
+        if (accessValue != null && !accessValue.trim().isEmpty()) {
+            return Arrays.asList(accessValue.split(","));
         }
         return null;
     }
