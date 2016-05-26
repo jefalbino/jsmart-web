@@ -28,6 +28,7 @@ var JSmart = (function() {
     var roleEmpty = 'role-empty';
     var roleTemplate = 'role-template';
     var roleAutoLoad = 'role-auto-load';
+    var sectionMode = 'section';
     var validateTextStyle = 'js5-validate-text';
     var validateGroupStyle = 'js5-validate-group';
     var csrfName = 'jsmart_csrf_name';
@@ -2320,6 +2321,11 @@ var JSmart = (function() {
             if (!template) {
                 template = 0;
             }
+            var rowMode = element.attr('row-mode');
+            if (!rowMode) {
+                rowMode = sectionMode;
+            }
+
             var item = element.find('>li[' + roleTemplate + '="' + template + '"], >a[' + roleTemplate + '="' + template + '"], '
                                     + 'tbody>tr[' + roleTemplate + '="' + template + '"]').clone();
 
@@ -2328,15 +2334,26 @@ var JSmart = (function() {
                 item.attr('row-id', item.attr('id')).attr('row-template', item.attr(roleTemplate)).removeAttr('id')
                     .removeAttr(roleTemplate);
 
-                 // Always insert at the end of last template item
-                var last = element.find('>li[row-template="' + template + '"], >a[row-template="' + template + '"], '
-                                        + 'tbody>tr[row-template="' + template + '"]').last();
+                if (rowMode == sectionMode) {
+                    // Always insert at the end of last template item
+                    var last = element.find('>li[row-template="' + template + '"], >a[row-template="' + template + '"], '
+                                            + 'tbody>tr[row-template="' + template + '"]').last();
 
-                if (last && last.length > 0) {
-                    last.after(item);
+                    if (last && last.length > 0) {
+                        last.after(item);
+                    } else {
+                        element.find('>li[' + roleTemplate + '="' + template + '"], >a[' + roleTemplate + '="' + template + '"], '
+                                        + 'tbody>tr[' + roleTemplate + '="' + template + '"]').after(item);
+                    }
                 } else {
-                    element.find('>li[' + roleTemplate + '="' + template + '"], >a[' + roleTemplate + '="' + template + '"], '
-                                    + 'tbody>tr[' + roleTemplate + '="' + template + '"]').after(item);
+                    // Always insert at the end of last item
+                    var last = element.find('>li[row-template], >a[row-template], tbody>tr[row-template]').last();
+
+                    if (last && last.length > 0) {
+                        last.after(item);
+                    } else {
+                        element.find('>li[' + roleTemplate + '], >a[' + roleTemplate + '], tbody>tr[' + roleTemplate + ']').after(item);
+                    }
                 }
 
                 if (item.is('tr')) {

@@ -32,6 +32,7 @@ import com.jsmartframework.web.tag.html.Li;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.html.Ul;
 import com.jsmartframework.web.tag.type.Event;
+import com.jsmartframework.web.tag.type.RowMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +57,8 @@ public final class ListTagHandler extends TagHandler {
     private String scrollOffset;
 
     private String maxHeight;
+
+    private String rowMode;
 
     private String update;
 
@@ -83,6 +86,9 @@ public final class ListTagHandler extends TagHandler {
         }
         if (values != null && var == null) {
             throw InvalidAttributeException.fromConflict("list", "var", "Attribute [var] must be specified case [values] is specified");
+        }
+        if (rowMode != null && !RowMode.validate(rowMode)) {
+            throw InvalidAttributeException.fromPossibleValues("table", "rowMode", RowMode.getValues());
         }
     }
 
@@ -112,7 +118,8 @@ public final class ListTagHandler extends TagHandler {
             .addAttribute("style", getTagValue(style))
             .addAttribute("style", maxHeight != null ? "max-height: " + maxHeight + ";" : null)
             .addAttribute("class", Bootstrap.LIST_GROUP)
-            .addAttribute("class", getTagValue(styleClass));
+            .addAttribute("class", getTagValue(styleClass))
+            .addAttribute("row-mode", rowMode);
 
         if (scrollSize != null || values == null) {
             ul.addAttribute("style", "overflow: auto;")
@@ -334,6 +341,10 @@ public final class ListTagHandler extends TagHandler {
 
     public void setMaxHeight(String maxHeight) {
         this.maxHeight = maxHeight;
+    }
+
+    public void setRowMode(String rowMode) {
+        this.rowMode = rowMode;
     }
 
     public void setUpdate(String update) {

@@ -723,7 +723,7 @@
 		</attribute>
         <attribute>
             <name>name</name>
-            <required>true</required>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>side</name>
@@ -1864,6 +1864,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>rowMode</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>update</name>
             <required>false</required>
         </attribute>
@@ -2573,6 +2577,10 @@
         </attribute>
         <attribute>
             <name>maxHeight</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>rowMode</name>
             <required>false</required>
         </attribute>
         <attribute>

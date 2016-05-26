@@ -41,6 +41,7 @@ import com.jsmartframework.web.tag.html.Td;
 import com.jsmartframework.web.tag.html.Th;
 import com.jsmartframework.web.tag.html.Tr;
 import com.jsmartframework.web.tag.type.Event;
+import com.jsmartframework.web.tag.type.RowMode;
 import com.jsmartframework.web.tag.type.Size;
 import com.jsmartframework.web.tag.type.Type;
 
@@ -77,6 +78,8 @@ public final class TableTagHandler extends TagHandler {
 
     private boolean striped;
 
+    private String rowMode;
+
     private String update;
 
     private String beforeSend;
@@ -106,6 +109,9 @@ public final class TableTagHandler extends TagHandler {
         }
         if (values != null && var == null) {
             throw InvalidAttributeException.fromConflict("table", "var", "Attribute [var] must be specified case [values] is specified");
+        }
+        if (rowMode != null && !RowMode.validate(rowMode)) {
+            throw InvalidAttributeException.fromPossibleValues("table", "rowMode", RowMode.getValues());
         }
     }
 
@@ -141,7 +147,8 @@ public final class TableTagHandler extends TagHandler {
             .addAttribute("class", bordered ? Bootstrap.TABLE_BORDERED : null)
             .addAttribute("class", striped ? Bootstrap.TABLE_STRIPED : null)
             .addAttribute("class", selectValue != null ? Bootstrap.TABLE_HOVER : null)
-            .addAttribute("class", scrollSize != null ? JSmart.TABLE_SCROLL : null);
+            .addAttribute("class", scrollSize != null ? JSmart.TABLE_SCROLL : null)
+            .addAttribute("row-mode", rowMode);
 
         if (Size.SMALL.equalsIgnoreCase(size)) {
             table.addAttribute("class", Bootstrap.TABLE_CONDENSED);
@@ -517,6 +524,10 @@ public final class TableTagHandler extends TagHandler {
         this.maxHeight = maxHeight;
     }
 
+    public void setRowMode(String rowMode) {
+        this.rowMode = rowMode;
+    }
+
     public void setSize(String size) {
         this.size = size;
     }
@@ -527,6 +538,26 @@ public final class TableTagHandler extends TagHandler {
 
     public void setStriped(boolean striped) {
         this.striped = striped;
+    }
+
+    public void setUpdate(String update) {
+        this.update = update;
+    }
+
+    public void setBeforeSend(String beforeSend) {
+        this.beforeSend = beforeSend;
+    }
+
+    public void setOnError(String onError) {
+        this.onError = onError;
+    }
+
+    public void setOnSuccess(String onSuccess) {
+        this.onSuccess = onSuccess;
+    }
+
+    public void setOnComplete(String onComplete) {
+        this.onComplete = onComplete;
     }
 
 }
