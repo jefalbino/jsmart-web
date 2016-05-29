@@ -564,7 +564,10 @@ public enum BeanHandler {
             Field[] exposeVars = HELPER.getExposeVarFields(bean.getClass());
             for (int i = 0; i < exposeVars.length; i++) {
                 try {
-                    setExposeVarAttribute(request, exposeVars[i].getName(), exposeVars[i].get(bean));
+                    Object value = exposeVars[i].get(bean);
+                    if (value != null) {
+                        setExposeVarAttribute(request, exposeVars[i].getName(), value);
+                    }
                 } catch (Exception ex) {
                     LOGGER.log(Level.SEVERE, "Could not expose var " + exposeVars[i], ex);
                 }
