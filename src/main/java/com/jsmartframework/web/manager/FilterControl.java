@@ -121,7 +121,7 @@ public final class FilterControl implements Filter {
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        initHeaders();
+        initHeaders(config);
         initResources(config);
         versionResources(config);
     }
@@ -377,15 +377,23 @@ public final class FilterControl implements Filter {
         return (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
     }
 
-    private void initHeaders() {
+    private void initHeaders(FilterConfig config) {
         String assetsUrl = CONFIG.getContent().getAssetsUrl();
-        Headers jsonHeaders = GSON.fromJson(convertResourceToString(FILTER_HEADERS), Headers.class);
+        String contextPath = config.getServletContext().getContextPath();
 
+        String headerPath = "/";
+        if (StringUtils.isNotBlank(assetsUrl)) {
+            headerPath = assetsUrl + (assetsUrl.endsWith("/") ? "" : "/");
+        } else if (StringUtils.isNotBlank(contextPath)) {
+            headerPath = contextPath + "/";
+        }
+
+        Headers jsonHeaders = GSON.fromJson(convertResourceToString(FILTER_HEADERS), Headers.class);
         for (String style : jsonHeaders.getStyles()) {
-            headerStyles.append(String.format(style, assetsUrl != null ? assetsUrl : "/"));
+            headerStyles.append(String.format(style, headerPath));
         }
         for (String script : jsonHeaders.getScripts()) {
-            headerScripts.append(String.format(script, assetsUrl != null ? assetsUrl : "/"));
+            headerScripts.append(String.format(script, headerPath));
         }
     }
 
