@@ -52,12 +52,12 @@ public enum WebText {
 
     private static Locale defaultLocale;
 
-    private Set<String> resources = new HashSet<String>();
+    private Set<String> resources = new HashSet<>();
 
     public void init(String[] messageFiles, String defaultLocale) {
         if (messageFiles != null) {
             for (String msg : messageFiles) {
-                this.resources.add(msg);
+                resources.add(msg);
             }
         }
         if (defaultLocale != null) {
