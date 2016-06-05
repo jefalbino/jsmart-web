@@ -324,12 +324,12 @@ var JSmart = (function() {
             doHideLoad(id);
         },
 
-        showModal: function(id) {
-            doShowModal(id);
+        showModal: function(id, onShow, onShown) {
+            doShowModal(id, onShow, onShown);
         },
 
-        hideModal: function(id) {
-            doHideModal(id);
+        hideModal: function(id, onHide, onHidden) {
+            doHideModal(id, onHide, onHidden);
         },
 
         showAlert: function(id, msg, type, head, icon) {
@@ -2260,12 +2260,35 @@ var JSmart = (function() {
      * EXPOSED FUNCTIONS
      ******************************************************/
 
-    function doShowModal(id) {
-        $(getId(id)).modal('show');
+    function doShowModal(id, onShow, onShown) {
+        var modal = $(getId(id));
+
+        if (onShow && onShow !== 'undefined') {
+            modal.unbind('show.bs.modal').on('show.bs.modal', function(event) {
+                callFunction(onShow, event);
+            });
+        }
+        if (onShown && onShown !== 'undefined') {
+            modal.unbind('shown.bs.modal').on('shown.bs.modal', function(event) {
+                callFunction(onShown, event);
+            });
+        }
+        modal.modal('show');
     }
 
-    function doHideModal(id) {
-        $(getId(id)).modal('hide');
+    function doHideModal(id, onHide, onHidden) {
+        var modal = $(getId(id));
+        if (onHide && onHide !== 'undefined') {
+            modal.unbind('hide.bs.modal').on('hide.bs.modal', function(event) {
+                callFunction(onHide, event);
+            });
+        }
+        if (onHidden && onHidden !== 'undefined') {
+            modal.unbind('hidden.bs.modal').on('hidden.bs.modal', function(event) {
+                callFunction(onHidden, event);
+            });
+        }
+        modal.modal('hide');
     }
 
     function doShowAlert(id, msg, type, head, icon) {
@@ -2693,6 +2716,19 @@ var JSmart = (function() {
     /******************************************************
      * GENERAL FUNCTIONS
      ******************************************************/
+
+     function callFunction(fName, event) {
+         if (typeof fName === 'function') {
+            fName(event);
+            return;
+         }
+         var fn = window[fName];
+         if (typeof fn === 'function') {
+             fn(event);
+         } else {
+             showOnConsole('Found error while calling [' + fName + ']. It is not a function');
+         }
+     }
 
     function getId(id) {
         if (id) {
