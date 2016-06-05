@@ -212,6 +212,7 @@ public final class TabTagHandler extends TagHandler {
             }
 
             li.addTag(a);
+            appendEvent(li, tabPane);
             ul.addTag(li);
 
             // Case dropDowns not empty we must include on drop down li tags
