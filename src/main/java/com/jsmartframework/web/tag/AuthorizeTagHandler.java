@@ -37,7 +37,7 @@ public final class AuthorizeTagHandler extends TagHandler {
     private OtherwiseTagHandler otherwise;
 
     public AuthorizeTagHandler() {
-        whens = new ArrayList<WhenTagHandler>();
+        whens = new ArrayList<>();
     }
 
     @Override
@@ -58,14 +58,11 @@ public final class AuthorizeTagHandler extends TagHandler {
 
         if (userAccess != null && !userAccess.isEmpty()) {
             for (WhenTagHandler when : whens) {
-                List<String> whenAccess = when.getAccess();
-
-                if (whenAccess != null && !whenAccess.isEmpty()) {
-                    for (String access : whenAccess) {
-                        if (userAccess.contains(access)) {
-                            return when.executeTag();
-                        }
-                    }
+                if (containsRole(userAccess, when.getDeny())) {
+                    continue;
+                }
+                if (containsRole(userAccess, when.getAccess())) {
+                    return when.executeTag();
                 }
             }
         }
@@ -74,6 +71,18 @@ public final class AuthorizeTagHandler extends TagHandler {
             return otherwise.executeTag();
         }
         return null;
+    }
+
+    private boolean containsRole(Collection<String> userRoles, List<String> roles) {
+        if (roles == null || roles.isEmpty()) {
+            return false;
+        }
+        for (String role : roles) {
+            if (userRoles.contains(role)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void addWhen(WhenTagHandler when) {

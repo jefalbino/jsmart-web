@@ -3001,6 +3001,10 @@
             <name>access</name>
             <required>true</required>
         </attribute>
+        <attribute>
+            <name>deny</name>
+            <required>false</required>
+        </attribute>
     </tag>
 
     <tag>

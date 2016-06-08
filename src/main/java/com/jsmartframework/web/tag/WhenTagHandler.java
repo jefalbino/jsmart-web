@@ -34,6 +34,8 @@ public final class WhenTagHandler extends TagHandler {
 
     private String access;
 
+    private String deny;
+
     @Override
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
@@ -59,20 +61,32 @@ public final class WhenTagHandler extends TagHandler {
         return null;
     }
 
-    public void setAccess(String roles) {
-        this.access = roles;
+    List<String> getAccess() {
+        return getAsList(access);
     }
 
-    List<String> getAccess() {
-        Object accessValue = getTagValue(access);
-        if (accessValue instanceof List) {
-            return (List) accessValue;
+    public void setAccess(String access) {
+        this.access = access;
+    }
 
-        } else if (accessValue instanceof String) {
-            String accessStr = (String) accessValue;
+    List<String> getDeny() {
+        return getAsList(deny);
+    }
 
-            if (!accessStr.trim().isEmpty()) {
-                return Arrays.asList(accessStr.split(","));
+    public void setDeny(String deny) {
+        this.deny = deny;
+    }
+
+    private List<String> getAsList(String value) {
+        Object object = getTagValue(value);
+        if (object instanceof List) {
+            return (List) object;
+
+        } else if (object instanceof String) {
+            String string = (String) object;
+
+            if (!string.trim().isEmpty()) {
+                return Arrays.asList(string.split(","));
             }
         }
         return null;
