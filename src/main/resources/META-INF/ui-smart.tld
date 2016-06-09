@@ -2999,7 +2999,11 @@
         <body-content>scriptless</body-content>
         <attribute>
             <name>access</name>
-            <required>true</required>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>grant</name>
+            <required>false</required>
         </attribute>
         <attribute>
             <name>deny</name>

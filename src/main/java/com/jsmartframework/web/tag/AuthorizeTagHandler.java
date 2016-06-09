@@ -58,10 +58,10 @@ public final class AuthorizeTagHandler extends TagHandler {
 
         if (userAccess != null && !userAccess.isEmpty()) {
             for (WhenTagHandler when : whens) {
-                if (containsRole(userAccess, when.getDeny())) {
-                    continue;
+                if (isDeniedAccess(userAccess, when.getDeny())) {
+                    return when.executeTag();
                 }
-                if (containsRole(userAccess, when.getAccess())) {
+                if (isGrantedAccess(userAccess, when.getGrant())) {
                     return when.executeTag();
                 }
             }
@@ -73,12 +73,24 @@ public final class AuthorizeTagHandler extends TagHandler {
         return null;
     }
 
-    private boolean containsRole(Collection<String> userRoles, List<String> roles) {
-        if (roles == null || roles.isEmpty()) {
+    private boolean isDeniedAccess(Collection<String> userAccess, List<String> denyList) {
+        if (denyList == null || denyList.isEmpty()) {
             return false;
         }
-        for (String role : roles) {
-            if (userRoles.contains(role)) {
+        boolean denied = true;
+
+        for (String deny : denyList) {
+            denied &= !userAccess.contains(deny);
+        }
+        return denied;
+    }
+
+    private boolean isGrantedAccess(Collection<String> userAccess, List<String> grantList) {
+        if (grantList == null || grantList.isEmpty()) {
+            return false;
+        }
+        for (String grant : grantList) {
+            if (userAccess.contains(grant)) {
                 return true;
             }
         }

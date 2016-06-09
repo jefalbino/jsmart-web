@@ -32,7 +32,7 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class WhenTagHandler extends TagHandler {
 
-    private String access;
+    private String grant;
 
     private String deny;
 
@@ -61,12 +61,17 @@ public final class WhenTagHandler extends TagHandler {
         return null;
     }
 
-    List<String> getAccess() {
-        return getAsList(access);
+    @Deprecated
+    public void setAccess(String access) {
+        this.grant = access;
     }
 
-    public void setAccess(String access) {
-        this.access = access;
+    List<String> getGrant() {
+        return getAsList(grant);
+    }
+
+    public void setGrant(String grant) {
+        this.grant = grant;
     }
 
     List<String> getDeny() {
@@ -91,5 +96,4 @@ public final class WhenTagHandler extends TagHandler {
         }
         return null;
     }
-
 }
