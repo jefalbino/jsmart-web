@@ -80,7 +80,7 @@ public final class AuthorizeTagHandler extends TagHandler {
         boolean denied = true;
 
         for (String deny : denyList) {
-            denied &= !userAccess.contains(deny);
+            denied &= !userAccess.contains(deny.trim());
         }
         return denied;
     }
@@ -90,7 +90,7 @@ public final class AuthorizeTagHandler extends TagHandler {
             return false;
         }
         for (String grant : grantList) {
-            if (userAccess.contains(grant)) {
+            if (userAccess.contains(grant.trim())) {
                 return true;
             }
         }
