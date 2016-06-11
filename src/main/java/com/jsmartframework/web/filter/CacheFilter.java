@@ -38,6 +38,8 @@ public final class CacheFilter implements Filter {
 
     private static final String HEADER_CACHE_CONTROL = "Cache-Control";
 
+    private static final String HEADER_EXPIRES = "Expires";
+
     @Override
     public void init(FilterConfig config) throws ServletException {
         // DO NOTHING
@@ -62,7 +64,8 @@ public final class CacheFilter implements Filter {
         CachePattern cachePattern = CONFIG.getContent().getCachePattern(httpRequest.getRequestURI());
 
         if (cachePattern != null && cachePattern.getCacheControl() != null) {
-            httpResponse.setHeader(HEADER_CACHE_CONTROL, cachePattern.getCacheControl());
+            httpResponse.setHeader(HEADER_CACHE_CONTROL, cachePattern.getCacheControlHeader());
+            httpResponse.setHeader(HEADER_EXPIRES, cachePattern.getExpiresHeader());
         }
         filterChain.doFilter(httpRequest, httpResponse);
     }

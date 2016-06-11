@@ -84,7 +84,7 @@ public final class FileVersion {
         extensionsPattern = Pattern.compile(patternBuilder.toString());
     }
 
-    @XmlAttribute(name = "include-minified")
+    @XmlAttribute(name = "includeMinified")
     public boolean isIncludeMinified() {
         return includeMinified;
     }
@@ -97,7 +97,7 @@ public final class FileVersion {
         return minifiedPattern.matcher(file).find();
     }
 
-    @XmlAttribute(name = "exclude-folders")
+    @XmlAttribute(name = "excludeFolders")
     @XmlJavaTypeAdapter(value = AttributeAdapter.class)
     public String[] getExcludeFolders() {
         return excludeFolders;

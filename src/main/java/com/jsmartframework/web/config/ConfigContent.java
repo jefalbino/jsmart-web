@@ -331,7 +331,7 @@ public final class ConfigContent {
     public CachePattern getCachePattern(String file) {
         if (StringUtils.isNotBlank(file) && cachePatterns != null) {
             for (CachePattern cachePattern : cachePatterns) {
-                if (cachePattern.isEndedIn(file)) {
+                if (cachePattern.matchesFile(file)) {
                     return cachePattern;
                 }
             }

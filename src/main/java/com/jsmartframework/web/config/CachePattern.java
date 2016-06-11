@@ -22,20 +22,34 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class CachePattern {
 
+    private static final long DEFAULT_MAX_AGE = 86400;
+
+    private static final String DEFAULT_EXPIRES = "1";
+
     private static Pattern filesPattern;
 
     private String cacheControl;
+
+    private Long maxAge = DEFAULT_MAX_AGE;
 
     private String[] files;
 
     @XmlAttribute
     public String getCacheControl() {
         return cacheControl;
+    }
+
+    public String getCacheControlHeader() {
+        if (maxAge == 0) {
+            return "no-cache";
+        }
+        return new StringBuilder(cacheControl).append(", max-age=").append(maxAge).toString();
     }
 
     public void setCacheControl(String cacheControl) {
@@ -45,12 +59,30 @@ public final class CachePattern {
     }
 
     @XmlAttribute
+    public Long getMaxAge() {
+        return maxAge;
+    }
+
+    public String getExpiresHeader() {
+        if (maxAge == 0) {
+            return DEFAULT_EXPIRES;
+        }
+        return String.valueOf(TimeUnit.SECONDS.toMillis(maxAge));
+    }
+
+    public void setMaxAge(Long maxAge) {
+        if (maxAge != null && maxAge >= 0) {
+            this.maxAge = maxAge;
+        }
+    }
+
+    @XmlAttribute
     @XmlJavaTypeAdapter(value = AttributeAdapter.class)
     public String[] getFiles() {
         return files;
     }
 
-    public boolean isEndedIn(String file) {
+    public boolean matchesFile(String file) {
         if (filesPattern != null && file != null) {
             Matcher matcher = filesPattern.matcher(file);
             return matcher.find();
@@ -74,7 +106,7 @@ public final class CachePattern {
             }
             patternBuilder.append(files[index]);
         }
-        patternBuilder.append("))$");
+        patternBuilder.append("))");
         filesPattern = Pattern.compile(patternBuilder.toString());
     }
 
