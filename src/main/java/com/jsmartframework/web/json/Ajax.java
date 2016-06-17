@@ -51,6 +51,8 @@ public final class Ajax {
 
     private String complete;
 
+    private boolean validate;
+
     public String getId() {
         return id;
     }
@@ -169,6 +171,14 @@ public final class Ajax {
 
     public void setComplete(String complete) {
         this.complete = complete;
+    }
+
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public void setValidate(boolean validate) {
+        this.validate = validate;
     }
 
     @Override

@@ -79,6 +79,8 @@ public final class ButtonTagHandler extends TagHandler {
 
     private boolean reset;
 
+    private boolean skipValidation;
+
     private DropMenuTagHandler dropMenu;
 
     @Override
@@ -314,6 +316,7 @@ public final class ButtonTagHandler extends TagHandler {
             action = annotatedAction.getBeanMethod();
             ajax = annotatedAction.getAction().ajax();
             timeout = annotatedAction.getAction().timeout();
+            skipValidation = annotatedAction.isSkipValidation();
 
             if (StringUtils.isNotBlank(annotatedAction.getAction().onForm())) {
                 onForm = annotatedAction.getAction().onForm();
@@ -343,6 +346,7 @@ public final class ButtonTagHandler extends TagHandler {
         jsonAjax.setId(id);
         jsonAjax.setForm((String) getTagValue(onForm));
         jsonAjax.setTimeout(timeout);
+        jsonAjax.setValidate(!skipValidation);
         jsonAjax.setTag("button");
 
         // Params must be considered regardless the action for rest purpose
@@ -459,4 +463,7 @@ public final class ButtonTagHandler extends TagHandler {
         this.reset = reset;
     }
 
+    public void setSkipValidation(boolean skipValidation) {
+        this.skipValidation = skipValidation;
+    }
 }

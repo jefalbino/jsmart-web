@@ -1800,6 +1800,8 @@ public enum BeanHandler {
 
         private String update;
 
+        private boolean skipValidation;
+
         public AnnotatedAction(Method method, String className, List<Arg> arguments) {
             this.method = method;
             this.className = className;
@@ -1811,6 +1813,7 @@ public enum BeanHandler {
             this.onError = StringUtils.join(action.onError(), ";");
             this.update = StringUtils.join(action.update(), ",");
             this.arguments = arguments;
+            this.skipValidation = action.skipValidation();
         }
 
         public Action getAction() {
@@ -1847,6 +1850,10 @@ public enum BeanHandler {
 
         public String getUpdate() {
             return update;
+        }
+
+        public boolean isSkipValidation() {
+            return skipValidation;
         }
     }
 }

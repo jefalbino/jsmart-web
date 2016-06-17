@@ -63,6 +63,8 @@ public class DropActionTagHandler extends TagHandler {
 
     private String onComplete;
 
+    private boolean skipValidation;
+
     @Override
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
@@ -161,6 +163,7 @@ public class DropActionTagHandler extends TagHandler {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
         jsonAjax.setTag("dropaction");
+        jsonAjax.setValidate(!skipValidation);
 
         // Params must be considered regardless the action for rest purpose
         for (String name : params.keySet()) {
@@ -206,6 +209,7 @@ public class DropActionTagHandler extends TagHandler {
         BeanHandler.AnnotatedAction annotatedAction = getAnnotatedAction(id);
         if (annotatedAction != null) {
             action = annotatedAction.getBeanMethod();
+            skipValidation = annotatedAction.isSkipValidation();
 
             if (StringUtils.isNotBlank(annotatedAction.getBeforeSend())) {
                 beforeSend = annotatedAction.getBeforeSend();
@@ -266,4 +270,7 @@ public class DropActionTagHandler extends TagHandler {
         this.onComplete = onComplete;
     }
 
+    public void setSkipValidation(boolean skipValidation) {
+        this.skipValidation = skipValidation;
+    }
 }

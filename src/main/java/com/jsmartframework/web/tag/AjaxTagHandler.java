@@ -55,6 +55,8 @@ public final class AjaxTagHandler extends TagHandler {
 
     private String onComplete;
 
+    private boolean skipValidation;
+
     @Override
     public void validateTag() throws JspException {
         if (event != null && !Event.validate(event)) {
@@ -94,6 +96,7 @@ public final class AjaxTagHandler extends TagHandler {
         jsonAjax.setForm((String) getTagValue(onForm));
         jsonAjax.setTimeout(timeout);
         jsonAjax.setTag("ajax");
+        jsonAjax.setValidate(!skipValidation);
 
         // Params must be considered regardless the action for rest purpose
         if (!hasDelegate) {
@@ -229,4 +232,7 @@ public final class AjaxTagHandler extends TagHandler {
         this.onComplete = onComplete;
     }
 
+    public void setSkipValidation(boolean skipValidation) {
+        this.skipValidation = skipValidation;
+    }
 }

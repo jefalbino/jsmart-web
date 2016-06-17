@@ -91,4 +91,10 @@ public @interface Action {
      * Specifies the timeout in milliseconds to wait before Ajax request is performed.
      */
     int timeout() default 0;
+
+    /**
+     * Turn off the validation of all elements in the same form where this action is applied. So
+     * any validate tag on these elements will be bypassed when the request is performed.
+     */
+    boolean skipValidation() default false;
 }

@@ -108,6 +108,10 @@
             <required>false</required>
 		</attribute>
         <attribute>
+            <name>skipValidation</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>ajax</name>
             <required>false</required>
 		</attribute>
@@ -378,6 +382,10 @@
             <required>false</required>
 		</attribute>
         <attribute>
+            <name>skipValidation</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>divider</name>
             <required>false</required>
 		</attribute>
@@ -530,6 +538,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>skipValidation</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>size</name>
             <required>false</required>
         </attribute>
@@ -641,6 +653,10 @@
         </attribute>
         <attribute>
             <name>onComplete</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>skipValidation</name>
             <required>false</required>
         </attribute>
     </tag>

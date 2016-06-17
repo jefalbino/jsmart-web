@@ -76,6 +76,8 @@ public final class LinkTagHandler extends TagHandler {
 
     private Integer timeout;
 
+    private boolean skipValidation;
+
     private Integer tabIndex;
 
     private String size;
@@ -270,6 +272,7 @@ public final class LinkTagHandler extends TagHandler {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
         jsonAjax.setTimeout(timeout);
+        jsonAjax.setValidate(!skipValidation);
         jsonAjax.setForm((String) getTagValue(onForm));
         jsonAjax.setTag("link");
 
@@ -333,6 +336,7 @@ public final class LinkTagHandler extends TagHandler {
         if (annotatedAction != null) {
             action = annotatedAction.getBeanMethod();
             timeout = annotatedAction.getAction().timeout();
+            skipValidation = annotatedAction.isSkipValidation();
 
             if (StringUtils.isNotBlank(annotatedAction.getAction().onForm())) {
                 onForm = annotatedAction.getAction().onForm();
@@ -422,5 +426,9 @@ public final class LinkTagHandler extends TagHandler {
 
     public void setSize(String size) {
         this.size = size;
+    }
+
+    public void setSkipValidation(boolean skipValidation) {
+        this.skipValidation = skipValidation;
     }
 }

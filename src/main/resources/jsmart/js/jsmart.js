@@ -380,8 +380,11 @@ var JSmart = (function() {
             setTimeout(function() {doAjax(map, el);}, timeout);
 
         } else {
-            if (map.tag && (map.tag == 'select' || map.tag == 'link' || map.tag == 'button'
-                                || map.tag == 'dropaction' || map.tag == 'function')) {
+            if (map.tag && (map.tag == 'select'
+                            || map.tag == 'link'
+                            || map.tag == 'button'
+                            || map.tag == 'dropaction'
+                            || map.tag == 'function')) {
                 el = $(getId(map.id));
             }
 
@@ -393,7 +396,7 @@ var JSmart = (function() {
 
             // Validate form before creating ajax request
             var form = (map.form && $.trim(map.form).length > 0) ? $(getId(map.form)) : el.closest('form');
-            if (form && form.length > 0) {
+            if (map.tag != 'function' && form && form.length > 0 && map.validate == true) {
                 if (!doValidate($(form).attr('id'))) {
                     return;
                 }
@@ -464,8 +467,10 @@ var JSmart = (function() {
     function doRest(map, rest) {
         if (rest && rest.attr('role') == 'restrequest') {
 
-            if (!doValidate(rest.attr('id'))) {
-                return;
+            if (map.tag != 'function' && map.validate == true) {
+                if (!doValidate(rest.attr('id'))) {
+                    return;
+                }
             }
 
             var queryParams = '';
