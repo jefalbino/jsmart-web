@@ -38,8 +38,8 @@ import static com.jsmartframework.web.config.Constants.REQUEST_EXPOSE_VARS_ATTR;
 import static com.jsmartframework.web.config.Constants.SESSION_RESET_ATTR;
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
 import static com.jsmartframework.web.manager.BeanHandler.AnnotatedFunction;
+import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
 
-import com.google.gson.Gson;
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
 import com.jsmartframework.web.config.FileVersion;
 import com.jsmartframework.web.config.HtmlCompress;
@@ -98,8 +98,6 @@ public final class FilterControl implements Filter {
     public static final String ENCODING = "UTF-8";
 
     private static final int STREAM_BUFFER = 2048;
-
-    private static final Gson GSON = new Gson();
 
     private static final Logger LOGGER = Logger.getLogger(FilterControl.class.getPackage().getName());
 
@@ -304,24 +302,13 @@ public final class FilterControl implements Filter {
 
             html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(metaTags.toString()));
         }
-
-        // Place exposed vars as Meta tags
-        Map<String, Object> exposeVars = (Map) httpRequest.getAttribute(REQUEST_EXPOSE_VARS_ATTR);
-        if (exposeVars != null && !exposeVars.isEmpty()) {
-            startHeadMatcher = START_HEAD_PATTERN.matcher(html);
-
-            StringBuilder metaTags = new StringBuilder();
-            for (String key : exposeVars.keySet()) {
-                Tag meta = new Meta().addAttribute("name", key).addAttribute("content", exposeVars.get(key))
-                        .addAttribute("expose-var", true);
-                metaTags.append(meta.getHtml());
-            }
-            html = startHeadMatcher.replaceFirst("$1" + Matcher.quoteReplacement(metaTags.toString()));
-        }
         return html;
     }
 
     private String completeScripts(HttpServletRequest httpRequest, String html) {
+        // Stand alone script with mapped exposed variables
+        Script varScript = getExposeVarScripts(httpRequest);
+
         // Stand alone functions mapped via function tag
         Script funcScript = getFunctionScripts(httpRequest);
 
@@ -329,6 +316,9 @@ public final class FilterControl implements Filter {
         DocScript docScript = (DocScript) httpRequest.getAttribute(REQUEST_PAGE_DOC_SCRIPT_ATTR);
 
         StringBuilder scriptBuilder = new StringBuilder(headerScripts);
+        if (varScript != null) {
+            scriptBuilder.append(varScript.getHtml());
+        }
         if (funcScript != null) {
             scriptBuilder.append(funcScript.getHtml());
         }
@@ -370,11 +360,28 @@ public final class FilterControl implements Filter {
             try {
                 new FunctionTagHandler().executeTag(httpRequest, annotatedFunction);
             } catch (JspException | IOException e) {
-                LOGGER.log(Level.SEVERE, "Annotated Function could not be generated for path ["
-                        + requestPath + "]: " + e.getMessage());
+                LOGGER.log(Level.SEVERE, "Annotated Function could not be generated for path [" + requestPath + "]: " + e.getMessage());
             }
         }
         return (Script) httpRequest.getAttribute(REQUEST_PAGE_SCRIPT_ATTR);
+    }
+
+    private Script getExposeVarScripts(HttpServletRequest httpRequest) {
+        Map<String, Object> exposeVars = (Map) httpRequest.getAttribute(REQUEST_EXPOSE_VARS_ATTR);
+        if (exposeVars == null || exposeVars.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder varBuilder = new StringBuilder();
+        for (String key : exposeVars.keySet()) {
+            varBuilder.append("var ").append(key).append(" = ")
+                    .append(EXPRESSIONS.GSON.toJson(exposeVars.get(key)))
+                    .append(";");
+        }
+        Script script = new Script();
+        script.addAttribute("type", "text/javascript");
+        script.addText(varBuilder);
+        return script;
     }
 
     private void initHeaders(FilterConfig config) {
@@ -388,7 +395,7 @@ public final class FilterControl implements Filter {
             headerPath = contextPath + "/";
         }
 
-        Headers jsonHeaders = GSON.fromJson(convertResourceToString(FILTER_HEADERS), Headers.class);
+        Headers jsonHeaders = EXPRESSIONS.GSON.fromJson(convertResourceToString(FILTER_HEADERS), Headers.class);
         for (String style : jsonHeaders.getStyles()) {
             headerStyles.append(String.format(style, headerPath));
         }
@@ -433,7 +440,7 @@ public final class FilterControl implements Filter {
                 return;
             }
 
-            Resources jsonResources = GSON.fromJson(convertResourceToString(FILTER_RESOURCES), Resources.class);
+            Resources jsonResources = EXPRESSIONS.GSON.fromJson(convertResourceToString(FILTER_RESOURCES), Resources.class);
 
             File libFile = new File(context.getRealPath(libFilePath));
             Dir content = Vfs.fromURL(libFile.toURI().toURL());

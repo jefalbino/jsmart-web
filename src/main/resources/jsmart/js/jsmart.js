@@ -46,16 +46,12 @@ var JSmart = (function() {
     // Keep the function vars to allow function components declare arguments and be accessed via js
     var functionVars = [];
 
-    // Keep key value pairs mapped using annotation ExposeVar on bean attributes
-    var exposeVars = {};
-
     $(function () {
         initCheckboxes();
         initPopOvers();
         initTooltips();
         initRoleEmpty();
         initWebSecurity();
-        initExposeVars();
     });
 
     function initPopOvers() {
@@ -158,12 +154,6 @@ var JSmart = (function() {
     function initWebSecurity() {
         $('form').each(function () {
             doFormSecurity($(this));
-        });
-    }
-
-    function initExposeVars() {
-        $('meta[expose-var="true"]').each(function() {
-            exposeVars[$(this).attr('name')] = $(this).attr('content');
         });
     }
 
@@ -1881,7 +1871,7 @@ var JSmart = (function() {
         if (!name) {
             return undefined;
         }
-        return exposeVars[name];
+        return window[name];
     }
 
     function doGetCsrfToken() {

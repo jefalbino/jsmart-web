@@ -81,7 +81,7 @@ enum ExpressionHandler {
 
     public static final String BEAN_METHOD_NAME_FORMAT = "%s.%s";
 
-    private static final Gson GSON = new GsonBuilder()
+    static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
             .registerTypeAdapter(Date.class, new DateTypeConverter())
             .create();
