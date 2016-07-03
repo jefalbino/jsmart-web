@@ -31,6 +31,14 @@ import javax.servlet.jsp.tagext.JspFragment;
 
 public final class AccordionTagHandler extends TagHandler {
 
+    private String onShow;
+
+    private String onShown;
+
+    private String onHide;
+
+    private String onHidden;
+
     @Override
     public void validateTag() throws JspException {
         // DO NOTHING
@@ -62,6 +70,35 @@ public final class AccordionTagHandler extends TagHandler {
         }
 
         appendEvent(div);
+
+        if (onShow != null) {
+            appendDocScript(getBindFunction(id, "show.bs.collapse", new StringBuilder(onShow)));
+        }
+        if (onShown != null) {
+            appendDocScript(getBindFunction(id, "shown.bs.collapse", new StringBuilder(onShown)));
+        }
+        if (onHide != null) {
+            appendDocScript(getBindFunction(id, "hide.bs.collapse", new StringBuilder(onHide)));
+        }
+        if (onHidden != null) {
+            appendDocScript(getBindFunction(id, "hidden.bs.collapse", new StringBuilder(onHidden)));
+        }
         return div;
+    }
+
+    public void setOnShow(String onShow) {
+        this.onShow = onShow;
+    }
+
+    public void setOnShown(String onShown) {
+        this.onShown = onShown;
+    }
+
+    public void setOnHide(String onHide) {
+        this.onHide = onHide;
+    }
+
+    public void setOnHidden(String onHidden) {
+        this.onHidden = onHidden;
     }
 }

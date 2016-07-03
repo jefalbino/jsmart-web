@@ -1606,6 +1606,22 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>onShow</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onShown</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onHide</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onHidden</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>onClick</name>
             <required>false</required>
         </attribute>
@@ -3345,6 +3361,10 @@
         </attribute>
         <attribute>
             <name>onSlide</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>onSlid</name>
             <required>false</required>
         </attribute>
         <attribute>

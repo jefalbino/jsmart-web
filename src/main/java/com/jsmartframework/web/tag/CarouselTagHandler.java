@@ -47,6 +47,8 @@ public final class CarouselTagHandler extends TagHandler {
 
     private String onSlide;
 
+    private String onSlid;
+
     private String width;
 
     private String height;
@@ -195,6 +197,9 @@ public final class CarouselTagHandler extends TagHandler {
         if (onSlide != null) {
             appendDocScript(getBindFunction(id, "slide.bs.carousel", new StringBuilder(onSlide)));
         }
+        if (onSlid != null) {
+            appendDocScript(getBindFunction(id, "slid.bs.carousel", new StringBuilder(onSlid)));
+        }
 
         if (noSlideImage) {
             StringBuilder script = new StringBuilder(JSMART_CAROUSEL.format(id));
@@ -216,6 +221,10 @@ public final class CarouselTagHandler extends TagHandler {
 
     public void setOnSlide(String onSlide) {
         this.onSlide = onSlide;
+    }
+
+    public void setOnSlid(String onSlid) {
+        this.onSlid = onSlid;
     }
 
     public void setContinuous(boolean continuous) {
