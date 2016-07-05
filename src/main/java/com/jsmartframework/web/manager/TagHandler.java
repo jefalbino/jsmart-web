@@ -884,9 +884,9 @@ public abstract class TagHandler extends SimpleTagSupport {
     protected void appendValidator(Tag tag) throws JspException, IOException {
         if (validatorTag != null) {
             tag.addAttribute("vldt-req", "true")
-                .addAttribute("vldt-min-l", validatorTag.getMinLength())
-                .addAttribute("vldt-max-l", validatorTag.getMaxLength())
-                .addAttribute("vldt-regex", validatorTag.getRegex())
+                .addAttribute("vldt-min-l", getTagValue(validatorTag.getMinLength()))
+                .addAttribute("vldt-max-l", getTagValue(validatorTag.getMaxLength()))
+                .addAttribute("vldt-regex", getTagValue(validatorTag.getRegex()))
                 .addAttribute("vldt-text", getTagValue(validatorTag.getText()))
                 .addAttribute("vldt-look", getTagValue(validatorTag.getLook()));
         }
@@ -897,11 +897,11 @@ public abstract class TagHandler extends SimpleTagSupport {
             tag.addAttribute("data-container", "body")
                 .addAttribute("data-toggle", "popover")
                 .addAttribute("title", getTagValue(popOverTag.getTitle()))
-                .addAttribute("data-placement", popOverTag.getSide())
+                .addAttribute("data-placement", getTagValue(popOverTag.getSide()))
                 .addAttribute("data-content", getTagValue(popOverTag.getContent()))
-                .addAttribute("data-selector", popOverTag.getSelector())
-                .addAttribute("template-id", popOverTag.getId())
-                .addAttribute("data-trigger", popOverTag.getEvent());
+                .addAttribute("data-selector", getTagValue(popOverTag.getSelector()))
+                .addAttribute("template-id", getTagValue(popOverTag.getId()))
+                .addAttribute("data-trigger", getTagValue(popOverTag.getEvent()));
         }
     }
 
@@ -910,10 +910,10 @@ public abstract class TagHandler extends SimpleTagSupport {
             tag.addAttribute("data-container", "body")
                 .addAttribute("data-toggle", "tooltip")
                 .addAttribute("title", getTagValue(tooltipTag.getTitle()))
-                .addAttribute("data-placement", tooltipTag.getSide())
-                .addAttribute("data-selector", tooltipTag.getSelector())
-                .addAttribute("template-id", tooltipTag.getId())
-                .addAttribute("data-trigger", tooltipTag.getEvent());
+                .addAttribute("data-placement", getTagValue(tooltipTag.getSide()))
+                .addAttribute("data-selector", getTagValue(tooltipTag.getSelector()))
+                .addAttribute("template-id", getTagValue(tooltipTag.getId()))
+                .addAttribute("data-trigger", getTagValue(tooltipTag.getEvent()));
         }
     }
 
@@ -929,19 +929,19 @@ public abstract class TagHandler extends SimpleTagSupport {
     }
 
     protected void appendEvent(Tag tag, TagHandler tagHandler) {
-        tag.addAttribute("onclick", tagHandler.onClick)
-            .addAttribute("ondblclick", tagHandler.onDblClick)
-            .addAttribute("onmousedown", tagHandler.onMouseDown)
-            .addAttribute("onmousemove", tagHandler.onMouseMove)
-            .addAttribute("onmouseover", tagHandler.onMouseOver)
-            .addAttribute("onmouseout", tagHandler.onMouseOut)
-            .addAttribute("onmouseup", tagHandler.onMouseUp)
-            .addAttribute("onkeydown", tagHandler.onKeyDown)
-            .addAttribute("onkeypress", tagHandler.onKeyPress)
-            .addAttribute("onkeyup", tagHandler.onKeyUp)
-            .addAttribute("onblur", tagHandler.onBlur)
-            .addAttribute("onchange", tagHandler.onChange)
-            .addAttribute("onfocus", tagHandler.onFocus)
-            .addAttribute("onselect", tagHandler.onSelect);
+        tag.addAttribute("onclick", getTagValue(tagHandler.onClick))
+            .addAttribute("ondblclick", getTagValue(tagHandler.onDblClick))
+            .addAttribute("onmousedown", getTagValue(tagHandler.onMouseDown))
+            .addAttribute("onmousemove", getTagValue(tagHandler.onMouseMove))
+            .addAttribute("onmouseover", getTagValue(tagHandler.onMouseOver))
+            .addAttribute("onmouseout", getTagValue(tagHandler.onMouseOut))
+            .addAttribute("onmouseup", getTagValue(tagHandler.onMouseUp))
+            .addAttribute("onkeydown", getTagValue(tagHandler.onKeyDown))
+            .addAttribute("onkeypress", getTagValue(tagHandler.onKeyPress))
+            .addAttribute("onkeyup", getTagValue(tagHandler.onKeyUp))
+            .addAttribute("onblur", getTagValue(tagHandler.onBlur))
+            .addAttribute("onchange", getTagValue(tagHandler.onChange))
+            .addAttribute("onfocus", getTagValue(tagHandler.onFocus))
+            .addAttribute("onselect", getTagValue(tagHandler.onSelect));
     }
 }
