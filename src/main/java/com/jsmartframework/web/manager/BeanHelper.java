@@ -35,11 +35,13 @@ import com.jsmartframework.web.annotation.WebBean;
 import com.jsmartframework.web.annotation.WebFilter;
 import com.jsmartframework.web.annotation.WebSecurity;
 import com.jsmartframework.web.annotation.WebServlet;
+import com.jsmartframework.web.config.UrlPattern;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,6 +52,8 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import static com.jsmartframework.web.config.Config.CONFIG;
+
 enum BeanHelper {
 
     HELPER();
@@ -58,6 +62,10 @@ enum BeanHelper {
 
     private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
 
+    private static final Pattern PATH_BEAN_ALL_PATTERN = Pattern.compile("(.*)/\\*");
+
+    private Map<Class<?>, String> beanNames = new ConcurrentHashMap<>();
+
     private Map<Class<?>, Field[]> beanFields = new ConcurrentHashMap<>();
 
     private Map<Class<?>, Method[]> beanMethods = new ConcurrentHashMap<>();
@@ -65,6 +73,8 @@ enum BeanHelper {
     private Map<Class<?>, Field[]> preSetFields = new ConcurrentHashMap<>();
 
     private Map<Class<?>, Field[]> exposeVarFields = new ConcurrentHashMap<>();
+
+    private Map<String, List<Class<?>>> exposeVarPaths = new ConcurrentHashMap<>();
 
     private Map<Class<?>, Method[]> postConstructMethods = new ConcurrentHashMap<>();
 
@@ -88,23 +98,29 @@ enum BeanHelper {
 
     private Map<Class<?>, Method[]> authMethods = new ConcurrentHashMap<>();
 
+    String getBeanName(Class<?> clazz) {
+        return beanNames.get(clazz);
+    }
+
     String getClassName(String name) {
         return name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toLowerCase());
     }
 
     String getClassName(WebBean webBean, Class<?> beanClass) {
-        if (StringUtils.isBlank(webBean.name())) {
-            String beanName = beanClass.getSimpleName();
-            return getClassName(beanName);
+        String beanName = webBean.name();
+        if (StringUtils.isBlank(beanName)) {
+            beanName = getClassName(beanClass.getSimpleName());
         }
-        return webBean.name();
+        beanNames.put(beanClass, beanName);
+        return beanName;
     }
 
     String getClassName(AuthBean authBean, Class<?> authClass) {
-        if (StringUtils.isBlank(authBean.name())) {
-            String beanName = authClass.getSimpleName();
-            return getClassName(beanName);
+        String beanName = authBean.name();
+        if (StringUtils.isBlank(beanName)) {
+            beanName = getClassName(authClass.getSimpleName());
         }
+        beanNames.put(authClass, beanName);
         return authBean.name();
     }
 
@@ -149,6 +165,14 @@ enum BeanHelper {
                 }
                 if (field.isAnnotationPresent(ExposeVar.class)) {
                     exposeVars.add(field);
+
+                    for (String varPath : cleanPaths(field.getAnnotation(ExposeVar.class).forPaths())) {
+                        List<Class<?>> classes = exposeVarPaths.get(varPath);
+                        if (classes == null) {
+                            exposeVarPaths.put(varPath, classes = new ArrayList<>());
+                        }
+                        classes.add(clazz);
+                    }
                 }
             }
 
@@ -166,6 +190,11 @@ enum BeanHelper {
     Field[] getExposeVarFields(Class<?> clazz) {
         Field[] fields = exposeVarFields.get(clazz);
         return fields != null ? fields : new Field[]{};
+    }
+
+    List<Class<?>> getExposeVarByPath(String path) {
+        List<Class<?>> classes = exposeVarPaths.get(path);
+        return classes != null ? classes : Collections.EMPTY_LIST;
     }
 
     String[] getUnescapeMethods(Class<?> clazz) {
@@ -338,5 +367,43 @@ enum BeanHelper {
             }
             authMethods.put(clazz, methods.toArray(new Method[methods.size()]));
         }
+    }
+
+    List<String> cleanPaths(String[] urlPaths) {
+        List<String> cleanPaths = new ArrayList<>();
+        if (urlPaths.length == 1 && "/*".equals(urlPaths[0].trim())) {
+            urlPaths = CONFIG.getContent().getUrlPatternsArray();
+        }
+
+        for (String urlPattern : urlPaths) {
+            String path = getCleanPath(urlPattern);
+            cleanPaths.add(matchUrlPattern(path));
+        }
+        return cleanPaths;
+    }
+
+    String getCleanPath(String path) {
+        Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
+        if (matcher.find()) {
+            path = matcher.group(1);
+        }
+        return path;
+    }
+
+    String matchUrlPattern(String path) {
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+            if (urlPattern.getUrl().equals(path)) {
+                return urlPattern.getUrl();
+            }
+        }
+        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
+            if (urlPattern.getUrl().contains("/*")) {
+                String url = urlPattern.getUrl().replace("/*", "");
+                if (path.equals(url)) {
+                    return url;
+                }
+            }
+        }
+        return path;
     }
 }

@@ -32,4 +32,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface ExposeVar {
 
+    /**
+     * List of url-pattern which the exposeVar will be mapped for
+     * direct value injection on JavaScript.
+     */
+    String[] forPaths() default {};
 }

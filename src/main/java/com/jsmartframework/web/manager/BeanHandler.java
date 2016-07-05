@@ -117,8 +117,6 @@ public enum BeanHandler {
 
     private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
 
-    private static final Pattern PATH_BEAN_ALL_PATTERN = Pattern.compile("(.*)/\\*");
-
     Map<String, Class<?>> webBeans = new ConcurrentHashMap<>();
 
     Map<String, Class<?>> authBeans = new ConcurrentHashMap<>();
@@ -1106,20 +1104,13 @@ public enum BeanHandler {
                 beanMethodFunctions.put(String.format(BEAN_METHOD_NAME_FORMAT, className, method.getName()),
                         annotatedFunction);
 
-                String[] urlPaths = annotatedFunction.getFunction().forPaths();
-                if (urlPaths.length == 1 && "/*".equals(urlPaths[0].trim())) {
-                    urlPaths = CONFIG.getContent().getUrlPatternsArray();
-                }
+                List<String> urlPaths = HELPER.cleanPaths(annotatedFunction.getFunction().forPaths());
 
-                for (String urlPattern : urlPaths) {
-                    // Functions are created per Url-Pattern
-                    String path = getCleanPath(urlPattern);
-                    path = matchUrlPattern(path);
-
-                    List<AnnotatedFunction> pathFunctions = annotatedFunctions.get(path);
+                for (String urlPath : urlPaths) {
+                    List<AnnotatedFunction> pathFunctions = annotatedFunctions.get(urlPath);
                     if (pathFunctions == null) {
                         pathFunctions = new ArrayList<>();
-                        annotatedFunctions.put(path, pathFunctions);
+                        annotatedFunctions.put(urlPath, pathFunctions);
                     }
                     pathFunctions.add(annotatedFunction);
                 }
@@ -1237,8 +1228,8 @@ public enum BeanHandler {
 
             HELPER.setBeanFields(clazz);
             HELPER.setBeanMethods(clazz);
-            String path = getCleanPath(asyncBean.value());
-            path = matchUrlPattern(path);
+            String path = HELPER.getCleanPath(asyncBean.value());
+            path = HELPER.matchUrlPattern(path);
             asyncBeans.put(path, clazz);
         }
 
@@ -1428,24 +1419,6 @@ public enum BeanHandler {
         }
     }
 
-    private String matchUrlPattern(String path) {
-        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
-            if (urlPattern.getUrl().equals(path)) {
-                return urlPattern.getUrl();
-            }
-        }
-
-        for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
-            if (urlPattern.getUrl().contains("/*")) {
-                String url = urlPattern.getUrl().replace("/*", "");
-                if (path.equals(url)) {
-                    return url;
-                }
-            }
-        }
-        return path;
-    }
-
     public String getForwardPath(String path) {
         if (path != null) {
             return forwardPaths.get(path);
@@ -1466,14 +1439,6 @@ public enum BeanHandler {
             return functions != null ? functions : Collections.EMPTY_LIST;
         }
         return Collections.EMPTY_LIST;
-    }
-
-    private String getCleanPath(String path) {
-        Matcher matcher = PATH_BEAN_ALL_PATTERN.matcher(path);
-        if (matcher.find()) {
-            path = matcher.group(1);
-        }
-        return path;
     }
 
     private void initForwardPaths(ServletContext servletContext) {
@@ -1580,15 +1545,20 @@ public enum BeanHandler {
     private void initJspPageBeans(ServletContext context) {
         for (UrlPattern urlPattern : CONFIG.getContent().getUrlPatterns()) {
 
-            String path = getCleanPath(urlPattern.getUrl());
+            String path = HELPER.getCleanPath(urlPattern.getUrl());
             JspPageBean jspPageBean = new JspPageBean();
 
             readJspPageResource(context, path, jspPageBean);
 
-            // Included the mapped bean containing function into jspPageBeans
+            // Include the mapped bean containing function into jspPageBeans
             // so they can be initialized properly
-            for(AnnotatedFunction annotatedFunction : getAnnotatedFunctions(path)) {
+            for (AnnotatedFunction annotatedFunction : getAnnotatedFunctions(path)) {
                 jspPageBean.addBeanName(annotatedFunction.getClassName());
+            }
+
+            // Include the mapped bean containing exposed vars into jspPageBeans
+            for (Class<?> clazz : HELPER.getExposeVarByPath(path)) {
+                jspPageBean.addBeanName(HELPER.getBeanName(clazz));
             }
             jspPageBeans.put(path, jspPageBean);
         }
