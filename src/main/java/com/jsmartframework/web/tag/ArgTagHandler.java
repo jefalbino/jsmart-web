@@ -50,13 +50,13 @@ public final class ArgTagHandler extends TagHandler {
 
         String nameVal = (String) getTagValue(name);
         if (StringUtils.isBlank(nameVal)) {
-            nameVal = "__" + String.valueOf(argName + parent.getArgs().size());
+            nameVal = "_" + String.valueOf(argName + parent.getArgs().size());
         }
 
         if (parent instanceof FunctionTagHandler && value == null && StringUtils.isBlank(bindTo)) {
-            FunctionTagHandler funcTagHandler = ((FunctionTagHandler) parent);
-            funcTagHandler.addArg(nameVal, null);
-            funcTagHandler.appendFunctionArg(nameVal);
+            FunctionTagHandler function = ((FunctionTagHandler) parent);
+            function.addArg(nameVal, null);
+            function.appendFunctionArg(nameVal);
 
         } else if (StringUtils.isNotBlank(bindTo)) {
             parent.addArg(nameVal, (String) getTagValue(bindTo));

@@ -83,8 +83,8 @@ public final class FunctionTagHandler extends TagHandler {
         }
 
         Ajax jsonAjax = getJsonAjax(WebContext.getRequest(), id);
-        StringBuilder builder = new StringBuilder(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-        appendFunction(getFunction(name, functionArgs, functionVars, builder));
+        StringBuilder scriptBuilder = new StringBuilder(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+        appendFunction(getFunction(id, name, functionArgs, functionVars, scriptBuilder));
         return null;
     }
 
@@ -93,6 +93,8 @@ public final class FunctionTagHandler extends TagHandler {
         name = annotatedFunction.getFunctionName();
         action = annotatedFunction.getBeanMethod();
         timeout = annotatedFunction.getFunction().timeout();
+
+        validateTag();
 
         if (StringUtils.isNotBlank(annotatedFunction.getBeforeSend())) {
             beforeSend = annotatedFunction.getBeforeSend();
@@ -109,13 +111,11 @@ public final class FunctionTagHandler extends TagHandler {
         if (StringUtils.isNotBlank(annotatedFunction.getUpdate())) {
             update = annotatedFunction.getUpdate();
         }
-
         setArgs(annotatedFunction.getArguments());
-        validateTag();
 
         Ajax jsonAjax = getJsonAjax(httpRequest, id);
-        StringBuilder builder = new StringBuilder(JSMART_AJAX.format(getJsonValue(jsonAjax)));
-        appendFunction(httpRequest, getFunction(name, functionArgs, functionVars, builder));
+        StringBuilder scriptBuilder = new StringBuilder(JSMART_AJAX.format(getJsonValue(jsonAjax)));
+        appendFunction(httpRequest, getFunction(id, name, functionArgs, functionVars, scriptBuilder));
     }
 
     private Ajax getJsonAjax(HttpServletRequest httpRequest, String id) {
@@ -137,7 +137,7 @@ public final class FunctionTagHandler extends TagHandler {
                 String name = getTagName(httpRequest, J_SBMT_ARGS, action);
 
                 for (Object arg : args.keySet()) {
-                    jsonAjax.addArg(new Param(name, arg, args.get(arg)));
+                    jsonAjax.addArg(new Param(name, id + arg, args.get(arg)));
                 }
             }
         } else if (update != null) {
@@ -166,7 +166,7 @@ public final class FunctionTagHandler extends TagHandler {
             functionArgs.append(",");
         }
         functionArgs.append(functionArg);
-        functionVars.append(JSMART_FUNCTION_VAR.format(functionArg, functionArg));
+        functionVars.append(JSMART_FUNCTION_VAR.format(id + functionArg, functionArg));
     }
 
     public void setName(String name) {

@@ -39,7 +39,8 @@ public enum JsConstants {
     JSMART_AUTOCOMPLETE("JSmart.autocplt", "(%s,e);"),
     JSMART_AUTOCPLTSCROLL("JSmart.autocpltscroll", "(%s);"),
     JSMART_ASYNCEVENT("JSmart.asyncevent", "(%s);"),
-    JSMART_FUNCTION_VAR("JSmart.fnvar", "('%s',%s);");
+    JSMART_FUNCTION_VAR("JSmart.fnvar", "('%s',%s);"),
+    JSMART_FUNCTION_OVERWRITE("JSmart.fnowc", "('%s',%s);");
 
     private String name;
 

@@ -33,6 +33,7 @@ var JSmart = (function() {
     var validateGroupStyle = 'js5-validate-group';
     var csrfName = 'jsmart_csrf_name';
     var csrfToken = 'jsmart_csrf_token';
+    var overwriteCallback = '_ow';
 
     // Keep track of scroll binds on table or list components with dynamic scroll, case update is done
     var scrollBinds = {};
@@ -45,6 +46,9 @@ var JSmart = (function() {
 
     // Keep the function vars to allow function components declare arguments and be accessed via js
     var functionVars = [];
+
+    // Keep the function callbacks to allow js function calling statement overwrite callbacks
+    var functionCallbacks = [];
 
     $(function () {
         initCheckboxes();
@@ -69,7 +73,7 @@ var JSmart = (function() {
                 $(this).popover();
             }
         });
-    }
+    };
 
     function initTooltips() {
         $('[data-toggle="tooltip"]').each(function() {
@@ -86,7 +90,7 @@ var JSmart = (function() {
                 $(this).tooltip();
             }
         });
-    }
+    };
 
     function initCheckboxes() {
         $('input:checkbox').each(function(index) {
@@ -120,7 +124,7 @@ var JSmart = (function() {
                 }
             });
         });
-    }
+    };
 
     function initRoleEmpty() {
         $('ul>li[' + roleEmpty + '], tbody>tr[' + roleEmpty + ']').each(function(index) {
@@ -149,13 +153,13 @@ var JSmart = (function() {
                 }
             }
         });
-    }
+    };
 
     function initWebSecurity() {
         $('form').each(function () {
             doFormSecurity($(this));
         });
-    }
+    };
 
     /******************************************************
      * PUBLIC INTERFACE
@@ -172,6 +176,10 @@ var JSmart = (function() {
 
         fnvar: function(id, value) {
             functionVars[id] = value;
+        },
+
+        fnowc: function(id, value) {
+            functionCallbacks[id] = value;
         },
 
         bind: function(map) {
@@ -428,10 +436,8 @@ var JSmart = (function() {
                 } else {
                     $.ajax(options);
                 }
-            } else {
-                if (map.before) {
-                    doExecute(map.before);
-                }
+            } else if (map.before) {
+                doExecute(map.before);
             }
         }
     }
@@ -1566,6 +1572,9 @@ var JSmart = (function() {
      ******************************************************/
 
     function getAjaxOptions(map) {
+        if (map.tag == 'function') {
+            doFunctionOverwrite(map);
+        }
         return {
             type: map.method,
             url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
@@ -1840,6 +1849,25 @@ var JSmart = (function() {
         // Send csrf token via header
         if (map.method && map.method.toLowerCase() == 'post') {
             doSetCsrfHeader(xhr);
+        }
+    }
+
+    function doFunctionOverwrite(map) {
+        var callbacks = functionCallbacks[map.id + overwriteCallback];
+        if (callbacks === undefined) {
+            return;
+        }
+        if (callbacks.beforeSend !== undefined) {
+            map.before = callbacks.beforeSend;
+        }
+        if (callbacks.onSuccess !== undefined) {
+            map.success = callbacks.onSuccess;
+        }
+        if (callbacks.onError !== undefined) {
+            map.error = callbacks.onError;
+        }
+        if (callbacks.onComplete !== undefined) {
+            map.complete = callbacks.onComplete;
         }
     }
 

@@ -23,6 +23,7 @@ import static com.jsmartframework.web.manager.BeanHandler.AnnotatedAction;
 import static com.jsmartframework.web.manager.ExpressionHandler.EXPRESSIONS;
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_BIND;
+import static com.jsmartframework.web.tag.js.JsConstants.JSMART_FUNCTION_OVERWRITE;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -114,6 +115,8 @@ public abstract class TagHandler extends SimpleTagSupport {
     protected static final String J_CAPTCHA = J_TAG_INIT + "012_";
 
     protected static final String J_AUTOCPLT = J_TAG_INIT + "013_";
+
+    protected static final String OVERWRITE_CALLBACK = "_ow";
 
     protected static final String EL_PARAM_READ_ONLY = Constants.EL_PARAM_READ_ONLY;
 
@@ -319,7 +322,7 @@ public abstract class TagHandler extends SimpleTagSupport {
     }
 
     public void addArg(Object arg, String bind) {
-        this.args.put(arg, bind);
+        args.put(arg, bind);
     }
 
     public void setArgs(List<Arg> args) {
@@ -329,7 +332,7 @@ public abstract class TagHandler extends SimpleTagSupport {
 
             String nameVal = (String) getTagValue(arg.name());
             if (StringUtils.isBlank(nameVal)) {
-                nameVal = "__" + String.valueOf(argName++);
+                nameVal = "_" + String.valueOf(argName++);
             }
 
             if (this instanceof FunctionTagHandler && argValue == null && StringUtils.isBlank(arg.bindTo())) {
@@ -652,31 +655,34 @@ public abstract class TagHandler extends SimpleTagSupport {
         return StringUtils.join(array, ",");
     }
 
-    protected StringBuilder getFunction(String name, StringBuilder arguments, StringBuilder vars, StringBuilder script) {
+    protected StringBuilder getFunction(String id, String name, StringBuilder arguments, StringBuilder vars, StringBuilder script) {
         StringBuilder builder = new StringBuilder();
-        builder.append("function").append(" ").append(name).append("(").append(arguments).append(")").append("{");
-        builder.append(vars);
-        builder.append(script);
-        builder.append("};");
+        builder.append("function").append(" ").append(name)
+            .append("(").append(arguments).append(arguments.length() > 0 ? "," : "")
+            .append(OVERWRITE_CALLBACK).append(")").append("{")
+            .append(vars)
+            .append(JSMART_FUNCTION_OVERWRITE.format(id + OVERWRITE_CALLBACK, OVERWRITE_CALLBACK))
+            .append(script)
+            .append("};");
         return builder;
     }
 
     protected StringBuilder getBindFunction(String id, String event, StringBuilder script) {
         StringBuilder builder = new StringBuilder();
-        builder.append("$(document).on('").append(event.toLowerCase()).append("','#").append(id).append("',function(e){");
-        builder.append("e.stopPropagation();");
-        builder.append(script);
-        builder.append("});");
+        builder.append("$(document).on('").append(event.toLowerCase()).append("','#").append(id).append("',function(e){")
+            .append("e.stopPropagation();")
+            .append(script)
+            .append("});");
         return builder;
     }
 
     protected StringBuilder getDelegateFunction(String id, String child, String event, StringBuilder script) {
         StringBuilder builder = new StringBuilder();
-        builder.append("$(document).on('").append(event.toLowerCase()).append("','#");
-        builder.append(id).append(" ").append(child).append("',function(e){");
-        builder.append("e.stopPropagation();");
-        builder.append(script);
-        builder.append("});");
+        builder.append("$(document).on('").append(event.toLowerCase()).append("','#")
+            .append(id).append(" ").append(child).append("',function(e){")
+            .append("e.stopPropagation();")
+            .append(script)
+            .append("});");
         return builder;
     }
 
