@@ -25,6 +25,7 @@ import static com.jsmartframework.web.tag.js.JsConstants.JSMART_AJAX;
 import static com.jsmartframework.web.tag.js.JsConstants.JSMART_BIND;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jsmartframework.web.annotation.Arg;
 import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.exception.InvalidAttributeException;
@@ -49,12 +50,14 @@ import com.jsmartframework.web.util.WebAlert;
 import com.jsmartframework.web.util.WebText;
 import com.jsmartframework.web.util.WebUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +71,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.JspTag;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
@@ -76,7 +78,10 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     protected static final Logger LOGGER = Logger.getLogger(TagHandler.class.getPackage().getName());
 
-    protected static final Gson GSON = new Gson();
+    protected static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new JsonConverter.DateTimeTypeConverter())
+            .registerTypeAdapter(Date.class, new JsonConverter.DateTypeConverter())
+            .create();
 
     protected static final String DELEGATE_TAG_PARENT = "delegate_tag_parent";
 

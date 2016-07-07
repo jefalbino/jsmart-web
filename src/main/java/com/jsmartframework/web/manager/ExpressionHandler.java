@@ -25,13 +25,6 @@ import static com.jsmartframework.web.manager.BeanHandler.AnnotatedFunction;
 import com.google.common.html.HtmlEscapers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.internal.Primitives;
 import com.jsmartframework.web.adapter.ListAdapter;
 import com.jsmartframework.web.adapter.TableAdapter;
@@ -45,11 +38,7 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLDecoder;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -82,8 +71,8 @@ enum ExpressionHandler {
     public static final String BEAN_METHOD_NAME_FORMAT = "%s.%s";
 
     static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
-            .registerTypeAdapter(Date.class, new DateTypeConverter())
+            .registerTypeAdapter(DateTime.class, new JsonConverter.DateTimeTypeConverter())
+            .registerTypeAdapter(Date.class, new JsonConverter.DateTypeConverter())
             .create();
 
     Map<String, String> getRequestExpressions(HttpServletRequest request) {
@@ -504,37 +493,5 @@ enum ExpressionHandler {
             ex.printStackTrace();
         }
         return value;
-    }
-
-    private static class DateTimeTypeConverter implements JsonSerializer<DateTime>, JsonDeserializer<DateTime> {
-
-        @Override
-        public JsonElement serialize(DateTime dateTime, Type srcType, JsonSerializationContext context) {
-            return new JsonPrimitive(dateTime.toString());
-        }
-
-        @Override
-        public DateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            return new DateTime(jsonElement.getAsString());
-        }
-    }
-
-    private static class DateTypeConverter implements JsonSerializer<Date>, JsonDeserializer<Date> {
-
-        private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-
-        public JsonElement serialize(Date date, Type srcType, JsonSerializationContext context) {
-            DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN, WebContext.getLocale());
-            return new JsonPrimitive(dateFormat.format(date));
-        }
-
-        public Date deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            try {
-                DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN, WebContext.getLocale());
-                return dateFormat.parse(jsonElement.getAsString());
-            } catch (ParseException e) {
-                throw new JsonParseException(e);
-            }
-        }
     }
 }

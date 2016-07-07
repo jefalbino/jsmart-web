@@ -19,11 +19,13 @@
 package com.jsmartframework.web.manager;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jsmartframework.web.util.WebAlert;
 import com.jsmartframework.web.util.WebUtils;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,6 +35,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -72,7 +75,10 @@ public final class WebContext implements Serializable {
 
     private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<>();
 
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(DateTime.class, new JsonConverter.DateTimeTypeConverter())
+            .registerTypeAdapter(Date.class, new JsonConverter.DateTypeConverter())
+            .create();
 
     private static Servlet smartServlet;
 
@@ -522,8 +528,7 @@ public final class WebContext implements Serializable {
     }
 
     /**
-     * Get request content from JSON and convert it to class mapping
-     * the content.
+     * Get request content from JSON and convert it to class mapping the content.
      *
      * @param clazz - Class mapping the request content.
      * @param <T> - type of class to convert JSON into class.
@@ -532,12 +537,25 @@ public final class WebContext implements Serializable {
      * @throws IOException
      */
     public static <T> T getContentFromJson(Class<T> clazz) throws IOException {
+        return getContentFromJson(clazz, GSON);
+    }
+
+    /**
+     * Get request content from JSON and convert it to class mapping the content.
+     *
+     * @param clazz - Class mapping the request content.
+     * @param gson - Gson converter to convert JSON request into object.
+     * @param <T> - type of class to convert JSON into class.
+     *
+     * @return content from JSON to object
+     * @throws IOException
+     */
+    public static <T> T getContentFromJson(Class<T> clazz, Gson gson) throws IOException {
         return gson.fromJson(getContentAsString(), clazz);
     }
 
     /**
-     * Get request content from XML and convert it to class mapping
-     * the content.
+     * Get request content from XML and convert it to class mapping the content.
      *
      * @param clazz - Class mapping the request content.
      * @param <T> - type of class to convert XML into class.
@@ -547,7 +565,19 @@ public final class WebContext implements Serializable {
      */
     public static <T> T getContentFromXml(Class<T> clazz) throws IOException, JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        return getContentFromXml(jaxbContext.createUnmarshaller());
+    }
+
+    /**
+     * Get request content from XML and convert it to class mapping the content.
+     *
+     * @param unmarshaller - JAXBContext unmarshaller to convert the request content into object.
+     * @param <T> - type of class to convert XML into class.
+     *
+     * @return content from XML to object
+     * @throws IOException
+     */
+    public static <T> T getContentFromXml(Unmarshaller unmarshaller) throws IOException, JAXBException {
         StringReader reader = new StringReader(getContentAsString());
         return (T) unmarshaller.unmarshal(reader);
     }
@@ -561,12 +591,12 @@ public final class WebContext implements Serializable {
      * Write response directly as String. Note that by using this method the response
      * as HTML will not be generated and the response will be what you have defined.
      *
-     * @param response String to write in the response
+     * @param response String to write in the response.
      * @throws IOException
      */
     public static void writeResponseAsString(String response) throws IOException {
         WebContext context = getCurrentInstance();
-        if (context != null && response != null) {
+        if (context != null) {
             context.responseWritten = true;
             PrintWriter writer = context.response.getWriter();
             writer.write(response);
@@ -578,12 +608,24 @@ public final class WebContext implements Serializable {
      * Write response directly as JSON from Object. Note that by using this method the response
      * as HTML will not be generated and the response will be what you have defined.
      *
-     * @param object Object to convert into JSON to write in the response
+     * @param object Object to convert into JSON to write in the response.
      * @throws IOException
      */
     public static void writeResponseAsJson(Object object) throws IOException {
+        writeResponseAsJson(object, GSON);
+    }
+
+    /**
+     * Write response directly as JSON from Object. Note that by using this method the response
+     * as HTML will not be generated and the response will be what you have defined.
+     *
+     * @param object Object to convert into JSON to write in the response.
+     * @param gson Gson instance to be used to convert object into JSON.
+     * @throws IOException
+     */
+    public static void writeResponseAsJson(Object object, Gson gson) throws IOException {
         WebContext context = getCurrentInstance();
-        if (context != null && object != null) {
+        if (context != null) {
             context.responseWritten = true;
             context.response.setContentType("application/json");
             PrintWriter writer = context.response.getWriter();
@@ -596,18 +638,28 @@ public final class WebContext implements Serializable {
      * Write response directly as XML from Object. Note that by using this method the response
      * as HTML will not be generated and the response will be what you have defined.
      *
-     * @param object Object to convert into XML to write in the response
+     * @param object Object to convert into XML to write in the response.
      * @throws IOException
      */
     public static void writeResponseAsXml(Object object) throws IOException, JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+        writeResponseAsXml(object, jaxbContext.createMarshaller());
+    }
+
+    /**
+     * Write response directly as XML from Object. Note that by using this method the response
+     * as HTML will not be generated and the response will be what you have defined.
+     *
+     * @param object Object to convert into XML to write in the response.
+     * @param marshaller JAXBContext marshaller to write object as XML.
+     * @throws IOException
+     */
+    public static void writeResponseAsXml(Object object, Marshaller marshaller) throws IOException, JAXBException {
         WebContext context = getCurrentInstance();
-        if (context != null && object != null) {
+        if (context != null) {
             context.responseWritten = true;
             context.response.setContentType("application/xml");
             PrintWriter writer = context.response.getWriter();
-
-            JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
-            Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.marshal(object, writer);
             writer.flush();
         }
@@ -616,30 +668,27 @@ public final class WebContext implements Serializable {
     /**
      * Write response directly as Event-Stream for Server Sent Events.
      *
-     * @param asyncContext - Asynchronous Context
-     * @param event - Name of event to be written on response
-     * @param data - Content of event ot be written on response
+     * @param asyncContext - Asynchronous Context.
+     * @param event - Name of event to be written on response.
+     * @param data - Content of event ot be written on response.
      * @throws IOException
      */
-    public static void writeResponseAsEventStream(AsyncContext asyncContext, String event,
-            Object data) throws IOException {
+    public static void writeResponseAsEventStream(AsyncContext asyncContext, String event, Object data) throws IOException {
         writeResponseAsEventStream(asyncContext, event, data, null);
     }
 
     /**
      * Write response directly as Event-Stream for Server Sent Events.
      *
-     * @param asyncContext - Asynchronous Context
-     * @param event - Name of event to be written on response
-     * @param data - Content of event ot be written on response
-     * @param retry - Time in (milliseconds) for client retry opening connection
+     * @param asyncContext - Asynchronous Context.
+     * @param event - Name of event to be written on response.
+     * @param data - Content of event ot be written on response.
+     * @param retry - Time in (milliseconds) for client retry opening connection.
      *              after asynchronous context is closed.
      * @throws IOException
      */
-    public static void writeResponseAsEventStream(AsyncContext asyncContext, String event, Object data,
-            Long retry) throws IOException {
+    public static void writeResponseAsEventStream(AsyncContext asyncContext, String event, Object data, Long retry) throws IOException {
         if (asyncContext != null && event != null && data != null) {
-
             HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
             response.setContentType("text/event-stream");
             PrintWriter printWriter = response.getWriter();
@@ -658,14 +707,13 @@ public final class WebContext implements Serializable {
      * Note that by using this method the response as HTML will not be generated and
      * the response will be what you have defined.
      *
-     * @param file - File to be written on response
+     * @param file - File to be written on response.
      * @param bufferSize - Buffer size to write the response. Example 2048 bytes.
      * @throws IOException
      */
     public static void writeResponseAsFileStream(File file, int bufferSize) throws IOException {
         WebContext context = getCurrentInstance();
         if (context != null && file != null && bufferSize > 0) {
-
             context.responseWritten = true;
             context.response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
             context.response.addHeader("Content-Length", Long.toString(file.length()));
