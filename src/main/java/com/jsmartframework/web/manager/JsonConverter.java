@@ -26,6 +26,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
@@ -46,7 +47,7 @@ class JsonConverter {
 
         @Override
         public DateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            return new DateTime(jsonElement.getAsString());
+            return new DateTime(jsonElement.getAsString(), DateTimeZone.UTC);
         }
     }
 
