@@ -165,7 +165,6 @@ var JSmart = (function() {
      * PUBLIC INTERFACE
      ******************************************************/
     return {
-
         ajax: function(map, el) {
             doAjax(map, el);
         },
@@ -257,6 +256,10 @@ var JSmart = (function() {
         /******************************************************
          * JS EXPOSED UTILITY FUNCTIONS
          ******************************************************/
+
+        reset: function(id) {
+            doReset(id);
+        },
 
         abortRequest: function(id) {
             doAbortAjax(id);
@@ -2068,10 +2071,19 @@ var JSmart = (function() {
      * VALIDATE FUNCTIONS
      ******************************************************/
 
-    function doValidate(id) {
+    function doReset(id) {
+        if (id && id.length > 0) {
+            var element = $(getId(id));
+            if (element.is('form')) {
+                element[0].reset();
+            }
+            doValidate(id, true);
+        }
+    }
+
+    function doValidate(id, clear) {
         var validated = true;
         if (id && id.length > 0) {
-
             var element = $(getId(id));
             element.find('em[vldt-ref]').remove();
 
@@ -2128,8 +2140,10 @@ var JSmart = (function() {
                             if ($(this).closest('div[checkgroup]').attr('inline')) {
                                 textLook = textLook.replace(validateTextStyle, validateGroupStyle);
                             }
-                            addValidate($(this), text, 'checkgroup', look, textLook);
-                            validated = false;
+                            if (!clear) {
+                                addValidate($(this), text, 'checkgroup', look, textLook);
+                                validated = false;
+                            }
                         }
                     }
                 } else if ($(this).is('input') && $(this).attr('radiogroup')) {
@@ -2155,8 +2169,10 @@ var JSmart = (function() {
                             if ($(this).closest('div[radiogroup]').attr('inline')) {
                                 textLook = textLook.replace(validateTextStyle, validateGroupStyle);
                             }
-                            addValidate($(this), text, 'radiogroup', look, textLook);
-                            validated = false;
+                            if (!clear) {
+                                addValidate($(this), text, 'radiogroup', look, textLook);
+                                validated = false;
+                            }
                         }
                     }
                 } else if ($(this).is('input:checkbox')) {
@@ -2168,7 +2184,7 @@ var JSmart = (function() {
                         return;
                     }
 
-                    if (value.length == 0 || !value[0].value || value[0].value == 'false') {
+                    if ((value.length == 0 || !value[0].value || value[0].value == 'false') && !clear) {
                         addValidate($(this), text, 'checkbox', look, textLook);
                         validated = false;
                     }
@@ -2199,53 +2215,53 @@ var JSmart = (function() {
                             fileSize = parseInt(fileSize);
 
                             var minLength = $(this).attr('vldt-min-l');
-                            if (minLength && fileSize < minLength) {
+                            if (minLength && fileSize < minLength && !clear) {
                                 addValidate($(this), text, type, look, textLook);
                                 validated = false;
                             }
 
                             var maxLength = $(this).attr('vldt-max-l');
-                            if (maxLength && fileSize > maxLength) {
+                            if (maxLength && fileSize > maxLength && !clear) {
                                 addValidate($(this), text, type, look, textLook);
                                 validated = false;
                             }
 
-                            if (regex && !regex.test(value[0].value)) {
+                            if (regex && !regex.test(value[0].value) && !clear) {
                                 addValidate($(this), text, type, look, textLook);
                                 validated = false;
                             }
 
-                        } else {
+                        } else if (!clear) {
                             addValidate($(this), text, type, look, textLook);
                             validated = false;
                         }
 
                     } else if (value.length > 0 && value[0].value && value[0].value.length > 0) {
 
-                        if (isString(value[0].value) && $.trim(value[0].value).length == 0) {
+                        if (isString(value[0].value) && $.trim(value[0].value).length == 0 && !clear) {
                             addValidate($(this), text, type, look, textLook);
                             validated = false;
 
                         } else {
                             var minLength = $(this).attr('vldt-min-l');
-                            if (minLength && value[0].value.length < minLength) {
+                            if (minLength && value[0].value.length < minLength && !clear) {
                                 addValidate($(this), text, type, look, textLook);
                                 validated = false;
                             }
 
                             var maxLength = $(this).attr('vldt-max-l');
-                            if (maxLength && value[0].value.length > maxLength) {
+                            if (maxLength && value[0].value.length > maxLength && !clear) {
                                 addValidate($(this), text, type, look, textLook);
                                 validated = false;
                             }
                         }
 
-                        if (regex && !regex.test(value[0].value)) {
+                        if (regex && !regex.test(value[0].value) && !clear) {
                             addValidate($(this), text, type, look, textLook);
                             validated = false;
                         }
 
-                    } else {
+                    } else if (!clear) {
                         addValidate($(this), text, type, look, textLook);
                         validated = false;
                     }
@@ -2623,8 +2639,8 @@ var JSmart = (function() {
         return ret;
     }
 
-    function doSetCheckGroup(key, array) {
-        var checkgroup = $.type(key) === 'object' ? key : $(getId(key));
+    function doSetCheckGroup(id, array) {
+        var checkgroup = $.type(id) === 'object' ? id : $(getId(id));
 
         if (checkgroup && checkgroup.length > 0) {
             checkgroup.find('input:checkbox').removeAttr('checked').each(function() {
@@ -2647,8 +2663,8 @@ var JSmart = (function() {
         return null;
     }
 
-    function doSetRadioGroup(key, value) {
-        var radiogroup = $.type(key) === 'object' ? key : $(getId(key));
+    function doSetRadioGroup(id, value) {
+        var radiogroup = $.type(id) === 'object' ? id : $(getId(id));
 
         if (radiogroup && radiogroup.length > 0) {
             radiogroup.find('input:radio').removeAttr('checked').each(function() {
@@ -2688,8 +2704,8 @@ var JSmart = (function() {
         }
     }
 
-    function doSetProgressBar(key, value) {
-        var div = $.type(key) === 'object' ? key : $(getId(key));
+    function doSetProgressBar(id, value) {
+        var div = $.type(id) === 'object' ? id : $(getId(id));
         var bars = div.find('div[role="progressbar"]');
 
         if (bars && bars.length > 0) {
