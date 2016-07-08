@@ -300,7 +300,8 @@ public abstract class TagHandler extends SimpleTagSupport {
         addAjaxTag(ajaxTag);
     }
 
-    // Only applied for List and Table
+    // Only table and list components current check for updated ids when Ajax is performed
+    // so we call load method on adapters when table or list must be updated
     protected boolean shallExecuteTag() {
         HttpServletRequest request = getRequest();
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {

@@ -1845,7 +1845,9 @@ var JSmart = (function() {
             $.each(map.update.split(','), function(i, value) {
                 values += ',' + value;
 
-                $(getId(value)).find('*[id]').each(function() {
+                // Only table and list components current check for updated ids when Ajax is performed
+                // so we call load method on adapters when table or list must be updated
+                $(getId(value)).find('table[id], ul[id]').each(function() {
                     var id = $(this).attr('id');
                     if (values.indexOf(id) < 0) {
                         values += ',' + id;
