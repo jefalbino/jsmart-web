@@ -121,7 +121,7 @@ enum BeanHelper {
             beanName = getClassName(authClass.getSimpleName());
         }
         beanNames.put(authClass, beanName);
-        return authBean.name();
+        return beanName;
     }
 
     String getClassName(WebServlet servlet, Class<?> servletClass) {

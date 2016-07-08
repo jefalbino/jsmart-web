@@ -1842,7 +1842,16 @@ var JSmart = (function() {
     function doHeaders(map, xhr, settings) {
         var values = map.id;
         if (map.update && map.update.length > 0) {
-            values += ',' + map.update;
+            $.each(map.update.split(','), function(i, value) {
+                values += ',' + value;
+
+                $(getId(value)).find('*[id]').each(function() {
+                    var id = $(this).attr('id');
+                    if (values.indexOf(id) < 0) {
+                        values += ',' + id;
+                    }
+                });
+            });
         }
         xhr.setRequestHeader('Update-Ajax', values);
 
