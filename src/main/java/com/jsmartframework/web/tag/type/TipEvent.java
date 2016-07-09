@@ -27,7 +27,9 @@ public enum TipEvent {
 
     public static boolean validate(String tipEvent) {
         try {
-            TipEvent.valueOf(tipEvent.toUpperCase());
+            for (String event : tipEvent.trim().split(" ")) {
+                TipEvent.valueOf(event.toUpperCase());
+            }
             return true;
         } catch (Exception e) {
             return false;
