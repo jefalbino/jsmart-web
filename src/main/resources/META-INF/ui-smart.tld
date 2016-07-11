@@ -227,12 +227,16 @@
 		</attribute>
         <attribute>
             <name>label</name>
-            <required>true</required>
+            <required>false</required>
 		</attribute>
         <attribute>
             <name>navbar</name>
             <required>false</required>
 		</attribute>
+        <attribute>
+            <name>caretClass</name>
+            <required>false</required>
+        </attribute>
         <attribute>
             <name>disabled</name>
             <required>false</required>

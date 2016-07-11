@@ -26,6 +26,7 @@ import com.jsmartframework.web.tag.html.Li;
 import com.jsmartframework.web.tag.html.Span;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Align;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 
@@ -37,6 +38,8 @@ public final class DropDownTagHandler extends TagHandler {
     private String label;
 
     private boolean navbar;
+
+    private String caretClass;
 
     private DropMenuTagHandler dropMenu;
 
@@ -82,11 +85,13 @@ public final class DropDownTagHandler extends TagHandler {
             }
         }
 
+        String labelVal = (String) getTagValue(label);
+
         a.addAttribute("href", "#")
             .addAttribute("data-toggle", "dropdown")
             .addAttribute("aria-expanded", "false")
             .addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
-            .addText(getTagValue(label));
+            .addText(StringUtils.isNotBlank(labelVal) ? labelVal : "&zwnj;");
 
         for (IconTagHandler iconTag : iconTags) {
             if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
@@ -96,10 +101,18 @@ public final class DropDownTagHandler extends TagHandler {
         }
 
         if (dropMenu != null) {
-            Span caret = new Span();
-            caret.addAttribute("class", Bootstrap.CARET);
+            Span span = new Span();
+            String caretName = (String) getTagValue(caretClass);
+            if (StringUtils.isNotBlank(caretName)) {
+                if (caretName.startsWith(Bootstrap.GLYPHICON)) {
+                    span.addAttribute("class", Bootstrap.GLYPHICON);
+                }
+                span.addAttribute("class", caretName);
+            } else {
+                span.addAttribute("class", Bootstrap.CARET);
+            }
             a.addText(" ");
-            a.addTag(caret);
+            a.addTag(span);
         }
 
         dropDown.addTag(a);
@@ -128,4 +141,7 @@ public final class DropDownTagHandler extends TagHandler {
         this.navbar = navbar;
     }
 
+    public void setCaretClass(String caretClass) {
+        this.caretClass = caretClass;
+    }
 }

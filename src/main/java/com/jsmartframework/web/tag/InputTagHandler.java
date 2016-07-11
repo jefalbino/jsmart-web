@@ -27,6 +27,7 @@ import com.jsmartframework.web.tag.html.Label;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Size;
 import com.jsmartframework.web.tag.type.Type;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -178,7 +179,7 @@ public final class InputTagHandler extends TagHandler {
         String name = getTagName(J_TAG, value);
 
         Input input = new Input();
-        input.addAttribute("name", name + (readOnly ? EL_PARAM_READ_ONLY : ""))
+        input.addAttribute("name", StringUtils.isNotBlank(name) ? name + (readOnly ? EL_PARAM_READ_ONLY : "") : null)
              .addAttribute("type", type != null ? type : Type.TEXT.name().toLowerCase())
              .addAttribute("class", Bootstrap.FORM_CONTROL)
              .addAttribute("tabindex", tabIndex)
