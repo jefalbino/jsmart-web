@@ -2681,7 +2681,7 @@ var JSmart = (function() {
             hidden = $(getId(id + '-wrap-date'));
         }
         if (hidden && hidden.length > 0) {
-            return hidden.val();
+            return new Date(parseInt(hidden.val()));
         }
         return null;
     }
