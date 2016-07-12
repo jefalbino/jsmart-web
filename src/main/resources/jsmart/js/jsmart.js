@@ -2680,7 +2680,7 @@ var JSmart = (function() {
         if (!hidden || hidden.length == 0) {
             hidden = $(getId(id + '-wrap-date'));
         }
-        if (hidden && hidden.length > 0) {
+        if (hidden && hidden.length > 0 && hidden.val().length > 0) {
             return new Date(parseInt(hidden.val()));
         }
         return null;
