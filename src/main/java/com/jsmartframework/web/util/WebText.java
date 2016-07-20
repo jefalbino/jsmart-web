@@ -19,11 +19,13 @@
 package com.jsmartframework.web.util;
 
 import com.jsmartframework.web.manager.WebContext;
+import org.reflections.scanners.ResourcesScanner;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -48,7 +50,7 @@ public enum WebText {
 
     private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
 
-    private final SmartTextControl control = new SmartTextControl();
+    private final WebTextControl control = new WebTextControl();
 
     private static Locale defaultLocale;
 
@@ -65,6 +67,14 @@ public enum WebText {
         }
     }
 
+    public WebTextSet getStrings(String res, String prefix) {
+        if (!containsResource(res)) {
+            LOGGER.log(Level.INFO, "Resource " + res + " not found!");
+            return null;
+        }
+        return null;
+    }
+
     /**
      * Return <code>true</code> if some resource mapped on configuration file is
      * presented on this container, <code>false</code> otherwise.
@@ -72,7 +82,7 @@ public enum WebText {
      * @param res resource name mapped on configuration file.
      * @return boolean indicating the presence of specified resource.
      */
-    public static boolean containsResource(final String res) {
+    public static boolean containsResource(String res) {
         return TEXTS.resources.contains(res);
     }
 
@@ -86,35 +96,42 @@ public enum WebText {
      * @param key key of the string inside the properties file
      * @return the string on resource file according to the {@link Locale} of the request.
      */
-    public static String getString(final String res, final String key) {
+    public static String getString(String res, String key) {
         try {
-            if (containsResource(res)) {
-                Locale locale = WebContext.getLocale();
-                if (locale == null && defaultLocale != null) {
-                    locale = defaultLocale;
-                }
-                return ResourceBundle.getBundle(res, (locale != null ? locale : Locale.getDefault()), TEXTS.control).getString(key);
-            } else {
+            if (!containsResource(res)) {
                 LOGGER.log(Level.INFO, "Resource " + res + " not found!");
+                return NOT_FOUND;
             }
+            Locale locale = WebContext.getLocale();
+            if (locale == null) {
+                locale = defaultLocale != null ? defaultLocale : Locale.getDefault();
+            }
+            return getBundle(res, locale).getString(key);
+
         } catch (MissingResourceException ex) {
             LOGGER.log(Level.INFO, "Message for " + key + " not found: " + ex.getMessage());
         }
         return NOT_FOUND;
     }
 
-    public static String getString(final String res, final String key, final Object ... params) {
+    private static ResourceBundle getBundle(String res, String locale) {
+        return getBundle(res, new Locale(locale));
+    }
+
+    private static ResourceBundle getBundle(String res, Locale locale) {
+        return ResourceBundle.getBundle(res, locale, TEXTS.control);
+    }
+
+    public static String getString(String res, String key, Object ... params) {
         String string = getString(res, key);
         string = formatString(string, params);
         return string;
     }
 
-    public static String formatString(String string, final Object ... params) {
+    public static String formatString(String string, Object ... params) {
         if (string != null && params != null && params.length > 0) {
-
             if (BRACKETS.matcher(string).find()) {
                 string = MessageFormat.format(string, params);
-
             } else if (string.contains("%s")) {
                 string = String.format(string, params);
             }
@@ -122,7 +139,7 @@ public enum WebText {
         return string;
     }
 
-    private class SmartTextControl extends ResourceBundle.Control {
+    private class WebTextControl extends ResourceBundle.Control {
 
         @Override
         public List<Locale> getCandidateLocales(String baseName, Locale locale) {
@@ -131,6 +148,26 @@ public enum WebText {
                 locales.add(locales.indexOf(Locale.ROOT), defaultLocale);
             }
             return locales;
+        }
+    }
+
+    public static class WebTextSet {
+
+        private final String locale;
+
+        private final Map<String, String> values;
+
+        private WebTextSet(String locale, Map<String, String> values) {
+            this.locale = locale;
+            this.values = values;
+        }
+
+        public String getLocale() {
+            return locale;
+        }
+
+        public Map<String, String> getValues() {
+            return values;
         }
     }
 

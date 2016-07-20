@@ -45,6 +45,8 @@ public final class ConfigContent {
 
     private String[] messageFiles;
 
+    private String[] propertyFiles;
+
     private String defaultLocale;
 
     private UploadConfig uploadConfig;
@@ -213,6 +215,16 @@ public final class ConfigContent {
 
     public void setMessageFiles(String[] messageFiles) {
         this.messageFiles = messageFiles;
+    }
+
+    @XmlElement(name = "property-file")
+    @XmlElementWrapper(name = "property-files")
+    public String[] getPropertyFiles() {
+        return propertyFiles;
+    }
+
+    public void setPropertyFiles(String[] propertyFiles) {
+        this.propertyFiles = propertyFiles;
     }
 
     @XmlElement(name = "default-locale")

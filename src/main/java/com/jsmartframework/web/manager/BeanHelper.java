@@ -18,6 +18,9 @@
 
 package com.jsmartframework.web.manager;
 
+import static com.jsmartframework.web.config.Config.CONFIG;
+import static com.jsmartframework.web.util.WebText.TEXTS;
+
 import com.google.gson.internal.Primitives;
 import com.jsmartframework.web.annotation.AuthAccess;
 import com.jsmartframework.web.annotation.AuthBean;
@@ -31,6 +34,7 @@ import com.jsmartframework.web.annotation.PreAction;
 import com.jsmartframework.web.annotation.PreSet;
 import com.jsmartframework.web.annotation.PreSubmit;
 import com.jsmartframework.web.annotation.Unescape;
+import com.jsmartframework.web.annotation.VarMapping;
 import com.jsmartframework.web.annotation.WebBean;
 import com.jsmartframework.web.annotation.WebFilter;
 import com.jsmartframework.web.annotation.WebSecurity;
@@ -51,8 +55,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
-import static com.jsmartframework.web.config.Config.CONFIG;
 
 enum BeanHelper {
 
@@ -163,10 +165,20 @@ enum BeanHelper {
                 if (field.isAnnotationPresent(PreSet.class)) {
                     preSets.add(field);
                 }
+
                 if (field.isAnnotationPresent(ExposeVar.class)) {
                     exposeVars.add(field);
+                    ExposeVar exposeVar = field.getAnnotation(ExposeVar.class);
 
-                    for (String varPath : cleanPaths(field.getAnnotation(ExposeVar.class).forPaths())) {
+                    if (StringUtils.isNotBlank(exposeVar.withContent().i18n())) {
+                        if (!field.getType().equals(Map.class)) {
+                            throw new RuntimeException("Field [" + field + "] annotated with ExposeVar containing " +
+                                    "VarMapping attribute must be the type of Map<String, String>");
+                        }
+                        setVarMapping(field, exposeVar.withContent());
+                    }
+
+                    for (String varPath : cleanPaths(exposeVar.forPaths())) {
                         List<Class<?>> classes = exposeVarPaths.get(varPath);
                         if (classes == null) {
                             exposeVarPaths.put(varPath, classes = new ArrayList<>());
@@ -405,5 +417,9 @@ enum BeanHelper {
             }
         }
         return path;
+    }
+
+    private void setVarMapping(Field field, VarMapping varMapping) {
+       TEXTS.getStrings(varMapping.i18n(), varMapping.prefix());
     }
 }

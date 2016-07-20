@@ -1,17 +1,17 @@
 /*
  * JSmart Framework - Java Web Development Framework
  * Copyright (c) 2015, Jeferson Albino da Silva, All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3.0 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -24,23 +24,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The {@link ExposeVar} annotation is used on field attributes to expose
- * field values mapped by attribute name on client side and extracted via JSmart
- * Javascript library.
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ExposeVar {
-
-    /**
-     * List of url-pattern which the exposeVar will be mapped for
-     * direct value injection on JavaScript.
-     */
-    String[] forPaths() default {};
+public @interface VarMapping {
 
     /**
      *
      */
-    VarMapping withContent() default @VarMapping(i18n = "", prefix = "");
+    String i18n();
+
+    /**
+     *
+     */
+    String prefix();
 
 }
