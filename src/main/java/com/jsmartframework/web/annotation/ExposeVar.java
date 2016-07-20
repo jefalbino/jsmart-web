@@ -41,6 +41,6 @@ public @interface ExposeVar {
     /**
      *
      */
-    VarMapping withContent() default @VarMapping(i18n = "", prefix = "");
+    VarMapping value() default @VarMapping(i18n = "", prefix = "");
 
 }

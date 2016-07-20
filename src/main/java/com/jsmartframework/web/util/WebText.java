@@ -19,9 +19,9 @@
 package com.jsmartframework.web.util;
 
 import com.jsmartframework.web.manager.WebContext;
-import org.reflections.scanners.ResourcesScanner;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -67,12 +67,21 @@ public enum WebText {
         }
     }
 
-    public WebTextSet getStrings(String res, String prefix) {
+    public WebTextSet getStrings(String res, String prefix, String locale) {
         if (!containsResource(res)) {
             LOGGER.log(Level.INFO, "Resource " + res + " not found!");
             return null;
         }
-        return null;
+
+        WebTextSet webTextSet = new WebTextSet(new Locale(locale));
+        ResourceBundle bundle = getBundle(res, locale);
+
+        for (String key : bundle.keySet()) {
+            if (key.startsWith(prefix)) {
+                webTextSet.putValue(key, bundle.getString(key));
+            }
+        }
+        return webTextSet;
     }
 
     /**
@@ -153,17 +162,20 @@ public enum WebText {
 
     public static class WebTextSet {
 
-        private final String locale;
+        private final Locale locale;
 
-        private final Map<String, String> values;
+        private final Map<String, String> values = new HashMap<>();
 
-        private WebTextSet(String locale, Map<String, String> values) {
+        private WebTextSet(Locale locale) {
             this.locale = locale;
-            this.values = values;
         }
 
-        public String getLocale() {
+        public Locale getLocale() {
             return locale;
+        }
+
+        private void putValue(String key, String value) {
+            values.put(key, value);
         }
 
         public Map<String, String> getValues() {

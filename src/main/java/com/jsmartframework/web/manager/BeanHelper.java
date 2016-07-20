@@ -40,8 +40,11 @@ import com.jsmartframework.web.annotation.WebFilter;
 import com.jsmartframework.web.annotation.WebSecurity;
 import com.jsmartframework.web.annotation.WebServlet;
 import com.jsmartframework.web.config.UrlPattern;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -49,6 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,9 +64,13 @@ enum BeanHelper {
 
     HELPER();
 
+    private static final String ENCODING = "UTF-8";
+
     private static final Logger LOGGER = Logger.getLogger(BeanHelper.class.getPackage().getName());
 
     private static final Pattern SET_METHOD_PATTERN = Pattern.compile("^set(.*)");
+
+    private static final Pattern PROPERTIES_NAME_PATTERN = Pattern.compile("\\s*_(.*)\\.properties");
 
     private static final Pattern PATH_BEAN_ALL_PATTERN = Pattern.compile("(.*)/\\*");
 
@@ -170,12 +178,12 @@ enum BeanHelper {
                     exposeVars.add(field);
                     ExposeVar exposeVar = field.getAnnotation(ExposeVar.class);
 
-                    if (StringUtils.isNotBlank(exposeVar.withContent().i18n())) {
+                    if (StringUtils.isNotBlank(exposeVar.value().i18n())) {
                         if (!field.getType().equals(Map.class)) {
                             throw new RuntimeException("Field [" + field + "] annotated with ExposeVar containing " +
-                                    "VarMapping attribute must be the type of Map<String, String>");
+                                    "VarMapping attribute must be the type of Map<String, Object>");
                         }
-                        setVarMapping(field, exposeVar.withContent());
+                        setVarMapping(field, exposeVar.value());
                     }
 
                     for (String varPath : cleanPaths(exposeVar.forPaths())) {
@@ -419,7 +427,30 @@ enum BeanHelper {
         return path;
     }
 
+
+
     private void setVarMapping(Field field, VarMapping varMapping) {
-       TEXTS.getStrings(varMapping.i18n(), varMapping.prefix());
+        try {
+            List<String> properties = IOUtils.readLines(this.getClass().getClassLoader().getResourceAsStream("/"), ENCODING);
+            for (String propertiesName : properties) {
+
+                if (propertiesName.startsWith(varMapping.i18n()) && propertiesName.endsWith(".properties")) {
+                    String locale = null;
+
+                    Matcher matcher = PROPERTIES_NAME_PATTERN.matcher(propertiesName);
+                    if (matcher.find()) {
+                        locale = matcher.group(1);
+                    } else if (propertiesName.equals(varMapping.i18n() + ".properties")) {
+                        locale = CONFIG.getContent().getDefaultLocale();
+                    }
+
+                    if (locale != null) {
+                        TEXTS.getStrings(varMapping.i18n(), varMapping.prefix(), locale);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "");
+        }
     }
 }
