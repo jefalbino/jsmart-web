@@ -71,6 +71,8 @@ public final class WebContext implements Serializable {
 
     private static final long serialVersionUID = -3910553204750683737L;
 
+    private static final String ERROR_CODE = "error";
+
     private static final JspFactory JSP_FACTORY = JspFactory.getDefaultFactory();
 
     private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<>();
@@ -327,9 +329,10 @@ public final class WebContext implements Serializable {
     public static void addAlert(String id, WebAlert alert) {
         WebContext context = getCurrentInstance();
         if (context != null && id != null && alert != null) {
+
             List<WebAlert> alerts = context.alerts.get(id);
             if (alerts == null) {
-                context.alerts.put(id, alerts = new ArrayList<WebAlert>());
+                context.alerts.put(id, alerts = new ArrayList<>());
             }
             alerts.add(alert);
         }
@@ -384,6 +387,17 @@ public final class WebContext implements Serializable {
     }
 
     /**
+     *
+     * @param errorCode
+     */
+    public static void addError(String errorCode) {
+        // Case addError is called and the request is Ajax we need to call onError on client side
+        if (isAjaxRequest()) {
+            getResponse().setHeader("Error-Ajax", StringUtils.isNotBlank(errorCode) ? errorCode : ERROR_CODE);
+        }
+    }
+
+    /**
      * Add error alert to be presented on client side after the response is returned.
      * <br>
      * This method only take effect if the alert tag is mapped with specified id on JSP page.
@@ -394,9 +408,24 @@ public final class WebContext implements Serializable {
      * @param message to be presented on the client side.
      */
     public static void addError(String id, String message) {
+        addError(id, message, ERROR_CODE);
+    }
+
+    /**
+     *
+     * @param id
+     * @param message
+     * @param errorCode
+     */
+    public static void addError(String id, String message, String errorCode) {
         WebAlert alert = new WebAlert(WebAlert.AlertType.DANGER);
         alert.setMessage(message);
         addAlert(id, alert);
+
+        // Case addError is called and the request is Ajax we need to call onError on client side
+        if (isAjaxRequest()) {
+            getResponse().setHeader("Error-Ajax", StringUtils.isNotBlank(errorCode) ? errorCode : ERROR_CODE);
+        }
     }
 
     static Object getMappedValue(String name) {

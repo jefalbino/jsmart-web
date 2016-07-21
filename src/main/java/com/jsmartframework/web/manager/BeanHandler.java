@@ -35,6 +35,7 @@ import com.jsmartframework.web.annotation.AuthBean;
 import com.jsmartframework.web.annotation.AuthField;
 import com.jsmartframework.web.annotation.AuthType;
 import com.jsmartframework.web.annotation.ExecuteAccess;
+import com.jsmartframework.web.annotation.ExposeVar;
 import com.jsmartframework.web.annotation.Function;
 import com.jsmartframework.web.annotation.PostAction;
 import com.jsmartframework.web.annotation.PostSubmit;
@@ -469,6 +470,15 @@ public enum BeanHandler {
                     continue;
                 }
 
+                // Inject VarMapping case present
+                if (field.isAnnotationPresent(ExposeVar.class)) {
+                    Map<?, ?> varMapping = HELPER.getExposeVarMapping(field);
+                    if (varMapping != null) {
+                        field.setAccessible(true);
+                        field.set(object, varMapping);
+                    }
+                }
+
                 // Inject dependencies
                 if (initialContext != null && jndiMapping.containsKey(field.getType())) {
                     field.setAccessible(true);
@@ -682,7 +692,6 @@ public enum BeanHandler {
     private Object initializeAuthBean(String name, HttpServletRequest request) {
         Object bean = null;
         try {
-            int index = 0;
             bean = authBeans.get(name).newInstance();
             AuthBean authBean = authBeans.get(name).getAnnotation(AuthBean.class);
 
@@ -702,6 +711,15 @@ public enum BeanHandler {
                     }
                     field.set(bean, fieldValue);
                     continue;
+                }
+
+                // Inject VarMapping case present
+                if (field.isAnnotationPresent(ExposeVar.class)) {
+                    Map<?, ?> varMapping = HELPER.getExposeVarMapping(field);
+                    if (varMapping != null) {
+                        field.setAccessible(true);
+                        field.set(bean, varMapping);
+                    }
                 }
 
                 if (initialContext != null && jndiMapping.containsKey(field.getType())) {

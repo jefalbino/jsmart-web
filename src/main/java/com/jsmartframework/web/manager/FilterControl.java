@@ -519,12 +519,13 @@ public final class FilterControl implements Filter {
                         continue;
                     }
 
-                    StringBuilder patternBuilder = patternBuilders.get(fileVersion.getVersion());
+                    String patternVersion = fileVersion.getVersion();
+
+                    StringBuilder patternBuilder = patternBuilders.get(patternVersion);
                     if (patternBuilder == null) {
                         patternBuilder = new StringBuilder("(");
-                        patternBuilders.put(fileVersion.getVersion(), patternBuilder);
+                        patternBuilders.put(patternVersion, patternBuilder);
                     }
-
                     if (patternBuilder.length() > 1) {
                         patternBuilder.append("|");
                     }

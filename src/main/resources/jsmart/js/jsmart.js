@@ -1591,26 +1591,33 @@ var JSmart = (function() {
                 var reset = xhr.getResponseHeader("Reset-Ajax");
                 if (reset && reset.length > 0) {
                     $(location).attr('href', $(location).attr('href'));
+                    return;
+                }
+                if (map.url && map.url.length > 0) {
+                    $(location).attr('href', map.url);
+                    return;
+                }
 
+                doExecute(map.successHandler, data, xhr, status);
+                doUpdate(map.update, data);
+
+                var ajaxError = xhr.getResponseHeader("Error-Ajax");
+                if (ajaxError && ajaxError.length > 0) {
+                    doExecute(map.error, xhr, status, ajaxError);
                 } else {
-                    if (map.url && map.url.length > 0) {
-                        $(location).attr('href', map.url);
-                    } else {
-                        doExecute(map.successHandler, data, xhr, status);
-                        doUpdate(map.update, data);
-                        doExecute(map.success, data, xhr, status);
-                        doAlertCheck(data);
+                    doExecute(map.success, data, xhr, status);
+                }
 
-                        var redirect = xhr.getResponseHeader("Redirect-Ajax");
-                        if (redirect && redirect.length > 0) {
-                            $(location).attr('href', redirect);
-                        }
+                doAlertCheck(data);
 
-                        var newWindow = xhr.getResponseHeader("New-Window-Ajax");
-                        if (newWindow && newWindow.length > 0) {
-                            window.open(newWindow, '_blank');
-                        }
-                    }
+                var redirect = xhr.getResponseHeader("Redirect-Ajax");
+                if (redirect && redirect.length > 0) {
+                    $(location).attr('href', redirect);
+                }
+
+                var newWindow = xhr.getResponseHeader("New-Window-Ajax");
+                if (newWindow && newWindow.length > 0) {
+                    window.open(newWindow, '_blank');
                 }
             },
             error: function (xhr, status, error) {

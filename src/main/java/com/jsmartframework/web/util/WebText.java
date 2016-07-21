@@ -67,13 +67,20 @@ public enum WebText {
         }
     }
 
-    public WebTextSet getStrings(String res, String prefix, String locale) {
+    public WebTextSet getStrings(String res, String prefix, String language) {
         if (!containsResource(res)) {
-            LOGGER.log(Level.INFO, "Resource " + res + " not found!");
+            LOGGER.log(Level.SEVERE, "Resource " + res + " not found to return set of messages!");
             return null;
         }
 
-        WebTextSet webTextSet = new WebTextSet(new Locale(locale));
+        Locale locale;
+        if (language != null) {
+            locale = new Locale(language);
+        } else {
+            locale = defaultLocale != null ? defaultLocale : Locale.getDefault();
+        }
+
+        WebTextSet webTextSet = new WebTextSet(locale);
         ResourceBundle bundle = getBundle(res, locale);
 
         for (String key : bundle.keySet()) {
@@ -123,8 +130,8 @@ public enum WebText {
         return NOT_FOUND;
     }
 
-    private static ResourceBundle getBundle(String res, String locale) {
-        return getBundle(res, new Locale(locale));
+    private static ResourceBundle getBundle(String res, String language) {
+        return getBundle(res, new Locale(language));
     }
 
     private static ResourceBundle getBundle(String res, Locale locale) {
@@ -162,25 +169,24 @@ public enum WebText {
 
     public static class WebTextSet {
 
-        private final Locale locale;
+        private final String language;
 
-        private final Map<String, String> values = new HashMap<>();
+        private final Map<String, Object> values = new HashMap<>();
 
         private WebTextSet(Locale locale) {
-            this.locale = locale;
+            this.language = locale.getLanguage();
         }
 
-        public Locale getLocale() {
-            return locale;
+        public String getLanguage() {
+            return language;
         }
 
-        private void putValue(String key, String value) {
+        private void putValue(String key, Object value) {
             values.put(key, value);
         }
 
-        public Map<String, String> getValues() {
+        public Map<String, Object> getValues() {
             return values;
         }
     }
-
 }

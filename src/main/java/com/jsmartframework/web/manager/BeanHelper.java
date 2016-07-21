@@ -41,6 +41,7 @@ import com.jsmartframework.web.annotation.WebSecurity;
 import com.jsmartframework.web.annotation.WebServlet;
 import com.jsmartframework.web.config.UrlPattern;
 
+import com.jsmartframework.web.util.WebText;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -50,6 +51,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -107,6 +109,8 @@ enum BeanHelper {
     private Map<Class<?>, Field[]> authAccess = new ConcurrentHashMap<>();
 
     private Map<Class<?>, Method[]> authMethods = new ConcurrentHashMap<>();
+
+    private Map<Field, Map<String, WebText.WebTextSet>> varMappingFields = new ConcurrentHashMap<>();
 
     String getBeanName(Class<?> clazz) {
         return beanNames.get(clazz);
@@ -183,7 +187,7 @@ enum BeanHelper {
                             throw new RuntimeException("Field [" + field + "] annotated with ExposeVar containing " +
                                     "VarMapping attribute must be the type of Map<String, Object>");
                         }
-                        setVarMapping(field, exposeVar.value());
+                        setExposeVarMapping(field, exposeVar.value());
                     }
 
                     for (String varPath : cleanPaths(exposeVar.forPaths())) {
@@ -205,16 +209,6 @@ enum BeanHelper {
     Field[] getPreSetFields(Class<?> clazz) {
         Field[] fields = preSetFields.get(clazz);
         return fields != null ? fields : new Field[]{};
-    }
-
-    Field[] getExposeVarFields(Class<?> clazz) {
-        Field[] fields = exposeVarFields.get(clazz);
-        return fields != null ? fields : new Field[]{};
-    }
-
-    List<Class<?>> getExposeVarByPath(String path) {
-        List<Class<?>> classes = exposeVarPaths.get(path);
-        return classes != null ? classes : Collections.EMPTY_LIST;
     }
 
     String[] getUnescapeMethods(Class<?> clazz) {
@@ -427,30 +421,61 @@ enum BeanHelper {
         return path;
     }
 
+    Field[] getExposeVarFields(Class<?> clazz) {
+        Field[] fields = exposeVarFields.get(clazz);
+        return fields != null ? fields : new Field[]{};
+    }
 
+    List<Class<?>> getExposeVarByPath(String path) {
+        List<Class<?>> classes = exposeVarPaths.get(path);
+        return classes != null ? classes : Collections.EMPTY_LIST;
+    }
 
-    private void setVarMapping(Field field, VarMapping varMapping) {
+    Map<String, Object> getExposeVarMapping(Field field) {
+        Locale locale = WebContext.getLocale();
+        String language = locale != null ? locale.getLanguage() : Locale.getDefault().getLanguage();
+
+        Map<String, WebText.WebTextSet> localeTexts = varMappingFields.get(field);
+        if (localeTexts != null) {
+            if (localeTexts.containsKey(language)) {
+                return localeTexts.get(language).getValues();
+            }
+            return localeTexts.get(Locale.getDefault().getLanguage()).getValues();
+        }
+        return null;
+    }
+
+    private void setExposeVarMapping(Field field, VarMapping varMapping) {
         try {
-            List<String> properties = IOUtils.readLines(this.getClass().getClassLoader().getResourceAsStream("/"), ENCODING);
+            List<String> properties = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream("/"), ENCODING);
             for (String propertiesName : properties) {
 
                 if (propertiesName.startsWith(varMapping.i18n()) && propertiesName.endsWith(".properties")) {
-                    String locale = null;
+                    String language = CONFIG.getContent().getDefaultLocale();
 
                     Matcher matcher = PROPERTIES_NAME_PATTERN.matcher(propertiesName);
                     if (matcher.find()) {
-                        locale = matcher.group(1);
-                    } else if (propertiesName.equals(varMapping.i18n() + ".properties")) {
-                        locale = CONFIG.getContent().getDefaultLocale();
+                        language = matcher.group(1);
                     }
-
-                    if (locale != null) {
-                        TEXTS.getStrings(varMapping.i18n(), varMapping.prefix(), locale);
-                    }
+                    setExposeVarMapping(field, varMapping, language);
                 }
             }
+            setExposeVarMapping(field, varMapping, Locale.getDefault().getLanguage());
+
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "");
+            LOGGER.log(Level.SEVERE, "Error reading list of resource properties", ex);
+        }
+    }
+
+    private void setExposeVarMapping(Field field, VarMapping varMapping, String language) {
+        WebText.WebTextSet webTextSet = TEXTS.getStrings(varMapping.i18n(), varMapping.prefix(), language);
+
+        if (webTextSet != null) {
+            Map<String, WebText.WebTextSet> localeTexts = varMappingFields.get(field);
+            if (localeTexts == null) {
+                varMappingFields.put(field, localeTexts = new ConcurrentHashMap<>());
+            }
+            localeTexts.put(webTextSet.getLanguage(), webTextSet);
         }
     }
 }

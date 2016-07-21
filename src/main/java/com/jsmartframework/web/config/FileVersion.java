@@ -34,6 +34,8 @@ public final class FileVersion {
 
     private String version;
 
+    private boolean auto;
+
     private String[] extensions;
 
     private String[] excludeFolders;
@@ -49,6 +51,15 @@ public final class FileVersion {
         if (StringUtils.isNotBlank(version)) {
             this.version = version;
         }
+    }
+
+    @XmlAttribute
+    public boolean isAuto() {
+        return auto;
+    }
+
+    public void setAuto(boolean auto) {
+        this.auto = auto;
     }
 
     @XmlAttribute
