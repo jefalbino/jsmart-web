@@ -23,20 +23,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import java.util.Map;
+
 /**
- *
+ * The {@link VarMapping} annotation is used as attribute for {@link ExposeVar}
+ * in order to specify the content to populate the field of type of {@link Map}
+ * with i18n message property values stating with key prefix to be accessed via
+ * Javascript library.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface VarMapping {
 
     /**
-     *
+     * Name of i18n message properties mapped on webConfig.xml.
      */
     String i18n();
 
     /**
-     *
+     * Key prefix to search for messages on mapped properties file.
      */
     String prefix();
 

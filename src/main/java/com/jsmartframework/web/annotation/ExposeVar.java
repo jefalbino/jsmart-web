@@ -39,7 +39,8 @@ public @interface ExposeVar {
     String[] forPaths() default {};
 
     /**
-     *
+     * Content mapping to exposed message values on JavaScript
+     * based on i18n properties files mapped via webConfig.xml.
      */
     VarMapping value() default @VarMapping(i18n = "", prefix = "");
 

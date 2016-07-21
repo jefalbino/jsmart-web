@@ -19,7 +19,6 @@
 package com.jsmartframework.web.manager;
 
 import static com.jsmartframework.web.config.Config.CONFIG;
-import static com.jsmartframework.web.util.WebText.TEXTS;
 
 import com.google.gson.internal.Primitives;
 import com.jsmartframework.web.annotation.AuthAccess;
@@ -451,7 +450,7 @@ enum BeanHelper {
             for (String propertiesName : properties) {
 
                 if (propertiesName.startsWith(varMapping.i18n()) && propertiesName.endsWith(".properties")) {
-                    String language = CONFIG.getContent().getDefaultLocale();
+                    String language = CONFIG.getContent().getDefaultLanguage();
 
                     Matcher matcher = PROPERTIES_NAME_PATTERN.matcher(propertiesName);
                     if (matcher.find()) {
@@ -468,7 +467,7 @@ enum BeanHelper {
     }
 
     private void setExposeVarMapping(Field field, VarMapping varMapping, String language) {
-        WebText.WebTextSet webTextSet = TEXTS.getStrings(varMapping.i18n(), varMapping.prefix(), language);
+        WebText.WebTextSet webTextSet = WebText.getStrings(varMapping.i18n(), varMapping.prefix(), language);
 
         if (webTextSet != null) {
             Map<String, WebText.WebTextSet> localeTexts = varMappingFields.get(field);

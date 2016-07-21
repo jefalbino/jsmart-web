@@ -94,8 +94,8 @@ public final class ContextControl implements ServletContextListener {
             CONTEXT_LOADER.initWebApplicationContext(servletContext);
 
             TagEncrypter.init();
+            TEXTS.init();
             IMAGES.init(servletContext);
-            TEXTS.init(CONFIG.getContent().getMessageFiles(), CONFIG.getContent().getDefaultLocale());
             HANDLER.init(servletContext);
 
             // ServletControl -> @MultipartConfig @WebServlet(name = "ServletControl", displayName = "ServletControl", loadOnStartup = 1)

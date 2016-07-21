@@ -18,6 +18,8 @@
 
 package com.jsmartframework.web.util;
 
+import static com.jsmartframework.web.config.Config.CONFIG;
+
 import com.jsmartframework.web.manager.WebContext;
 
 import java.text.MessageFormat;
@@ -56,18 +58,20 @@ public enum WebText {
 
     private Set<String> resources = new HashSet<>();
 
-    public void init(String[] messageFiles, String defaultLocale) {
+    public void init() {
+        String[] messageFiles = CONFIG.getContent().getMessageFiles();
         if (messageFiles != null) {
             for (String msg : messageFiles) {
                 resources.add(msg);
             }
         }
-        if (defaultLocale != null) {
-            this.defaultLocale = new Locale(defaultLocale);
+        String defaultLanguage = CONFIG.getContent().getDefaultLanguage();
+        if (defaultLanguage != null) {
+            defaultLocale = new Locale(defaultLanguage);
         }
     }
 
-    public WebTextSet getStrings(String res, String prefix, String language) {
+    public static WebTextSet getStrings(String res, String keyPrefix, String language) {
         if (!containsResource(res)) {
             LOGGER.log(Level.SEVERE, "Resource " + res + " not found to return set of messages!");
             return null;
@@ -84,7 +88,7 @@ public enum WebText {
         ResourceBundle bundle = getBundle(res, locale);
 
         for (String key : bundle.keySet()) {
-            if (key.startsWith(prefix)) {
+            if (key.startsWith(keyPrefix)) {
                 webTextSet.putValue(key, bundle.getString(key));
             }
         }

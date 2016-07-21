@@ -45,7 +45,7 @@ public final class ConfigContent {
 
     private String[] messageFiles;
 
-    private String defaultLocale;
+    private String defaultLanguage;
 
     private UploadConfig uploadConfig;
 
@@ -216,13 +216,13 @@ public final class ConfigContent {
     }
 
     @XmlElement(name = "default-locale")
-    public String getDefaultLocale() {
-        return defaultLocale;
+    public String getDefaultLanguage() {
+        return defaultLanguage;
     }
 
-    public void setDefaultLocale(String defaultLocale) {
-        if (StringUtils.isNotBlank(defaultLocale)) {
-            this.defaultLocale = defaultLocale.trim();
+    public void setDefaultLanguage(String defaultLanguage) {
+        if (StringUtils.isNotBlank(defaultLanguage)) {
+            this.defaultLanguage = defaultLanguage.trim();
         }
     }
 
