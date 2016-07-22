@@ -1601,9 +1601,9 @@ var JSmart = (function() {
                 doExecute(map.successHandler, data, xhr, status);
                 doUpdate(map.update, data);
 
-                var ajaxError = xhr.getResponseHeader("Error-Ajax");
-                if (ajaxError && ajaxError.length > 0) {
-                    doExecute(map.error, xhr, status, ajaxError);
+                var errorCode = xhr.getResponseHeader("Error-Ajax");
+                if (errorCode && errorCode.length > 0) {
+                    doExecute(map.error, xhr, errorCode, data);
                 } else {
                     doExecute(map.success, data, xhr, status);
                 }

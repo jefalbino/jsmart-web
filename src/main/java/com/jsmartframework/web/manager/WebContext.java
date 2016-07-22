@@ -164,6 +164,14 @@ public final class WebContext implements Serializable {
         return jspContext.getExpressionFactory();
     }
 
+    private static void setResponseAsError(String errorCode) {
+        // Case response error is called we need to call onError on client side
+        HttpServletResponse response = getResponse();
+        if (response != null) {
+            response.setHeader("Error-Ajax", StringUtils.isNotBlank(errorCode) ? errorCode : ERROR_CODE);
+        }
+    }
+
     /**
      * Returns the current {@link ServletContext} instance associated to the request
      * being processed.
@@ -391,10 +399,8 @@ public final class WebContext implements Serializable {
      * @param errorCode
      */
     public static void addError(String errorCode) {
-        // Case addError is called and the request is Ajax we need to call onError on client side
-        if (isAjaxRequest()) {
-            getResponse().setHeader("Error-Ajax", StringUtils.isNotBlank(errorCode) ? errorCode : ERROR_CODE);
-        }
+        // Case addError is called we need to call onError on client side
+        setResponseAsError(errorCode);
     }
 
     /**
@@ -421,11 +427,8 @@ public final class WebContext implements Serializable {
         WebAlert alert = new WebAlert(WebAlert.AlertType.DANGER);
         alert.setMessage(message);
         addAlert(id, alert);
-
-        // Case addError is called and the request is Ajax we need to call onError on client side
-        if (isAjaxRequest()) {
-            getResponse().setHeader("Error-Ajax", StringUtils.isNotBlank(errorCode) ? errorCode : ERROR_CODE);
-        }
+        // Case addError is called we need to call onError on client side
+        setResponseAsError(errorCode);
     }
 
     static Object getMappedValue(String name) {
@@ -617,6 +620,56 @@ public final class WebContext implements Serializable {
     }
 
     /**
+     *
+     * @throws IOException
+     */
+    public static void writeResponseError() throws IOException {
+        writeResponseError(ERROR_CODE);
+    }
+
+    /**
+     *
+     * @param errorCode
+     * @throws IOException
+     */
+    public static void writeResponseError(int errorCode) throws IOException {
+        writeResponseError(String.valueOf(errorCode));
+    }
+
+    /**
+     *
+     * @param errorCode
+     * @throws IOException
+     */
+    public static void writeResponseError(String errorCode) throws IOException {
+        setResponseAsError(errorCode);
+        WebContext context = getCurrentInstance();
+        if (context != null) {
+            context.responseWritten = true;
+        }
+    }
+
+    /**
+     *
+     * @param response
+     * @throws IOException
+     */
+    public static void writeResponseErrorAsString(String response) throws IOException {
+        writeResponseErrorAsString(ERROR_CODE, response);
+    }
+
+    /**
+     *
+     * @param errorCode
+     * @param response
+     * @throws IOException
+     */
+    public static void writeResponseErrorAsString(String errorCode, String response) throws IOException {
+        setResponseAsError(errorCode);
+        writeResponseAsString(response);
+    }
+
+    /**
      * Write response directly as String. Note that by using this method the response
      * as HTML will not be generated and the response will be what you have defined.
      *
@@ -631,6 +684,37 @@ public final class WebContext implements Serializable {
             writer.write(response);
             writer.flush();
         }
+    }
+
+    /**
+     *
+     * @param object
+     * @throws IOException
+     */
+    public static void writeResponseErrorAsJson(Object object) throws IOException {
+        writeResponseErrorAsJson(ERROR_CODE, object);
+    }
+
+    /**
+     *
+     * @param errorCode
+     * @param object
+     * @throws IOException
+     */
+    public static void writeResponseErrorAsJson(String errorCode, Object object) throws IOException {
+        writeResponseErrorAsJson(errorCode, object, GSON);
+    }
+
+    /**
+     *
+     * @param errorCode
+     * @param object
+     * @param gson
+     * @throws IOException
+     */
+    public static void writeResponseErrorAsJson(String errorCode, Object object, Gson gson) throws IOException {
+        setResponseAsError(errorCode);
+        writeResponseAsJson(object, gson);
     }
 
     /**
@@ -661,6 +745,41 @@ public final class WebContext implements Serializable {
             writer.write(gson.toJson(object));
             writer.flush();
         }
+    }
+
+    /**
+     *
+     * @param object
+     * @throws IOException
+     * @throws JAXBException
+     */
+    public static void writeResponseErrorAsXml(Object object) throws IOException, JAXBException {
+        writeResponseErrorAsXml(ERROR_CODE, object);
+    }
+
+    /**
+     *
+     * @param errorCode
+     * @param object
+     * @throws IOException
+     * @throws JAXBException
+     */
+    public static void writeResponseErrorAsXml(String errorCode, Object object) throws IOException, JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+        writeResponseErrorAsXml(errorCode, object, jaxbContext.createMarshaller());
+    }
+
+    /**
+     *
+     * @param errorCode
+     * @param object
+     * @param marshaller
+     * @throws IOException
+     * @throws JAXBException
+     */
+    public static void writeResponseErrorAsXml(String errorCode, Object object, Marshaller marshaller) throws IOException, JAXBException {
+        setResponseAsError(errorCode);
+        writeResponseAsXml(object, marshaller);
     }
 
     /**
