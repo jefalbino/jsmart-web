@@ -2097,13 +2097,13 @@ var JSmart = (function() {
             var validateArray = element.find('*[vldt-req]');
             if (!element.is('form') && element.attr('vldt-req') && element.attr('vldt-req').length > 0) {
                 validateArray = element;
-                $('em[vldt-ref="' + id + '"]').remove();
+                $('em[vldt-ref="' + id.replace('#', '') + '"]').remove();
             }
 
             // Clear radiogroup and checkgroup which do not hold vldt-req attribute
             if (element.attr('radiogroup') && element.attr('radiogroup').length > 0 ||
                     element.attr('checkgroup') && element.attr('checkgroup').length > 0) {
-                $('em[vldt-ref="' + id + '"]').remove();
+                $('em[vldt-ref="' + id.replace('#', '') + '"]').remove();
             }
 
             var checkgroups = new Array();
