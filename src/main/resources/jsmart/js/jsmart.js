@@ -2795,10 +2795,9 @@ var JSmart = (function() {
 
     function getId(id) {
         if (id) {
+            id = $.trim(id);
             if (id.indexOf('#') != 0) {
-                id = '#' + $.trim(id);
-            } else {
-                id = $.trim(id);
+                id = '#' + id;
             }
         }
         return id;
