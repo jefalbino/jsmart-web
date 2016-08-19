@@ -44,7 +44,7 @@ public class RepeatTagHandler extends TagHandler {
     @Override
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
-        if (parent instanceof TagHandler) {
+        if (parent instanceof AccordionTagHandler || parent instanceof DropMenuTagHandler) {
             ((TagHandler) parent).setRepeatTag(this);
             return false;
         }

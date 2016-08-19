@@ -99,8 +99,9 @@ public final class DropMenuTagHandler extends TagHandler {
         for (DropActionTagHandler dropAction : dropActions) {
             ul.addTag(dropAction.executeTag());
         }
-
-        appendRepeatChild(ul);
+        if (repeatTag != null) {
+            ul.addTag(repeatTag.executeTag());
+        }
         return ul;
     }
 

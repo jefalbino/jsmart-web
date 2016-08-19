@@ -2694,19 +2694,25 @@ var JSmart = (function() {
     }
 
     function doSetDate(id, time) {
+        if (time && isString(time)) {
+            time = parseInt(time);
+        }
         var hidden = $(getId(id + '-date'));
+
         if (hidden && hidden.length > 0) {
-            if (time && isString(time)) {
-                time = parseInt(time);
+            if (moment.isMoment(time) || time instanceof Date) {
+                $(getId(id)).data('DateTimePicker').date(time);
+            } else {
+                $(getId(id)).data('DateTimePicker').date(time ? new Date(time) : null);
             }
-            $(getId(id)).data('DateTimePicker').date(time ? new Date(time) : null);
         } else {
             hidden = $(getId(id + '-wrap-date'));
             if (hidden && hidden.length > 0) {
-                if (time && isString(time)) {
-                    time = parseInt(time);
+                if (moment.isMoment(time) || time instanceof Date) {
+                    $(getId(id + '-wrap')).data('DateTimePicker').date(time);
+                } else {
+                    $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(time) : null);
                 }
-                $(getId(id + '-wrap')).data('DateTimePicker').date(time ? new Date(time) : null);
             }
         }
     }

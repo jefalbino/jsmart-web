@@ -887,12 +887,6 @@ public abstract class TagHandler extends SimpleTagSupport {
         }
     }
 
-    protected void appendRepeatChild(Tag tag) throws JspException, IOException {
-        if (repeatTag != null) {
-            tag.addTag(repeatTag.executeTag());
-        }
-    }
-
     protected void appendValidator(Tag tag) throws JspException, IOException {
         if (validatorTag != null) {
             tag.addAttribute("vldt-req", "true")
