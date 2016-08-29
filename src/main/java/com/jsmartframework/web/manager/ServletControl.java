@@ -21,12 +21,17 @@ package com.jsmartframework.web.manager;
 import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_PATH_AJAX_ATTR;
 import static com.jsmartframework.web.config.Constants.REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR;
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+import static com.jsmartframework.web.config.Constants.ENCODING;
+import static com.jsmartframework.web.config.Constants.NEXT_URL;
 
 import com.jsmartframework.web.listener.WebAsyncListener;
 import com.jsmartframework.web.listener.WebAsyncListener.Reason;
 import com.jsmartframework.web.util.WebUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -160,10 +165,8 @@ public final class ServletControl extends HttpServlet {
             // Case is Ajax post action, let JavaScript redirect page
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 if (redirectAjax) {
-                    request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR,
-                            (responsePath.startsWith("/") ? request.getContextPath() : "") + responsePath);
-                    request.setAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR,
-                            WebContext.isRedirectToWindow());
+                    request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR, getRedirectPath(responsePath, request, false));
+                    request.setAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR, WebContext.isRedirectToWindow());
                 }
                 responsePath = path;
             }
@@ -174,7 +177,7 @@ public final class ServletControl extends HttpServlet {
     private boolean checkAuthentication(String path, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String authPath = HANDLER.checkAuthentication(path);
         if (authPath != null && !authPath.equals(path)) {
-            sendRedirect(authPath, request, response);
+            sendRedirect(authPath, request, response, true);
             return true;
         }
         return false;
@@ -232,10 +235,8 @@ public final class ServletControl extends HttpServlet {
 
         // Case is Ajax post action, let JavaScript redirect page
         if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
-            request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR,
-                    (path.startsWith("/") ? request.getContextPath() : "") + path);
-            request.setAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR,
-                    WebContext.isRedirectToWindow());
+            request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR, getRedirectPath(path, request, false));
+            request.setAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR, WebContext.isRedirectToWindow());
         }
 
         // Use Forward request internally case is the same page
@@ -253,6 +254,10 @@ public final class ServletControl extends HttpServlet {
     }
 
     private void sendRedirect(String path, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        sendRedirect(path, request, response, false);
+    }
+
+    private void sendRedirect(String path, HttpServletRequest request, HttpServletResponse response, boolean authNeeded) throws IOException, ServletException {
         if (request.getServletPath().equals(path)) {
             String url = HANDLER.getForwardPath(path);
             if (url == null) {
@@ -269,7 +274,35 @@ public final class ServletControl extends HttpServlet {
         } else {
             // Use Redirect response case page had changed (Do not use status 302 once cookies are not set)
             response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
-            response.setHeader("Location", (path.startsWith("/") ? request.getContextPath() : "") + path);
+            response.setHeader("Location", getRedirectPath(path, request, authNeeded));
+        }
+    }
+
+    private String getRedirectPath(String path, HttpServletRequest request, boolean authNeeded) {
+        StringBuilder nextUrl = new StringBuilder();
+
+        if (authNeeded) {
+            nextUrl.append("?").append(NEXT_URL).append("=").append(request.getServletPath());
+            if (StringUtils.isNotBlank(request.getPathInfo())) {
+                nextUrl.append(request.getPathInfo());
+            }
+            if (StringUtils.isNotBlank(request.getQueryString())) {
+                nextUrl.append(encodeUrlQuietly("?" + request.getQueryString()));
+            }
+        } else {
+            String nextPath = request.getParameter(NEXT_URL);
+            if (StringUtils.isNotBlank(nextPath)) {
+                return nextPath;
+            }
+        }
+        return (path.startsWith("/") ? request.getContextPath() : "") + path + nextUrl;
+    }
+
+    private String encodeUrlQuietly(String url) {
+        try {
+            return URLEncoder.encode(url, ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            return "";
         }
     }
 

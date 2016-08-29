@@ -21,6 +21,7 @@ package com.jsmartframework.web.manager;
 import static com.jsmartframework.web.config.Config.CONFIG;
 import static com.jsmartframework.web.config.Constants.CSRF_TOKEN_NAME;
 import static com.jsmartframework.web.config.Constants.CSRF_TOKEN_VALUE;
+import static com.jsmartframework.web.config.Constants.ENCODING;
 import static com.jsmartframework.web.config.Constants.FILTER_HEADERS;
 import static com.jsmartframework.web.config.Constants.FILTER_RESOURCES;
 import static com.jsmartframework.web.config.Constants.INDEX_JSP;
@@ -94,8 +95,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 
 public final class FilterControl implements Filter {
-
-    public static final String ENCODING = "UTF-8";
 
     private static final int STREAM_BUFFER = 2048;
 

@@ -20,6 +20,7 @@ package com.jsmartframework.web.manager;
 
 import static com.jsmartframework.web.config.Config.CONFIG;
 import static com.jsmartframework.web.manager.BeanHandler.HANDLER;
+import static com.jsmartframework.web.config.Constants.ENCODING;
 import static com.jsmartframework.web.manager.BeanHandler.AnnotatedFunction;
 
 import com.google.common.html.HtmlEscapers;
@@ -488,7 +489,7 @@ enum ExpressionHandler {
 
     String decodeUrl(String value) {
         try {
-            return URLDecoder.decode(value, FilterControl.ENCODING);
+            return URLDecoder.decode(value, ENCODING);
         } catch (UnsupportedEncodingException ex) {
             ex.printStackTrace();
         }

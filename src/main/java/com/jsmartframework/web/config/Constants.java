@@ -66,6 +66,10 @@ public final class Constants {
     public static final String EL_PARAM_READ_ONLY = "#";
 
 
+    public static final String ENCODING = "UTF-8";
+
+    public static final String NEXT_URL = "next";
+
     public static final String ROOT_PATH = "/";
 
     public static final String WEB_INF = "/WEB-INF";
