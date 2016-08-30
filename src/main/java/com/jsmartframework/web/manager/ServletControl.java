@@ -282,7 +282,13 @@ public final class ServletControl extends HttpServlet {
         StringBuilder nextUrl = new StringBuilder();
 
         if (authNeeded) {
-            nextUrl.append("?").append(NEXT_URL).append("=").append(request.getServletPath());
+            nextUrl.append("?").append(NEXT_URL).append("=");
+
+            if (!request.getContextPath().equals("/")) {
+                nextUrl.append(request.getContextPath());
+            }
+            nextUrl.append(request.getServletPath());
+
             if (StringUtils.isNotBlank(request.getPathInfo())) {
                 nextUrl.append(request.getPathInfo());
             }
