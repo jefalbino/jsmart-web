@@ -175,9 +175,9 @@ public final class ServletControl extends HttpServlet {
     }
 
     private boolean checkAuthentication(String path, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String authPath = HANDLER.checkAuthentication(path);
-        if (authPath != null && !authPath.equals(path)) {
-            sendRedirect(authPath, request, response, true);
+        AuthPath authPath = HANDLER.checkAuthentication(path);
+        if (authPath.shouldRedirectFromPath(path)) {
+            sendRedirect(authPath.getPath(), request, response, !authPath.isHomePath());
             return true;
         }
         return false;

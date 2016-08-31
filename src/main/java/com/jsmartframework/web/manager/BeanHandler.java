@@ -824,7 +824,7 @@ public enum BeanHandler {
         request.removeAttribute(HELPER.getClassName(webSecurity, listener.getClass()));
     }
 
-    String checkAuthentication(String path) throws ServletException {
+    AuthPath checkAuthentication(String path) throws ServletException {
         if (authBeans.isEmpty() && !CONFIG.getContent().getSecureUrls().isEmpty()) {
             throw new ServletException("Not found AuthBean mapped in your system. Once your system " +
                     "has secure urls, please map a bean with @AuthBean!");
@@ -854,9 +854,9 @@ public enum BeanHandler {
         //  - User not authenticated ===>>> redirect to login
         if (CONFIG.getContent().containsSecureUrl(path)) {
             if (authenticated) {
-                return path;
+                return new AuthPath(path);
             } else {
-                return WebUtils.decodePath(authBean.loginPath());
+                return new AuthPath(WebUtils.decodePath(authBean.loginPath()));
             }
         }
         // Access non secure url
@@ -868,12 +868,12 @@ public enum BeanHandler {
             if (authenticated) {
                 if (authBean != null && (path.equals(WebUtils.decodePath(authBean.loginPath()))
                         || CONFIG.getContent().containsNonSecureUrlOnly(path))) {
-                    return WebUtils.decodePath(authBean.homePath());
+                    return new AuthPath(WebUtils.decodePath(authBean.homePath()), true);
                 } else {
-                    return path;
+                    return new AuthPath(path);
                 }
             } else {
-                return path;
+                return new AuthPath(path);
             }
         }
     }
