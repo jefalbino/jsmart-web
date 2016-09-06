@@ -24,9 +24,11 @@ import static com.jsmartframework.web.config.Constants.CSRF_TOKEN_VALUE;
 import static com.jsmartframework.web.config.Constants.ENCODING;
 import static com.jsmartframework.web.config.Constants.FILTER_HEADERS;
 import static com.jsmartframework.web.config.Constants.FILTER_RESOURCES;
+import static com.jsmartframework.web.config.Constants.IMPLEMENTATION_VERSION;
 import static com.jsmartframework.web.config.Constants.INDEX_JSP;
 import static com.jsmartframework.web.config.Constants.LIB_FILE_PATH;
 import static com.jsmartframework.web.config.Constants.LIB_JAR_FILE_PATTERN;
+import static com.jsmartframework.web.config.Constants.MANIFEST;
 import static com.jsmartframework.web.config.Constants.PATH_SEPARATOR;
 import static com.jsmartframework.web.config.Constants.ROOT_PATH;
 import static com.jsmartframework.web.config.Constants.REQUEST_META_DATA_CSRF_TOKEN_NAME;
@@ -71,6 +73,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -501,9 +504,14 @@ public final class FilterControl implements Filter {
                 return;
             }
 
+            String automaticVersion = getAutomaticResourceVersion(config);
+            if (automaticVersion != null) {
+                LOGGER.log(Level.INFO, "Automatic versioning detected as " + automaticVersion);
+            }
+
             ServletContext context = config.getServletContext();
-            File libFile = new File(context.getRealPath(ROOT_PATH));
-            Dir content = Vfs.fromURL(libFile.toURI().toURL());
+            File rootFile = new File(context.getRealPath(ROOT_PATH));
+            Dir content = Vfs.fromURL(rootFile.toURI().toURL());
 
             Map<String, StringBuilder> patternBuilders = new HashMap<>();
             Iterator<Vfs.File> files = content.getFiles().iterator();
@@ -518,7 +526,13 @@ public final class FilterControl implements Filter {
                         continue;
                     }
 
-                    String patternVersion = fileVersion.getVersion();
+                    String patternVersion = automaticVersion;
+                    if (!fileVersion.isAuto()) {
+                        patternVersion = fileVersion.getVersion();
+                    }
+                    if (patternVersion == null) {
+                        continue;
+                    }
 
                     StringBuilder patternBuilder = patternBuilders.get(patternVersion);
                     if (patternBuilder == null) {
@@ -538,6 +552,17 @@ public final class FilterControl implements Filter {
             }
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    private String getAutomaticResourceVersion(FilterConfig config) {
+        try {
+            Properties manifestProperties = new Properties();
+            manifestProperties.load(config.getServletContext().getResourceAsStream(MANIFEST));
+            return manifestProperties.getProperty(IMPLEMENTATION_VERSION);
+        } catch (Exception e) {
+            LOGGER.warning("Failed to retrieve MANIFEST.MF information for automatic versioning");
+            return null;
         }
     }
 

@@ -92,6 +92,9 @@ public final class Constants {
 
     public static final String FILTER_HEADERS = "jsmart_headers.json";
 
+    public static final String MANIFEST = "/META-INF/MANIFEST.MF";
+
+    public static final String IMPLEMENTATION_VERSION = "Implementation-Version";
 
     private Constants() {
         // DO NOTHING
