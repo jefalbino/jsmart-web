@@ -29,6 +29,8 @@ import org.joda.time.format.DateTimeFormat;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import javax.servlet.jsp.JspException;
@@ -76,6 +78,9 @@ public final class FormatTagHandler extends TagHandler {
             } else if (Type.DATE.equalsIgnoreCase(type)) {
                 if (value instanceof Date) {
                     return new SimpleDateFormat(regex, getRequest().getLocale()).format(value);
+
+                } else if (value instanceof LocalDateTime) {
+                    return ((LocalDateTime) value).format(DateTimeFormatter.ofPattern(regex).withLocale(getRequest().getLocale()));
 
                 } else if (value instanceof DateTime) {
                     return ((DateTime) value).toString(DateTimeFormat.forPattern(regex).withLocale(getRequest().getLocale()));

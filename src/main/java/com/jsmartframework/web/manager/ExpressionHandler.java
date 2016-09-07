@@ -40,6 +40,9 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -72,6 +75,7 @@ enum ExpressionHandler {
     public static final String BEAN_METHOD_NAME_FORMAT = "%s.%s";
 
     static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonConverter.LocalDateTimeTypeConverter())
             .registerTypeAdapter(DateTime.class, new JsonConverter.DateTimeTypeConverter())
             .registerTypeAdapter(Date.class, new JsonConverter.DateTypeConverter())
             .create();
@@ -378,6 +382,14 @@ enum ExpressionHandler {
                     Long timeMillis = Long.parseLong(value);
                     try {
                         valueExpr.setValue(context, new Date(timeMillis));
+                        return;
+                    } catch (Exception ex) {
+                        throwable = ex;
+                    }
+
+                    try {
+                        valueExpr.setValue(context, Instant.ofEpochMilli(timeMillis)
+                                .atZone(ZoneId.systemDefault()).toLocalDateTime());
                         return;
                     } catch (Exception ex) {
                         throwable = ex;

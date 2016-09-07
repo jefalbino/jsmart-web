@@ -23,7 +23,6 @@ import com.google.gson.GsonBuilder;
 import com.jsmartframework.web.util.WebAlert;
 import com.jsmartframework.web.util.WebUtils;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
@@ -34,6 +33,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -78,6 +78,7 @@ public final class WebContext implements Serializable {
     private static final Map<Thread, WebContext> THREADS = new ConcurrentHashMap<>();
 
     private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonConverter.LocalDateTimeTypeConverter())
             .registerTypeAdapter(DateTime.class, new JsonConverter.DateTimeTypeConverter())
             .registerTypeAdapter(Date.class, new JsonConverter.DateTypeConverter())
             .create();

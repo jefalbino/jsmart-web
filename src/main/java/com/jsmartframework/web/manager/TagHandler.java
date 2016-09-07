@@ -56,6 +56,7 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -80,6 +81,7 @@ public abstract class TagHandler extends SimpleTagSupport {
     protected static final Logger LOGGER = Logger.getLogger(TagHandler.class.getPackage().getName());
 
     protected static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonConverter.LocalDateTimeTypeConverter())
             .registerTypeAdapter(DateTime.class, new JsonConverter.DateTimeTypeConverter())
             .registerTypeAdapter(Date.class, new JsonConverter.DateTypeConverter())
             .create();
