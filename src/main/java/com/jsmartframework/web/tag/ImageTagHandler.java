@@ -149,6 +149,9 @@ public final class ImageTagHandler extends TagHandler {
         appendAjax(id);
         appendBind(id);
 
+        appendTooltip(image);
+        appendPopOver(image);
+
         if (figure) {
             Figure fig = new Figure();
             fig.addTag(image);
