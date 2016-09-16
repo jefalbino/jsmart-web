@@ -179,12 +179,26 @@ public final class TabTagHandler extends TagHandler {
                 }
             }
 
+            for (ImageTagHandler imageTag : tabPane.getImageTags()) {
+                if (Align.LEFT.equalsIgnoreCase(imageTag.getSide())) {
+                    a.addTag(imageTag.executeTag());
+                    a.addText(" ");
+                }
+            }
+
             a.addText(getTagValue(tabPane.getLabel()));
 
             for (IconTagHandler iconTag : tabPane.getIconTags()) {
                 if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
                     a.addText(" ");
                     a.addTag(iconTag.executeTag());
+                }
+            }
+
+            for (ImageTagHandler imageTag : tabPane.getImageTags()) {
+                if (Align.RIGHT.equalsIgnoreCase(imageTag.getSide())) {
+                    a.addText(" ");
+                    a.addTag(imageTag.executeTag());
                 }
             }
 
@@ -302,12 +316,26 @@ public final class TabTagHandler extends TagHandler {
             }
         }
 
+        for (ImageTagHandler imageTag : dropPane.getImageTags()) {
+            if (Align.LEFT.equalsIgnoreCase(imageTag.getSide())) {
+                dropA.addTag(imageTag.executeTag());
+                dropA.addText(" ");
+            }
+        }
+
         dropA.addText(getTagValue(dropPane.getLabel()));
 
         for (IconTagHandler iconTag : dropPane.getIconTags()) {
             if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
                 dropA.addText(" ");
                 dropA.addTag(iconTag.executeTag());
+            }
+        }
+
+        for (ImageTagHandler imageTag : dropPane.getImageTags()) {
+            if (Align.RIGHT.equalsIgnoreCase(imageTag.getSide())) {
+                dropA.addText(" ");
+                dropA.addTag(imageTag.executeTag());
             }
         }
 

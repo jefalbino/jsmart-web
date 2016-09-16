@@ -128,12 +128,26 @@ public final class HeaderTagHandler extends TagHandler {
             }
         }
 
+        for (ImageTagHandler imageTag : imageTags) {
+            if (Align.LEFT.equalsIgnoreCase(imageTag.getSide())) {
+                header.addTag(imageTag.executeTag());
+                header.addText(" ");
+            }
+        }
+
         header.addText(getTagValue(title));
 
         for (IconTagHandler iconTag : iconTags) {
             if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
                 header.addText(" ");
                 header.addTag(iconTag.executeTag());
+            }
+        }
+
+        for (ImageTagHandler imageTag : imageTags) {
+            if (Align.RIGHT.equalsIgnoreCase(imageTag.getSide())) {
+                header.addText(" ");
+                header.addTag(imageTag.executeTag());
             }
         }
 

@@ -85,6 +85,13 @@ public final class DropDownTagHandler extends TagHandler {
             }
         }
 
+        for (ImageTagHandler imageTag : imageTags) {
+            if (Align.LEFT.equalsIgnoreCase(imageTag.getSide())) {
+                a.addTag(imageTag.executeTag());
+                a.addText(" ");
+            }
+        }
+
         String labelVal = (String) getTagValue(label);
 
         a.addAttribute("href", "#")
@@ -97,6 +104,13 @@ public final class DropDownTagHandler extends TagHandler {
             if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
                 a.addText(" ");
                 a.addTag(iconTag.executeTag());
+            }
+        }
+
+        for (ImageTagHandler imageTag : imageTags) {
+            if (Align.RIGHT.equalsIgnoreCase(imageTag.getSide())) {
+                a.addText(" ");
+                a.addTag(imageTag.executeTag());
             }
         }
 

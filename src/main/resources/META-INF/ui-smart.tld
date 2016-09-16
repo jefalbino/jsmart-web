@@ -870,6 +870,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>side</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>caption</name>
             <required>false</required>
         </attribute>

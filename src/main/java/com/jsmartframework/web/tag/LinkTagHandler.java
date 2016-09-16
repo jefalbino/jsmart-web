@@ -184,6 +184,13 @@ public final class LinkTagHandler extends TagHandler {
             }
         }
 
+        for (ImageTagHandler imageTag : imageTags) {
+            if (Align.LEFT.equalsIgnoreCase(imageTag.getSide())) {
+                link.addTag(imageTag.executeTag());
+                link.addText(" ");
+            }
+        }
+
         Object val = getTagValue(label);
         if (val != null && val instanceof String) {
             if (length != null && length > 0 && val.toString().length() >= length) {
@@ -205,6 +212,13 @@ public final class LinkTagHandler extends TagHandler {
             if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {
                 link.addText(" ");
                 link.addTag(iconTag.executeTag());
+            }
+        }
+
+        for (ImageTagHandler imageTag : imageTags) {
+            if (Align.RIGHT.equalsIgnoreCase(imageTag.getSide())) {
+                link.addText(" ");
+                link.addTag(imageTag.executeTag());
             }
         }
 

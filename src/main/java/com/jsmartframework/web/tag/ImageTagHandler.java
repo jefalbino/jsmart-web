@@ -25,6 +25,7 @@ import com.jsmartframework.web.tag.html.FigCaption;
 import com.jsmartframework.web.tag.html.Figure;
 import com.jsmartframework.web.tag.html.Image;
 import com.jsmartframework.web.tag.html.Tag;
+import com.jsmartframework.web.tag.type.Align;
 import com.jsmartframework.web.tag.type.Type;
 import com.jsmartframework.web.util.WebImage;
 
@@ -32,6 +33,7 @@ import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.JspFragment;
+import javax.servlet.jsp.tagext.JspTag;
 
 public final class ImageTagHandler extends TagHandler {
 
@@ -45,11 +47,50 @@ public final class ImageTagHandler extends TagHandler {
 
     private String height;
 
+    private String side = Align.LEFT.name().toLowerCase();
+
     private String caption;
 
     private boolean figure;
 
     private String type;
+
+    @Override
+    public boolean beforeTag() throws JspException, IOException {
+        JspTag parent = getParent();
+
+        if (parent instanceof ButtonTagHandler) {
+            ((ButtonTagHandler) parent).addImageTag(this);
+            return false;
+
+        } else if (parent instanceof LinkTagHandler) {
+            ((LinkTagHandler) parent).addImageTag(this);
+            return false;
+
+        } else if (parent instanceof DropDownTagHandler) {
+            ((DropDownTagHandler) parent).addImageTag(this);
+            return false;
+
+        } else if (parent instanceof DropActionTagHandler) {
+            ((DropActionTagHandler) parent).addImageTag(this);
+            return false;
+
+        } else if (parent instanceof HeaderTagHandler) {
+            ((HeaderTagHandler) parent).addImageTag(this);
+            return false;
+
+        } else if (parent instanceof TabPaneTagHandler) {
+            TabPaneTagHandler tabPaneTag = (TabPaneTagHandler) parent;
+
+            // Consider only the first child image tag as tabpane image,
+            // otherwise let it be executed as any other tabpane content
+            if (tabPaneTag.getImageTags().isEmpty()) {
+                tabPaneTag.addImageTag(this);
+                return false;
+            }
+        }
+        return super.beforeTag();
+    }
 
     @Override
     public void validateTag() throws JspException {
@@ -141,6 +182,14 @@ public final class ImageTagHandler extends TagHandler {
 
     public void setAlt(String alt) {
         this.alt = alt;
+    }
+
+    String getSide() {
+        return side;
+    }
+
+    public void setSide(String side) {
+        this.side = side;
     }
 
     public void setCaption(String caption) {

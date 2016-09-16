@@ -37,6 +37,7 @@ import com.jsmartframework.web.tag.BindTagHandler;
 import com.jsmartframework.web.tag.EmptyTagHandler;
 import com.jsmartframework.web.tag.FunctionTagHandler;
 import com.jsmartframework.web.tag.IconTagHandler;
+import com.jsmartframework.web.tag.ImageTagHandler;
 import com.jsmartframework.web.tag.LoadTagHandler;
 import com.jsmartframework.web.tag.PopOverTagHandler;
 import com.jsmartframework.web.tag.RepeatTagHandler;
@@ -142,6 +143,8 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     protected List<IconTagHandler> iconTags;
 
+    protected List<ImageTagHandler> imageTags;
+
     protected List<BindTagHandler> bindTags;
 
     protected StringWriter outputWriter;
@@ -189,6 +192,7 @@ public abstract class TagHandler extends SimpleTagSupport {
     public TagHandler() {
         ajaxTags = new ArrayList<>(2);
         iconTags = new ArrayList<>(2);
+        imageTags = new ArrayList<>(2);
         bindTags = new ArrayList<>(2);
         params = new LinkedHashMap<>(3);
         args = new LinkedHashMap<>(3);
@@ -197,6 +201,7 @@ public abstract class TagHandler extends SimpleTagSupport {
     public void clearTagParameters() {
         ajaxTags.clear();
         iconTags.clear();
+        imageTags.clear();
         bindTags.clear();
         params.clear();
         args.clear();
@@ -385,8 +390,16 @@ public abstract class TagHandler extends SimpleTagSupport {
         this.iconTags.add(iconTag);
     }
 
+    public void addImageTag(ImageTagHandler imageTag) {
+        this.imageTags.add(imageTag);
+    }
+
     public List<IconTagHandler> getIconTags() {
         return iconTags;
+    }
+
+    public List<ImageTagHandler> getImageTags() {
+        return imageTags;
     }
 
     public List<BindTagHandler> getBindTags() {
