@@ -4153,4 +4153,14 @@
         </attribute>
     </tag>
 
+    <tag>
+        <name>render</name>
+        <tag-class>com.jsmartframework.web.tag.RenderTagHandler</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>test</name>
+            <required>true</required>
+        </attribute>
+    </tag>
+
 </taglib>

@@ -63,6 +63,10 @@ public final class Constants {
 
     public static final String EL_SEPARATOR = "\\.";
 
+    public static final String SPACE_SEPARATOR = " ";
+
+    public static final String SEPARATOR_REGEX = EL_SEPARATOR + "|" + SPACE_SEPARATOR;
+
     public static final String EL_PARAM_READ_ONLY = "#";
 
 

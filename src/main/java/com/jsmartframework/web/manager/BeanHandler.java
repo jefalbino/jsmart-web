@@ -25,6 +25,7 @@ import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN;
 import static com.jsmartframework.web.manager.ExpressionHandler.ID_PATTERN;
 import static com.jsmartframework.web.manager.ExpressionHandler.EL_PATTERN_FORMAT;
 import static com.jsmartframework.web.manager.ExpressionHandler.BEAN_METHOD_NAME_FORMAT;
+import static com.jsmartframework.web.manager.ExpressionHandler.JSP_PATTERN;
 import static com.jsmartframework.web.manager.TagHandler.J_TAG_PATTERN;
 import static com.jsmartframework.web.manager.BeanHelper.HELPER;
 
@@ -114,7 +115,8 @@ public enum BeanHandler {
 
     private static final Pattern INCLUDE_PATTERN = Pattern.compile("<%@*.include.*file=\"(.*)\".*%>");
 
-    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern() + "|" + ID_PATTERN.pattern());
+    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern()
+            + "|" + ID_PATTERN.pattern() + "|" + JSP_PATTERN.pattern());
 
     private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
 
@@ -1607,7 +1609,16 @@ public enum BeanHandler {
 
                     matcher = ExpressionHandler.EL_PATTERN.matcher(lineScan);
                     while (matcher.find()) {
-                        for (String name : matcher.group(1).split(Constants.EL_SEPARATOR)) {
+                        for (String name : matcher.group(1).split(Constants.SEPARATOR_REGEX)) {
+                            if (webBeans.containsKey(name.trim())) {
+                                jspPageBean.addBeanName(name.trim());
+                            }
+                        }
+                    }
+
+                    matcher = ExpressionHandler.JSP_PATTERN.matcher(lineScan);
+                    while (matcher.find()) {
+                        for (String name : matcher.group(1).split(Constants.SEPARATOR_REGEX)) {
                             if (webBeans.containsKey(name.trim())) {
                                 jspPageBean.addBeanName(name.trim());
                             }

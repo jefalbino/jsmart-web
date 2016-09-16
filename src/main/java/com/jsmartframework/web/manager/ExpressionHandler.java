@@ -66,7 +66,9 @@ enum ExpressionHandler {
 
     private static final Logger LOGGER = Logger.getLogger(ExpressionHandler.class.getPackage().getName());
 
-    public static final Pattern EL_PATTERN = Pattern.compile("@\\{(.[^@\\{\\}]*)\\}");
+    public static final Pattern EL_PATTERN = Pattern.compile("@\\{[!]*(.[^@\\{\\}]*)\\}");
+
+    public static final Pattern JSP_PATTERN = Pattern.compile("\\$\\{[!]*(.[^\\$\\{\\}]*)\\}");
 
     public static final Pattern ID_PATTERN = Pattern.compile("id=\"(.[^\"]*)\"");
 
