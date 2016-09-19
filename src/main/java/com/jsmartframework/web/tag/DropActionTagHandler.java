@@ -104,7 +104,9 @@ public class DropActionTagHandler extends TagHandler {
         Li li = new Li();
         li.addAttribute("id", id)
                 .addAttribute("role", "presentation")
-                .addAttribute("class", disabled ? Bootstrap.DISABLED : null);
+                .addAttribute("style", getTagValue(style))
+                .addAttribute("class", disabled ? Bootstrap.DISABLED : null)
+                .addAttribute("class", getTagValue(styleClass));
         set.addTag(li);
 
         appendEvent(li);
