@@ -160,6 +160,7 @@
 .js5-table-filter-sort-by span, .js5-table-sort-by span {
 	cursor: pointer;
 	font-size: 12px;
+    color: #ddd;
 }
 
 .js5-table-filter-sort-by span:first-child {
@@ -171,19 +172,21 @@
 }
 
 .js5-table-sort-by span:first-child {
-	top: -1px;
+	top: 0px;
 }
 
 .js5-table-sort-by span:last-child {
-	top: -1px;
+	top: -2px;
 }
 
 .js5-table-filter-sort-by span[sort-active="true"], .js5-table-sort-by span[sort-active="true"] {
     display: none;
+    color: inherit;
 }
 
 .js5-table-filter-sort-by span[sort-active="false"], .js5-table-sort-by span[sort-active="false"] {
     top: 5px;
+    color: inherit;
 }
 
 .js5-auto-complete-refresh {

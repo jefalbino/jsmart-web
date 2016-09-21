@@ -319,6 +319,8 @@ public final class TableTagHandler extends TagHandler {
             th.addAttribute("style", getTagValue(column.style))
                 .addAttribute("class", getTagValue(column.styleClass));
 
+            Object label = getTagValue(column.getLabel());
+
             if (column.getFilterBy() != null) {
                 Div div = new Div();
                 div.addAttribute("class", JSmart.TABLE_HEADER_FILTER_BY);
@@ -326,24 +328,20 @@ public final class TableTagHandler extends TagHandler {
                 Input input = new Input();
                 input.addAttribute("class", Bootstrap.FORM_CONTROL)
                     .addAttribute("class", Bootstrap.INPUT_SMALL)
-                    .addAttribute("placeholder", getTagValue(column.getLabel()))
+                    .addAttribute("placeholder", label)
                     .addAttribute("type", Type.TEXT.name().toLowerCase())
                     .addAttribute("datatype", Type.TEXT.name().toLowerCase())
                     .addAttribute("filter-by", column.getFilterBy());
-
                 div.addTag(input);
                 th.addTag(div);
 
-            } else {
-                if (column.getSortBy() != null) {
-                    Div div = new Div();
-                    div.addAttribute("class", JSmart.TABLE_HEADER_SORT_BY)
-                        .addText(getTagValue(column.getLabel()));
-                    th.addTag(div);
+            } else if (column.getSortBy() != null) {
+                Div div = new Div();
+                div.addAttribute("class", JSmart.TABLE_HEADER_SORT_BY).addText(label);
+                th.addTag(div);
 
-                } else {
-                    th.addText(getTagValue(column.getLabel()));
-                }
+            } else {
+                th.addText(label);
             }
 
             if (column.getSortBy() != null) {
