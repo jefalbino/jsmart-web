@@ -430,7 +430,7 @@ public final class AutoCompleteTagHandler extends TagHandler {
         jsonAjax.addParam(new Param(getTagName(J_AUTOCPLT, fakeTagName(id)), ""));
 
         if (update != null) {
-            jsonAjax.setUpdate(update.trim());
+            jsonAjax.setUpdate((String) getTagValue(update.trim()));
         }
         if (beforeSend != null) {
             jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));

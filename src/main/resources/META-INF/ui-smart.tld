@@ -1928,6 +1928,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>onFilter</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>onClick</name>
             <required>false</required>
         </attribute>

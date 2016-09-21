@@ -144,7 +144,7 @@ public final class FunctionTagHandler extends TagHandler {
             jsonAjax.setMethod("get");
         }
         if (update != null) {
-            jsonAjax.setUpdate(update.trim());
+            jsonAjax.setUpdate((String) getTagValue(update.trim()));
         }
         if (beforeSend != null) {
             jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));

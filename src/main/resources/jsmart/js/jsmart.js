@@ -775,7 +775,7 @@ var JSmart = (function() {
                     // Table adapter parameters
                     var jsonParam = {};
                     var thead = tbody.closest('table').find('thead>tr');
-                    var sortSpan = thead.find('span[sort-active]');
+                    var sortSpan = thead.find('span[sort-active="true"]');
 
                     if (sortSpan && sortSpan.length > 0) {
                         jsonParam.sort = sortSpan.attr('sort-by');
@@ -801,11 +801,12 @@ var JSmart = (function() {
         $(document).on('click', getId(map.id) + ' span[sort-by]', function(e) {
 
             var sortActive = $(this).attr('sort-active');
-            if (sortActive && sortActive.length > 0) {
+            if (sortActive && sortActive == 'true') {
                 return;
             }
 
             $(this).closest('tr').find('span').removeAttr('sort-active');
+            $(this).closest('div').find('span').attr('sort-active', 'false');
             $(this).attr('sort-active', 'true');
 
             // Table adapter parameters
@@ -818,6 +819,10 @@ var JSmart = (function() {
             $(this).closest('tr').find('input').each(function() {
                 jsonParam.filters[$(this).attr('filter-by')] = $(this).val();
             });
+
+            if (map.filter) {
+                doExecute(map.filter, jsonParam.sort, jsonParam.order, jsonParam.filters);
+            }
 
             var tbody = $(this).closest('table').find('tbody');
 
@@ -844,7 +849,7 @@ var JSmart = (function() {
 
                 // Table adapter parameters
                 var jsonParam = {};
-                var sortSpan = thead.find('span[sort-active]');
+                var sortSpan = thead.find('span[sort-active="true"]');
 
                 if (sortSpan && sortSpan.length > 0) {
                     jsonParam.sort = sortSpan.attr('sort-by');

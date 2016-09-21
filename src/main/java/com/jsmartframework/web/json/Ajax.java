@@ -53,6 +53,8 @@ public final class Ajax {
 
     private boolean validate;
 
+    private String filter;
+
     public String getId() {
         return id;
     }
@@ -179,6 +181,14 @@ public final class Ajax {
 
     public void setValidate(boolean validate) {
         this.validate = validate;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     @Override

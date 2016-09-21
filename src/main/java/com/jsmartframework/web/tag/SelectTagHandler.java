@@ -241,7 +241,7 @@ public final class SelectTagHandler extends TagHandler {
         jsonAjax.setTag("select");
 
         if (update != null) {
-            jsonAjax.setUpdate(update.trim());
+            jsonAjax.setUpdate((String) getTagValue(update.trim()));
         }
         if (beforeSend != null) {
             jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));

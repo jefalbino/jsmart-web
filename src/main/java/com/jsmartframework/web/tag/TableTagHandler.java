@@ -90,6 +90,8 @@ public final class TableTagHandler extends TagHandler {
 
     private String onComplete;
 
+    private String onFilter;
+
     private final List<ColumnTagHandler> columns;
 
     public TableTagHandler() {
@@ -434,7 +436,7 @@ public final class TableTagHandler extends TagHandler {
             jsonAjax.addParam(new Param(getTagName(J_SCROLL, selectValue), ""));
         }
         if (update != null) {
-            jsonAjax.setUpdate(update.trim());
+            jsonAjax.setUpdate((String) getTagValue(update.trim()));
         }
         if (beforeSend != null) {
             jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
@@ -475,6 +477,9 @@ public final class TableTagHandler extends TagHandler {
 
         jsonAjax.addParam(new Param(getTagName(J_SCROLL, fakeTagName(id)), ""));
 
+        if (onFilter != null) {
+            jsonAjax.setFilter(onFilter);
+        }
         StringBuilder builder = new StringBuilder();
         builder.append(JSMART_TABLEHEADER.format(getJsonValue(jsonAjax)));
         return builder;
@@ -560,4 +565,7 @@ public final class TableTagHandler extends TagHandler {
         this.onComplete = onComplete;
     }
 
+    public void setOnFilter(String onFilter) {
+        this.onFilter = onFilter;
+    }
 }

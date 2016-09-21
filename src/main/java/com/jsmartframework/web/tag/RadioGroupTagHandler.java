@@ -163,7 +163,7 @@ public final class RadioGroupTagHandler extends TagHandler {
         jsonAjax.setTag("radiogroup");
 
         if (update != null) {
-            jsonAjax.setUpdate(update.trim());
+            jsonAjax.setUpdate((String) getTagValue(update.trim()));
         }
         if (beforeSend != null) {
             jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));

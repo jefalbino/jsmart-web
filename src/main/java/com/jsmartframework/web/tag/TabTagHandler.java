@@ -404,7 +404,7 @@ public final class TabTagHandler extends TagHandler {
         jsonAjax.addParam(new Param(getTagName(J_TAG, tabValue), ""));
 
         if (update != null) {
-            jsonAjax.setUpdate(update.trim());
+            jsonAjax.setUpdate((String) getTagValue(update.trim()));
         }
         if (beforeSend != null) {
             jsonAjax.setBefore((String) getTagValue(beforeSend.trim()));
