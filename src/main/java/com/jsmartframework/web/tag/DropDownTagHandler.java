@@ -98,7 +98,7 @@ public final class DropDownTagHandler extends TagHandler {
             .addAttribute("data-toggle", "dropdown")
             .addAttribute("aria-expanded", "false")
             .addAttribute("class", Bootstrap.DROPDOWN_TOGGLE)
-            .addText(StringUtils.isNotBlank(labelVal) ? labelVal : "&zwnj;");
+            .addText(StringUtils.isNotBlank(labelVal) ? labelVal : StringUtils.isBlank(caretClass) ? "&zwnj;" : null);
 
         for (IconTagHandler iconTag : iconTags) {
             if (Align.RIGHT.equalsIgnoreCase(iconTag.getSide())) {

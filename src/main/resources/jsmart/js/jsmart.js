@@ -822,6 +822,7 @@ var JSmart = (function() {
 
             if (map.filter) {
                 doExecute(map.filter, jsonParam.sort, jsonParam.order, jsonParam.filters);
+                return;
             }
 
             var tbody = $(this).closest('table').find('tbody');
@@ -863,6 +864,11 @@ var JSmart = (function() {
                 thead.find('input').each(function() {
                     jsonParam.filters[$(this).attr('filter-by')] = $(this).val();
                 });
+
+                if (map.filter) {
+                    doExecute(map.filter, jsonParam.sort, jsonParam.order, jsonParam.filters);
+                    return;
+                }
 
                 doTableAjax(tbody, map, true, jsonParam);
             }, 2000);
