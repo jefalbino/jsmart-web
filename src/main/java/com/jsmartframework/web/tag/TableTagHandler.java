@@ -365,6 +365,11 @@ public final class TableTagHandler extends TagHandler {
                 div.addTag(bottomTag);
 
                 th.addTag(div);
+
+                if (column.getFilterBy() == null) {
+                    th.addAttribute("sortable", "true")
+                        .addAttribute("style", "cursor: pointer;");
+                }
             }
             tr.addTag(th);
         }

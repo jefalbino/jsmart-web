@@ -155,6 +155,7 @@
 
 .js5-table-sort-by {
 	height: 20px;
+	float: right;
 }
 
 .js5-table-filter-sort-by span, .js5-table-sort-by span {
@@ -184,7 +185,12 @@
     color: inherit;
 }
 
-.js5-table-filter-sort-by span[sort-active="false"], .js5-table-sort-by span[sort-active="false"] {
+.js5-table-filter-sort-by span[sort-active="false"] {
+    top: 10px;
+    color: inherit;
+}
+
+.js5-table-sort-by span[sort-active="false"] {
     top: 5px;
     color: inherit;
 }

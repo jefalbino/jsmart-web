@@ -797,9 +797,15 @@ var JSmart = (function() {
     }
 
     function doTableHeader(map) {
+        // For sorting th
+        $(document).on('click', getId(map.id) + ' th[sortable]', function(e) {
+            e.stopPropagation();
+            $(this).find('span[sort-by]:visible').first().click();
+        });
+
         // For sorting
         $(document).on('click', getId(map.id) + ' span[sort-by]', function(e) {
-
+            e.stopPropagation();
             var sortActive = $(this).attr('sort-active');
             if (sortActive && sortActive == 'true') {
                 return;
