@@ -299,7 +299,7 @@ public final class ListTagHandler extends TagHandler {
 
         StringBuilder builder = new StringBuilder();
         builder.append(JSMART_LIST.format(getJsonValue(jsonAjax)));
-        return getDelegateFunction(id, "a", Event.CLICK.name(), builder);
+        return getDelegateFunction(id, ">a", Event.CLICK.name(), builder);
     }
 
     private StringBuilder getScrollFunction() {

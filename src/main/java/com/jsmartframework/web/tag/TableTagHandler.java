@@ -456,7 +456,7 @@ public final class TableTagHandler extends TagHandler {
 
         StringBuilder builder = new StringBuilder();
         builder.append(JSMART_TABLE.format(getJsonValue(jsonAjax)));
-        return getDelegateFunction(id, "tr", Event.CLICK.name(), builder);
+        return getDelegateFunction(id, ">tr", Event.CLICK.name(), builder);
     }
 
     private StringBuilder getScrollFunction() {

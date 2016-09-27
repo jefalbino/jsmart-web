@@ -393,7 +393,7 @@ public final class TabTagHandler extends TagHandler {
         Ajax jsonAjax = getJsonAjax();
         StringBuilder builder = new StringBuilder();
         builder.append(JSMART_TABPANE.format(getJsonValue(jsonAjax)));
-        return getDelegateFunction(id, "ul li", Event.CLICK.name(), builder);
+        return getDelegateFunction(id, ">ul li", Event.CLICK.name(), builder);
     }
 
     private Ajax getJsonAjax() {
