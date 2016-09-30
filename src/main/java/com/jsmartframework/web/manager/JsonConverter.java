@@ -26,10 +26,9 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
 
 import java.lang.reflect.Type;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -38,11 +37,13 @@ import java.util.Date;
 
 class JsonConverter {
 
+    private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
+    private static final String LOCAL_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
+
     private JsonConverter() {}
 
     static class LocalDateTimeTypeConverter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
-
-        private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
         @Override
         public JsonElement serialize(LocalDateTime localDateTime, Type srcType, JsonSerializationContext context) {
@@ -51,8 +52,12 @@ class JsonConverter {
 
         @Override
         public LocalDateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
-            return LocalDateTime.parse(jsonElement.getAsString(), formatter);
+            String jsonDate = jsonElement.getAsString();
+            String datePattern = DATE_PATTERN;
+            if (!jsonDate.contains("Z")) {
+                datePattern = LOCAL_DATE_PATTERN;
+            }
+            return LocalDateTime.parse(jsonDate, DateTimeFormatter.ofPattern(datePattern));
         }
     }
 
@@ -65,23 +70,29 @@ class JsonConverter {
 
         @Override
         public DateTime deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-            return new DateTime(jsonElement.getAsString(), DateTimeZone.UTC);
+            String jsonDate = jsonElement.getAsString();
+            String datePattern = DATE_PATTERN;
+            if (!jsonDate.contains("Z")) {
+                datePattern = LOCAL_DATE_PATTERN;
+            }
+            return DateTimeFormat.forPattern(datePattern).parseDateTime(jsonDate);
         }
     }
 
     static class DateTypeConverter implements JsonSerializer<Date>, JsonDeserializer<Date> {
 
-        private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-
         public JsonElement serialize(Date date, Type srcType, JsonSerializationContext context) {
-            DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN, WebContext.getLocale());
-            return new JsonPrimitive(dateFormat.format(date));
+            return new JsonPrimitive(new SimpleDateFormat(DATE_PATTERN).format(date));
         }
 
         public Date deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
             try {
-                DateFormat dateFormat = new SimpleDateFormat(DATE_PATTERN, WebContext.getLocale());
-                return dateFormat.parse(jsonElement.getAsString());
+                String jsonDate = jsonElement.getAsString();
+                String datePattern = DATE_PATTERN;
+                if (!jsonDate.contains("Z")) {
+                    datePattern = LOCAL_DATE_PATTERN;
+                }
+                return new SimpleDateFormat(datePattern).parse(jsonDate);
             } catch (ParseException e) {
                 throw new JsonParseException(e);
             }

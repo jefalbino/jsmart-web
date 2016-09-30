@@ -800,6 +800,18 @@ public final class WebContext implements Serializable {
      * as HTML will not be generated and the response will be what you have defined.
      *
      * @param object Object to convert into XML to write in the response.
+     */
+    public static void writeResponseAsXmlQuietly(Object object) {
+        try {
+            writeResponseAsXml(object);
+        } catch (Exception e) {}
+    }
+
+    /**
+     * Write response directly as XML from Object. Note that by using this method the response
+     * as HTML will not be generated and the response will be what you have defined.
+     *
+     * @param object Object to convert into XML to write in the response.
      * @param marshaller JAXBContext marshaller to write object as XML.
      * @throws IOException
      */

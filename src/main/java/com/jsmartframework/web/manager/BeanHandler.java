@@ -42,6 +42,7 @@ import com.jsmartframework.web.annotation.PostAction;
 import com.jsmartframework.web.annotation.PostSubmit;
 import com.jsmartframework.web.annotation.PreAction;
 import com.jsmartframework.web.annotation.PreSubmit;
+import com.jsmartframework.web.annotation.ProduceType;
 import com.jsmartframework.web.annotation.QueryParam;
 import com.jsmartframework.web.annotation.RequestPath;
 import com.jsmartframework.web.annotation.ScopeType;
@@ -1712,6 +1713,8 @@ public enum BeanHandler {
 
         private String update;
 
+        private ProduceType produces;
+
         public AnnotatedFunction(Method method, String className, List<Arg> arguments) {
             this.method = method;
             this.className = className;
@@ -1722,6 +1725,7 @@ public enum BeanHandler {
             this.onComplete = StringUtils.join(function.onComplete(), ";");
             this.onError = StringUtils.join(function.onError(), ";");
             this.update = StringUtils.join(function.update(), ",");
+            this.produces = function.produces();
             this.arguments = arguments;
         }
 
@@ -1774,6 +1778,14 @@ public enum BeanHandler {
 
         public String getUpdate() {
             return update;
+        }
+
+        public ProduceType getProduces() {
+            return produces;
+        }
+
+        public boolean hasProduces() {
+            return produces != ProduceType.VOID;
         }
     }
 

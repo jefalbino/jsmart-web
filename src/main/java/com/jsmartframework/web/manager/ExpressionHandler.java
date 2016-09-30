@@ -29,6 +29,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.internal.Primitives;
 import com.jsmartframework.web.adapter.ListAdapter;
 import com.jsmartframework.web.adapter.TableAdapter;
+import com.jsmartframework.web.annotation.ProduceType;
 import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.json.Scroll;
 import com.jsmartframework.web.util.WebText;
@@ -128,7 +129,7 @@ enum ExpressionHandler {
     }
 
     String handleSubmitExpression(String expr, String jParam) throws ServletException, IOException {
-        String responsePath = null;
+        Object response = null;
         Matcher matcher = EL_PATTERN.matcher(expr);
         if (matcher.find()) {
 
@@ -142,7 +143,7 @@ enum ExpressionHandler {
 
                 // Check authorization to execute method
                 if (!HANDLER.checkExecuteAuthorization(bean, elBeanMethod, request)) {
-                    return responsePath;
+                    return null;
                 }
 
                 // Call mapped method with @PreSubmit / @PreAction annotation for specific action
@@ -153,11 +154,11 @@ enum ExpressionHandler {
                     Object[] arguments = null;
                     String[] paramArgs = request.getParameterValues(TagHandler.J_SBMT_ARGS + jParam);
 
+                    AnnotatedFunction function = HANDLER.beanMethodFunctions.get(beanMethod);
+
                     if (paramArgs != null) {
                         arguments = new Object[paramArgs.length];
                         boolean unescape = HANDLER.containsUnescapeMethod(methodSign);
-
-                        AnnotatedFunction function = HANDLER.beanMethodFunctions.get(beanMethod);
 
                         for (int i = 0; i < paramArgs.length; i++) {
                             if (function != null) {
@@ -178,7 +179,23 @@ enum ExpressionHandler {
                     MethodExpression methodExpr = WebContext.getExpressionFactory().createMethodExpression(context, elBeanMethod,
                             null, arguments != null ? new Class<?>[arguments.length] : new Class<?>[]{});
 
-                    responsePath = (String) methodExpr.invoke(context, arguments);
+                    response = methodExpr.invoke(context, arguments);
+
+                    if (function != null && function.hasProduces()) {
+                        switch (function.getProduces()) {
+                            case JSON:
+                                WebContext.writeResponseAsJson(response);
+                                break;
+                            case XML:
+                                WebContext.writeResponseAsXmlQuietly(response);
+                                break;
+                            case STRING:
+                                WebContext.writeResponseAsString(response.toString());
+                                break;
+                        }
+                        // Reset response to be passed to path analysis
+                        response = null;
+                    }
 
                     // Call mapped method with @PostSubmit / @PostAction annotation for specific action
                     HANDLER.executePostSubmit(bean, methodSign[methodSign.length -1]);
@@ -186,7 +203,7 @@ enum ExpressionHandler {
                 }
             }
         }
-        return responsePath;
+        return response != null ? response.toString() : null;
     }
 
     @SuppressWarnings("all")

@@ -34,6 +34,7 @@ var JSmart = (function() {
     var csrfName = 'jsmart_csrf_name';
     var csrfToken = 'jsmart_csrf_token';
     var overwriteCallback = '_ow';
+    var localFormat = 'YYYY-MM-DD[T]HH:mm:ss';
 
     // Keep track of scroll binds on table or list components with dynamic scroll, case update is done
     var scrollBinds = {};
@@ -253,9 +254,7 @@ var JSmart = (function() {
             doAsyncEvent(map);
         },
 
-        /******************************************************
-         * JS EXPOSED UTILITY FUNCTIONS
-         ******************************************************/
+        // JS EXPOSED UTILITY FUNCTIONS
 
         reset: function(id) {
             doReset(id);
@@ -295,6 +294,10 @@ var JSmart = (function() {
 
         getDate: function(id) {
             return doGetDate(id);
+        },
+
+        getLocalDateString: function(id) {
+            return getLocalDateFormatted(id);
         },
 
         getCheckGroup: function(id) {
@@ -2708,6 +2711,14 @@ var JSmart = (function() {
             return new Date(parseInt(hidden.val()));
         }
         return null;
+    }
+
+    function getLocalDateFormatted(id) {
+        var date = doGetDate(id);
+        if (!date) {
+            return null;
+        }
+        return moment(date).format(localFormat);
     }
 
     function doSetDate(id, time) {

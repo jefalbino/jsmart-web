@@ -48,6 +48,11 @@ public @interface Function {
     String[] forPaths();
 
     /**
+     * Response type to be written automatically from method return.
+     */
+    ProduceType produces() default ProduceType.VOID;
+
+    /**
      * List of component ids to be updated after function call succeed. Only works
      * if the return is HTML content, otherwise the update will not apply.
      */
