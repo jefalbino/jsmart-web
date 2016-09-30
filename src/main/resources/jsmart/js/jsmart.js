@@ -336,6 +336,10 @@ var JSmart = (function() {
             doHideModal(id, onHide, onHidden);
         },
 
+        showTab: function(id, onShow, onShown) {
+            doShowTab(id, onShow, onShown);
+        },
+
         showAlert: function(id, msg, type, head, icon) {
             return doShowAlert(id, msg, type, head, icon);
         },
@@ -2366,6 +2370,24 @@ var JSmart = (function() {
             });
         }
         modal.modal('hide');
+    }
+
+    function doShowTab(id, onShow, onShown) {
+        if (!id || $.trim(id).length == 0) {
+            return null;
+        }
+        var tab = $('a[href="' + getId(id) + '"]');
+        if (onShow && onShow !== 'undefined') {
+            tab.unbind('show.bs.tab').on('show.bs.tab', function(event) {
+                callFunction(onShow, event);
+            });
+        }
+        if (onShown && onShown !== 'undefined') {
+            tab.unbind('shown.bs.tab').on('shown.bs.tab', function(event) {
+                callFunction(onShown, event);
+            });
+        }
+        tab.tab('show');
     }
 
     function doShowAlert(id, msg, type, head, icon) {
