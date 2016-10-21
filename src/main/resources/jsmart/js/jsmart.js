@@ -2303,36 +2303,68 @@ var JSmart = (function() {
     }
 
     function addValidate(element, text, type, look, textLook) {
+        var removeMarginTop = false;
         if (type == 'radiogroup' || type == 'checkgroup') {
             // If radiogroup or checkgroup has label or it is inside rest or form we need to use the form-group class
             if (element.closest('div.form-group').length > 0) {
                 element.closest('div.form-group').addClass(look);
+                if (element.closest('div.form-group').find('>label').length == 0) {
+                    removeMarginTop = true;
+                }
             } else {
                 element.closest('div[' + type + ']').addClass(look);
+                if (element.closest('div[' + type + ']').find('>label').length == 0) {
+                    removeMarginTop = true;
+                }
             }
 
             if (text && text.length > 0) {
                 var id = element.attr('id') ? element.attr('id') : element.attr('name');
-                element.closest('div[' + type + ']').after($('<em vldt-ref="' + id + '"></em>').addClass(textLook).text(text));
+                var vldt = $('<em vldt-ref="' + id + '"></em>').addClass(textLook).text(text);
+                if (removeMarginTop) {
+                    vldt.css({'margin-top':'4px'});
+                }
+                element.closest('div[' + type + ']').after(vldt);
             }
 
         } else if (type == 'checkbox') {
             element.closest('div.checkbox').addClass(look);
+            if (element.closest('div.checkbox').find('>label').length == 0) {
+                removeMarginTop = true;
+            }
             if (text && text.length > 0) {
                 var id = element.attr('id') ? element.attr('id') : element.attr('name');
-                element.closest('div.checkbox').after($('<em vldt-ref="' + id + '"></em>').addClass(textLook).text(text));
+                var vldt = $('<em vldt-ref="' + id + '"></em>').addClass(textLook).text(text);
+                if (removeMarginTop) {
+                    vldt.css({'margin-top':'4px'});
+                }
+                element.closest('div.checkbox').after(vldt);
             }
 
         } else if (type == 'form-group' || type == 'input-group') {
             element.closest('div.' + type).addClass(look);
+            if (element.closest('div.' + type).find('>label').length == 0) {
+                removeMarginTop = true;
+            }
             if (text && text.length > 0) {
-                element.closest('div.' + type).after($('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text));
+                var vldt = $('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text);
+                if (removeMarginTop) {
+                    vldt.css({'margin-top':'4px'});
+                }
+                element.closest('div.' + type).after(vldt);
             }
 
         } else {
             element.addClass(look);
+            if (element.find('>label').length == 0) {
+                removeMarginTop = true;
+            }
             if (text && text.length > 0) {
-                element.after($('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text));
+                var vldt = $('<em vldt-ref="' + element.attr('id') + '"></em>').addClass(textLook).text(text);
+                if (removeMarginTop) {
+                    vldt.css({'margin-top':'4px'});
+                }
+                element.after(vldt);
             }
         }
     }
@@ -2482,7 +2514,7 @@ var JSmart = (function() {
                     item.closest('table').find('thead th').each(function (index) {
                         item.find('td')[index].width = $(this).width();
                     });
-                    item.css({'display': 'inline-table'});
+                    item.css({'display': 'table-row'});
                 } else {
                     item.css({'display': 'block'});
                 }
