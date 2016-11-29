@@ -230,8 +230,8 @@
 	
 			                        <cssSourceDir>resources/jsmart</cssSourceDir>
 									<cssSourceFiles>
-										<cssSourceFile>bootstrap-3.3.5/css/bootstrap.css</cssSourceFile>
-										<cssSourceFile>bootstrap-datetime-4.7.14/css/bootstrap-datetime.css</cssSourceFile>
+										<cssSourceFile>bootstrap-3.3.7/css/bootstrap.css</cssSourceFile>
+										<cssSourceFile>bootstrap-datetime-4.14.30/css/bootstrap-datetimepicker.css</cssSourceFile>
 										<cssSourceFile>css/jsmart.css</cssSourceFile>
 									</cssSourceFiles>
 									<cssTargetDir>classes/jsmart/css</cssTargetDir>
@@ -239,12 +239,12 @@
 	
 									<jsSourceDir>resources/jsmart</jsSourceDir>
 									<jsSourceFiles>
-										<jsSourceFile>jquery-1.11.3/jquery-1.11.3.js</jsSourceFile>
+										<jsSourceFile>jquery-1.12.4/jquery-1.12.4.js</jsSourceFile>
 										<jsSourceFile>jquery-form-3.51.0/jquery.form-3.51.0.js</jsSourceFile>
-										<jsSourceFile>momentjs-2.9.0/js/moment-locales.js</jsSourceFile>
-										<jsSourceFile>bootstrap-3.3.5/js/bootstrap.js</jsSourceFile>
-										<jsSourceFile>bootstrap-3.3.5/js/bootstrap-input-mask.js</jsSourceFile>
-										<jsSourceFile>bootstrap-datetime-4.7.14/js/bootstrap-datetime.js</jsSourceFile>
+										<jsSourceFile>momentjs-2.17.0/moment-with-locales.js</jsSourceFile>
+										<jsSourceFile>bootstrap-3.3.7/js/bootstrap.js</jsSourceFile>
+										<jsSourceFile>bootstrap-3.3.7/js/bootstrap-input-mask.js</jsSourceFile>
+										<jsSourceFile>bootstrap-datetime-4.14.30/js/bootstrap-datetimepicker.js</jsSourceFile>
 										<jsSourceFile>js/jsmart.js</jsSourceFile>
 									</jsSourceFiles>
 									<jsTargetDir>classes/jsmart/js</jsTargetDir>
@@ -270,15 +270,15 @@
                     					<copy file="${basedir}/src/main/resources/descriptors/release/jsmart_headers.json" tofile="${basedir}/target/classes/jsmart_headers.json" />
                     					<copy file="${basedir}/src/main/resources/descriptors/release/jsmart_resources.json" tofile="${basedir}/target/classes/jsmart_resources.json" />
 
-                    					<copy file="${basedir}/src/main/resources/jsmart/bootstrap-3.3.5/css/bootstrap.css.map" tofile="${basedir}/target/classes/jsmart/css/bootstrap.css.map" />
-										<copydir src="${basedir}/src/main/resources/jsmart/bootstrap-3.3.5/fonts" dest="${basedir}/target/classes/jsmart/fonts" />
+                    					<copy file="${basedir}/src/main/resources/jsmart/bootstrap-3.3.7/css/bootstrap.css.map" tofile="${basedir}/target/classes/jsmart/css/bootstrap.css.map" />
+										<copydir src="${basedir}/src/main/resources/jsmart/bootstrap-3.3.7/fonts" dest="${basedir}/target/classes/jsmart/fonts" />
 
 										<delete dir="${basedir}/target/classes/descriptors" />
-                    					<delete dir="${basedir}/target/classes/jsmart/bootstrap-3.3.5" />
-                    					<delete dir="${basedir}/target/classes/jsmart/bootstrap-datetime-4.7.14" />
-                    					<delete dir="${basedir}/target/classes/jsmart/jquery-1.11.3" />
+                    					<delete dir="${basedir}/target/classes/jsmart/bootstrap-3.3.7" />
+                    					<delete dir="${basedir}/target/classes/jsmart/bootstrap-datetime-4.14.30" />
+                    					<delete dir="${basedir}/target/classes/jsmart/jquery-1.12.4" />
                     					<delete dir="${basedir}/target/classes/jsmart/jquery-form-3.51.0" />
-                    					<delete dir="${basedir}/target/classes/jsmart/momentjs-2.9.0" />
+                    					<delete dir="${basedir}/target/classes/jsmart/momentjs-2.17.0" />
                     					<delete>
                     						<fileset dir="${basedir}/target/classes/jsmart/css">
                     							<exclude name="jsmart.min.css" />
