@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -160,7 +161,7 @@ enum BeanHelper {
 
     Field[] getBeanFields(Class<?> clazz) {
         if (!beanFields.containsKey(clazz)) {
-            beanFields.put(clazz, clazz.getDeclaredFields());
+            beanFields.put(clazz, getAllDeclaredFields(clazz));
         }
         return beanFields.get(clazz);
     }
@@ -171,7 +172,7 @@ enum BeanHelper {
             List<Field> preSets = new ArrayList<>();
             List<Field> exposeVars = new ArrayList<>();
 
-            for (Field field : clazz.getDeclaredFields()) {
+            for (Field field : getAllDeclaredFields(clazz)) {
                 field.setAccessible(true);
                 if (field.isAnnotationPresent(PreSet.class)) {
                     preSets.add(field);
@@ -199,10 +200,20 @@ enum BeanHelper {
                 }
             }
 
-            beanFields.put(clazz, clazz.getDeclaredFields());
+            beanFields.put(clazz, getAllDeclaredFields(clazz));
             preSetFields.put(clazz, preSets.toArray(new Field[preSets.size()]));
             exposeVarFields.put(clazz, exposeVars.toArray(new Field[exposeVars.size()]));
         }
+    }
+
+    private Field[] getAllDeclaredFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class<?> superClazz = clazz;
+        while (superClazz != null && superClazz != Object.class) {
+            fields.addAll(Arrays.asList(superClazz.getDeclaredFields()));
+            superClazz = superClazz.getSuperclass();
+        }
+        return fields.toArray(new Field[fields.size()]);
     }
 
     Field[] getPreSetFields(Class<?> clazz) {
