@@ -3138,6 +3138,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>mask</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>locale</name>
             <required>false</required>
         </attribute>

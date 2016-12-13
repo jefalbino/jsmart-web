@@ -78,6 +78,8 @@ public final class DateTagHandler extends TagHandler {
 
     private FormatTagHandler format;
 
+    private String mask;
+
     public DateTagHandler() {
         childAddOns = new ArrayList<TagHandler>(2);
     }
@@ -184,7 +186,8 @@ public final class DateTagHandler extends TagHandler {
              .addAttribute("disabled", isDisabled() ? "disabled" : null)
              .addAttribute("placeholder", getTagValue(placeholder))
              .addAttribute("datatype", Type.TEXT.name().toLowerCase())
-             .addAttribute("autofocus", autoFocus ? autoFocus : null);
+             .addAttribute("autofocus", autoFocus ? autoFocus : null)
+             .addAttribute("data-mask", mask);
 
         appendRefId(input, id);
 
@@ -356,4 +359,7 @@ public final class DateTagHandler extends TagHandler {
         this.rightAddOn = rightAddOn;
     }
 
+    public void setMask(String mask) {
+        this.mask = mask;
+    }
 }
