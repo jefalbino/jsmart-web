@@ -934,18 +934,17 @@ var JSmart = (function() {
 
         // Append loading icon on table if it was configured
         if (trLoad && trLoad.length > 0) {
-            trLoad.find('td').css({'display': 'block'});
+            doHideEmpty(map.id);
             tbody.append(trLoad);
-            trLoad.slideDown('fast');
+            trLoad.find('td').css({'display': 'table-cell'});
+            trLoad.show();
         }
 
         // Remove scroll-active and refreshing icon
         map.completeHandler = function() {
             if (trLoad && trLoad.length > 0) {
-                trLoad.slideUp('fast', function() {
-                    trLoad.remove();
-                    tbody.removeAttr('scroll-active');
-                });
+                trLoad.remove();
+                tbody.removeAttr('scroll-active');
             } else {
                 tbody.removeAttr('scroll-active');
             }
@@ -2587,7 +2586,7 @@ var JSmart = (function() {
             var trLoad = el.find('tbody>tr[' + roleLoad + ']').clone();
             // Append loading icon on table if it was configured
             if (trLoad && trLoad.length > 0) {
-                trLoad.find('td').css({'display': 'block'});
+                trLoad.find('td').css({'display': 'table-cell'});
                 el.find('tbody').append(trLoad);
                 trLoad.slideDown('fast');
             }
@@ -2604,22 +2603,18 @@ var JSmart = (function() {
         }
 
         if (el.is('ul')) {
-            var liLoad = el.find('>li[' + roleLoad + ']:visible');
+            var liLoad = el.find('>li[' + roleLoad + ']:visible').last();
             // Remove loading icon from list if it was configured
             if (liLoad && liLoad.length > 0) {
-                liLoad.slideUp('fast', function() {
-                    liLoad.remove();
-                });
+                liLoad.remove();
             }
             return;
         }
 
         if (el.is('table')) {
-            var trLoad = el.find('tbody>tr[' + roleLoad + ']:visible');
+            var trLoad = el.find('tbody>tr[' + roleLoad + ']:visible').last();
             if (trLoad && trLoad.length > 0) {
-                trLoad.slideUp('fast', function() {
-                    trLoad.remove();
-                });
+                trLoad.remove();
             }
             return;
         }
@@ -2644,7 +2639,7 @@ var JSmart = (function() {
         if (el.is('table')) {
             var trEmpty = el.find('tbody tr[' + roleEmpty + ']');
             if (trEmpty && trEmpty.length > 0) {
-                trEmpty.find('td').show();
+                trEmpty.find('td').css({'display': 'table-cell'});
             }
             return;
         }
@@ -2657,7 +2652,7 @@ var JSmart = (function() {
         }
 
         if (el.is('ul')) {
-            var liEmpty = el.find('li[' + roleEmpty + ']:visible');
+            var liEmpty = el.find('li[' + roleEmpty + ']');
             if (liEmpty && liEmpty.length > 0) {
                 liEmpty.hide();
             }
@@ -2665,7 +2660,7 @@ var JSmart = (function() {
         }
 
         if (el.is('table')) {
-            var trEmpty = el.find('tbody tr[' + roleEmpty + ']:visible');
+            var trEmpty = el.find('tbody tr[' + roleEmpty + ']');
             if (trEmpty && trEmpty.length > 0) {
                 trEmpty.find('td').hide();
             }

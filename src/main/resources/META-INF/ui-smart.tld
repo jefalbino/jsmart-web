@@ -2017,6 +2017,10 @@
             <name>filterBy</name>
             <required>false</required>
         </attribute>
+        <attribute>
+            <name>filterMask</name>
+            <required>false</required>
+        </attribute>
     </tag>
 
     <tag>

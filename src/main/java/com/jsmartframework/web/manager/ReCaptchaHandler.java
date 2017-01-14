@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public final class ReCaptchaHandler {
 
-    public static final Integer RECAPTCHA_V1 = 1;
+    public static final String RECAPTCHA_V1 = "1";
 
-    public static final Integer RECAPTCHA_V2 = 2;
+    public static final String RECAPTCHA_V2 = "2";
 
 
     public static final String RESPONSE_V1_FIELD_NAME = "recaptcha_response_field";
@@ -58,7 +58,7 @@ public final class ReCaptchaHandler {
         return checkReCaptcha(secretKey, responseField, RECAPTCHA_V2);
     }
 
-    private static boolean checkReCaptcha(String secretKey, String responseField, Integer version) {
+    private static boolean checkReCaptcha(String secretKey, String responseField, String version) {
 
         HttpsURLConnection conn = null;
         HttpServletRequest request = WebContext.getRequest();

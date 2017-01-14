@@ -42,7 +42,7 @@ import javax.servlet.jsp.tagext.JspTag;
 
 public final class ReCaptchaTagHandler extends TagHandler {
 
-    private Integer version = ReCaptchaHandler.RECAPTCHA_V1;
+    private String version = ReCaptchaHandler.RECAPTCHA_V1;
 
     private String siteKey;
 
@@ -64,8 +64,11 @@ public final class ReCaptchaTagHandler extends TagHandler {
 
     @Override
     public void validateTag() throws JspException {
-        if (version != null && !version.equals(ReCaptchaHandler.RECAPTCHA_V1) && !version.equals(ReCaptchaHandler.RECAPTCHA_V2)) {
-            throw InvalidAttributeException.fromPossibleValues("recaptcha", "version", new String[]{"1", "2"});
+        if (version != null) {
+            version = getTagValue(version).toString();
+            if (!version.equals(ReCaptchaHandler.RECAPTCHA_V1) && !version.equals(ReCaptchaHandler.RECAPTCHA_V2)) {
+                throw InvalidAttributeException.fromPossibleValues("recaptcha", "version", new String[]{"1", "2"});
+            }
         }
         if (size != null && !Size.validateSmallLarge(size)) {
             throw InvalidAttributeException.fromPossibleValues("recaptcha", "size", Size.getSmallLargeValues());
@@ -98,7 +101,6 @@ public final class ReCaptchaTagHandler extends TagHandler {
         if (version.equals(ReCaptchaHandler.RECAPTCHA_V2)) {
             return executeRecaptchaV2(parent);
         }
-
         // ReCaptcha V1
         return executeRecaptchaV1(parent);
     }
@@ -244,7 +246,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
 
         Script challenge = new Script();
         challenge.addAttribute("type", "text/javascript")
-            .addAttribute("src", String.format(ReCaptchaHandler.RECAPTCHA_V1_CHALLENGE_URL, siteKey));
+            .addAttribute("src", String.format(ReCaptchaHandler.RECAPTCHA_V1_CHALLENGE_URL, getTagValue(siteKey)));
 
         div.addTag(formImage)
             .addTag(formGroup)
@@ -296,7 +298,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
         callback.addAttribute("type", "text/javascript")
             .addText("var onloadReCaptcha = function() {")
             .addText("grecaptcha.render('" + id + "', {")
-            .addText("'sitekey': '" + siteKey + "'")
+            .addText("'sitekey': '" + getTagValue(siteKey) + "'")
             .addText("});").addText("};");
 
         if (parent instanceof FormTagHandler) {
@@ -323,7 +325,7 @@ public final class ReCaptchaTagHandler extends TagHandler {
         return a;
     }
 
-    public void setVersion(Integer version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 

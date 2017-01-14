@@ -37,6 +37,8 @@ public final class ColumnTagHandler extends TagHandler {
 
     private String filterBy;
 
+    private String filterMask;
+
     @Override
     public boolean beforeTag() throws JspException, IOException {
         JspTag parent = getParent();
@@ -92,4 +94,11 @@ public final class ColumnTagHandler extends TagHandler {
         this.filterBy = filterBy;
     }
 
+    String getFilterMask() {
+        return filterMask;
+    }
+
+    public void setFilterMask(String filterMask) {
+        this.filterMask = filterMask;
+    }
 }

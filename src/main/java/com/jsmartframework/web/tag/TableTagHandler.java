@@ -331,7 +331,8 @@ public final class TableTagHandler extends TagHandler {
                     .addAttribute("placeholder", label)
                     .addAttribute("type", Type.TEXT.name().toLowerCase())
                     .addAttribute("datatype", Type.TEXT.name().toLowerCase())
-                    .addAttribute("filter-by", column.getFilterBy());
+                    .addAttribute("filter-by", column.getFilterBy())
+                    .addAttribute("data-mask", column.getFilterMask());
                 div.addTag(input);
                 th.addTag(div);
 
