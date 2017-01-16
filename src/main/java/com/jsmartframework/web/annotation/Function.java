@@ -42,6 +42,11 @@ public @interface Function {
     int timeout() default 0;
 
     /**
+     * Specifies the timeout in milliseconds for the Ajax request.
+     */
+    int requestTimeout() default 0;
+
+    /**
      * List of url-pattern which the function will be mapped for
      * direct call via JavaScript function.
      */

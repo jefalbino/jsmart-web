@@ -1601,7 +1601,7 @@ var JSmart = (function() {
         if (map.tag == 'function') {
             doFunctionOverwrite(map);
         }
-        return {
+        var ajaxOptions = {
             type: map.method,
             url: $(location).attr('href') + ($(location).attr('href').indexOf('?') >= 0 ? '&' : '?') + new Date().getTime(),
             beforeSend: function (xhr, settings) {
@@ -1657,6 +1657,11 @@ var JSmart = (function() {
             },
             async: true
         };
+
+        if (map.requestTimeout && map.requestTimeout > 0) {
+            ajaxOptions.timeout = map.requestTimeout;
+        }
+        return ajaxOptions;
     }
 
     function getAjaxParams(map) {

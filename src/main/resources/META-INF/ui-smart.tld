@@ -708,6 +708,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>requestTimeout</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>beforeSend</name>
             <required>false</required>
         </attribute>

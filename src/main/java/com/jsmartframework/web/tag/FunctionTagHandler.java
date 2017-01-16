@@ -45,6 +45,8 @@ public final class FunctionTagHandler extends TagHandler {
 
     private Integer timeout;
 
+    private Integer requestTimeout;
+
     private String update;
 
     private String beforeSend;
@@ -93,6 +95,7 @@ public final class FunctionTagHandler extends TagHandler {
         name = annotatedFunction.getFunctionName();
         action = annotatedFunction.getBeanMethod();
         timeout = annotatedFunction.getFunction().timeout();
+        requestTimeout = annotatedFunction.getFunction().requestTimeout();
 
         validateTag();
 
@@ -122,6 +125,7 @@ public final class FunctionTagHandler extends TagHandler {
         Ajax jsonAjax = new Ajax();
         jsonAjax.setId(id);
         jsonAjax.setTimeout(timeout);
+        jsonAjax.setRequestTimeout(requestTimeout);
         jsonAjax.setTag("function");
 
         // Params must be considered regardless the action for rest purpose
@@ -179,6 +183,10 @@ public final class FunctionTagHandler extends TagHandler {
 
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
+    }
+
+    public void setRequestTimeout(Integer requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     public void setUpdate(String update) {

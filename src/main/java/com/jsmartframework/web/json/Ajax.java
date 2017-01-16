@@ -31,6 +31,8 @@ public final class Ajax {
 
     private Integer timeout;
 
+    private Integer requestTimeout;
+
     private String method;
 
     private String action;
@@ -85,6 +87,14 @@ public final class Ajax {
 
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
+    }
+
+    public Integer getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(Integer requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     public String getMethod() {
