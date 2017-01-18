@@ -56,6 +56,7 @@ var JSmart = (function() {
         initPopOvers();
         initTooltips();
         initRoleEmpty();
+        initInputMasks();
         initWebSecurity();
     });
 
@@ -153,6 +154,12 @@ var JSmart = (function() {
                     $(this).find('td').hide();
                 }
             }
+        });
+    };
+
+    function initInputMasks() {
+        $('input[data-mask]').each(function() {
+            VMasker($(this)).maskPattern($(this).attr('data-mask'));
         });
     };
 
@@ -1989,6 +1996,7 @@ var JSmart = (function() {
 
             // May reset empty content for list and table components
             initRoleEmpty();
+            initInputMasks();
         }
     }
 
