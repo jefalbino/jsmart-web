@@ -2590,7 +2590,7 @@ var JSmart = (function() {
             // Append loading icon on list if it was configured
             if (liLoad && liLoad.length > 0) {
                 el.append(liLoad);
-                liLoad.slideDown('fast');
+                liLoad.attr('data-load-show', true).show();
             }
             return;
         }
@@ -2599,9 +2599,9 @@ var JSmart = (function() {
             var trLoad = el.find('tbody>tr[' + roleLoad + ']').clone();
             // Append loading icon on table if it was configured
             if (trLoad && trLoad.length > 0) {
-                trLoad.find('td').css({'display': 'table-cell'});
+                trLoad.attr('data-load-show', true).find('td').css({'display': 'table-cell'});
                 el.find('tbody').append(trLoad);
-                trLoad.slideDown('fast');
+                trLoad.show();
             }
             return;
         }
@@ -2616,7 +2616,7 @@ var JSmart = (function() {
         }
 
         if (el.is('ul')) {
-            var liLoad = el.find('>li[' + roleLoad + ']:visible').last();
+            var liLoad = el.find('>li[data-load-show]');
             // Remove loading icon from list if it was configured
             if (liLoad && liLoad.length > 0) {
                 liLoad.remove();
@@ -2625,7 +2625,7 @@ var JSmart = (function() {
         }
 
         if (el.is('table')) {
-            var trLoad = el.find('tbody>tr[' + roleLoad + ']:visible').last();
+            var trLoad = el.find('tbody>tr[data-load-show]');
             if (trLoad && trLoad.length > 0) {
                 trLoad.remove();
             }
