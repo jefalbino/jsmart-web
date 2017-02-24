@@ -61,6 +61,8 @@ public final class UploadTagHandler extends TagHandler {
 
     private List<TagHandler> childAddOns;
 
+    private String accept;
+
     public UploadTagHandler() {
         childAddOns = new ArrayList<TagHandler>(2);
     }
@@ -155,6 +157,7 @@ public final class UploadTagHandler extends TagHandler {
         Input input = new Input();
         input.addAttribute("name", name != null ? name.replace(J_FILE, J_PART) : null)
              .addAttribute("type", Type.FILE.name().toLowerCase())
+             .addAttribute("accept", accept)
              .addAttribute("class", Bootstrap.FORM_CONTROL)
              .addAttribute("tabindex", tabIndex)
              .addAttribute("readonly", readOnly ? readOnly : null)
@@ -277,5 +280,9 @@ public final class UploadTagHandler extends TagHandler {
 
     public void setOnUpload(String onUpload) {
         this.onUpload = onUpload;
+    }
+
+    public void setAccept(String accept) {
+        this.accept = accept;
     }
 }

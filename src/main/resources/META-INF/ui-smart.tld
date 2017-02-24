@@ -2846,6 +2846,10 @@
             <required>false</required>
         </attribute>
         <attribute>
+            <name>accept</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
             <name>leftAddOn</name>
             <required>false</required>
         </attribute>
