@@ -159,6 +159,9 @@ public final class FilterControl implements Filter {
             thrown.printStackTrace();
         }
 
+        // Add header for click jacking protection
+        responseWrapper.addHeader("X-Frame-Options", "DENY");
+
         // Finalize request scoped web and auth beans
         HANDLER.finalizeBeans(httpRequest, responseWrapper);
 
