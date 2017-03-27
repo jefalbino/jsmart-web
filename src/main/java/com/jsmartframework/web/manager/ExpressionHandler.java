@@ -29,7 +29,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.internal.Primitives;
 import com.jsmartframework.web.adapter.ListAdapter;
 import com.jsmartframework.web.adapter.TableAdapter;
-import com.jsmartframework.web.annotation.ProduceType;
 import com.jsmartframework.web.config.Constants;
 import com.jsmartframework.web.json.Scroll;
 import com.jsmartframework.web.util.WebText;
