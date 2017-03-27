@@ -40,6 +40,8 @@ public final class CacheFilter implements Filter {
 
     private static final String HEADER_EXPIRES = "Expires";
 
+    private static final String HEADER_X_FRAME_OPTIONS = "X-Frame-Options";
+
     @Override
     public void init(FilterConfig config) throws ServletException {
         // DO NOTHING
@@ -62,12 +64,13 @@ public final class CacheFilter implements Filter {
         }
 
         CachePattern cachePattern = CONFIG.getContent().getCachePattern(httpRequest.getRequestURI());
-
         if (cachePattern != null && cachePattern.getCacheControl() != null) {
             httpResponse.setHeader(HEADER_CACHE_CONTROL, cachePattern.getCacheControlHeader());
             httpResponse.setHeader(HEADER_EXPIRES, cachePattern.getExpiresHeader());
         }
+
+        // Add header for click jacking protection
+        httpResponse.setHeader(HEADER_X_FRAME_OPTIONS, "DENY");
         filterChain.doFilter(httpRequest, httpResponse);
     }
-
 }
