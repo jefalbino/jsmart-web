@@ -116,8 +116,8 @@ public enum BeanHandler {
 
     private static final Pattern INCLUDE_PATTERN = Pattern.compile("<%@*.include.*file=\"(.*)\".*%>");
 
-    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern() + "|" + INCLUDE_PATTERN.pattern()
-            + "|" + ID_PATTERN.pattern() + "|" + JSP_PATTERN.pattern());
+    private static final Pattern HANDLER_EL_PATTERN = Pattern.compile(EL_PATTERN.pattern()
+            + "|" + INCLUDE_PATTERN.pattern() + "|" + ID_PATTERN.pattern() + "|" + JSP_PATTERN.pattern());
 
     private static final Pattern SPRING_VALUE_PATTERN = Pattern.compile("[\\$,\\{,\\}]*");
 
@@ -310,7 +310,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Execution of PreSet on WebBean " + bean + " failed: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Execution of PreSet on WebBean [" + bean + "] failed: " + ex.getMessage());
         }
     }
 
@@ -351,12 +351,16 @@ public enum BeanHandler {
                 }
             }
         }
-
-        String responsePath = null;
         if (submitExpr != null) {
-            responsePath = EXPRESSIONS.handleSubmitExpression(submitExpr, submitParam);
+            try {
+                return EXPRESSIONS.handleSubmitExpression(submitExpr, submitParam);
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "Error executing expression [" + submitExpr + "] with parameters ["
+                        + submitParam + "]: " + ex.getMessage());
+                throw ex;
+            }
         }
-        return responsePath;
+        return null;
     }
 
     void instantiateBeans(String path, Map<String, String> expressions) throws Exception {
@@ -504,7 +508,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Injection on object " + object + " failed", ex);
+            LOGGER.log(Level.SEVERE, "Injection on object [" + object + "] failed", ex);
         }
     }
 
@@ -580,7 +584,7 @@ public enum BeanHandler {
                         setExposeVarAttribute(request, exposeVars[i].getName(), value);
                     }
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, "Could not expose var " + exposeVars[i], ex);
+                    LOGGER.log(Level.SEVERE, "Could not expose var [" + exposeVars[i] + "]", ex);
                 }
             }
 
@@ -642,7 +646,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Finalize injection on WebBean " + bean + " failed: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Finalize injection on WebBean [" + bean + "] failed: " + ex.getMessage());
         }
     }
 
@@ -748,7 +752,7 @@ public enum BeanHandler {
             executePostConstruct(bean);
 
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Injection on AuthBean " + bean + " failed: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Injection on AuthBean [" + bean + "] failed: " + ex.getMessage());
         }
         return bean;
     }
@@ -788,7 +792,7 @@ public enum BeanHandler {
                 }
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean " + bean + " failed: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "Finalize injection on AuthBean [" + bean + "] failed: " + ex.getMessage());
         }
         request.removeAttribute(HELPER.getClassName(authBean, bean.getClass()));
     }
@@ -813,7 +817,7 @@ public enum BeanHandler {
                     executePostConstruct(listener);
                     request.setAttribute(name, listener);
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, "Injection on WebSecurity " + name + " failed: " + ex.getMessage());
+                    LOGGER.log(Level.SEVERE, "Injection on WebSecurity [" + name + "] failed: " + ex.getMessage());
                 }
             }
             // We must have only one @WebSecurity mapped
@@ -1042,7 +1046,7 @@ public enum BeanHandler {
 
                 CsrfAdapter csrfAdapter = listener.generateToken();
                 if (csrfAdapter == null || StringUtils.isBlank(csrfAdapter.getName()) || StringUtils.isBlank(csrfAdapter.getToken())) {
-                    LOGGER.warning("Class " + name + " returned invalid token from generateToken method");
+                    LOGGER.warning("Class [" + name + "] returned invalid token from generateToken method");
                     return;
                 }
 
@@ -1063,8 +1067,8 @@ public enum BeanHandler {
 
     private void initAnnotatedBeans() {
         if (CONFIG.getContent().getPackageScan() == null) {
-            LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on " + Constants.WEB_CONFIG_XML +
-                                     " file! Skipping package scanning.");
+            LOGGER.log(Level.SEVERE, "None [package-scan] tag was found on [" + Constants.WEB_CONFIG_XML +
+                                     "] file! Skipping package scanning.");
             return;
         }
 
@@ -1477,7 +1481,7 @@ public enum BeanHandler {
                     LOGGER.log(Level.INFO, "Overriding path mapping [" + urlPattern.getUrl() + "] from [" + prevJsp + "] " +
                             "to [" + urlPattern.getJsp() + "]");
                 } else {
-                    LOGGER.log(Level.INFO, "Mapping path  [" + urlPattern.getUrl() + "] to [" + urlPattern.getJsp() + "]");
+                    LOGGER.log(Level.INFO, "Mapping path [" + urlPattern.getUrl() + "] to [" + urlPattern.getJsp() + "]");
                 }
             }
         }

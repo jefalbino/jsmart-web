@@ -45,7 +45,7 @@ public enum Config {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             content = (ConfigContent) unmarshaller.unmarshal(is);
         } catch (Exception ex) {
-            LOGGER.log(Level.INFO, "Failed to parse " + Constants.WEB_CONFIG_XML + ": " + ex.getMessage());
+            LOGGER.log(Level.INFO, "Failed to parse [" + Constants.WEB_CONFIG_XML + "]: " + ex.getMessage());
         }
     }
 

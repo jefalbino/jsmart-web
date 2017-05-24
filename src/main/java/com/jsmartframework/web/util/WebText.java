@@ -73,7 +73,7 @@ public enum WebText {
 
     public static WebTextSet getStrings(String res, String keyPrefix, String language) {
         if (!containsResource(res)) {
-            LOGGER.log(Level.SEVERE, "Resource " + res + " not found to return set of messages!");
+            LOGGER.log(Level.SEVERE, "Resource [" + res + "] not found to return set of messages!");
             return null;
         }
 
@@ -119,7 +119,7 @@ public enum WebText {
     public static String getString(String res, String key) {
         try {
             if (!containsResource(res)) {
-                LOGGER.log(Level.INFO, "Resource " + res + " not found!");
+                LOGGER.log(Level.INFO, "Resource [" + res + "] not found!");
                 return NOT_FOUND;
             }
             Locale locale = WebContext.getLocale();
@@ -129,7 +129,7 @@ public enum WebText {
             return getBundle(res, locale).getString(key);
 
         } catch (MissingResourceException ex) {
-            LOGGER.log(Level.INFO, "Message for " + key + " not found: " + ex.getMessage());
+            LOGGER.log(Level.INFO, "Message for [" + key + "] not found: " + ex.getMessage());
         }
         return NOT_FOUND;
     }

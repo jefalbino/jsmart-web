@@ -88,7 +88,7 @@ final class TagEncrypter {
                 byte[] encode = getEncryptCipher(request).doFinal(value.getBytes("UTF8"));
                 return new String(Base64.encodeBase64(encode, true, true)).trim();
             } catch (Exception ex) {
-                LOGGER.log(Level.INFO, "Failed to encrypt tag: " + value + " " + ex.getMessage());
+                LOGGER.log(Level.INFO, "Failed to encrypt tag [" + value + "]: " + ex.getMessage());
             }
         }
         return value;
@@ -100,7 +100,7 @@ final class TagEncrypter {
                 byte[] decoded = Base64.decodeBase64(value);
                 return new String(getDecryptCipher(request).doFinal(decoded), "UTF8");
             } catch (Exception ex) {
-                LOGGER.log(Level.INFO, "Failed to decrypt tag: " + value + " " + ex.getMessage());
+                LOGGER.log(Level.INFO, "Failed to decrypt tag [" + value + "]: " + ex.getMessage());
             }
         }
         return value;

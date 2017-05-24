@@ -122,7 +122,7 @@ enum ExpressionHandler {
                 setExpressionCaptcha(expr, jParam);
             }
         } catch (PropertyNotWritableException e) {
-            LOGGER.log(Level.SEVERE, "Property " + expr + " is not writable");
+            LOGGER.log(Level.SEVERE, "Property [" + expr + "] is not writable");
             throw e;
         }
     }

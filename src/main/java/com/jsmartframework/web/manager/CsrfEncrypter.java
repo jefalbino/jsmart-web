@@ -64,7 +64,7 @@ final class CsrfEncrypter {
                 byte[] encode = getEncryptCipher(request, key).doFinal(value.toString().getBytes("UTF8"));
                 return new String(Base64.encodeBase64(encode, true, true)).trim();
             } catch (Exception ex) {
-                LOGGER.log(Level.INFO, "Failed to encrypt value: " + value + " " + ex.getMessage());
+                LOGGER.log(Level.INFO, "Failed to encrypt value [" + value + "]: " + ex.getMessage());
             }
             return value.toString();
         }
@@ -77,7 +77,7 @@ final class CsrfEncrypter {
                 byte[] decoded = Base64.decodeBase64(value.toString());
                 return new String(getDecryptCipher(request, key).doFinal(decoded), "UTF8");
             } catch (Exception ex) {
-                LOGGER.log(Level.INFO, "Failed to decrypt value: " + value + " " + ex.getMessage());
+                LOGGER.log(Level.INFO, "Failed to decrypt value [" + value + "]: " + ex.getMessage());
             }
             return value.toString();
         }

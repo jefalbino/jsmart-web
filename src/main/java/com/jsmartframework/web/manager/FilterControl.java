@@ -416,15 +416,15 @@ public final class FilterControl implements Filter {
     private void initResources(FilterConfig config) {
         try {
             if (CONFIG.getContent().getAssetsUrl() != null) {
-                LOGGER.log(Level.INFO, "Using external assets, please provide the jsmart assets content at "
-                        + CONFIG.getContent().getAssetsUrl());
+                LOGGER.log(Level.INFO, "Using external assets, please provide the jsmart assets content at ["
+                        + CONFIG.getContent().getAssetsUrl() + "]");
             }
 
             ServletContext context = config.getServletContext();
             Set<String> libs = context.getResourcePaths(LIB_FILE_PATH);
 
             if (libs == null || libs.isEmpty()) {
-                LOGGER.log(Level.SEVERE, "Could not find the JSmart library JAR file. Empty " + LIB_FILE_PATH + " resource folder.");
+                LOGGER.log(Level.SEVERE, "Could not find the JSmart library JAR file. Empty [" + LIB_FILE_PATH + "] resource folder.");
                 return;
             }
 
@@ -438,7 +438,7 @@ public final class FilterControl implements Filter {
             }
 
             if (libFilePath == null) {
-                LOGGER.log(Level.SEVERE, "Could not find the JSmart library JAR file inside " + LIB_FILE_PATH);
+                LOGGER.log(Level.SEVERE, "Could not find the JSmart library JAR file inside [" + LIB_FILE_PATH + "]");
                 return;
             }
 
@@ -561,7 +561,7 @@ public final class FilterControl implements Filter {
             manifestProperties.load(config.getServletContext().getResourceAsStream(MANIFEST));
             return manifestProperties.getProperty(IMPLEMENTATION_VERSION);
         } catch (Exception e) {
-            LOGGER.warning("Failed to retrieve MANIFEST.MF information for automatic versioning");
+            LOGGER.warning("Failed to retrieve [MANIFEST.MF] information for automatic versioning");
             return null;
         }
     }

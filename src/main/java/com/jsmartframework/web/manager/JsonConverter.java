@@ -34,8 +34,12 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class JsonConverter {
+
+    private static final Logger LOGGER = Logger.getLogger(JsonConverter.class.getPackage().getName());
 
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
@@ -57,7 +61,12 @@ class JsonConverter {
             if (!jsonDate.contains("Z")) {
                 datePattern = LOCAL_DATE_PATTERN;
             }
-            return LocalDateTime.parse(jsonDate, DateTimeFormatter.ofPattern(datePattern));
+            try {
+                return LocalDateTime.parse(jsonDate, DateTimeFormatter.ofPattern(datePattern));
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "Failed to parse date [" + jsonDate + "] with pattern [" + datePattern + "]");
+                throw ex;
+            }
         }
     }
 
@@ -75,7 +84,12 @@ class JsonConverter {
             if (!jsonDate.contains("Z")) {
                 datePattern = LOCAL_DATE_PATTERN;
             }
-            return DateTimeFormat.forPattern(datePattern).parseDateTime(jsonDate);
+            try {
+                return DateTimeFormat.forPattern(datePattern).parseDateTime(jsonDate);
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, "Failed to parse date [" + jsonDate + "] with pattern [" + datePattern + "]");
+                throw ex;
+            }
         }
     }
 
@@ -86,14 +100,15 @@ class JsonConverter {
         }
 
         public Date deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+            String jsonDate = jsonElement.getAsString();
+            String datePattern = DATE_PATTERN;
+            if (!jsonDate.contains("Z")) {
+                datePattern = LOCAL_DATE_PATTERN;
+            }
             try {
-                String jsonDate = jsonElement.getAsString();
-                String datePattern = DATE_PATTERN;
-                if (!jsonDate.contains("Z")) {
-                    datePattern = LOCAL_DATE_PATTERN;
-                }
                 return new SimpleDateFormat(datePattern).parse(jsonDate);
             } catch (ParseException e) {
+                LOGGER.log(Level.SEVERE, "Failed to parse date [" + jsonDate + "] with pattern [" + datePattern + "]");
                 throw new JsonParseException(e);
             }
         }
