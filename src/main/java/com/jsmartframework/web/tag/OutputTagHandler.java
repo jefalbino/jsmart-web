@@ -88,47 +88,47 @@ public final class OutputTagHandler extends TagHandler {
         Tag tag = null;
 
         if (Output.DIV.equalsIgnoreCase(type)) {
-            tag =  new Tag("div");
+            tag = new Tag("div");
         } else if (Output.LEGEND.equalsIgnoreCase(type)) {
-            tag =  new Tag("legend");
+            tag = new Tag("legend");
         } else if (Output.STRONG.equalsIgnoreCase(type)) {
-            tag =  new Tag("strong");
+            tag = new Tag("strong");
         } else if (Output.MARK.equalsIgnoreCase(type)) {
-            tag =  new Tag("mark");
+            tag = new Tag("mark");
         } else if (Output.EM.equalsIgnoreCase(type)) {
-            tag =  new Tag("em");
+            tag = new Tag("em");
         } else if (Output.SMALL.equalsIgnoreCase(type)) {
-            tag =  new Tag("small");
+            tag = new Tag("small");
         } else if (Output.LABEL.equalsIgnoreCase(type)) {
-            tag =  new Tag("label");
+            tag = new Tag("label");
         } else if (Output.OUTPUT.equalsIgnoreCase(type)) {
-            tag =  new Tag("output");
+            tag = new Tag("output");
         } else if (Output.DEL.equalsIgnoreCase(type)) {
-            tag =  new Tag("del");
+            tag = new Tag("del");
         } else if (Output.S.equalsIgnoreCase(type)) {
-            tag =  new Tag("s");
+            tag = new Tag("s");
         } else if (Output.INS.equalsIgnoreCase(type)) {
-            tag =  new Tag("ins");
+            tag = new Tag("ins");
         } else if (Output.U.equalsIgnoreCase(type)) {
-            tag =  new Tag("u");
+            tag = new Tag("u");
         } else if (Output.P.equalsIgnoreCase(type)) {
-            tag =  new Tag("p");
+            tag = new Tag("p");
         } else if (Output.H1.equalsIgnoreCase(type)) {
-            tag =  new Tag("h1");
+            tag = new Tag("h1");
         } else if (Output.H2.equalsIgnoreCase(type)) {
-            tag =  new Tag("h2");
+            tag = new Tag("h2");
         } else if (Output.H3.equalsIgnoreCase(type)) {
-            tag =  new Tag("h3");
+            tag = new Tag("h3");
         } else if (Output.H4.equalsIgnoreCase(type)) {
-            tag =  new Tag("h4");
+            tag = new Tag("h4");
         } else if (Output.H5.equalsIgnoreCase(type)) {
-            tag =  new Tag("h5");
+            tag = new Tag("h5");
         } else if (Output.H6.equalsIgnoreCase(type)) {
             tag = new Tag("h6");
         } else if (Output.NONE.equalsIgnoreCase(type)) {
             tag = new None();
         } else {
-            tag =  new Span();
+            tag = new Span();
         }
 
         tag.addAttribute("style", getTagValue(style));
