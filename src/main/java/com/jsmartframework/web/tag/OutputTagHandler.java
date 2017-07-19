@@ -21,6 +21,7 @@ package com.jsmartframework.web.tag;
 import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.css.Bootstrap;
+import com.jsmartframework.web.tag.html.None;
 import com.jsmartframework.web.tag.html.Span;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Align;
@@ -123,7 +124,9 @@ public final class OutputTagHandler extends TagHandler {
         } else if (Output.H5.equalsIgnoreCase(type)) {
             tag =  new Tag("h5");
         } else if (Output.H6.equalsIgnoreCase(type)) {
-            tag =  new Tag("h6");
+            tag = new Tag("h6");
+        } else if (Output.NONE.equalsIgnoreCase(type)) {
+            tag = new None();
         } else {
             tag =  new Span();
         }

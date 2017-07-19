@@ -39,7 +39,8 @@ public enum Output {
     H3,
     H4,
     H5,
-    H6;
+    H6,
+    NONE;
 
     public static boolean validate(String output) {
         try {
