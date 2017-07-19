@@ -22,6 +22,7 @@ import com.jsmartframework.web.exception.InvalidAttributeException;
 import com.jsmartframework.web.manager.TagHandler;
 import com.jsmartframework.web.tag.css.Bootstrap;
 import com.jsmartframework.web.tag.html.None;
+import com.jsmartframework.web.tag.html.Script;
 import com.jsmartframework.web.tag.html.Span;
 import com.jsmartframework.web.tag.html.Tag;
 import com.jsmartframework.web.tag.type.Align;
@@ -127,6 +128,8 @@ public final class OutputTagHandler extends TagHandler {
             tag = new Tag("h6");
         } else if (Output.NONE.equalsIgnoreCase(type)) {
             tag = new None();
+        } else if (Output.SCRIPT.equalsIgnoreCase(type)) {
+            tag = new Script();
         } else {
             tag = new Span();
         }
