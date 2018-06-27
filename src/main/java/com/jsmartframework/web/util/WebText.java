@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -51,6 +52,8 @@ public enum WebText {
     private static final Logger LOGGER = Logger.getLogger(WebText.class.getPackage().getName());
 
     private static final Pattern BRACKETS = Pattern.compile(".*\\{[0-9]*\\}.*");
+
+    private static Map<String, ResourceBundle> resourceBundles = new ConcurrentHashMap<>();
 
     private final WebTextControl control = new WebTextControl();
 
@@ -139,7 +142,18 @@ public enum WebText {
     }
 
     private static ResourceBundle getBundle(String res, Locale locale) {
-        return ResourceBundle.getBundle(res, locale, TEXTS.control);
+        String resourceBundleKey = res + locale.getLanguage();
+        ResourceBundle resourceBundle = resourceBundles.get(resourceBundleKey);
+        if (resourceBundle == null) {
+            synchronized (resourceBundles) {
+                if (!resourceBundles.containsKey(resourceBundleKey)) {
+                    resourceBundles.put(resourceBundleKey, resourceBundle = ResourceBundle.getBundle(res, locale, TEXTS.control));
+                } else {
+                    resourceBundle = resourceBundles.get(resourceBundleKey);
+                }
+            }
+        }
+        return resourceBundle;
     }
 
     public static String getString(String res, String key, Object ... params) {
