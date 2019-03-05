@@ -581,12 +581,14 @@ var JSmart = (function() {
         $(getId(map.id)).scroll(function(e) {
             var ul = $(this);
             if (ul.scrollTop() + ul.outerHeight() >= ul[0].scrollHeight) {
+                if (ul.attr('scroll-block') && ul.attr('scroll-block').length > 0) {
+                    return;
+                }
+                ul.attr('scroll-block', 'true');
 
                 // Timeout is used because scroll is called more than one time
                 setTimeout(function() {
-
-                    var scrollActive = ul.attr('scroll-active');
-                    if (scrollActive && scrollActive.length > 0) {
+                    if (ul.attr('scroll-active') && ul.attr('scroll-active').length > 0) {
                         return;
                     }
 
@@ -685,6 +687,8 @@ var JSmart = (function() {
                         $.ajax(options);
                     }
                 }, 50);
+            } else {
+                ul.removeAttr('scroll-block');
             }
         });
     }
@@ -898,9 +902,7 @@ var JSmart = (function() {
     }
 
     function doTableAjax(tbody, map, reset, jsonParam) {
-
-        var scrollActive = tbody.attr('scroll-active');
-        if (scrollActive && scrollActive.length > 0) {
+        if (tbody.attr('scroll-active') && tbody.attr('scroll-active').length > 0) {
             return;
         }
 
@@ -1327,12 +1329,14 @@ var JSmart = (function() {
         $('ul[auto-list-id="' + map.id + '"]').scroll(function(e) {
             var ul = $(this);
             if (ul.scrollTop() + ul.outerHeight() >= ul[0].scrollHeight) {
+                if (ul.attr('scroll-block') && ul.attr('scroll-block').length > 0) {
+                    return;
+                }
+                ul.attr('scroll-block', 'true');
 
                 // Timeout is used because scroll is called more than one time
                 setTimeout(function() {
-
-                    var scrollActive = ul.attr('scroll-active');
-                    if (scrollActive && scrollActive.length > 0) {
+                    if (ul.attr('scroll-active') && ul.attr('scroll-active').length > 0) {
                         return;
                     }
 
@@ -1418,6 +1422,8 @@ var JSmart = (function() {
                         $.ajax(options);
                     }
                 }, 50);
+            } else {
+                ul.removeAttr('scroll-block');
             }
         });
     }

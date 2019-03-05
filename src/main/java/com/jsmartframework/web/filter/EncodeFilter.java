@@ -105,7 +105,6 @@ public final class EncodeFilter implements Filter {
             }
 
             if (gzipOutputStream == null) {
-                LOGGER.log(Level.SEVERE, "Encoding type [" + contentEncode.getEncode() + "] not supported for compression");
                 filterChain.doFilter(httpRequest, httpResponse);
                 return;
             }
