@@ -1,4 +1,4 @@
-JSmart Framework - Java framework for Web development
+<h1>JSmart Framework - Java framework for Web development</h1>
 
 An open source Java and JavaScript based web application framework
 
