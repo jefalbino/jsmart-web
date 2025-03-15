@@ -61,18 +61,17 @@ var JSmart = (function() {
     });
 
     function initPopOvers() {
-        $('[data-toggle="popover"]').each(function() {
+        $('[data-toggle="popover-ui"]').each(function() {
             var templateId = $(this).attr('template-id');
 
             if (templateId && templateId.length > 0) {
-                $(this).popover({
-                    html: true,
+                $(this).webuiPopover({
                     content: function() {
                         return $('#' + templateId).html();
                     }
                 });
             } else {
-                $(this).popover();
+                $(this).webuiPopover();
             }
         });
     };
@@ -1649,6 +1648,7 @@ var JSmart = (function() {
                 var redirect = xhr.getResponseHeader("Redirect-Ajax");
                 if (redirect && redirect.length > 0) {
                     $(location).attr('href', redirect);
+                    return;
                 }
 
                 var newWindow = xhr.getResponseHeader("New-Window-Ajax");

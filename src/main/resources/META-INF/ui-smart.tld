@@ -3011,6 +3011,18 @@
             <name>selector</name>
             <required>false</required>
         </attribute>
+        <attribute>
+            <name>style</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>width</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <name>height</name>
+            <required>false</required>
+        </attribute>
     </tag>
 
     <tag>

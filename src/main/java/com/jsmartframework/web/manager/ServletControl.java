@@ -154,7 +154,7 @@ public final class ServletControl extends HttpServlet {
         }
 
         // Case is Ajax post action and submit method returned a path, let JavaScript redirect page
-        if (responsePath != null && "XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+        if (responsePath != null && WebContext.isAjaxRequest(request)) {
             redirectAjax = true;
         }
 
@@ -163,7 +163,7 @@ public final class ServletControl extends HttpServlet {
         } else {
 
             // Case is Ajax post action, let JavaScript redirect page
-            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            if (WebContext.isAjaxRequest(request)) {
                 if (redirectAjax) {
                     request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR, getRedirectPath(responsePath, request, false));
                     request.setAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR, WebContext.isRedirectToWindow());
@@ -177,7 +177,12 @@ public final class ServletControl extends HttpServlet {
     private boolean checkAuthentication(String path, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         AuthPath authPath = HANDLER.checkAuthentication(path);
         if (authPath.shouldRedirectFromPath(path)) {
-            sendRedirect(authPath.getPath(), request, response, !authPath.isHomePath());
+            // Case is Ajax post action, let JavaScript redirect page
+            if (WebContext.isAjaxRequest(request)) {
+                request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR, getRedirectPath(authPath.getPath(), request, true));
+            } else {
+                sendRedirect(authPath.getPath(), request, response, !authPath.isHomePath());
+            }
             return true;
         }
         return false;
@@ -234,7 +239,7 @@ public final class ServletControl extends HttpServlet {
         }
 
         // Case is Ajax post action, let JavaScript redirect page
-        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+        if (WebContext.isAjaxRequest(request)) {
             request.setAttribute(REQUEST_REDIRECT_PATH_AJAX_ATTR, getRedirectPath(path, request, false));
             request.setAttribute(REQUEST_REDIRECT_WINDOW_PATH_AJAX_ATTR, WebContext.isRedirectToWindow());
         }

@@ -85,6 +85,17 @@ public final class FormatTagHandler extends TagHandler {
                 } else if (value instanceof DateTime) {
                     return ((DateTime) value).toString(DateTimeFormat.forPattern(regex).withLocale(getRequest().getLocale()));
                 }
+            } else if (Type.MILLIS.equalsIgnoreCase(type)) {
+                try {
+                    Long millis = Long.valueOf(String.valueOf(value));
+                    if (millis == 0l) {
+                        return " - ";
+                    }
+                    return new DateTime(millis)
+                        .toString(DateTimeFormat.forPattern(regex).withLocale(getRequest().getLocale()));
+                } catch (Exception e) {
+                    return String.valueOf(value);
+                }
             }
             return value.toString();
         }

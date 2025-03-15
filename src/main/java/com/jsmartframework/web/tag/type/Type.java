@@ -22,6 +22,7 @@ public enum Type {
 
     NUMBER,
     DATE,
+    MILLIS,
 
     RESPONSIVE,
     ROUND,
@@ -61,7 +62,7 @@ public enum Type {
     }
 
     public static boolean validateFormat(String format) {
-        return NUMBER.equalsIgnoreCase(format) || DATE.equalsIgnoreCase(format);
+        return NUMBER.equalsIgnoreCase(format) || DATE.equalsIgnoreCase(format) || MILLIS.equalsIgnoreCase(format);
     }
 
     public static boolean validatePanel(String panel) {

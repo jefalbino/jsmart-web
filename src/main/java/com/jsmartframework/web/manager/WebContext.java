@@ -306,7 +306,10 @@ public final class WebContext implements Serializable {
      */
     public static Locale getLocale() {
         HttpServletRequest request = getRequest();
-        return request != null ? request.getLocale() : null;
+        return request != null ? request.getAttribute("locale") != null
+            ? new Locale(String.valueOf(request.getAttribute("locale")))
+            : request.getLocale()
+            : null;
     }
 
     /**
@@ -316,8 +319,17 @@ public final class WebContext implements Serializable {
      * @return boolean value indicating if request was done using Ajax.
      */
     public static boolean isAjaxRequest() {
-        HttpServletRequest request = getRequest();
-        return request != null ? "XMLHttpRequest".equals(request.getHeader("X-Requested-With")) : false;
+        return isAjaxRequest(getRequest());
+    }
+
+    /**
+     * Returns true if the request being process was triggered by Ajax on client side,
+     * false otherwise.
+     *
+     * @return boolean value indicating if request was done using Ajax.
+     */
+    public static boolean isAjaxRequest(HttpServletRequest request) {
+        return request != null && "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
     }
 
     static List<WebAlert> getAlerts(String id) {

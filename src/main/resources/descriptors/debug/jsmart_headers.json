@@ -2,6 +2,7 @@
 	"styles": [
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart/bootstrap-3.3.7/css/bootstrap.css\"/>",
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart/bootstrap-datetime-4.14.30/css/bootstrap-datetimepicker.css\"/>",
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart/webui-popover-1.2.0/css/jquery.webui-popover.css\"/>",
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%sjsmart/css/jsmart.css\"/>"
 	],
 	"scripts": [
@@ -10,6 +11,7 @@
 		"<script type=\"text/javascript\" src=\"%sjsmart/momentjs-2.17.0/moment-with-locales.js\"></script>",
 		"<script type=\"text/javascript\" src=\"%sjsmart/bootstrap-3.3.7/js/bootstrap.js\"></script>",
 		"<script type=\"text/javascript\" src=\"%sjsmart/vanilla-masker-1.1.0/vanilla-masker-1.1.0.js\"></script>",
+		"<script type=\"text/javascript\" src=\"%sjsmart/webui-popover-1.2.0/jquery.webui-popover.js\"></script>",
 		"<script type=\"text/javascript\" src=\"%sjsmart/bootstrap-datetime-4.14.30/js/bootstrap-datetimepicker.js\"></script>",
 		"<script type=\"text/javascript\" src=\"%sjsmart/js/jsmart.js\"></script>"
 	]

@@ -311,7 +311,7 @@ public abstract class TagHandler extends SimpleTagSupport {
     // so we call load method on adapters when table or list must be updated
     protected boolean shallExecuteTag() {
         HttpServletRequest request = getRequest();
-        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+        if (WebContext.isAjaxRequest(request)) {
             String update = request.getHeader("Update-Ajax");
             return update != null && update.contains(id);
         }
@@ -915,14 +915,17 @@ public abstract class TagHandler extends SimpleTagSupport {
 
     protected void appendPopOver(Tag tag) throws JspException, IOException {
         if (popOverTag != null) {
-            tag.addAttribute("data-container", "body")
-                .addAttribute("data-toggle", "popover")
-                .addAttribute("title", getTagValue(popOverTag.getTitle()))
+            tag.addAttribute("data-container", "document.body")
+                .addAttribute("data-toggle", "popover-ui")
+                .addAttribute("data-title", getTagValue(popOverTag.getTitle()))
                 .addAttribute("data-placement", getTagValue(popOverTag.getSide()))
                 .addAttribute("data-content", getTagValue(popOverTag.getContent()))
                 .addAttribute("data-selector", getTagValue(popOverTag.getSelector()))
                 .addAttribute("template-id", getTagValue(popOverTag.getId()))
-                .addAttribute("data-trigger", getTagValue(popOverTag.getEvent()));
+                .addAttribute("data-trigger", getTagValue(popOverTag.getEvent()))
+                .addAttribute("data-width", getTagValue(popOverTag.getWidth()))
+                .addAttribute("data-height", getTagValue(popOverTag.getHeight()))
+                .addAttribute("data-style", getTagValue(popOverTag.getStyle()));
         }
     }
 
