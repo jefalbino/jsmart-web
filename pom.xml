@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jsmartframework</groupId>
 	<artifactId>jsmart-web</artifactId>
-	<version>3.0.9-SNAPSHOT</version>
+	<version>3.0.9</version>
 	<packaging>jar</packaging>
 
 	<name>JSmart Web Framework</name>
@@ -300,6 +300,29 @@
 						</executions>
     				</plugin>
 					<!-- END RELEASE MODE -->
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>3.0.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<useAgent>false</useAgent>
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
+							<passphraseServerId>gpg.passphrase</passphraseServerId>
+						</configuration>
+					</plugin>
 
 				</plugins>
 			</build>
