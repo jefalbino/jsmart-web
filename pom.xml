@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jsmartframework</groupId>
 	<artifactId>jsmart-web</artifactId>
-	<version>3.0.10-SNAPSHOT</version>
+	<version>3.0.10</version>
 	<packaging>jar</packaging>
 
 	<name>JSmart Web Framework</name>
@@ -31,7 +31,7 @@
 		<connection>scm:git:git@github.com:jefalbino/jsmart-web.git</connection>
 		<developerConnection>scm:git:git@github.com:jefalbino/jsmart-web.git</developerConnection>
 		<url>git@github.com:jefalbino/jsmart-web.git</url>
-	  <tag>jsmart-web-3.0.9</tag>
+	  <tag>jsmart-web-3.0.10</tag>
   </scm>
 
 	<dependencies>
