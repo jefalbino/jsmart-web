@@ -32,7 +32,7 @@
 		<developerConnection>scm:git:git@github.com:jefalbino/jsmart-web.git</developerConnection>
 		<url>git@github.com:jefalbino/jsmart-web.git</url>
 	  <tag>jsmart-web-3.0.9</tag>
-  </scm>
+  	</scm>
 
 	<dependencies>
 		<!-- Servlet -->
@@ -164,7 +164,16 @@
 		</dependency>
 	</dependencies>
 
-
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
 	<profiles>
 		<profile>
