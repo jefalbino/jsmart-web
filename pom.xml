@@ -184,12 +184,21 @@
             <build>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>3.5.1</version>
                         <configuration>
                             <source>1.8</source>
                             <target>1.8</target>
+                            <encoding>UTF-8</encoding>
                         </configuration>
                     </plugin>
 
@@ -259,7 +268,7 @@
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <tasks>
+                                    <target>
                                         <copy file="${basedir}/src/main/resources/descriptors/release/jsmart_headers.json"
                                               tofile="${basedir}/target/classes/jsmart_headers.json"/>
                                         <copy file="${basedir}/src/main/resources/descriptors/release/jsmart_resources.json"
@@ -289,7 +298,7 @@
                                                 <exclude name="jsmart.min.js"/>
                                             </fileset>
                                         </delete>
-                                    </tasks>
+                                    </target>
                                 </configuration>
                             </execution>
                         </executions>
