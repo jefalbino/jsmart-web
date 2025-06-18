@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jsmartframework</groupId>
     <artifactId>jsmart-web</artifactId>
-    <version>3.0.9</version>
+    <version>3.0.9-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>JSmart Web Framework</name>
@@ -31,8 +32,7 @@
         <connection>scm:git:git@github.com:jefalbino/jsmart-web.git</connection>
         <developerConnection>scm:git:git@github.com:jefalbino/jsmart-web.git</developerConnection>
         <url>git@github.com:jefalbino/jsmart-web.git</url>
-      <tag>jsmart-web-3.0.9</tag>
-  </scm>
+    </scm>
 
     <dependencies>
         <!-- Servlet -->
@@ -260,29 +260,33 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${basedir}/src/main/resources/descriptors/release/jsmart_headers.json" tofile="${basedir}/target/classes/jsmart_headers.json" />
-                                        <copy file="${basedir}/src/main/resources/descriptors/release/jsmart_resources.json" tofile="${basedir}/target/classes/jsmart_resources.json" />
+                                        <copy file="${basedir}/src/main/resources/descriptors/release/jsmart_headers.json"
+                                              tofile="${basedir}/target/classes/jsmart_headers.json"/>
+                                        <copy file="${basedir}/src/main/resources/descriptors/release/jsmart_resources.json"
+                                              tofile="${basedir}/target/classes/jsmart_resources.json"/>
 
-                                        <copy file="${basedir}/src/main/resources/jsmart/bootstrap-3.3.7/css/bootstrap.css.map" tofile="${basedir}/target/classes/jsmart/css/bootstrap.css.map" />
-                                        <copydir src="${basedir}/src/main/resources/jsmart/bootstrap-3.3.7/fonts" dest="${basedir}/target/classes/jsmart/fonts" />
+                                        <copy file="${basedir}/src/main/resources/jsmart/bootstrap-3.3.7/css/bootstrap.css.map"
+                                              tofile="${basedir}/target/classes/jsmart/css/bootstrap.css.map"/>
+                                        <copydir src="${basedir}/src/main/resources/jsmart/bootstrap-3.3.7/fonts"
+                                                 dest="${basedir}/target/classes/jsmart/fonts"/>
 
-                                        <delete dir="${basedir}/target/classes/descriptors" />
-                                        <delete dir="${basedir}/target/classes/jsmart/bootstrap-3.3.7" />
-                                        <delete dir="${basedir}/target/classes/jsmart/vanilla-masker-1.1.0" />
-                                        <delete dir="${basedir}/target/classes/jsmart/bootstrap-datetime-4.14.30" />
-                                        <delete dir="${basedir}/target/classes/jsmart/jquery-1.12.4" />
-                                        <delete dir="${basedir}/target/classes/jsmart/jquery-form-3.51.0" />
-                                        <delete dir="${basedir}/target/classes/jsmart/momentjs-2.17.0" />
-                                        <delete dir="${basedir}/target/classes/jsmart/webui-popover-1.2.0" />
+                                        <delete dir="${basedir}/target/classes/descriptors"/>
+                                        <delete dir="${basedir}/target/classes/jsmart/bootstrap-3.3.7"/>
+                                        <delete dir="${basedir}/target/classes/jsmart/vanilla-masker-1.1.0"/>
+                                        <delete dir="${basedir}/target/classes/jsmart/bootstrap-datetime-4.14.30"/>
+                                        <delete dir="${basedir}/target/classes/jsmart/jquery-1.12.4"/>
+                                        <delete dir="${basedir}/target/classes/jsmart/jquery-form-3.51.0"/>
+                                        <delete dir="${basedir}/target/classes/jsmart/momentjs-2.17.0"/>
+                                        <delete dir="${basedir}/target/classes/jsmart/webui-popover-1.2.0"/>
                                         <delete>
                                             <fileset dir="${basedir}/target/classes/jsmart/css">
-                                                <exclude name="jsmart.min.css" />
-                                                <exclude name="bootstrap.css.map" />
+                                                <exclude name="jsmart.min.css"/>
+                                                <exclude name="bootstrap.css.map"/>
                                             </fileset>
                                         </delete>
                                         <delete>
                                             <fileset dir="${basedir}/target/classes/jsmart/js">
-                                                <exclude name="jsmart.min.js" />
+                                                <exclude name="jsmart.min.js"/>
                                             </fileset>
                                         </delete>
                                     </tasks>
